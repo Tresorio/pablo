@@ -1,0 +1,26 @@
+{
+    "no_password": {
+        "eng": "Please enter a valid password"
+    },
+    "no_mail": {
+        "eng": "Please enter a valid mail"
+    },
+    "already_logged_in": {
+        "eng": "Already logged in"
+    },
+    "not_logged_in": {
+        "eng": "Not logged in"
+    },
+    "no_mail_password": {
+        "eng": "Please enter your mail and password"
+    },
+    "invalid_login": {
+        "eng": "Invalid mail or password"
+    },
+    "success_login": {
+        "eng": "Successfully logged in"
+    },
+    "success_logout": {
+        "eng": "Successfully loged out"
+    }
+}

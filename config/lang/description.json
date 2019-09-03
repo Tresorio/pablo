@@ -1,0 +1,26 @@
+{
+    "login": {
+        "eng": "Login to Tresorio"
+    },
+    "logout": {
+        "eng": "Logout of Tresorio"
+    },
+    "mail": {
+        "eng": "Mail address of the tresorio's account"
+    },
+    "password": {
+        "eng": "Password of your Tresorio account"
+    },
+    "stay_connected": {
+        "eng": "Connect automatically at the next login"
+    },
+    "toggle_password": {
+        "eng": "Reveal or hide the password"
+    },
+    "forgot_password": {
+        "eng": "Redirects to the Tresorio page for forgotten passwords"
+    },
+    "create_account": {
+        "eng": "Redirects to the Tresorio page to register a new account"
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "login": {
+        "eng": "Login"
+    },
+    "logout": {
+        "eng": "Logout"
+    },
+    "mail": {
+        "eng": "Mail"
+    },
+    "password": {
+        "eng": "Password"
+    },
+    "stay_connected": {
+        "eng": "Stay connected"
+    },
+    "forgot_password": {
+        "eng": "Forgot your password ?"
+    },
+    "create_account": {
+        "eng": "Create your account now"
+    },
+    "render_frame": {
+        "eng": "Render frame"
+    },
+    "render_animation": {
+        "eng": "Render animation"
+    }
+}
