@@ -1,33 +1,47 @@
-import os
-import sys
-import bpy
+def reload_all():
+    """Reloads recursively all the modules"""
+    __all__ = []
+    for loader, module_name, _ in pkgutil.walk_packages(__path__):
+        print(f"reloading: {module_name}")
+        __all__.append(module_name)
+        _module = loader.find_module(module_name).load_module(module_name)
+        globals()[module_name] = _module
 
-sys.path.append("/home/robin/Tresorio/pablo") ## locate submodules TODO remove it, it's temporary
-user_path = bpy.utils.resource_path('USER')
-config_path = os.path.join(user_path, "config")
-addon_path = os.path.join(config_path, "pablo")
-sys.path.append(addon_path)
 
+if "bpy" in locals():
+    import pkgutil
+    reload_all()
+else:
+    import os
+    import sys
+    import bpy
+    # locate submodules TODO remove it, it's temporary
+    sys.path.append("/home/robin/Tresorio/pablo")
+    user_path = bpy.utils.resource_path('USER')
+    addon_path = os.path.join(user_path, "config", "pablo")
+    sys.path.append(addon_path)
+
+import src
+from src.settings.property import TresorioSettings
 from src.login.logout_op import TresorioLogout
 from src.login.login_op import TresorioLogin
-from src.settings.property import TresorioSettings
 from src.main_panel.panel import TresorioPanel
-
-bl_info = {
-    "name": "Tresorio cloud rendering",
-    "version": (0, 0, 0),
-    "blender": (2, 80, 0),
-    "file": "/home/$USER/.config/blender/2.80/scripts/addons/pablo",
-    "location": "Render > Tresorio Rendering",
-    "description": "Cloud distributed rendering for Blender",
-    "warning": "",
-}
-
 
 classes = (TresorioSettings,
            TresorioLogin,
            TresorioLogout,
            TresorioPanel)
+
+bl_info = {
+    "name": "Tresorio cloud rendering",
+    "version": (0, 0, 0),
+    "blender": (2, 80, 0),
+    "file": "/$HOME/.config/blender/2.80/scripts/addons/pablo",
+    "location": "Render > Tresorio Rendering",
+    "description": "Cloud distributed rendering for Blender",
+    "warning": "",
+}
+
 
 def make_annotations(cls):
     """Converts class fields to annotations if running with Blender 2.8"""
@@ -42,6 +56,7 @@ def make_annotations(cls):
             annotations[k] = v
             delattr(cls, k)
     return cls
+
 
 def register():
     for cls in classes:

@@ -1,4 +1,7 @@
 {
+    "connection": {
+        "eng": "Connection"
+    },
     "login": {
         "eng": "Login"
     },

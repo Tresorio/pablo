@@ -1,4 +1,7 @@
 import bpy
+import urllib.parse as url
+from src.config import tresorio_config as tc
+from src.config import lang_field as lf
 
 class TresorioPanel(bpy.types.Panel):
     """Tresorio's blender plugin, un plugin qui chauffe plutot pas mal."""
@@ -11,16 +14,17 @@ class TresorioPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         settings = context.scene.tresorio_settings
+        lang = settings.curr_lang
 
         if settings.is_logged == False:
 
             col = layout.row().split(factor=0.36)
             col.label(text="")
-            col.label(text="Connection")
+            col.label(text=lf['connection'][lang])
 
-            layout.label(text="Mail")
+            layout.label(text=lf['mail'][lang])
             layout.prop(settings, "mail", text="")
-            layout.label(text="Password:")
+            layout.label(text=lf['password'][lang])
 
             row = layout.row().split(factor=0.9)
             if settings.show_password:
@@ -32,16 +36,18 @@ class TresorioPanel(bpy.types.Panel):
             layout.separator(factor=0.1)
 
             row = layout.row().split(factor=0.3)
-            row.column().prop(settings, "stay_connected", text="Stay connected")
+            row.column().prop(settings, "stay_connected", text=lf['stay_connected'][lang])
             col = row.column()
-            if settings.mail=="" or settings.hidden_password=="" and settings.clear_password=="":
-                col.enabled=False
-            col.operator("tresorio.login", icon='UNLOCKED', text='Login')
+            col.operator("tresorio.login", icon='UNLOCKED', text=lf['login'][lang])
 
             layout.separator(factor=4.0)
 
-            layout.operator("wm.url_open", text="Forgot your password ?", icon="QUESTION").url = "http://192.168.15.20:3000/password"
-            layout.operator("wm.url_open", text="Create your account now", icon="PLUS").url = "http://192.168.15.20:3000/register"
+            layout.operator("wm.url_open",
+                            text=lf['forgot_password'][lang],
+                            icon="QUESTION").url=url.urljoin(tc['frontend'], tc['routes']['forgot_password'])
+            layout.operator("wm.url_open",
+                            text=lf['create_account'][lang],
+                            icon="PLUS").url=url.urljoin(tc['frontend'], tc['routes']['register'])
 
             ## TODO Login panel, interface ...
         elif settings.is_logged == True:

@@ -1,7 +1,9 @@
 {
-    "backend": "0.0.0.0:5000",
-    "frontend": "0.0.0.0:3000",
+    "backend": "http://0.0.0.0:5000",
+    "frontend": "http://0.0.0.0:3000",
     "routes": {
+        "forgot_password": "/password",
+        "register": "/register",
         "signin": "/auth/signin",
         "user_infos": "/user/informations",
         "packs": "/user/products/render/renderpacks"
