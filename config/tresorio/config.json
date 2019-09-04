@@ -1,7 +1,8 @@
 {
-    "gandalf": "0.0.0.0:5000",
+    "backend": "0.0.0.0:5000",
+    "frontend": "0.0.0.0:3000",
     "routes": {
-        "auth": "/auth/signin",
+        "signin": "/auth/signin",
         "user_infos": "/user/informations",
         "packs": "/user/products/render/renderpacks"
     }
