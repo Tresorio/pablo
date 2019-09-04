@@ -22,5 +22,8 @@
     },
     "success_logout": {
         "eng": "Successfully loged out"
+    },
+    "internal_error_login": {
+        "eng": "An internal error occured on login, please retry"
     }
 }

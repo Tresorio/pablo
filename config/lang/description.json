@@ -1,8 +1,8 @@
 {
-    "login": {
+    "tresorio_login": {
         "eng": "Login to Tresorio"
     },
-    "logout": {
+    "tresorio_logout": {
         "eng": "Logout of Tresorio"
     },
     "mail": {

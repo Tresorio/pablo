@@ -22,6 +22,7 @@ else:
     sys.path.append(addon_path)
 
 import src
+from src.settings.lang_tools import get_default_lang
 from src.settings.property import TresorioSettings
 from src.login.logout_op import TresorioLogout
 from src.login.login_op import TresorioLogin
@@ -59,8 +60,12 @@ def make_annotations(cls):
 
 
 def register():
+    lang = get_default_lang()
     for cls in classes:
         make_annotations(cls)
+        set_doc = getattr(cls, "set_doc", None)
+        if callable(set_doc):
+            cls.set_doc(lang)
         bpy.utils.register_class(cls)
 
 

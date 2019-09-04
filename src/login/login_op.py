@@ -2,15 +2,19 @@ import bpy
 import requests
 import urllib.parse as url
 
+from src.settings.lang_tools import get_default_lang
 from src.settings.password_tools import get_password
-from src.config import tresorio_config as tc, lang_notif as ln
+from src.config import tresorio_config as tc, lang_notif as ln, lang_desc as ld
 from .save_login import save_login_infos, remove_login_infos
 
 
 class TresorioLogin(bpy.types.Operator):
-    """Login to Tresorio"""
     bl_idname = 'tresorio.login'
     bl_label = 'Login'
+
+    @classmethod
+    def set_doc(cls, lang):
+        cls.__doc__ = ld['tresorio_login'][lang]
 
     def execute(self, context):
         settings = context.scene.tresorio_settings
@@ -44,11 +48,11 @@ class TresorioLogin(bpy.types.Operator):
         except Exception as e:
             print(e)
             self.report(
-                {'ERROR'}, "Internal error when trying to log in, please retry")
+                {'ERROR'}, ln['internal_error_login'][lang])
             return {'CANCELLED'}
 
         if "token" not in auth_res:
-            self.report({'WARNING'}, "Invalid email or password")
+            self.report({'WARNING'}, ln['invalid_login'][lang])
             return {'CANCELLED'}
 
         if settings.stay_connected == True:
@@ -57,5 +61,5 @@ class TresorioLogin(bpy.types.Operator):
             remove_login_infos()
 
         context.scene.tresorio_settings.is_logged = True
-        self.report({'INFO'}, "Successfully logged in")
+        self.report({'INFO'}, ln['success_login'][lang])
         return {'FINISHED'}
