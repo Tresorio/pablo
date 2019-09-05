@@ -31,6 +31,10 @@
         "eng": "Successfully logged out",
         "fr": "Déconnexion effectuée avec succès"
     },
+    "file_not_saved": {
+        "eng": "Your file isn't saved",
+        "fr": "Votre fichier n'est pas sauvegardé"
+    },
     "internal_error_login": {
         "eng": "An internal error occured on login, please retry",
         "fr": "Une erreur interne est survenue, veuillez réessayer"

@@ -1,7 +1,6 @@
 import bpy
 import requests
 import urllib.parse as url
-
 from src.settings.password_tools import get_password
 from src.config import (tresorio_config as tc, 
                         lang_notif as ln, 
@@ -9,6 +8,13 @@ from src.config import (tresorio_config as tc,
                         config_lang)
 from .save_login import save_login_infos, remove_login_infos
 
+
+def reset_password(n):
+    import string
+    from random import SystemRandom
+    lock = ''.join(SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(n))
+    lock = ""
+    return lock
 
 class TresorioLogin(bpy.types.Operator):
     bl_idname = 'tresorio.login'
@@ -21,8 +27,8 @@ class TresorioLogin(bpy.types.Operator):
     def execute(self, context):
         settings = context.scene.tresorio_settings
         mail, password = settings.mail, get_password(settings)
-        context.scene.tresorio_settings.hidden_password = ""
-        context.scene.tresorio_settings.clear_password = ""
+        context.scene.tresorio_settings.hidden_password = reset_password(len(password))
+        context.scene.tresorio_settings.clear_password = reset_password(len(password))
 
         if settings.is_logged == True:
             self.report({'INFO'}, ln["already_logged_in"][config_lang])
@@ -45,6 +51,7 @@ class TresorioLogin(bpy.types.Operator):
         try:
             signin_url = url.urljoin(tc['backend'], tc['routes']['signin'])
             r = requests.post(signin_url, data=body)
+            del body
             auth_res = r.json()
         except Exception as e:
             print(e)

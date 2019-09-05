@@ -7,6 +7,10 @@
         "eng": "Logout of Tresorio",
         "fr": "Déconnexion de Tresorio"
     },
+    "tresorio_render_frame": {
+        "eng": "Renders the current frame on Tresorio's servers",
+        "fr": "Réalise le rendu sur les serveurs de Tresorio"
+    },
     "mail": {
         "eng": "Email address of the Tresorio account",
         "fr": "Adresse mail de votre compte Tresorio"

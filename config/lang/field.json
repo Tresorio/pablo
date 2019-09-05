@@ -33,11 +33,11 @@
     },
     "render_frame": {
         "eng": "Render frame",
-        "fr": ""
+        "fr": "Rendu image"
     },
     "render_animation": {
         "eng": "Render animation",
-        "fr": ""
+        "fr": "Rendu animation"
     },
     "rendering": {
         "eng": "Rendering",

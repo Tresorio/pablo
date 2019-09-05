@@ -4,6 +4,7 @@ from src.config import (tresorio_config as tc,
                         lang_field as lf,
                         config_lang)
 
+
 class TresorioPanel(bpy.types.Panel):
     """Tresorio's blender plugin, un plugin qui chauffe plutot pas mal."""
     bl_label = "Tresorio Rendering"
@@ -33,25 +34,27 @@ class TresorioPanel(bpy.types.Panel):
                 row.prop(settings, "clear_password", text="")
             else:
                 row.prop(settings, "hidden_password", text="")
-            row.prop(settings, "show_password", icon_only=True, icon="HIDE_OFF")
+            row.prop(settings, "show_password",
+                     icon_only=True, icon="HIDE_OFF")
 
             layout.separator(factor=0.1)
 
             row = layout.row().split(factor=0.5)
-            row.column().prop(settings, "stay_connected", text=lf['stay_connected'][config_lang])
+            row.column().prop(settings, "stay_connected",
+                              text=lf['stay_connected'][config_lang])
             col = row.column()
-            col.operator("tresorio.login", icon='UNLOCKED', text=lf['login'][config_lang])
+            col.operator("tresorio.login", icon='UNLOCKED',
+                         text=lf['login'][config_lang])
 
             layout.separator(factor=4.0)
 
-            layout.operator("wm.url_open",
+            layout.operator("tresorio.redirect_forgot_password",
                             text=lf['forgot_password'][config_lang],
-                            icon="QUESTION").url=url.urljoin(tc['frontend'], tc['routes']['forgot_password'])
-            layout.operator("wm.url_open",
+                            icon="QUESTION")
+            layout.operator("tresorio.redirect_register",
                             text=lf['create_account'][config_lang],
-                            icon="PLUS").url=url.urljoin(tc['frontend'], tc['routes']['register'])
+                            icon="PLUS")
 
-            ## TODO Login panel, interface ...
         elif settings.is_logged == True:
 
             case = layout.row().grid_flow(columns=10)
@@ -59,6 +62,15 @@ class TresorioPanel(bpy.types.Panel):
             align_case = case.row()
             align_case.column().prop(settings, "langs")
 
+            layout.operator('tresorio.render_frame',
+                            text=lf['render_frame'][config_lang],
+                            icon='RESTRICT_RENDER_OFF')
+            layout.operator('tresorio.render_frame',
+                            text=lf['render_animation'][config_lang],
+                            icon='RENDER_ANIMATION')
+
             row = layout.row()
             row.label(text=settings.mail)
-            row.operator("tresorio.logout", icon='LOCKED', text=lf['logout'][config_lang])
+            row.operator("tresorio.logout",
+                         text=lf['logout'][config_lang],
+                         icon='LOCKED')

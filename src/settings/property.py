@@ -9,6 +9,7 @@ from src.config import config_lang
 
 
 class TresorioSettings(bpy.types.PropertyGroup):
+    bl_idname = "tresorio.settings"
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
     bl_context = "render"
@@ -20,7 +21,7 @@ class TresorioSettings(bpy.types.PropertyGroup):
         TresorioSettings.is_logged = BoolProperty(
             name="",
             default=prelogged_in,
-            options={'HIDDEN'}
+            options={'HIDDEN', 'SKIP_SAVE'}
         )
 
         TresorioSettings.langs = EnumProperty(
@@ -35,6 +36,7 @@ class TresorioSettings(bpy.types.PropertyGroup):
             name="",
             description=desc,
             maxlen=128,
+            options={'HIDDEN', 'SKIP_SAVE'},
             default=mail,
         )
 
@@ -44,6 +46,7 @@ class TresorioSettings(bpy.types.PropertyGroup):
             description=desc,
             maxlen=128,
             default="",
+            options={'HIDDEN', 'SKIP_SAVE'},
             subtype="PASSWORD",
         )
 
@@ -53,6 +56,7 @@ class TresorioSettings(bpy.types.PropertyGroup):
             description=desc,
             maxlen=128,
             default="",
+            options={'HIDDEN', 'SKIP_SAVE'},
             subtype="NONE",
         )
 
@@ -62,6 +66,7 @@ class TresorioSettings(bpy.types.PropertyGroup):
             description=desc,
             default=False,
             update=switch_password_visibility,
+            options={'SKIP_SAVE'}
         )
 
         desc = ld["stay_connected"][config_lang]
