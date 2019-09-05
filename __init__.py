@@ -2,7 +2,6 @@ def reload_all():
     """Reloads recursively all the modules"""
     __all__ = []
     for loader, module_name, _ in pkgutil.walk_packages(__path__):
-        print(f"reloading: {module_name}")
         __all__.append(module_name)
         _module = loader.find_module(module_name).load_module(module_name)
         globals()[module_name] = _module
@@ -11,6 +10,7 @@ def reload_all():
 if "bpy" in locals():
     import pkgutil
     reload_all()
+    del pkgutil
 else:
     import os
     import sys
@@ -21,8 +21,8 @@ else:
     addon_path = os.path.join(user_path, "config", "pablo")
     sys.path.append(addon_path)
 
+
 import src
-from src.settings.lang_tools import get_default_lang
 from src.settings.property import TresorioSettings
 from src.login.logout_op import TresorioLogout
 from src.login.login_op import TresorioLogin
@@ -37,10 +37,11 @@ bl_info = {
     "name": "Tresorio cloud rendering",
     "version": (0, 0, 0),
     "blender": (2, 80, 0),
-    "file": "/$HOME/.config/blender/2.80/scripts/addons/pablo",
-    "location": "Render > Tresorio Rendering",
-    "description": "Cloud distributed rendering for Blender",
-    "warning": "",
+    "category": "Render",
+    "file": "/$HOME/.config/blender/2.80/scripts/addons/tresorio_rendering",
+    "location": "Properties: Render > Tresorio Rendering",
+    "description": "Cloud distributed rendering for Blender, by Tresorio",
+    "wiki_url": "http://192.168.15.20:3000",
 }
 
 
@@ -60,12 +61,11 @@ def make_annotations(cls):
 
 
 def register():
-    lang = get_default_lang()
     for cls in classes:
         make_annotations(cls)
         set_doc = getattr(cls, "set_doc", None)
         if callable(set_doc):
-            cls.set_doc(lang)
+            cls.set_doc()
         bpy.utils.register_class(cls)
 
 

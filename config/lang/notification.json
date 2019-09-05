@@ -1,29 +1,38 @@
 {
     "no_password": {
-        "eng": "Please enter a valid password"
+        "eng": "Please enter a valid password",
+        "fr": "Veuillez entrer un mot de passe valide"
     },
     "no_mail": {
-        "eng": "Please enter a valid mail"
+        "eng": "Please enter a valid email",
+        "fr": "Veuillez entrer un mail valide"
     },
     "already_logged_in": {
-        "eng": "Already logged in"
+        "eng": "Already logged in",
+        "fr": "Déjà connecté"
     },
     "not_logged_in": {
-        "eng": "Not logged in"
+        "eng": "Not logged in",
+        "fr": "Pas encore connecté"
     },
     "no_mail_password": {
-        "eng": "Please enter your mail and password"
+        "eng": "Please enter your email and password",
+        "fr": "Veuillez entrer votre mail et mot de passe"
     },
     "invalid_login": {
-        "eng": "Invalid mail or password"
+        "eng": "Invalid email or password",
+        "fr": "Mail ou mot de passe invalide"
     },
     "success_login": {
-        "eng": "Successfully logged in"
+        "eng": "Successfully logged in",
+        "fr": "Connexion effectuée avec succès"
     },
     "success_logout": {
-        "eng": "Successfully loged out"
+        "eng": "Successfully logged out",
+        "fr": "Déconnexion effectuée avec succès"
     },
     "internal_error_login": {
-        "eng": "An internal error occured on login, please retry"
+        "eng": "An internal error occured on login, please retry",
+        "fr": "Une erreur interne est survenue, veuillez réessayer"
     }
 }

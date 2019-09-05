@@ -7,16 +7,16 @@ def remove_login_infos():
     except Exception as e:
         print(e)
 
+## Returns false in case there is no valid login config file, either way it returns True and the email
 def login_from_conf():
         try:
             login_conf = load_json(login_config_path)
-        except Exception as e:
-            print(e)
-            return False
+        except FileNotFoundError:
+            return (False, "")
         if "mail" not in login_conf or "token" not in login_conf:
             remove_login_infos()
-            return False
-        return True
+            return (False, "")
+        return (True, login_conf['mail'])
 
 def save_login_infos(mail, token, context):
     conf = {

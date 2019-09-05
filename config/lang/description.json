@@ -1,26 +1,34 @@
 {
     "tresorio_login": {
-        "eng": "Login to Tresorio"
+        "eng": "Login to Tresorio",
+        "fr": "Connexion à Tresorio"
     },
     "tresorio_logout": {
-        "eng": "Logout of Tresorio"
+        "eng": "Logout of Tresorio",
+        "fr": "Déconnexion de Tresorio"
     },
     "mail": {
-        "eng": "Mail address of the Tresorio account"
+        "eng": "Email address of the Tresorio account",
+        "fr": "Adresse mail de votre compte Tresorio"
     },
     "password": {
-        "eng": "Password of your Tresorio account"
+        "eng": "Password of your Tresorio account",
+        "fr": "Mot de passe de votre compte Tresorio"
     },
     "stay_connected": {
-        "eng": "Connect automatically at the next login"
+        "eng": "Connect automatically at the next login",
+        "fr": "Permet la connexion automatique à la prochaine session"
     },
     "toggle_password": {
-        "eng": "Reveal or hide the password"
+        "eng": "Reveal or hide the password",
+        "fr": "Révèle ou cache le mot de passe"
     },
     "forgot_password": {
-        "eng": "Redirects to the Tresorio page for forgotten passwords"
+        "eng": "Redirects to the Tresorio page for forgotten passwords",
+        "fr": "Redirige vers la page Tresorio gérant l'oubli de mot de passe"
     },
     "create_account": {
-        "eng": "Redirects to the Tresorio page to register a new account"
+        "eng": "Redirects to the Tresorio page to register a new account",
+        "fr": "Redirige vers la page Tresorio gérant la création de compte"
     }
 }

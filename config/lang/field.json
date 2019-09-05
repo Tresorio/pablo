@@ -1,32 +1,46 @@
 {
     "connection": {
-        "eng": "Connection"
+        "eng": "Connection",
+        "fr": "Connexion"
     },
     "login": {
-        "eng": "Login"
+        "eng": "Login",
+        "fr": "Se connecter"
     },
     "logout": {
-        "eng": "Logout"
+        "eng": "Logout",
+        "fr": "Se déconnecter"
     },
     "mail": {
-        "eng": "Mail"
+        "eng": "Email",
+        "fr": "Mail"
     },
     "password": {
-        "eng": "Password"
+        "eng": "Password",
+        "fr": "Mot de passe"
     },
     "stay_connected": {
-        "eng": "Stay connected"
+        "eng": "Stay connected",
+        "fr": "Rester connecté"
     },
     "forgot_password": {
-        "eng": "Forgot your password ?"
+        "eng": "Forgot your password ?",
+        "fr": "Mot de passe oublié ?"
     },
     "create_account": {
-        "eng": "Create your account now"
+        "eng": "Create an account",
+        "fr": "Créer un compte"
     },
     "render_frame": {
-        "eng": "Render frame"
+        "eng": "Render frame",
+        "fr": ""
     },
     "render_animation": {
-        "eng": "Render animation"
+        "eng": "Render animation",
+        "fr": ""
+    },
+    "rendering": {
+        "eng": "Rendering",
+        "fr": "Rendu"
     }
 }
