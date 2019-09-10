@@ -2,7 +2,7 @@ import json as js
 
 # Loads a json file in a dictionnary and returns it
 def load_json(file):
-    with open(file, "r") as f:
+    with open(file, 'r') as f:
         return js.load(f)
 
 # Writes a dictionnary as a json in the given file

@@ -22,4 +22,4 @@ class TresorioRenderFrame(bpy.types.Operator):
             self.report({'WARNING'}, ln['file_not_saved'][config_lang])
             return {'CANCELLED'}
 
-        print("IT SHOULD UPLOAD HERE")
+        print('IT SHOULD UPLOAD HERE')

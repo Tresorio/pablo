@@ -1,5 +1,5 @@
 {
-    "backend": "http://0.0.0.0:5000",
+    "backend": "http://192.168.15.20:5000",
     "frontend": "http://192.168.15.20:3000",
     "routes": {
         "forgot_password": "/password",

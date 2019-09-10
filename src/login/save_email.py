@@ -13,15 +13,15 @@ def email_from_conf():
             email_conf = load_json(email_config_path)
         except Exception as e:
             print(e)
-            return ""
-        if "email" not in email_conf:
+            return ''
+        if 'email' not in email_conf:
             remove_email_infos()
-            return ""
+            return ''
         return email_conf['email']
 
 def save_email_infos(email):
     conf = {
-        "email": email,
+        'email': email,
     }
     try:
         write_json(conf, email_config_path)
