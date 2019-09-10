@@ -19,4 +19,4 @@ lang_notif = load_json(_lang_notification_path)
 tresorio_config = load_json(_tresorio_config_path)
 
 # Keeps mail and jwt token for future connections
-login_config_path = path.join(bpy.utils.user_resource('CONFIG', path='tresorio', create=True), "login.json")
+email_config_path = path.join(bpy.utils.user_resource('CONFIG', path='tresorio', create=True), "email.json")

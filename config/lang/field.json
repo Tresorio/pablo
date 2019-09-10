@@ -19,9 +19,9 @@
         "eng": "Password",
         "fr": "Mot de passe"
     },
-    "stay_connected": {
-        "eng": "Stay connected",
-        "fr": "Rester connecté"
+    "remember_email": {
+        "eng": "Remember email",
+        "fr": "Se souvenir du mail"
     },
     "forgot_password": {
         "eng": "Forgot your password ?",

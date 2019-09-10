@@ -19,9 +19,9 @@
         "eng": "Password of your Tresorio account",
         "fr": "Mot de passe de votre compte Tresorio"
     },
-    "stay_connected": {
-        "eng": "Connect automatically at the next login",
-        "fr": "Permet la connexion automatique à la prochaine session"
+    "remember_email": {
+        "eng": "Remembers the email used for the connection",
+        "fr": "Se souvient du mail utilisé pour la connexion"
     },
     "toggle_password": {
         "eng": "Reveal or hide the password",

@@ -6,7 +6,7 @@ from src.config import (tresorio_config as tc,
                         lang_notif as ln, 
                         lang_desc as ld,
                         config_lang)
-from .save_login import save_login_infos, remove_login_infos
+from .save_email import save_email_infos, remove_email_infos
 
 
 def reset_password(n):
@@ -26,17 +26,17 @@ class TresorioLogin(bpy.types.Operator):
 
     def execute(self, context):
         settings = context.scene.tresorio_settings
-        mail, password = settings.mail, get_password(settings)
+        email, password = settings.email, get_password(settings)
         context.scene.tresorio_settings.hidden_password = reset_password(len(password))
         context.scene.tresorio_settings.clear_password = reset_password(len(password))
 
         if settings.is_logged == True:
             self.report({'INFO'}, ln["already_logged_in"][config_lang])
             return {'CANCELLED'}
-        if mail == "" and password == "":
+        if email == "" and password == "":
             self.report({'ERROR'}, ln["no_mail_password"][config_lang])
             return {'CANCELLED'}
-        if mail == "":
+        if email == "":
             self.report({'INFO'}, ln["no_mail"][config_lang])
             return {'CANCELLED'}
         if password == "":
@@ -44,28 +44,31 @@ class TresorioLogin(bpy.types.Operator):
             return {'CANCELLED'}
 
         body = {
-            "email": mail,
+            "email": email,
             "password": password,
         }
 
         try:
             signin_url = url.urljoin(tc['backend'], tc['routes']['signin'])
             r = requests.post(signin_url, data=body)
-            del body
             auth_res = r.json()
+            print("first:", r)
         except Exception as e:
             print(e)
             self.report({'ERROR'}, ln['internal_error_login'][config_lang])
             return {'CANCELLED'}
+        finally:
+            if "token" not in auth_res:
+                self.report({'WARNING'}, ln['invalid_login'][config_lang])
+                return {'CANCELLED'}
+            else:
+                context.scene.tresorio_settings.token = auth_res['token']
 
-        if "token" not in auth_res:
-            self.report({'WARNING'}, ln['invalid_login'][config_lang])
-            return {'CANCELLED'}
 
-        if settings.stay_connected == True:
-            save_login_infos(mail, auth_res['token'], context)
-        elif settings.stay_connected == False:
-            remove_login_infos()
+        if settings.remember_email == True:
+            save_email_infos(email)
+        elif settings.remember_email == False:
+            remove_email_infos()
 
         context.scene.tresorio_settings.is_logged = True
         self.report({'INFO'}, ln['success_login'][config_lang])

@@ -1,0 +1,4 @@
+[submodule "src/services/nassim"]
+	path = src/services/nassim
+	url = git@gitlab.com:tresorio/platform/nassim/sdk-python.git
+	branch = nassim-sdk-blender

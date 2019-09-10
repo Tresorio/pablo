@@ -26,7 +26,7 @@ class TresorioPanel(bpy.types.Panel):
 
             box = layout.box()
             box.label(text=lf['mail'][config_lang])
-            box.prop(settings, "mail", text="")
+            box.prop(settings, "email", text="")
             box.label(text=lf['password'][config_lang])
 
             row = box.row().split(factor=0.9)
@@ -40,8 +40,8 @@ class TresorioPanel(bpy.types.Panel):
             layout.separator(factor=0.1)
 
             row = layout.row().split(factor=0.5)
-            row.column().prop(settings, "stay_connected",
-                              text=lf['stay_connected'][config_lang])
+            row.column().prop(settings, "remember_email",
+                              text=lf['remember_email'][config_lang])
             col = row.column()
             col.operator("tresorio.login", icon='UNLOCKED',
                          text=lf['login'][config_lang])
@@ -70,7 +70,7 @@ class TresorioPanel(bpy.types.Panel):
                             icon='RENDER_ANIMATION')
 
             row = layout.row()
-            row.label(text=settings.mail)
+            row.label(text=settings.email)
             row.operator("tresorio.logout",
                          text=lf['logout'][config_lang],
                          icon='LOCKED')

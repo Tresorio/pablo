@@ -2,7 +2,7 @@ import bpy
 import json
 from bpy.props import PointerProperty, StringProperty, BoolProperty, EnumProperty, IntProperty, CollectionProperty
 from src.config import lang_desc as ld, all_langs
-from src.login.save_login import login_from_conf
+from src.login.save_email import email_from_conf
 from .password_tools import switch_password_visibility
 from src.config import set_new_lang
 from src.config import config_lang
@@ -16,12 +16,18 @@ class TresorioSettings(bpy.types.PropertyGroup):
 
     @classmethod
     def register(TresorioSettings):
-        prelogged_in, mail = login_from_conf()
+        email = email_from_conf()
 
         TresorioSettings.is_logged = BoolProperty(
             name="",
-            default=prelogged_in,
-            options={'HIDDEN', 'SKIP_SAVE'}
+            default=False,
+            options={'HIDDEN', 'SKIP_SAVE'},
+        )
+
+        TresorioSettings.token = StringProperty(
+            name="",
+            default="",
+            options={'HIDDEN', 'SKIP_SAVE'},
         )
 
         TresorioSettings.langs = EnumProperty(
@@ -32,12 +38,12 @@ class TresorioSettings(bpy.types.PropertyGroup):
         )
 
         desc = ld["mail"][config_lang]
-        TresorioSettings.mail = StringProperty(
+        TresorioSettings.email = StringProperty(
             name="",
             description=desc,
             maxlen=128,
             options={'HIDDEN', 'SKIP_SAVE'},
-            default=mail,
+            default=email,
         )
 
         desc = ld["password"][config_lang]
@@ -69,11 +75,11 @@ class TresorioSettings(bpy.types.PropertyGroup):
             options={'SKIP_SAVE'}
         )
 
-        desc = ld["stay_connected"][config_lang]
-        TresorioSettings.stay_connected = BoolProperty(
+        desc = ld["remember_email"][config_lang]
+        TresorioSettings.remember_email = BoolProperty(
             name="",
             description=desc,
-            default=prelogged_in,
+            default=email!="",
         )
 
         bpy.types.Scene.tresorio_settings = PointerProperty(
