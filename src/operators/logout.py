@@ -1,7 +1,5 @@
 import bpy
-from src.config import (lang_notif as ln,
-                        lang_desc as ld,
-                        config_lang)
+from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
 class TresorioLogout(bpy.types.Operator):
@@ -10,16 +8,18 @@ class TresorioLogout(bpy.types.Operator):
 
     @classmethod
     def set_doc(cls):
-        cls.__doc__ = ld['tresorio_logout'][config_lang]
+        cls.__doc__ = TRADUCTOR['desc']['tresorio_logout'][CONFIG_LANG]
 
     def execute(self, context):
         settings = context.scene.tresorio_settings
 
         if settings.is_logged == False:
-            self.report({'INFO'}, ln['not_logged_in'][config_lang])
+            self.report({'INFO'},
+                        TRADUCTOR['notif']['not_logged_in'][CONFIG_LANG])
             return {'CANCELLED'}
 
         context.scene.tresorio_settings.is_logged = False
 
-        self.report({'INFO'}, ln['success_logout'][config_lang])
+        self.report({'INFO'},
+                    TRADUCTOR['notif']['success_logout'][CONFIG_LANG])
         return {'FINISHED'}

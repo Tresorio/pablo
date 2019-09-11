@@ -1,5 +1,5 @@
 bl_info = {
-    'name': 'Tresorio cloud rendering',
+    'name': 'WIP Tresorio cloud rendering',
     'version': (0, 0, 0),
     'blender': (2, 80, 0),
     'category': 'Render',
@@ -9,19 +9,11 @@ bl_info = {
     'wiki_url': 'http://192.168.15.20:3000',
 }
 
-def is_connected():
-    import socket
-    try:
-        socket.create_connection(('www.google.com', 80))
-        return True
-    except OSError:
-        pass
-    return False
-
 def reload_all():
     """Reloads recursively all the modules"""
     __all__ = []
     for loader, module_name, _ in pkgutil.walk_packages(__path__):
+        print(f'reloading: {module_name}')
         __all__.append(module_name)
         _module = loader.find_module(module_name).load_module(module_name)
         globals()[module_name] = _module
@@ -43,12 +35,13 @@ else:
 
 
 import src
-from src.settings.property import TresorioSettings
-from src.login.logout_op import TresorioLogout
-from src.login.login_op import TresorioLogin
-from src.main_panel.panel import TresorioPanel
-from src.main_panel.redirect import TresorioRedirectForgotPassword, TresorioRedirectRegister
-from src.render.frame_op import TresorioRenderFrame
+from src.properties.property import TresorioSettings
+from src.operators.logout import TresorioLogout
+from src.operators.login import TresorioLogin
+from src.operators.panel import TresorioPanel
+from src.operators.redirect import TresorioRedirectForgotPassword, TresorioRedirectRegister
+from src.operators.render import TresorioRenderFrame
+from src.async_loop import AsyncLoopModalOperator
 
 classes = (TresorioSettings,
            TresorioLogin,
@@ -56,41 +49,22 @@ classes = (TresorioSettings,
            TresorioPanel,
            TresorioRedirectForgotPassword,
            TresorioRedirectRegister,
-           TresorioRenderFrame)
-
-def make_annotations(cls):
-    """Converts class fields to annotations if running with Blender 2.8"""
-    if bpy.app.version < (2, 80):
-        return cls
-    bl_props = {k: v for k, v in cls.__dict__.items() if isinstance(v, tuple)}
-    if bl_props:
-        if '__annotations__' not in cls.__dict__:
-            setattr(cls, '__annotations__', {})
-        annotations = cls.__dict__['__annotations__']
-        for k, v in bl_props.items():
-            annotations[k] = v
-            delattr(cls, k)
-    return cls
+           TresorioRenderFrame,
+           AsyncLoopModalOperator)
 
 
 def register():
-    if is_connected() == True:
-        for cls in classes:
-            make_annotations(cls)
-            ## Add description with language translation
-            set_doc = getattr(cls, 'set_doc', None)
-            if callable(set_doc):
-                cls.set_doc()
-            bpy.utils.register_class(cls)
-    else:
-        print('NO CONNECTION')
-        ## TODO show a reload panel once connected
+    for cls in classes:
+        ## Add description with language translation
+        set_doc = getattr(cls, 'set_doc', None)
+        if callable(set_doc):
+            cls.set_doc()
+        bpy.utils.register_class(cls)
 
 
 def unregister():
     for cls in classes:
-        if cls.__doc__ != '':
-            bpy.utils.unregister_class(cls)
+        bpy.utils.unregister_class(cls)
 
 
 if __name__ == '__main__':
