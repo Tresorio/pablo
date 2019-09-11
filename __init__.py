@@ -9,52 +9,50 @@ bl_info = {
     'wiki_url': 'http://192.168.15.20:3000',
 }
 
-def reload_all():
-    """Reloads recursively all the modules"""
-    __all__ = []
-    for loader, module_name, _ in pkgutil.walk_packages(__path__):
-        print(f'reloading: {module_name}')
-        __all__.append(module_name)
-        _module = loader.find_module(module_name).load_module(module_name)
-        globals()[module_name] = _module
+import sys
+import os
+import bpy
+from importlib import reload
 
+user_path = bpy.utils.resource_path('USER')
+addon_path = os.path.join(user_path, 'scripts', 'addons', 'pablo')
+sys.path.append(addon_path)
+
+from types import ModuleType
+
+def reload_all(module: ModuleType, layers: int):
+    """ TODO: remove this ugly trick and find a correct way to reload submodules"""
+    if layers == 0: return
+    for key in module.__dict__:
+        attr = module.__dict__[key]
+        if type(attr) is not ModuleType:
+            continue
+        reload_all(attr, layers - 1)
 
 if 'bpy' in locals():
-    import pkgutil
-    reload_all()
-    del pkgutil
-else:
-    import os
-    import sys
-    import bpy
-    # locate submodules TODO remove it, it's temporary, for dev (symlink)
-    sys.path.append('/home/robin/Tresorio/pablo')
-    user_path = bpy.utils.resource_path('USER')
-    addon_path = os.path.join(user_path, 'config', 'pablo')
-    sys.path.append(addon_path)
+    import src
+    reload_all(src, 2)
 
-
-import src
 from src.properties.property import TresorioSettings
 from src.operators.logout import TresorioLogout
 from src.operators.login import TresorioLogin
 from src.operators.panel import TresorioPanel
 from src.operators.redirect import TresorioRedirectForgotPassword, TresorioRedirectRegister
 from src.operators.render import TresorioRenderFrame
-from src.async_loop import AsyncLoopModalOperator
+from src.services.async_loop import AsyncLoopModalOperator
 
-classes = (TresorioSettings,
-           TresorioLogin,
-           TresorioLogout,
-           TresorioPanel,
-           TresorioRedirectForgotPassword,
-           TresorioRedirectRegister,
-           TresorioRenderFrame,
-           AsyncLoopModalOperator)
+to_register_classes = (TresorioSettings,
+                       TresorioLogin,
+                       TresorioLogout,
+                       TresorioPanel,
+                       TresorioRedirectForgotPassword,
+                       TresorioRedirectRegister,
+                       TresorioRenderFrame,
+                       AsyncLoopModalOperator)
 
 
 def register():
-    for cls in classes:
+    for cls in to_register_classes:
         ## Add description with language translation
         set_doc = getattr(cls, 'set_doc', None)
         if callable(set_doc):
@@ -63,8 +61,11 @@ def register():
 
 
 def unregister():
-    for cls in classes:
-        bpy.utils.unregister_class(cls)
+    for cls in reversed(to_register_classes):
+        try:
+            bpy.utils.unregister_class(cls)
+        except RuntimeError:
+            pass
 
 
 if __name__ == '__main__':
