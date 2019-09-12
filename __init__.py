@@ -28,12 +28,13 @@ def reload_all(module: ModuleType, layers: int):
         if type(attr) is not ModuleType:
             continue
         reload_all(attr, layers - 1)
+        reload(attr)
 
 if 'bpy' in locals():
     import src
     reload_all(src, 2)
 
-from src.properties.property import TresorioSettings
+from src.properties import TresorioUserProps
 from src.operators.logout import TresorioLogout
 from src.operators.login import TresorioLogin
 from src.operators.panel import TresorioPanel
@@ -41,7 +42,7 @@ from src.operators.redirect import TresorioRedirectForgotPassword, TresorioRedir
 from src.operators.render import TresorioRenderFrame
 from src.services.async_loop import AsyncLoopModalOperator
 
-to_register_classes = (TresorioSettings,
+to_register_classes = (TresorioUserProps,
                        TresorioLogin,
                        TresorioLogout,
                        TresorioPanel,
@@ -51,6 +52,15 @@ to_register_classes = (TresorioSettings,
                        AsyncLoopModalOperator)
 
 
+def unregister():
+    for cls in reversed(to_register_classes):
+        try:
+            bpy.utils.unregister_class(cls)
+        except RuntimeError as exc:
+            print(exc)
+            return
+
+
 def register():
     for cls in to_register_classes:
         ## Add description with language translation
@@ -58,14 +68,6 @@ def register():
         if callable(set_doc):
             cls.set_doc()
         bpy.utils.register_class(cls)
-
-
-def unregister():
-    for cls in reversed(to_register_classes):
-        try:
-            bpy.utils.unregister_class(cls)
-        except RuntimeError:
-            pass
 
 
 if __name__ == '__main__':

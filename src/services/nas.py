@@ -59,9 +59,11 @@ class Nas:
         self._logger.addHandler(console_handler)
 
     async def __aenter__(self):
+        """Entrypoint of `async with`"""
         return self
 
     async def __aexit__(self, *args):
+        """Callback once out of the `async with` block"""
         if self._session is not None:
             return await self._session.close()
 
@@ -103,18 +105,49 @@ class Nas:
 
     @_nasrequest.__func__
     async def download(self, uuid: str, src_filename: str):
+        """Downloads a specific file on the Nas.
+
+        Arg:
+            uuid: The uuid of the project we want to target.
+            src_filename: file to download.
+
+        Example:
+            >>> with Nas('http://0.0.0.0:3000') as nas:
+            ...     task = await nas.download('55fe2bc6', 'my_file.txt')
+            ...     file = asyncio.run(task)
+        """
         url = urljoin(self.url, uuid+'/'+src_filename)
         response = await self._session.get(url, raise_for_status=True)
         return await response.read()
 
     @_nasrequest.__func__
     async def download_project(self, uuid: str):
+        """Downloads a whole project as a zip
+
+        Arg:
+            uuid: The uuid of the project we want to download
+
+        Example:
+            >>> with Nas('http://0.0.0.0:3000') as nas:
+            ...     task = await nas.list_files('55fe2bc6')
+            ...     project = asyncio.run(task)
+        """
         url = urljoin(self.url, uuid+"?download=1&format=zip")
         response = await self._session.get(url, raise_for_status=True)
         return await response.read()
 
     @_nasrequest.__func__
     async def list_files(self, uuid: str):
+        """Lists the files contained in the Nas specific uuid folder.
+
+        Arg:
+            uuid: The uuid of the project we want to list
+
+        Example:
+            >>> with Nas('http://0.0.0.0:3000') as nas:
+            ...     task = await nas.list_files('55fe2bc6')
+            ...     files = asyncio.run(task)
+        """
         url = urljoin(self.url, uuid)
         response = await self._session.get(url, raise_for_status=True)
         return await response.text()

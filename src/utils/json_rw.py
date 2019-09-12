@@ -7,7 +7,10 @@ def load(filepath: str):
     """Loads a json file into a dictionnary."""
 
     with open(filepath, 'r') as file:
-        return json.load(file)
+        try:
+            return json.load(file)
+        except json.JSONDecodeError:
+            return ''
 
 
 def write(json_dict: dict, filename: str):

@@ -8,7 +8,8 @@ def remove_email_from_conf():
     """Empties the email configuration file."""
 
     try:
-        open(EMAIL_CONFIG_PATH, 'w').close()
+        with open(EMAIL_CONFIG_PATH, 'w') as file:
+            file.write('{}')
     except OSError as exc:
         print(exc)
 

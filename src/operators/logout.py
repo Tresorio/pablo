@@ -11,14 +11,14 @@ class TresorioLogout(bpy.types.Operator):
         cls.__doc__ = TRADUCTOR['desc']['tresorio_logout'][CONFIG_LANG]
 
     def execute(self, context):
-        settings = context.scene.tresorio_settings
+        user_props = context.window_manager.tresorio_user_props
 
-        if settings.is_logged == False:
+        if user_props.is_logged == False:
             self.report({'INFO'},
                         TRADUCTOR['notif']['not_logged_in'][CONFIG_LANG])
             return {'CANCELLED'}
 
-        context.scene.tresorio_settings.is_logged = False
+        context.window_manager.tresorio_user_props.is_logged = False
 
         self.report({'INFO'},
                     TRADUCTOR['notif']['success_logout'][CONFIG_LANG])

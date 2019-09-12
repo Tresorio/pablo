@@ -16,14 +16,14 @@ class TresorioLogin(bpy.types.Operator):
         cls.__doc__ = TRADUCTOR['desc']['tresorio_login'][CONFIG_LANG]
 
     def execute(self, context):
-        settings = context.scene.tresorio_settings
-        email, password = settings.email, get_password(settings)
-        context.scene.tresorio_settings.hidden_password = reset_password(
+        user_props = context.window_manager.tresorio_user_props
+        email, password = user_props.email, get_password(user_props)
+        context.window_manager.tresorio_user_props.hidden_password = reset_password(
             len(password))
-        context.scene.tresorio_settings.clear_password = reset_password(
+        context.window_manager.tresorio_user_props.clear_password = reset_password(
             len(password))
 
-        if settings.is_logged == True:
+        if user_props.is_logged == True:
             self.report({'INFO'},
                         TRADUCTOR['notif']['already_logged_in'][CONFIG_LANG])
             return {'CANCELLED'}
@@ -61,14 +61,14 @@ class TresorioLogin(bpy.types.Operator):
                             TRADUCTOR['notif']['invalid_login'][CONFIG_LANG])
                 return {'CANCELLED'}
             else:
-                context.scene.tresorio_settings.token = auth_res['token']
+                context.window_manager.tresorio_user_props.token = auth_res['token']
 
-        if settings.remember_email == True:
+        if user_props.remember_email == True:
             set_email_in_conf(email)
-        elif settings.remember_email == False:
+        elif user_props.remember_email == False:
             remove_email_from_conf()
 
-        context.scene.tresorio_settings.is_logged = True
+        context.window_manager.tresorio_user_props.is_logged = True
 
         self.report({'INFO'},
                     TRADUCTOR['notif']['success_login'][CONFIG_LANG])

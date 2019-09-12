@@ -3,12 +3,7 @@ from src.utils.email import get_email_from_conf
 from src.utils.password import switch_password_visibility
 from src.config.langs import set_new_lang, TRADUCTOR, CONFIG_LANG, ALL_LANGS
 
-class TresorioSettings(bpy.types.PropertyGroup):
-    bl_idname = 'tresorio.settings'
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = 'render'
-
+class TresorioUserProps(bpy.types.PropertyGroup):
     email = get_email_from_conf()
 
     is_logged: bpy.props.BoolProperty(
@@ -77,11 +72,11 @@ class TresorioSettings(bpy.types.PropertyGroup):
 
     @classmethod
     def register(cls):
-        bpy.types.Scene.tresorio_settings = bpy.props.PointerProperty(
+        bpy.types.WindowManager.tresorio_user_props = bpy.props.PointerProperty(
             type=cls,
-            name='tresorio_settings',
+            name='tresorio_user_props',
             options={'HIDDEN', 'SKIP_SAVE'})
 
     @classmethod
     def unregister(cls):
-        del bpy.types.Scene.tresorio_settings
+        del bpy.types.WindowManager.tresorio_user_props
