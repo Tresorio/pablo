@@ -90,13 +90,16 @@ class Nas:
             ... def Nas_method(self, uuid):
             ...     pass
         """
-        async def wrapper(self, *args, **kwargs):
+        async def wrapper(self, *args, read: bool = True, **kwargs):
             if self.mocked is True:
                 return await func(*args, **kwargs)
             try:
                 if self._session is None:
                     self._session = aiohttp.ClientSession()
-                return await func(self, *args, **kwargs)
+                res = await func(self, *args, **kwargs)
+                if read is True:
+                    return await res.read()
+                return res
             except aiohttp.ClientResponseError as exc:
                 self._log_client_co_err(
                     exc, prefix=f'{self.__class__.__name__}.{func.__name__}')
@@ -118,7 +121,7 @@ class Nas:
         """
         url = urljoin(self.url, uuid+'/'+src_filename)
         response = await self._session.get(url, raise_for_status=True)
-        return await response.read()
+        return response
 
     @_nasrequest.__func__
     async def download_project(self, uuid: str):
@@ -134,7 +137,7 @@ class Nas:
         """
         url = urljoin(self.url, uuid+"?download=1&format=zip")
         response = await self._session.get(url, raise_for_status=True)
-        return await response.read()
+        return response
 
     @_nasrequest.__func__
     async def list_files(self, uuid: str):
@@ -150,7 +153,7 @@ class Nas:
         """
         url = urljoin(self.url, uuid)
         response = await self._session.get(url, raise_for_status=True)
-        return await response.text()
+        return response
 
     @_nasrequest.__func__
     async def upload_content(self, uuid: str, content, filename: str):
@@ -174,7 +177,7 @@ class Nas:
             }
             mpw.append(content, headers=header)
             response = await self._session.put(url, data=mpw, raise_for_status=True)
-            return await response.text()
+            return response
 
     async def close(self):
         """Closes the aiohttp session. To use if Nas is not instanciated with `async with`."""

@@ -13,12 +13,11 @@ import sys
 import os
 import bpy
 from importlib import reload
+from types import ModuleType
 
 user_path = bpy.utils.resource_path('USER')
 addon_path = os.path.join(user_path, 'scripts', 'addons', 'pablo')
 sys.path.append(addon_path)
-
-from types import ModuleType
 
 def reload_all(module: ModuleType, layers: int):
     """ TODO: remove this ugly trick and find a correct way to reload submodules"""
