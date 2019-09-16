@@ -42,5 +42,41 @@
     "rendering": {
         "eng": "Rendering",
         "fr": "Rendu"
+    },
+    "account_panel": {
+        "eng": "Account",
+        "fr": "Compte"
+    },
+    "new_render_panel": {
+        "eng": "New rendering",
+        "fr": "Nouveau rendu"
+    },
+    "new_rendering_name": {
+        "eng": "Name",
+        "fr": "Nom"
+    },
+    "engine": {
+        "eng": "Engine",
+        "fr": "Moteur"
+    },
+    "format": {
+        "eng": "Format",
+        "fr": "Format"
+    },
+    "timeout": {
+        "eng": "Timeout",
+        "fr": "Délai"
+    },
+    "hours": {
+        "eng": "Hours",
+        "fr": "Heures"
+    },
+    "render_pack": {
+        "eng": "Render pack",
+        "fr": "Pack de rendu"
+    },
+    "default_render_name": {
+        "eng": "My_new_render",
+        "fr": "Mon_nouveau_rendu"
     }
 }

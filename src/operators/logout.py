@@ -2,7 +2,7 @@ import bpy
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
-class TresorioLogout(bpy.types.Operator):
+class TresorioLogoutOperator(bpy.types.Operator):
     bl_idname = 'tresorio.logout'
     bl_label = 'Logout'
 

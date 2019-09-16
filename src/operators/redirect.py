@@ -7,7 +7,7 @@ from src.config.api import API_CONFIG
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
-class Redirector(bpy.types.Operator):
+class RedirectorOperator(bpy.types.Operator):
     """Base class for redirection operators. DON'T REGISTER."""
 
     def __init__(self):
@@ -27,7 +27,7 @@ class Redirector(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class TresorioRedirectForgotPassword(Redirector):
+class TresorioRedirectForgotPasswordOperator(RedirectorOperator):
     """This operator redirects to the password recovery page Tresorio's website."""
 
     bl_idname = 'tresorio.redirect_forgot_password'
@@ -44,7 +44,7 @@ class TresorioRedirectForgotPassword(Redirector):
         cls.__doc__ = TRADUCTOR['desc']['forgot_password'][CONFIG_LANG]
 
 
-class TresorioRedirectRegister(Redirector):
+class TresorioRedirectRegisterOperator(RedirectorOperator):
     """This operator redirects to the registration page on the Tresorio's website."""
 
     bl_idname = 'tresorio.redirect_register'
@@ -59,3 +59,19 @@ class TresorioRedirectRegister(Redirector):
     def set_doc(cls):
         """Customizes the docstring for Blender language management."""
         cls.__doc__ = TRADUCTOR['desc']['create_account'][CONFIG_LANG]
+
+
+class TresorioRedirectHomeOperator(RedirectorOperator):
+    """This operator redirects to the main page on the Tresorio's website."""
+
+    bl_idname = 'tresorio.redirect_home'
+    bl_label = 'Tresorio Home'
+
+    def __init__(self):
+        super().__init__()
+        self.url = API_CONFIG['homepage']
+
+    @classmethod
+    def set_doc(cls):
+        """Customizes the docstring for Blender language management."""
+        cls.__doc__ = TRADUCTOR['desc']['redirect_tresorio'][CONFIG_LANG]

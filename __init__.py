@@ -33,22 +33,40 @@ if 'bpy' in locals():
     import src
     reload_all(src, 2)
 
-from src.properties import TresorioUserProps
-from src.operators.logout import TresorioLogout
-from src.operators.login import TresorioLogin
-from src.operators.panel import TresorioPanel
-from src.operators.redirect import TresorioRedirectForgotPassword, TresorioRedirectRegister
-from src.operators.render import TresorioRenderFrame
+from src.properties import TresorioUserProps, TresorioRenderFormProps
+
+from src.ui.main_panel import TresorioMainPanel
+from src.ui.account_panel import TresorioAccountPanel
+from src.ui.new_render_panel import TresorioNewRenderPanel
+
+from src.operators.login import TresorioLoginOperator
+from src.operators.logout import TresorioLogoutOperator
+from src.operators.render import TresorioRenderFrameOperator
+from src.operators.redirect import TresorioRedirectHomeOperator
+from src.operators.redirect import TresorioRedirectRegisterOperator
+from src.operators.redirect import TresorioRedirectForgotPasswordOperator
+
 from src.services.async_loop import AsyncLoopModalOperator
 
-to_register_classes = (TresorioUserProps,
-                       TresorioLogin,
-                       TresorioLogout,
-                       TresorioPanel,
-                       TresorioRedirectForgotPassword,
-                       TresorioRedirectRegister,
-                       TresorioRenderFrame,
-                       AsyncLoopModalOperator)
+to_register_classes = (
+                       # Properties 
+                       TresorioUserProps,
+                       TresorioRenderFormProps,
+
+                       # Operators
+                       TresorioLoginOperator,
+                       TresorioLogoutOperator,
+                       TresorioRedirectForgotPasswordOperator,
+                       TresorioRedirectRegisterOperator,
+                       TresorioRedirectHomeOperator,
+                       TresorioRenderFrameOperator,
+                       AsyncLoopModalOperator,
+
+                       # UI
+                       TresorioMainPanel,
+                       TresorioNewRenderPanel,
+                       TresorioAccountPanel,
+                      )
 
 
 def unregister():

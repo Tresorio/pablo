@@ -30,7 +30,9 @@ class Nas:
         ...     nas.download('uuid', 'file.txt')
 
     TODO's:
-        Upload a whole folder (in case there are assets for the rendering)
+        - Upload a whole folder (in case there are assets for the rendering)
+        - Write the mocked part of the @_nasrequests methods
+        - Stream upload ?
     """
 
     def __init__(self, base_url: str, mocked=False):
@@ -39,16 +41,6 @@ class Nas:
         self._session = None
         self._logger = logging.getLogger("Nas")
         self._set_logger()
-
-    def _log_client_co_err(self, exc: aiohttp.ClientConnectionError, prefix: str = ""):
-        """Logs the ClientConnectionErrors thanks to the wrapper @nasrequest.
-
-        Args:
-            exc: The client connection exception.
-            prefix: A string to prepend the logs.
-        """
-        err = f'{prefix} [{exc.request_info.method}] {exc.args[0]}'
-        self._logger.error(err)
 
     def _set_logger(self):
         """Configurates the logger for the Nas instance"""
@@ -87,10 +79,16 @@ class Nas:
             with __func__.
 
             >>> @_nasrequest.__func__
-            ... def Nas_method(self, uuid):
+            ... async def Nas_method(self, uuid):
             ...     pass
         """
-        async def wrapper(self, *args, read: bool = True, **kwargs):
+        async def wrapper(self, *args, read: bool = False, **kwargs):
+            """This wrapper handles common cases of nas requests
+
+            Args:
+                read: If `False`, the wrapped function will return the whole
+                    response. If `True`, will read the response and return bytes
+            """
             if self.mocked is True:
                 return await func(*args, **kwargs)
             try:
@@ -100,10 +98,9 @@ class Nas:
                 if read is True:
                     return await res.read()
                 return res
-            except aiohttp.ClientResponseError as exc:
-                self._log_client_co_err(
-                    exc, prefix=f'{self.__class__.__name__}.{func.__name__}')
-
+            except aiohttp.ClientError as err:
+                self._logger.error(f'{err}')
+                return None
         return wrapper
 
     @_nasrequest.__func__
@@ -169,7 +166,6 @@ class Nas:
             ...     task = nas.upload_content('55fe2bc6', 'Hello world', 'file.txt')
             ...     asyncio.run(task)
         """
-
         url = urljoin(self.url, uuid)
         with aiohttp.MultipartWriter('form-data') as mpw:
             header = {

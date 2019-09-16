@@ -1,11 +1,16 @@
 import os
 import bpy
+import asyncio
 from src.config.langs import TRADUCTOR, CONFIG_LANG
+from src.services.backend import Renderer, Render
+import src.services.async_loop as async_loop
 
 
-class TresorioRenderFrame(bpy.types.Operator):
+class TresorioRenderFrameOperator(bpy.types.Operator):
     bl_idname = 'tresorio.render_frame'
     bl_label = 'Render frame'
+
+    render_type: bpy.props.StringProperty(options={'SKIP_SAVE', 'HIDDEN'})
 
     @classmethod
     def set_doc(cls):
@@ -23,5 +28,10 @@ class TresorioRenderFrame(bpy.types.Operator):
             self.report({'WARNING'},
                         TRADUCTOR['notif']['file_not_saved'][CONFIG_LANG])
             return {'CANCELLED'}
+
+        print(f'RENDERING {self.render_type}')
+        render = Render(bpy.data.filepath, 'my_render')
+        asyncio.ensure_future(Renderer().upload_blend_file(render))
+        async_loop.ensure_async_loop()
 
         return {'FINISHED'}

@@ -34,5 +34,29 @@
     "create_account": {
         "eng": "Redirects to the Tresorio page to register a new account",
         "fr": "Redirige vers la page Tresorio gérant la création de compte"
+    },
+    "redirect_tresorio": {
+        "eng": "Redirects to the Tresorio main page",
+        "fr": "Redirige vers la page principale de Tresorio"
+    },
+    "rendering_name": {
+        "eng": "Name to identify your new rendering. It doesn't need to be unique",
+        "fr": "Nom de votre nouveau rendu. Il ne nécessite pas d'être unique"
+    },
+    "render_engines_list": {
+        "eng": "The render engine that will be used for this rendering",
+        "fr": "Le moter de rendu qui sera utilisé pour ce rendu"
+    },
+    "output_formats_list": {
+        "eng": "Format of the output files of the render",
+        "fr": "Format des fichiers de sortie du rendu"
+    },
+    "render_farms": {
+        "eng": "The render pack that will be used for your render",
+        "fr": "Le pack de rendu qui sera utilisé pour votre rendu"
+    },
+    "timeout": {
+        "eng": "Timeout before the rendering will be stopped. 0 will cosumme all your credits while the rendering is running, and will refund you once it's over",
+        "fr": "Délai avant lequel le rendu sera stoppé. 0 consommera tout vos crédits le temps du rendu, et vous remboursera à la fin du rendu"
     }
 }

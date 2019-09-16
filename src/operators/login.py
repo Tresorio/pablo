@@ -7,7 +7,7 @@ from src.utils.password import reset_password, get_password
 from src.utils.email import set_email_in_conf, remove_email_from_conf
 
 
-class TresorioLogin(bpy.types.Operator):
+class TresorioLoginOperator(bpy.types.Operator):
     bl_idname = 'tresorio.login'
     bl_label = 'Login'
 
