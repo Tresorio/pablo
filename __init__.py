@@ -9,8 +9,15 @@ bl_info = {
     'wiki_url': 'http://192.168.15.20:3000',
 }
 
-import sys
 import os
+
+try:
+    import aiohttp
+    del aiohttp
+except ModuleNotFoundError:
+    os.system('pip install --user aiohttp')
+
+import sys
 import bpy
 from importlib import reload
 from types import ModuleType
@@ -23,6 +30,8 @@ def reload_all(module: ModuleType, layers: int):
     """ TODO: remove this ugly trick and find a correct way to reload submodules"""
     if layers == 0: return
     for key in module.__dict__:
+        if key == 'bpy':
+            continue
         attr = module.__dict__[key]
         if type(attr) is not ModuleType:
             continue
@@ -33,7 +42,9 @@ if 'bpy' in locals():
     import src
     reload_all(src, 2)
 
-from src.properties import TresorioUserProps, TresorioRenderFormProps
+from src.properties import (TresorioUserProps,
+                            TresorioRenderFormProps,
+                            TresorioReportProps)
 
 from src.ui.main_panel import TresorioMainPanel
 from src.ui.account_panel import TresorioAccountPanel
@@ -45,13 +56,13 @@ from src.operators.render import TresorioRenderFrameOperator
 from src.operators.redirect import TresorioRedirectHomeOperator
 from src.operators.redirect import TresorioRedirectRegisterOperator
 from src.operators.redirect import TresorioRedirectForgotPasswordOperator
-
 from src.services.async_loop import AsyncLoopModalOperator
 
 to_register_classes = (
                        # Properties 
                        TresorioUserProps,
                        TresorioRenderFormProps,
+                       TresorioReportProps,
 
                        # Operators
                        TresorioLoginOperator,

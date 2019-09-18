@@ -6,7 +6,7 @@
         "forgot_password": "/password",
         "register": "/register",
         "signin": "/auth/signin",
-        "user_infos": "/user/informations",
-        "farms": "/user/products/render/farms"
+        "user_info": "/user/informations",
+        "packs": "/user/products/render/farms"
     }
 }

@@ -58,5 +58,13 @@
     "timeout": {
         "eng": "Timeout before the rendering will be stopped. 0 will cosumme all your credits while the rendering is running, and will refund you once it's over",
         "fr": "Délai avant lequel le rendu sera stoppé. 0 consommera tout vos crédits le temps du rendu, et vous remboursera à la fin du rendu"
+    },
+    "uploading": {
+        "eng": "Uploading file ...",
+        "fr": "Envoi du fichier ..."
+    },
+    "upload_failed": {
+        "eng": "The upload failed, please retry",
+        "fr": "L'envoi du fichier a échoué, veuillez réessayer"
     }
 }

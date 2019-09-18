@@ -78,5 +78,9 @@
     "default_render_name": {
         "eng": "My_new_render",
         "fr": "Mon_nouveau_rendu"
+    },
+    "configuration": {
+        "eng": "Configuration",
+        "fr": "Configuration"
     }
 }

@@ -1,4 +1,5 @@
 import bpy
+from src.services.backend import TresorioBackend
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
@@ -16,17 +17,25 @@ class TresorioAccountPanel(bpy.types.Panel):
 
     def draw(self, context: bpy.types.Context):
         """Draws the account informations"""
-        layout = self.layout.box()
         user_props = context.window_manager.tresorio_user_props
+        report_props = context.window_manager.tresorio_report_props
+
+        layout = self.layout
 
         case = layout.row().grid_flow(columns=10)
         case.label(text=user_props.email)
         align_case = case.row()
         align_case.column().prop(user_props, 'langs')
 
+        layout.separator(factor=1.0)
+
+        if report_props.fetched_user_info is True:
+            layout.label(text=f'Credits: {user_props.total_credits}')
+
+        layout.separator(factor=1.0)
         layout.operator('tresorio.logout',
-                     text=TRADUCTOR['field']['logout'][CONFIG_LANG],
-                     icon='LOCKED')
+                        text=TRADUCTOR['field']['logout'][CONFIG_LANG],
+                        icon='LOCKED')
         layout.operator('tresorio.redirect_home',
-                     text='Tresorio',
-                     icon='INFO')
+                        text='Tresorio',
+                        icon='INFO')

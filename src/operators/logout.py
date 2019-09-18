@@ -18,6 +18,7 @@ class TresorioLogoutOperator(bpy.types.Operator):
                         TRADUCTOR['notif']['not_logged_in'][CONFIG_LANG])
             return {'CANCELLED'}
 
+        context.window_manager.tresorio_user_props.token = ''
         context.window_manager.tresorio_user_props.is_logged = False
 
         self.report({'INFO'},

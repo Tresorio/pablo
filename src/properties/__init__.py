@@ -71,6 +71,30 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         default=email != '',
     )
 
+    #desc = TRADUCTOR['desc']['credits'][CONFIG_LANG]
+    total_credits: bpy.props.IntProperty(
+        name='',
+    #   description=desc
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update= lambda a, b: None,
+    )
+
+    firstname: bpy.props.StringProperty(
+        default='',
+        name='',
+        description='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update= lambda a, b: None,
+    )
+
+    lastname: bpy.props.StringProperty(
+        default='',
+        name='',
+        description='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update= lambda a, b: None,
+    )
+
     @classmethod
     def register(cls):
         """Link to window manager so these settings are reset at launch"""
@@ -85,9 +109,16 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         del bpy.types.WindowManager.tresorio_user_props
 
 
-class TresorioRenderFormProps(bpy.types.PropertyGroup):
+def update_max_cost(prop, ctx):
+    del prop
+    form_fields = ctx.window_manager.tresorio_render_form
+    # TODO get the real prices for each pack (dict)
+    # -> prices[form_fields.render_farms] * form_fields.timeout
+    price_per_hour_TODO_REMOVE = 1.27
+    form_fields.max_cost = price_per_hour_TODO_REMOVE * form_fields.timeout
 
-    # TODO : desc traduction, register, unregister
+
+class TresorioRenderFormProps(bpy.types.PropertyGroup):
 
     default = TRADUCTOR['field']['default_render_name'][CONFIG_LANG]
     desc = TRADUCTOR['desc']['rendering_name'][CONFIG_LANG]
@@ -130,15 +161,37 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
             ('m', 'M', '40 CPU 8 GPU'),
             ('l', 'L', '80 CPU 16 GPU'),
         ),
-        default='s'
+        default='s',
+        update=update_max_cost,
     )
 
     desc = TRADUCTOR['desc']['timeout'][CONFIG_LANG]
     timeout: bpy.props.IntProperty(
         min=0,
+        max=1024,
         description=desc,
+        name='',
         default=12,
         subtype='TIME',
+        update=update_max_cost,
+    )
+
+    max_cost: bpy.props.FloatProperty(
+        min=0,
+        description='',
+        name='',
+        default=12*1.27,  # TODO change that to the real default pack * default time price
+    )
+
+    upload_percent: bpy.props.FloatProperty(
+        min=0,
+        max=100,
+        name='',
+        description='',
+        default=0,
+        subtype='PERCENTAGE',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
     )
 
     @classmethod
@@ -153,3 +206,57 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
     @classmethod
     def unregister(cls):
         del bpy.types.WindowManager.tresorio_render_form
+
+
+class TresorioReportProps(bpy.types.PropertyGroup):
+
+    login_in: bpy.props.BoolProperty(
+        name='',
+        description='',
+        default=False,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    invalid_logs: bpy.props.BoolProperty(
+        name='',
+        description='',
+        default=False,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    uploading_blend_file: bpy.props.BoolProperty(
+        default=False,
+        name='',
+        description='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
+    )
+
+    upload_failed: bpy.props.BoolProperty(
+        default=False,
+        name='',
+        description='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
+    )
+
+    fetched_user_info: bpy.props.BoolProperty(
+        default=False,
+        name='',
+        description='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
+    )
+
+    @classmethod
+    def register(cls):
+        """Link to window manager so these settings are reset at launch"""
+        bpy.types.WindowManager.tresorio_report_props = bpy.props.PointerProperty(
+            type=cls,
+            name='tresorio_report_props',
+            options={'HIDDEN', 'SKIP_SAVE'}
+        )
+
+    @classmethod
+    def unregister(cls):
+        del bpy.types.WindowManager.tresorio_report_props

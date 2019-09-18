@@ -2,7 +2,7 @@ import os
 import bpy
 import asyncio
 from src.config.langs import TRADUCTOR, CONFIG_LANG
-from src.services.backend import Renderer, Render
+from src.services.backend import TresorioBackend, Render
 import src.services.async_loop as async_loop
 
 
@@ -29,9 +29,6 @@ class TresorioRenderFrameOperator(bpy.types.Operator):
                         TRADUCTOR['notif']['file_not_saved'][CONFIG_LANG])
             return {'CANCELLED'}
 
-        print(f'RENDERING {self.render_type}')
-        render = Render(bpy.data.filepath, 'my_render')
-        asyncio.ensure_future(Renderer().upload_blend_file(render))
-        async_loop.ensure_async_loop()
+        TresorioBackend.new_render(self.render_type)
 
         return {'FINISHED'}

@@ -38,5 +38,9 @@
     "internal_error_login": {
         "eng": "An internal error occured on login, please retry",
         "fr": "Une erreur interne est survenue, veuillez réessayer"
+    },
+    "login_in": {
+        "eng": "Login in ...",
+        "fr": "Connexion ..."
     }
 }

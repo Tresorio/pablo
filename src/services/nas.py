@@ -2,6 +2,7 @@
 
 # -*- coding: utf-8 -*-
 from urllib.parse import urljoin
+from typing import Callable, Any
 import logging
 import aiohttp
 
@@ -45,7 +46,7 @@ class Nas:
     def _set_logger(self):
         """Configurates the logger for the Nas instance"""
         log_formatter = logging.Formatter(
-            "[%(asctime)s] [%(levelname)-5.5s] %(message)s")
+            "[NAS][%(asctime)s] [%(levelname)-5.5s] %(message)s")
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(log_formatter)
         self._logger.addHandler(console_handler)
@@ -60,7 +61,7 @@ class Nas:
             return await self._session.close()
 
     @staticmethod
-    def _nasrequest(func):
+    def _nasrequest(func: Callable[[str, Any], aiohttp.ClientResponse]):
         """Wrapper used to skip code duplication over the Nas's methods.
 
         It will create a new aiohttp client session if there wasn't any before
@@ -69,7 +70,7 @@ class Nas:
         this exception.
 
         Args:
-            func: Nas's method to decorate.
+            func: Nas's method to decorate.args
 
         Returns:
             The newly decorated function.
@@ -104,7 +105,7 @@ class Nas:
         return wrapper
 
     @_nasrequest.__func__
-    async def download(self, uuid: str, src_filename: str):
+    async def download(self, uuid: str, src_filename: str) -> aiohttp.ClientResponse:
         """Downloads a specific file on the Nas.
 
         Arg:
@@ -121,7 +122,7 @@ class Nas:
         return response
 
     @_nasrequest.__func__
-    async def download_project(self, uuid: str):
+    async def download_project(self, uuid: str) -> aiohttp.ClientResponse:
         """Downloads a whole project as a zip
 
         Arg:
@@ -137,7 +138,7 @@ class Nas:
         return response
 
     @_nasrequest.__func__
-    async def list_files(self, uuid: str):
+    async def list_files(self, uuid: str) -> aiohttp.ClientResponse:
         """Lists the files contained in the Nas specific uuid folder.
 
         Arg:
@@ -153,7 +154,7 @@ class Nas:
         return response
 
     @_nasrequest.__func__
-    async def upload_content(self, uuid: str, content, filename: str):
+    async def upload_content(self, uuid: str, content, filename: str) -> aiohttp.ClientResponse:
         """Uploads any type of content to the Nas targeted by self.url.
 
         Args:
