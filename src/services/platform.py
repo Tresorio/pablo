@@ -45,21 +45,21 @@ class Platform:
         this exception.
 
         Args:
-            func: Nas's method to decorate.
+            func: Platform's method to decorate.
 
         Returns:
             The newly decorated function.
 
         Example:
-            As _nasrequest is a @staticmethod, we need to access its function
+            As _platformrequest is a @staticmethod, we need to access its function
             with __func__.
 
-            >>> @_nasrequest.__func__
-            ... async def Nas_method(self, uuid):
+            >>> @_platformrequest.__func__
+            ... async def platform_method(self, *arg):
             ...     pass
         """
         async def wrapper(self, *args, read: bool = False, jsonify: bool = False, **kwargs):
-            """This wrapper handles common cases of nas requests
+            """This wrapper handles common cases of platform requests
 
             Args:
                 read: If `False`, the wrapped function will return the whole

@@ -27,6 +27,7 @@ import typing
 
 import bpy
 
+#logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
 # Keeps track of whether a loop-kicking operator is already running.

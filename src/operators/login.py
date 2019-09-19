@@ -46,7 +46,8 @@ class TresorioLoginOperator(bpy.types.Operator):
             return {'CANCELLED'}
 
         context.window_manager.tresorio_report_props.login_in = True
-        context.window_manager.tresorio_report_props.invalid_logs = False
+        context.window_manager.tresorio_report_props.invalid_logs = False # TODO move this in src/services/backend.py
+
         TresorioBackend.connect_to_tresorio(email, password)
 
         return {'FINISHED'}

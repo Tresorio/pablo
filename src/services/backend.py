@@ -5,7 +5,7 @@ import bpy
 import asyncio
 import aiohttp
 from .nas import Nas
-from .async_loop import ensure_async_loop
+from .async_loop import ensure_async_loop, erase_async_loop, kick_async_loop
 from src.services.platform import Platform
 from src.utils.percent_reader import PercentReader
 from src.utils.email import set_email_in_conf, remove_email_from_conf
@@ -25,10 +25,6 @@ class Render:
 
 
 class TresorioBackend:
-
-    @staticmethod
-    async def get_upload_nas(self):
-        pass
 
     @staticmethod
     def _upload_blend_file_callback(task: asyncio.Task):
@@ -51,6 +47,7 @@ class TresorioBackend:
                 res = await nas.upload_content('tmp_blender', file, blendfile_name)
                 return res
 
+    # NEW RENDER
     @staticmethod
     def _new_render_callback(task: asyncio.Task):
         res = task.result()
@@ -65,7 +62,6 @@ class TresorioBackend:
     def new_render(cls, render_type: str):
         """To call on front"""
         bpy.data.window_managers['WinMan'].tresorio_report_props.upload_failed = 0
-
         props = bpy.data.window_managers['WinMan'].tresorio_render_form
         current_frame = bpy.data.scenes[0].frame_current
         render = Render(
@@ -77,11 +73,13 @@ class TresorioBackend:
             current_frame=current_frame,
             render_type=render_type,
         )
+
         future = cls._new_render(render)
         task = asyncio.ensure_future(future)
         task.add_done_callback(cls._upload_blend_file_callback)
         ensure_async_loop()
 
+    # CONNECT TO TRESORIO
     @classmethod
     def _connect_to_tresorio_callback(cls, task: asyncio.Task):
         res = task.result()
@@ -111,7 +109,6 @@ class TresorioBackend:
     def connect_to_tresorio(cls, email: str, password: str):
         """To call on front"""
         bpy.data.window_managers['WinMan'].tresorio_user_props.token = ''
-
         data = {
             'email': email,
             'password': password
@@ -122,14 +119,16 @@ class TresorioBackend:
         task.add_done_callback(cls._connect_to_tresorio_callback)
         ensure_async_loop()
 
+    # GET USER INFO
     @staticmethod
-    def _fill_user_info_callback(task: asyncio.Task):
+    def _get_user_info_callback(task: asyncio.Task):
         res = task.result()
         if res is None:
-            # deconnect and print error
+            bpy.data.window_managers['WinMan'].tresorio_user_props.is_logged = False
+            bpy.data.window_managers['WinMan'].tresorio_user_props.token = ''
             return
         bpy.data.window_managers['WinMan'].tresorio_report_props.fetched_user_info = 1
-        bpy.data.window_managers['WinMan'].tresorio_user_props.credits = res['credits']
+        bpy.data.window_managers['WinMan'].tresorio_user_props.total_credits = res['credits']
 
     @staticmethod
     async def _get_user_info():
@@ -139,8 +138,8 @@ class TresorioBackend:
             return future
 
     @classmethod
-    def fill_user_info(cls):
+    def get_user_info(cls):
         future = cls._get_user_info()
         task = asyncio.ensure_future(future)
-        task.add_done_callback(cls._fill_user_info_callback)
+        task.add_done_callback(cls._get_user_info_callback)
         ensure_async_loop()
