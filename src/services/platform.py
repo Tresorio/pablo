@@ -8,6 +8,7 @@ from urllib.parse import urljoin
 from src.config.api import API_CONFIG
 import src.services.async_loop as async_loop
 
+logging.basicConfig(level=logging.FATAL)
 
 class Platform:
 
@@ -84,10 +85,19 @@ class Platform:
         return wrapper
 
     @_platformrequest.__func__
-    async def req_connect_to_tresorio(self, data: dict) -> aiohttp.ClientResponse:
+    async def req_connect_to_tresorio(self, credentials: dict) -> aiohttp.ClientResponse:
         url = urljoin(self.url, API_CONFIG['routes']['signin'])
-        response = await self._session.post(url, data=data, raise_for_status=True)
-        return response
+        return await self._session.post(url, data=credentials, raise_for_status=True)
+
+    @_platformrequest.__func__
+    async def req_create_render(self, jwt: str, render_desc: dict) -> aiohttp.ClientResponse:
+        headers = {
+            'Authorization': f'JWT {jwt}',
+            'Content-Type': 'application/json'
+        }
+        url = urljoin(self.url, API_CONFIG['routes']['create_render'])
+        print(render_desc)
+        return await self._session.post(url, data=render_desc, headers=headers, raise_for_status=True)
 
     @_platformrequest.__func__
     async def req_get_user_info(self, jwt: str) -> aiohttp.ClientResponse:
@@ -96,8 +106,7 @@ class Platform:
             'Content-Type': 'application/json'
         }
         url = urljoin(self.url, API_CONFIG['routes']['user_info'])
-        response = await self._session.get(url, raise_for_status=True, headers=headers)
-        return response
+        return await self._session.get(url, raise_for_status=True, headers=headers)
 
     @_platformrequest.__func__
     async def req_get_renderpacks(self, jwt: str) -> aiohttp.ClientResponse:
@@ -106,8 +115,7 @@ class Platform:
             'Content-Type': 'application/json'
         }
         url = urljoin(self.url, API_CONFIG['routes']['renderpacks'])
-        response = await self._session.get(url, raise_for_status=True, headers=headers)
-        return response
+        return await self._session.get(url, raise_for_status=True, headers=headers)
 
     async def close(self):
         """Closes the aiohttp session."""

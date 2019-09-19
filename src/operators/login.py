@@ -43,8 +43,11 @@ class TresorioLoginOperator(bpy.types.Operator):
                         TRADUCTOR['notif']['no_password'][CONFIG_LANG])
             return {'CANCELLED'}
 
-        TresorioBackend.connect_to_tresorio(email, password)
+        if user_props.remember_email is True:
+            set_email_in_conf(email)
+        else:
+            remove_email_from_conf()
 
-        # TODO redraw panel once connected to update it
+        TresorioBackend.connect_to_tresorio(email, password)
 
         return {'FINISHED'}

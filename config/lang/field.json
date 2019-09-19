@@ -82,5 +82,13 @@
     "configuration": {
         "eng": "Configuration",
         "fr": "Configuration"
+    },
+    "launch": {
+        "eng": "Launch",
+        "fr": "Lancer"
+    },
+    "render_type": {
+        "eng": "Render type",
+        "fr": "Type de rendu"
     }
 }

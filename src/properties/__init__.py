@@ -1,11 +1,10 @@
 import bpy
-from src.utils.email import get_email_from_conf
+from src.utils.email import get_email_from_conf, set_email_in_conf, remove_email_from_conf
 from src.utils.password import switch_password_visibility
 from src.config.langs import set_new_lang, TRADUCTOR, CONFIG_LANG, ALL_LANGS
 
 
 class TresorioUserProps(bpy.types.PropertyGroup):
-    email = get_email_from_conf()
 
     is_logged: bpy.props.BoolProperty(
         name='',
@@ -26,13 +25,14 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         default=ALL_LANGS[CONFIG_LANG][0],
     )
 
+    conf_email = get_email_from_conf()
     desc = TRADUCTOR['desc']['mail'][CONFIG_LANG]
     email: bpy.props.StringProperty(
         name='',
         description=desc,
         maxlen=128,
         options={'SKIP_SAVE'},
-        default=email,
+        default=conf_email,
     )
 
     desc = TRADUCTOR['desc']['password'][CONFIG_LANG]
@@ -68,7 +68,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
     remember_email: bpy.props.BoolProperty(
         name='',
         description=desc,
-        default=email != '',
+        default=conf_email != '',
     )
 
     #desc = TRADUCTOR['desc']['credits'][CONFIG_LANG]
@@ -112,10 +112,14 @@ class TresorioUserProps(bpy.types.PropertyGroup):
 def update_max_cost(prop, ctx):
     del prop
     form_fields = ctx.window_manager.tresorio_render_form
+    user_credits = ctx.window_manager.tresorio_user_props.total_credits
     # TODO get the real prices for each pack (dict)
     # -> prices[form_fields.render_farms] * form_fields.timeout
     price_per_hour_TODO_REMOVE = 1.27
-    form_fields.max_cost = price_per_hour_TODO_REMOVE * form_fields.timeout
+    if form_fields.timeout == 0:
+        form_fields.max_cost = price_per_hour_TODO_REMOVE * user_credits
+    else:
+        form_fields.max_cost = price_per_hour_TODO_REMOVE * form_fields.timeout
 
 
 class TresorioRenderFormProps(bpy.types.PropertyGroup):
@@ -156,13 +160,23 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         description=desc,
         name='',
         items=(
-            ('xs', 'XS', '10 CPU 2 GPU'),
-            ('s', 'S', '20 CPU 4 GPU'),
-            ('m', 'M', '40 CPU 8 GPU'),
-            ('l', 'L', '80 CPU 16 GPU'),
+            ('XS', 'XS', '10 CPU 2 GPU'),
+            ('S', 'S', '20 CPU 4 GPU'),
+            ('M', 'M', '40 CPU 8 GPU'),
+            ('L', 'L', '80 CPU 16 GPU'),
         ),
-        default='s',
+        default='S',
         update=update_max_cost,
+    )
+
+    render_types: bpy.props.EnumProperty(
+        description='TODO DESC',
+        name='',
+        items=(
+            ('FRAME', 'Frame', 'TODO DESC', 'RESTRICT_RENDER_OFF', 0),
+            ('ANIMATION', 'Animation', 'TODO DESC', 'RENDER_ANIMATION', 1),
+        ),
+        default='ANIMATION'
     )
 
     desc = TRADUCTOR['desc']['timeout'][CONFIG_LANG]

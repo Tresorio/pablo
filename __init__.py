@@ -27,7 +27,6 @@ addon_path = os.path.join(user_path, 'scripts', 'addons', 'pablo')
 sys.path.append(addon_path)
 
 def reload_all(module: ModuleType, layers: int):
-    """ TODO: remove this ugly trick and find a correct way to reload submodules"""
     if layers == 0: return
     for key in module.__dict__:
         if key == 'bpy':

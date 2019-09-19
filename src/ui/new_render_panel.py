@@ -45,6 +45,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row.prop(form_fields, 'output_formats_list')
 
         box = col.box()
+        box.label(text=TRADUCTOR['field']['timeout'][CONFIG_LANG]+':')
         row = box.row().split(factor=0.15)
         row.label(icon='PREVIEW_RANGE')
         row.prop(form_fields, 'timeout', text='Hours')
@@ -53,21 +54,19 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                         ['render_pack'][CONFIG_LANG]+':')
         box.row().prop_tabs_enum(form_fields, 'render_farms')
 
+        box.label(text=TRADUCTOR['field']['render_type'][CONFIG_LANG]+':')
+        box.row().prop_tabs_enum(form_fields, 'render_types')
+
         row = box.row().split(factor=0.5)
         row.label(text='Max cost:')
         row.label(text=f'{form_fields.max_cost:2.2f}€')
-
-        layout.label(text='Launch'+':')
 
         # LAUNCH
         box = layout.box()
         box.enabled = not report_props.uploading_blend_file
         box.column().operator('tresorio.render_frame',
-                              text=TRADUCTOR['field']['render_frame'][CONFIG_LANG],
-                              icon='RESTRICT_RENDER_OFF').render_type = 'frame'
-        box.column().operator('tresorio.render_frame',
-                              text=TRADUCTOR['field']['render_animation'][CONFIG_LANG],
-                              icon='RENDER_ANIMATION').render_type = 'animation'
+                              text=TRADUCTOR['field']['launch'][CONFIG_LANG],
+                              icon='PLAY')
 
         if report_props.uploading_blend_file is True:
             layout.box().prop(form_fields, 'upload_percent',

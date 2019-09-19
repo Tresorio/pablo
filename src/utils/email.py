@@ -16,7 +16,6 @@ def remove_email_from_conf():
 
 def get_email_from_conf():
     """Returns the email stored in the email configuration file, if any."""
-
     try:
         email_conf = json.load(EMAIL_CONFIG_PATH)
     except OSError as exc:
