@@ -27,7 +27,7 @@ import typing
 
 import bpy
 
-#logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
 # Keeps track of whether a loop-kicking operator is already running.
@@ -51,7 +51,7 @@ def setup_asyncio_executor():
 
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=10)
     loop.set_default_executor(executor)
-    # loop.set_debug(True)
+    loop.set_debug(True)
 
 
 def kick_async_loop(*args) -> bool:

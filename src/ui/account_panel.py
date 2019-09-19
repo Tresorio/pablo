@@ -18,7 +18,7 @@ class TresorioAccountPanel(bpy.types.Panel):
     def draw(self, context: bpy.types.Context):
         """Draws the account informations"""
         user_props = context.window_manager.tresorio_user_props
-        report_props = context.window_manager.tresorio_report_props
+        # report_props = context.window_manager.tresorio_report_props
 
         layout = self.layout
 
@@ -29,8 +29,7 @@ class TresorioAccountPanel(bpy.types.Panel):
 
         layout.separator(factor=1.0)
 
-        if report_props.fetched_user_info is True:
-            layout.label(text=f'Credits: {user_props.total_credits}')
+        layout.label(text=f'Credits: {user_props.total_credits}')
 
         layout.separator(factor=1.0)
         layout.operator('tresorio.logout',

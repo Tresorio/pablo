@@ -99,6 +99,16 @@ class Platform:
         response = await self._session.get(url, raise_for_status=True, headers=headers)
         return response
 
+    @_platformrequest.__func__
+    async def req_get_renderpacks(self, jwt: str) -> aiohttp.ClientResponse:
+        headers = {
+            'Authorization': f'JWT {jwt}',
+            'Content-Type': 'application/json'
+        }
+        url = urljoin(self.url, API_CONFIG['routes']['renderpacks'])
+        response = await self._session.get(url, raise_for_status=True, headers=headers)
+        return response
+
     async def close(self):
         """Closes the aiohttp session."""
         if self._session is not None:

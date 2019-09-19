@@ -20,8 +20,6 @@ class TresorioLoginOperator(bpy.types.Operator):
 
     def execute(self, context):
         user_props = context.window_manager.tresorio_user_props
-        report_props = context.window_manager.tresorio_report_props
-
         email, password = user_props.email, get_password(user_props)
         context.window_manager.tresorio_user_props.hidden_password = reset_password(
             len(password))
@@ -45,9 +43,8 @@ class TresorioLoginOperator(bpy.types.Operator):
                         TRADUCTOR['notif']['no_password'][CONFIG_LANG])
             return {'CANCELLED'}
 
-        context.window_manager.tresorio_report_props.login_in = True
-        context.window_manager.tresorio_report_props.invalid_logs = False # TODO move this in src/services/backend.py
-
         TresorioBackend.connect_to_tresorio(email, password)
+
+        # TODO redraw panel once connected to update it
 
         return {'FINISHED'}

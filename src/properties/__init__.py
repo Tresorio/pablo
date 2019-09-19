@@ -74,9 +74,9 @@ class TresorioUserProps(bpy.types.PropertyGroup):
     #desc = TRADUCTOR['desc']['credits'][CONFIG_LANG]
     total_credits: bpy.props.IntProperty(
         name='',
-    #   description=desc
+        #   description=desc
         options={'HIDDEN', 'SKIP_SAVE'},
-        update= lambda a, b: None,
+        update=lambda a, b: None,
     )
 
     firstname: bpy.props.StringProperty(
@@ -84,7 +84,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         name='',
         description='',
         options={'HIDDEN', 'SKIP_SAVE'},
-        update= lambda a, b: None,
+        update=lambda a, b: None,
     )
 
     lastname: bpy.props.StringProperty(
@@ -92,7 +92,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         name='',
         description='',
         options={'HIDDEN', 'SKIP_SAVE'},
-        update= lambda a, b: None,
+        update=lambda a, b: None,
     )
 
     @classmethod
@@ -135,10 +135,10 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         description=desc,
         name='',
         items=(
-            ('cycles', 'Cycles', ''),
-            ('eevee', 'Eevee', ''),
+            ('CYCLES', 'Cycles', ''),
+            ('EEVEE', 'Eevee', ''),
         ),
-        default='cycles'
+        default='CYCLES'
     )
 
     desc = TRADUCTOR['desc']['output_formats_list'][CONFIG_LANG]
@@ -146,9 +146,9 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         description=desc,
         name='',
         items=(
-            ('png', 'PNG', ''),
+            ('PNG', 'PNG', ''),
         ),
-        default='png'
+        default='PNG'
     )
 
     desc = TRADUCTOR['desc']['render_farms'][CONFIG_LANG]
