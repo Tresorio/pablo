@@ -4,7 +4,7 @@ import requests
 import urllib.parse as url
 from src.services import async_loop
 from src.config.api import API_CONFIG
-from src.services.backend import TresorioBackend
+from src.services.backend import connect_to_tresorio
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.utils.password import reset_password, get_password
 from src.utils.email import set_email_in_conf, remove_email_from_conf
@@ -48,6 +48,6 @@ class TresorioLoginOperator(bpy.types.Operator):
         else:
             remove_email_from_conf()
 
-        TresorioBackend.connect_to_tresorio(email, password)
+        connect_to_tresorio(email, password)
 
         return {'FINISHED'}

@@ -1,5 +1,4 @@
 import bpy
-from src.services.backend import TresorioBackend
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 

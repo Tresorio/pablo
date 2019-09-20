@@ -1,9 +1,9 @@
 import os
 import bpy
 import asyncio
-from src.config.langs import TRADUCTOR, CONFIG_LANG
-from src.services.backend import TresorioBackend
+from src.services.backend import new_render
 import src.services.async_loop as async_loop
+from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
 class TresorioRenderFrameOperator(bpy.types.Operator):
@@ -27,6 +27,6 @@ class TresorioRenderFrameOperator(bpy.types.Operator):
                         TRADUCTOR['notif']['file_not_saved'][CONFIG_LANG])
             return {'CANCELLED'}
 
-        TresorioBackend.new_render()
+        new_render()
 
         return {'FINISHED'}

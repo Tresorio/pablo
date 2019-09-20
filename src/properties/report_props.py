@@ -10,12 +10,14 @@ class TresorioReportProps(bpy.types.PropertyGroup):
         description='',
         default=False,
         options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
     )
     invalid_logs: bpy.props.BoolProperty(
         name='',
         description='',
         default=False,
         options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
     )
 
     # Uploading
@@ -24,14 +26,14 @@ class TresorioReportProps(bpy.types.PropertyGroup):
         name='',
         description='',
         options={'HIDDEN', 'SKIP_SAVE'},
-        #update=lambda a, b: None,
+        update=lambda a, b: None,
     )
     upload_failed: bpy.props.BoolProperty(
         default=False,
         name='',
         description='',
         options={'HIDDEN', 'SKIP_SAVE'},
-        #update=lambda a, b: None,
+        update=lambda a, b: None,
     )
 
     # Fetching user info
@@ -40,12 +42,30 @@ class TresorioReportProps(bpy.types.PropertyGroup):
         name='',
         description='',
         options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
     )
     fetch_user_info_failed: bpy.props.BoolProperty(
         default=False,
         name='',
         description='',
         options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
+    )
+
+    # Network issue
+    connection_error: bpy.props.BoolProperty(
+        default=False,
+        name='',
+        description='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
+    )
+    connection_error_msg: bpy.props.StringProperty(
+        default='',
+        name='',
+        description='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
     )
 
     @classmethod
