@@ -41,9 +41,9 @@ if 'bpy' in locals():
     import src
     reload_all(src, 2)
 
-from src.properties import (TresorioUserProps,
-                            TresorioRenderFormProps,
-                            TresorioReportProps)
+from src.properties.user_props import TresorioUserProps
+from src.properties.report_props import TresorioReportProps
+from src.properties.render_form import TresorioRenderFormProps
 
 from src.ui.main_panel import TresorioMainPanel
 from src.ui.account_panel import TresorioAccountPanel

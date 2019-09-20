@@ -1,10 +1,9 @@
 """This module provides the sdk for Tresorio's Nas."""
 
-# -*- coding: utf-8 -*-
+import aiohttp
 from urllib.parse import urljoin
 from typing import Callable, Any
-import logging
-import aiohttp
+from src.services.loggers import NAS_LOGGER
 
 
 class Nas:
@@ -36,27 +35,24 @@ class Nas:
         - Stream upload ?
     """
 
-    def __init__(self, base_url: str, mocked=False):
+    def __init__(self, base_url: str, mocked: bool = False, debug: bool = False):
         self.url = base_url
         self.mocked = mocked
         self._session = None
-        self._logger = logging.getLogger("Nas")
-        self._set_logger()
-
-    def _set_logger(self):
-        """Configurates the logger for the Nas instance"""
-        log_formatter = logging.Formatter(
-            "[NAS][%(asctime)s] [%(levelname)-5.5s] %(message)s")
-        console_handler = logging.StreamHandler()
-        console_handler.setFormatter(log_formatter)
-        self._logger.addHandler(console_handler)
+        self.debug = debug
+        if debug is True:
+            self._logger = NAS_LOGGER
 
     async def __aenter__(self):
         """Entrypoint of `async with`"""
+        if self.debug is True:
+            self._logger.debug('__aenter__: initiating Platform instance')
         return self
 
     async def __aexit__(self, *args):
         """Callback once out of the `async with` block"""
+        if self.debug is True:
+            self._logger.debug('__aexit__: leaving Nas instance')
         if self._session is not None:
             return await self._session.close()
 
@@ -90,18 +86,16 @@ class Nas:
                 read: If `False`, the wrapped function will return the whole
                     response. If `True`, will read the response and return bytes
             """
+            if self.debug is True:
+                self._logger.debug(f'Entering {func.__name__}')
             if self.mocked is True:
                 return await func(*args, **kwargs)
-            try:
-                if self._session is None:
-                    self._session = aiohttp.ClientSession()
-                res = await func(self, *args, **kwargs)
-                if read is True:
-                    return await res.read()
-                return res
-            except aiohttp.ClientError as err:
-                self._logger.error(f'{err}')
-                return None
+            if self._session is None:
+                self._session = aiohttp.ClientSession()
+            res = await func(self, *args, **kwargs)
+            if read is True:
+                return await res.read()
+            return res
         return wrapper
 
     @_nasrequest.__func__
@@ -118,8 +112,7 @@ class Nas:
             ...     file = asyncio.run(task)
         """
         url = urljoin(self.url, uuid+'/'+src_filename)
-        response = await self._session.get(url, raise_for_status=True)
-        return response
+        return await self._session.get(url, raise_for_status=True)
 
     @_nasrequest.__func__
     async def download_project(self, uuid: str) -> aiohttp.ClientResponse:
@@ -134,8 +127,7 @@ class Nas:
             ...     project = asyncio.run(task)
         """
         url = urljoin(self.url, uuid+"?download=1&format=zip")
-        response = await self._session.get(url, raise_for_status=True)
-        return response
+        return await self._session.get(url, raise_for_status=True)
 
     @_nasrequest.__func__
     async def list_files(self, uuid: str) -> aiohttp.ClientResponse:
@@ -150,8 +142,7 @@ class Nas:
             ...     files = asyncio.run(task)
         """
         url = urljoin(self.url, uuid)
-        response = await self._session.get(url, raise_for_status=True)
-        return response
+        return await self._session.get(url, raise_for_status=True)
 
     @_nasrequest.__func__
     async def upload_content(self, uuid: str, content, filename: str) -> aiohttp.ClientResponse:
@@ -173,8 +164,7 @@ class Nas:
                 'Content-Disposition': f'form-data; name="{filename}"; filename="{filename}"'
             }
             mpw.append(content, headers=header)
-            response = await self._session.put(url, data=mpw, raise_for_status=True)
-            return response
+            return await self._session.put(url, data=mpw, raise_for_status=True)
 
     async def close(self):
         """Closes the aiohttp session. To use if Nas is not instanciated with `async with`."""

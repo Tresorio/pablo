@@ -32,9 +32,9 @@ class PercentReader(io.BufferedReader):
         """Entrypoint of `with`."""
         return self
 
-    def __exit__(self, *arg):
+    def __exit__(self, *args):
         """Exit point of `with`."""
-        del arg
+        del args
         self.close()
 
     def read(self, *args, **kwargs):

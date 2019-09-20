@@ -4,18 +4,18 @@ import os
 import bpy
 import asyncio
 import aiohttp
-from .nas import Nas
-from .async_loop import ensure_async_loop, erase_async_loop, kick_async_loop
+from typing import Union
+from src.services.nas import Nas
+from src.utils.lockfile import Lockfile
 from src.services.platform import Platform
 from src.utils.percent_reader import PercentReader
-from src.utils.email import set_email_in_conf, remove_email_from_conf
+from src.services.async_loop import ensure_async_loop
 
 
 class TresorioBackend:
     """Regroups the methods to use on the front interface"""
-    # TODO a real error handling system
 
-    # TO CALL FROM OPS---------------------------------------------------------
+    # TO CALL WITH OPS---------------------------------------------------------
     @classmethod
     def new_render(cls):
         """To call on front"""
@@ -23,6 +23,7 @@ class TresorioBackend:
         props = bpy.data.window_managers['WinMan'].tresorio_render_form
         current_frame = bpy.data.scenes[0].frame_current
 
+        # TODO format validator on args
         render = {
             'name': props.rendering_name,
             'engine': props.render_engines_list,
@@ -37,8 +38,9 @@ class TresorioBackend:
             'name': os.path.basename(bpy.data.filepath),
             'size': os.path.getsize(bpy.data.filepath),
         }
+        token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
 
-        future = cls._new_render(render, blendfile)
+        future = cls._new_render(token, render, blendfile)
         asyncio.ensure_future(future)
         ensure_async_loop()
 
@@ -49,6 +51,7 @@ class TresorioBackend:
         bpy.data.window_managers['WinMan'].tresorio_report_props.invalid_logs = 0
         bpy.data.window_managers['WinMan'].tresorio_report_props.login_in = 1
 
+        # TODO format validator on args
         credentials = {
             'email': email,
             'password': password
@@ -61,20 +64,23 @@ class TresorioBackend:
     # ASYNC METHODS------------------------------------------------------------
     @classmethod
     async def _connect_to_tresorio(cls, data: dict):
-        async with Platform() as plt:
-            res = await plt.req_connect_to_tresorio(data, jsonify=True)
-            cls._connect_to_tresorio_callback(res)
-            token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
-            res = await plt.req_get_user_info(token, jsonify=True)
-            cls._get_user_info_callback(res)
-            res = await plt.req_get_renderpacks(token, jsonify=True)
-            # cls._get_renderpacks_callback(res)
+        async with Platform(debug=True) as plt:
+            res_connect = await plt.req_connect_to_tresorio(data, jsonify=True)
+            cls._connect_to_tresorio_callback(res_connect)
+            res_user_info = await plt.req_get_user_info(res_connect['token'], jsonify=True)
+            cls._get_user_info_callback(res_user_info)
+            # res_renderpacks = await plt.req_get_renderpacks(res_connect['token'], jsonify=True)
+            # cls._get_renderpacks_callback(res_renderpacks)
 
     @classmethod
-    async def _new_render(cls, render: dict, blendfile: dict):
-        token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
-        res = await cls._upload_blend_file(blendfile)
-        cls._upload_blend_file_callback(res)
+    async def _new_render(cls, token: str, render: dict, blendfile: dict):
+        with Lockfile(blendfile['path'], 'a'):
+            try:
+                res = await cls._upload_blend_file(blendfile)
+                cls._upload_blend_file_callback(res)
+            except aiohttp.ClientResponseError as err:
+                cls._upload_blend_file_callback(err)
+
         async with Platform() as plt:
             res = await plt.req_create_render(token, render)
 
@@ -87,25 +93,26 @@ class TresorioBackend:
 
     # CALLBACKS----------------------------------------------------------------
     @staticmethod
-    def _get_user_info_callback(res):
-        if res is None:
+    def _get_user_info_callback(res: dict):
+        if 'credits' not in res:
             bpy.data.window_managers['WinMan'].tresorio_user_props.is_logged = False
             bpy.data.window_managers['WinMan'].tresorio_user_props.token = ''
         else:
-            bpy.data.window_managers['WinMan'].tresorio_report_props.fetched_user_info = 1
             bpy.data.window_managers['WinMan'].tresorio_user_props.total_credits = res['credits']
 
     @staticmethod
     def _connect_to_tresorio_callback(res: dict):
         bpy.data.window_managers['WinMan'].tresorio_report_props.login_in = 0
-        if res is None or 'token' not in res:
+
+        if 'token' not in res:
             bpy.data.window_managers['WinMan'].tresorio_report_props.invalid_logs = 1
-            return
-        bpy.data.window_managers['WinMan'].tresorio_user_props.token = res['token']
-        bpy.context.window_manager.tresorio_user_props.is_logged = True
+        else:
+            bpy.data.window_managers['WinMan'].tresorio_user_props.token = res['token']
+            bpy.context.window_manager.tresorio_user_props.is_logged = True
 
     @staticmethod
-    def _upload_blend_file_callback(res: aiohttp.ClientResponse):
+    def _upload_blend_file_callback(res: Union[aiohttp.ClientResponse, aiohttp.ClientResponseError], error: bool = False):
         bpy.data.window_managers['WinMan'].tresorio_report_props.uploading_blend_file = 0
-        if res is None or res.status < 200 or res.status >= 300:
-            bpy.data.window_managers['WinMan'].tresorio_report_props.upload_failed = 1
+        if error is True:
+            bpy.data.window_managers['WinMan'].tresorio_report_props.upload_failed = True
+    # ERROR HANDLERS-----------------------------------------------------------

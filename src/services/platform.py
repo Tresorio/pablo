@@ -7,32 +7,29 @@ from typing import Callable, Any
 from urllib.parse import urljoin
 from src.config.api import API_CONFIG
 import src.services.async_loop as async_loop
+from src.services.loggers import PLATFORM_LOGGER
 
-logging.basicConfig(level=logging.FATAL)
 
 class Platform:
 
-    def __init__(self, mocked=False):
+    def __init__(self, mocked=False, debug=False):
         self.url = API_CONFIG['backend']
         self.mocked = mocked
         self._session = None
-        self._logger = logging.getLogger("Platform")
-        self._set_logger()
-
-    def _set_logger(self):
-        """Configurates the logger for the Platform instance"""
-        log_formatter = logging.Formatter(
-            "[PLATFORM][%(asctime)s] [%(levelname)-5.5s] %(message)s")
-        console_handler = logging.StreamHandler()
-        console_handler.setFormatter(log_formatter)
-        self._logger.addHandler(console_handler)
+        self.debug = debug
+        if debug is True:
+            self._logger = PLATFORM_LOGGER
 
     async def __aenter__(self):
         """Entrypoint of `async with`"""
+        if self.debug is True:
+            self._logger.debug('__aenter__: initiating Platform instance')
         return self
 
     async def __aexit__(self, *args):
         """Callback once out of the `async with` block"""
+        if self.debug is True:
+            self._logger.debug('__aexit__: leaving Platform instance')
         if self._session is not None:
             return await self._session.close()
 
@@ -68,20 +65,18 @@ class Platform:
                 jsonify (overides `read`): If `False`, will proceed the `read` arg.
                     Else, will return the body as a dict.
             """
+            if self.debug is True:
+                self._logger.debug(f'Entering {func.__name__}')
             if self.mocked is True:
                 return await func(*args, **kwargs)
-            try:
-                if self._session is None:
-                    self._session = aiohttp.ClientSession()
-                res = await func(self, *args, **kwargs)
-                if jsonify is True:
-                    return await res.json()
-                if read is True:
-                    return await res.read()
-                return res
-            except aiohttp.ClientError as err:
-                self._logger.error(f'{err}')
-                return None
+            if self._session is None:
+                self._session = aiohttp.ClientSession()
+            res = await func(self, *args, **kwargs)
+            if jsonify is True:
+                return await res.json()
+            if read is True:
+                return await res.read()
+            return res
         return wrapper
 
     @_platformrequest.__func__
@@ -96,7 +91,6 @@ class Platform:
             'Content-Type': 'application/json'
         }
         url = urljoin(self.url, API_CONFIG['routes']['create_render'])
-        print(render_desc)
         return await self._session.post(url, data=render_desc, headers=headers, raise_for_status=True)
 
     @_platformrequest.__func__
