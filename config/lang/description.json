@@ -51,7 +51,7 @@
         "eng": "Format of the output files of the render",
         "fr": "Format des fichiers de sortie du rendu"
     },
-    "render_farms": {
+    "render_packs": {
         "eng": "The render pack that will be used for your render",
         "fr": "Le pack de rendu qui sera utilisé pour votre rendu"
     },

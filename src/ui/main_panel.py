@@ -15,7 +15,7 @@ class TresorioMainPanel(bpy.types.Panel):
         layout = self.layout
 
         if report_props.connection_error is True:
-            layout.label(text=report_props.connection_error_msg, icon='ERROR')
+            layout.prop(report_props, 'connection_error_msg', icon='ERROR')
 
         if user_props.is_logged == False:
             draw_connection_panel(layout, context)

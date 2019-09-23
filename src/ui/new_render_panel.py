@@ -16,7 +16,8 @@ class TresorioNewRenderPanel(bpy.types.Panel):
 
     def draw(self, context: bpy.types.Context):
         """Draws the form required for a rendering"""
-        form_fields = bpy.context.window_manager.tresorio_render_form
+        render_form = bpy.context.window_manager.tresorio_render_form
+        render_packs = bpy.context.window_manager.tresorio_render_packs
         report_props = bpy.context.window_manager.tresorio_report_props
 
         layout = self.layout
@@ -34,32 +35,34 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row = box.row().split(factor=0.4)
         row.label(
             text=TRADUCTOR['field']['new_rendering_name'][CONFIG_LANG]+':')
-        row.prop(form_fields, 'rendering_name')
+        row.prop(render_form, 'rendering_name')
 
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['engine'][CONFIG_LANG]+':')
-        row.prop(form_fields, 'render_engines_list')
+        row.prop(render_form, 'render_engines_list')
 
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['format'][CONFIG_LANG]+':')
-        row.prop(form_fields, 'output_formats_list')
+        row.prop(render_form, 'output_formats_list')
 
         box = col.box()
         box.label(text=TRADUCTOR['field']['timeout'][CONFIG_LANG]+':')
         row = box.row().split(factor=0.15)
         row.label(icon='PREVIEW_RANGE')
-        row.prop(form_fields, 'timeout', text='Hours')
+        row.prop(render_form, 'timeout', text='Hours')
 
         box.row().label(text=TRADUCTOR['field']
                         ['render_pack'][CONFIG_LANG]+':')
-        box.row().prop_tabs_enum(form_fields, 'render_farms')
+        row = box.row()
+        for pack in render_packs:
+            row.prop(pack, 'is_selected', text=pack.name, toggle=1)
 
         box.label(text=TRADUCTOR['field']['render_type'][CONFIG_LANG]+':')
-        box.row().prop_tabs_enum(form_fields, 'render_types')
+        box.row().prop_tabs_enum(render_form, 'render_types')
 
         row = box.row().split(factor=0.5)
         row.label(text='Max cost:')
-        row.label(text=f'{form_fields.max_cost:2.2f}€')
+        row.label(text=f'{render_form.max_cost:2.2f}€')
 
         # LAUNCH
         box = layout.box()
@@ -69,7 +72,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                               icon='PLAY')
 
         if report_props.uploading_blend_file is True:
-            layout.box().prop(form_fields, 'upload_percent',
+            layout.box().prop(render_form, 'upload_percent',
                               text=TRADUCTOR['desc']['uploading'][CONFIG_LANG])
             layout.separator(factor=0.3)
         if report_props.upload_failed is True:

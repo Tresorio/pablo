@@ -44,6 +44,7 @@ if 'bpy' in locals():
 from src.properties.user_props import TresorioUserProps
 from src.properties.report_props import TresorioReportProps
 from src.properties.render_form import TresorioRenderFormProps
+from src.properties.render_packs import TresorioRenderPacksProps
 
 from src.ui.main_panel import TresorioMainPanel
 from src.ui.account_panel import TresorioAccountPanel
@@ -60,8 +61,9 @@ from src.services.async_loop import AsyncLoopModalOperator
 to_register_classes = (
                        # Properties 
                        TresorioUserProps,
-                       TresorioRenderFormProps,
                        TresorioReportProps,
+                       TresorioRenderPacksProps,
+                       TresorioRenderFormProps,
 
                        # Operators
                        TresorioLoginOperator,

@@ -3,7 +3,6 @@
 import os
 import bpy
 import asyncio
-from functools import wraps
 from http import HTTPStatus
 from typing import Dict, Any
 from src.services.nas import Nas
@@ -12,7 +11,7 @@ from src.services.platform import Platform
 from src.services.loggers import BACKEND_LOGGER
 from src.utils.percent_reader import PercentReader
 from src.services.async_loop import ensure_async_loop
-from aiohttp import ClientResponseError, ClientResponse, ClientConnectorError
+from aiohttp import ClientResponseError, ClientResponse
 
 
 def new_render():
@@ -26,7 +25,7 @@ def new_render():
         'engine': props.render_engines_list,
         'outputFormat': props.output_formats_list,
         'timeout': props.timeout,
-        'renderPack': props.render_farms,
+        'renderPack': props.render_pack,
         'currentFrame': current_frame,
         'renderType': props.render_types,
     }
@@ -43,7 +42,7 @@ def new_render():
 
 
 def connect_to_tresorio(email: str, password: str):
-    """Connects the user to Tresorio and fetch its data"""
+    """Connects the user to Tresorio and fetch required data"""
     bpy.data.window_managers['WinMan'].tresorio_report_props.connection_error = False
     bpy.data.window_managers['WinMan'].tresorio_user_props.token = ''
     bpy.data.window_managers['WinMan'].tresorio_report_props.invalid_logs = 0
@@ -73,6 +72,7 @@ async def _connect_to_tresorio(data: Dict[str, str]):
             BACKEND_LOGGER.error(err)
             _connect_to_tresorio_error(err)
             if Exception is not ClientResponseError:
+                # TODO: traductions
                 set_connection_error(err, 'Error while connecting')
             return
 
@@ -125,7 +125,18 @@ async def _upload_blend_file(blendfile: dict):
 
 # CALLBACKS----------------------------------------------------------------
 def _get_renderpacks_callback(res: ClientResponse) -> None:
-    pass
+    for i, pack in enumerate(res):
+        new_pack = bpy.context.window_manager.tresorio_render_packs.add()
+        cost = pack['cost']
+        gpu = pack['gpu']
+        vcpu = pack['vcpu']
+        ram = pack['ram'] / 1024
+
+        new_pack.name = pack['name'].upper()
+        new_pack.cost = pack['cost']
+        new_pack.description = f'COST: {cost:.2f}/hr | GPU: {gpu} | VCPU: {vcpu} | RAM: {ram} Gio'
+        if i == 0:
+            new_pack.is_selected = True
 
 
 def _get_user_info_callback(res: ClientResponse) -> None:
@@ -143,21 +154,23 @@ def _upload_blend_file_callback(res: ClientResponse) -> None:
 
 
 # ERROR HANDLERS-----------------------------------------------------------
-def _get_renderpacks_error(err: ClientResponseError) -> None:
+def _get_renderpacks_error(err: Exception) -> None:
     pass
 
 
-def _get_user_info_error(err: ClientResponseError) -> None:
+def _get_user_info_error(err: Exception) -> None:
     bpy.data.window_managers['WinMan'].tresorio_user_props.is_logged = False
     bpy.data.window_managers['WinMan'].tresorio_user_props.token = ''
 
 
-def _upload_blend_file_error(err: ClientResponseError) -> None:
+def _upload_blend_file_error(err: Exception) -> None:
     bpy.data.window_managers['WinMan'].tresorio_report_props.uploading_blend_file = False
     bpy.data.window_managers['WinMan'].tresorio_report_props.upload_failed = True
 
 
-def _connect_to_tresorio_error(err: ClientResponseError) -> None:
+def _connect_to_tresorio_error(err: Exception) -> None:
     bpy.data.window_managers['WinMan'].tresorio_report_props.login_in = False
+    if type(err) is not ClientResponseError:
+        return
     if err.status == HTTPStatus.UNAUTHORIZED:
         bpy.data.window_managers['WinMan'].tresorio_report_props.invalid_logs = True

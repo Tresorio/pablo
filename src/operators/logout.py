@@ -22,6 +22,7 @@ class TresorioLogoutOperator(bpy.types.Operator):
         context.window_manager.property_unset('tresorio_user_props')
         context.window_manager.property_unset('tresorio_report_props')
         context.window_manager.property_unset('tresorio_render_form')
+        context.window_manager.property_unset('tresorio_render_packs')
 
         if remember_email is True:
             context.window_manager.tresorio_user_props.email = user_props.email

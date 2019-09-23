@@ -4,15 +4,12 @@ from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 def update_max_cost(prop, ctx):
     del prop
-    form_fields = ctx.window_manager.tresorio_render_form
+    render_form = ctx.window_manager.tresorio_render_form
     user_credits = ctx.window_manager.tresorio_user_props.total_credits
-    # TODO get the real prices for each pack (dict)
-    # -> prices[form_fields.render_farms] * form_fields.timeout
-    price_per_hour_TODO_REMOVE = 1.27
-    if form_fields.timeout == 0:
-        form_fields.max_cost = price_per_hour_TODO_REMOVE * user_credits
+    if render_form.timeout == 0:
+        render_form.max_cost = render_form.price_per_hour * user_credits
     else:
-        form_fields.max_cost = price_per_hour_TODO_REMOVE * form_fields.timeout
+        render_form.max_cost = render_form.price_per_hour * render_form.timeout
 
 
 class TresorioRenderFormProps(bpy.types.PropertyGroup):
@@ -27,6 +24,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         default=default,
     )
 
+    # TODO dynamic way of getting these infos (on gandalf)
     desc = TRADUCTOR['desc']['render_engines_list'][CONFIG_LANG]
     render_engines_list: bpy.props.EnumProperty(
         description=desc,
@@ -38,6 +36,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         default='CYCLES'
     )
 
+    # TODO dynamic way of getting these infos (on gandalf)
     desc = TRADUCTOR['desc']['output_formats_list'][CONFIG_LANG]
     output_formats_list: bpy.props.EnumProperty(
         description=desc,
@@ -48,18 +47,10 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         default='PNG'
     )
 
-    desc = TRADUCTOR['desc']['render_farms'][CONFIG_LANG]
-    render_farms: bpy.props.EnumProperty(
-        description=desc,
+    render_pack: bpy.props.StringProperty(
+        description='',
         name='',
-        items=(
-            ('XS', 'XS', '10 CPU 2 GPU'),
-            ('S', 'S', '20 CPU 4 GPU'),
-            ('M', 'M', '40 CPU 8 GPU'),
-            ('L', 'L', '80 CPU 16 GPU'),
-        ),
-        default='S',
-        update=update_max_cost,
+        options={'HIDDEN', 'SKIP_SAVE'},
     )
 
     render_types: bpy.props.EnumProperty(
@@ -69,7 +60,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
             ('FRAME', 'Frame', 'TODO DESC', 'RESTRICT_RENDER_OFF', 0),
             ('ANIMATION', 'Animation', 'TODO DESC', 'RENDER_ANIMATION', 1),
         ),
-        default='ANIMATION'
+        default='FRAME'
     )
 
     desc = TRADUCTOR['desc']['timeout'][CONFIG_LANG]
@@ -83,13 +74,6 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         update=update_max_cost,
     )
 
-    max_cost: bpy.props.FloatProperty(
-        min=0,
-        description='',
-        name='',
-        default=12*1.27,  # TODO change that to the real default pack * default time price
-    )
-
     upload_percent: bpy.props.FloatProperty(
         min=0,
         max=100,
@@ -100,6 +84,10 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
         update=lambda a, b: None,
     )
+
+    max_cost: bpy.props.FloatProperty()
+    current_pack_index: bpy.props.IntProperty()
+    price_per_hour: bpy.props.FloatProperty()
 
     @classmethod
     def register(cls):
