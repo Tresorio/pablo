@@ -46,7 +46,7 @@ class Nas:
     async def __aenter__(self):
         """Entrypoint of `async with`"""
         if self.debug is True:
-            self._logger.debug('__aenter__: initiating Platform instance')
+            self._logger.debug('__aenter__: initiating Nas instance')
         return self
 
     async def __aexit__(self, *args):
@@ -145,7 +145,7 @@ class Nas:
         return await self._session.get(url, raise_for_status=True)
 
     @_nasrequest.__func__
-    async def upload_content(self, uuid: str, content, filename: str) -> aiohttp.ClientResponse:
+    async def upload_content(self, uuid: str, content, filename: str, jwt: str) -> aiohttp.ClientResponse:
         """Uploads any type of content to the Nas targeted by self.url.
 
         Args:
@@ -161,6 +161,7 @@ class Nas:
         url = urljoin(self.url, uuid)
         with aiohttp.MultipartWriter('form-data') as mpw:
             header = {
+                'Authorization': f'JWT {jwt}',
                 'Content-Disposition': f'form-data; name="{filename}"; filename="{filename}"'
             }
             mpw.append(content, headers=header)

@@ -8,7 +8,7 @@
         "signin": "/auth/signin",
         "user_info": "/user/informations",
         "renderpacks": "/user/products/render/renderpacks",
-        "get_jwt_nassim": "/user/products/render/nassim",
+        "get_nassim_upload": "/user/products/render/nassim",
         "create_render": "/user/products/render"
     }
 }

@@ -26,11 +26,8 @@ class TresorioAccountPanel(bpy.types.Panel):
         align_case = case.row()
         align_case.column().prop(user_props, 'langs')
 
-        layout.separator(factor=1.0)
-
         layout.label(text=f'Credits: {user_props.total_credits}')
 
-        layout.separator(factor=1.0)
         layout.operator('tresorio.logout',
                         text=TRADUCTOR['field']['logout'][CONFIG_LANG],
                         icon='LOCKED')

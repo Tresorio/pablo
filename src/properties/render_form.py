@@ -53,12 +53,15 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
+    desc = TRADUCTOR['desc']['render_types'][CONFIG_LANG]
+    desc_frame = TRADUCTOR['desc']['render_type_frame'][CONFIG_LANG]
+    desc_animation = TRADUCTOR['desc']['render_type_animation'][CONFIG_LANG]
     render_types: bpy.props.EnumProperty(
-        description='TODO DESC',
+        description=desc,
         name='',
         items=(
-            ('FRAME', 'Frame', 'TODO DESC', 'RESTRICT_RENDER_OFF', 0),
-            ('ANIMATION', 'Animation', 'TODO DESC', 'RENDER_ANIMATION', 1),
+            ('FRAME', 'Frame', desc_frame, 'RESTRICT_RENDER_OFF', 0),
+            ('ANIMATION', 'Animation', desc_animation, 'RENDER_ANIMATION', 1),
         ),
         default='FRAME'
     )

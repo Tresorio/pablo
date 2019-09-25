@@ -42,5 +42,25 @@
     "login_in": {
         "eng": "Login in ...",
         "fr": "Connexion ..."
+    },
+    "err_connection": {
+        "eng": "Error while connecting",
+        "fr": "Erreur pendant la connexion"
+    },
+    "err_acc_info": {
+        "eng": "Error while getting account profile information",
+        "fr": "Erreur pendant la récupération de votre profil utilisateur"
+    },
+    "err_renderpacks": {
+        "eng": "Error while getting renderpacks information",
+        "fr": "Erreur lors de l'obtention des packs de rendu disponibles"
+    },
+    "err_upl_blendfile": {
+        "eng": "Error while uploading blend file",
+        "fr": "Erreur lors de l'envoi du fichier blend"
+    },
+    "expired_session": {
+        "eng": "Your session expired, please reconnect",
+        "fr": "Votre session a expiré, veuillez vous reconnecter"
     }
 }

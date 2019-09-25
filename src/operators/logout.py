@@ -2,6 +2,23 @@ import bpy
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
+def logout():
+    user_props = bpy.context.window_manager.tresorio_user_props
+    remember_email = user_props.remember_email
+
+    bpy.context.window_manager.property_unset('tresorio_user_props')
+    bpy.context.window_manager.property_unset('tresorio_report_props')
+    bpy.context.window_manager.property_unset('tresorio_render_form')
+    bpy.context.window_manager.property_unset('tresorio_render_packs')
+
+    if remember_email is True:
+        bpy.context.window_manager.tresorio_user_props.email = user_props.email
+        bpy.context.window_manager.tresorio_user_props.remember_email = True
+    else:
+        bpy.context.window_manager.tresorio_user_props.email = ''
+        bpy.context.window_manager.tresorio_user_props.remember_email = False
+
+
 class TresorioLogoutOperator(bpy.types.Operator):
     bl_idname = 'tresorio.logout'
     bl_label = 'Logout'
@@ -11,26 +28,7 @@ class TresorioLogoutOperator(bpy.types.Operator):
         cls.__doc__ = TRADUCTOR['desc']['tresorio_logout'][CONFIG_LANG]
 
     def execute(self, context):
-        user_props = context.window_manager.tresorio_user_props
-
-        if user_props.is_logged == False:
-            self.report({'INFO'},
-                        TRADUCTOR['notif']['not_logged_in'][CONFIG_LANG])
-            return {'CANCELLED'}
-        remember_email = user_props.remember_email
-
-        context.window_manager.property_unset('tresorio_user_props')
-        context.window_manager.property_unset('tresorio_report_props')
-        context.window_manager.property_unset('tresorio_render_form')
-        context.window_manager.property_unset('tresorio_render_packs')
-
-        if remember_email is True:
-            context.window_manager.tresorio_user_props.email = user_props.email
-            context.window_manager.tresorio_user_props.remember_email = True
-        else:
-            context.window_manager.tresorio_user_props.email = ''
-            context.window_manager.tresorio_user_props.remember_email = False
-
+        logout()
         self.report({'INFO'},
                     TRADUCTOR['notif']['success_logout'][CONFIG_LANG])
         return {'FINISHED'}

@@ -1,0 +1,2 @@
+PLATFORM_DEBUG = False
+NAS_DEBUG = False

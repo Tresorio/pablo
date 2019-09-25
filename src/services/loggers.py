@@ -1,13 +1,21 @@
 import logging
+from src.config.paths import LOGS_PATH
 
 def set_logger(logger: logging.Logger, level: int):
     """Configurates the given logger"""
-    if len(logger.handlers) != 0: # check if logger already has handler
-        logger.removeHandler(logger.handlers[0])
+    for hdlr in logger.handlers:
+        logger.removeHandler(hdlr)
+        del hdlr
     log_formatter = logging.Formatter(
     '[%(name)s][%(filename)s:%(lineno)d][%(asctime)s][%(levelname)-5.5s]: %(message)s')
+
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(log_formatter)
+
+    file_handler = logging.FileHandler(f'{LOGS_PATH}', mode='w')
+    file_handler.setFormatter(log_formatter)
+
+    logger.addHandler(file_handler)
     logger.addHandler(console_handler)
     logger.setLevel(logging.DEBUG)
 

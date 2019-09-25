@@ -90,5 +90,13 @@
     "render_type": {
         "eng": "Render type",
         "fr": "Type de rendu"
+    },
+    "credits": {
+        "eng": "credits",
+        "fr": "crédits"
+    },
+    "max_cost": {
+        "eng": "Max cost",
+        "fr": "Coût max"
     }
 }

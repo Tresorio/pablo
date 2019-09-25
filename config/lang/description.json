@@ -56,8 +56,8 @@
         "fr": "Le pack de rendu qui sera utilisé pour votre rendu"
     },
     "timeout": {
-        "eng": "Timeout before the rendering will be stopped. 0 will cosumme all your credits while the rendering is running, and will refund you once it's over",
-        "fr": "Délai avant lequel le rendu sera stoppé. 0 consommera tout vos crédits le temps du rendu, et vous remboursera à la fin du rendu"
+        "eng": "Timeout before the rendering will be stopped. 0 will cosumme all your credits while the rendering is running. You will be refunded at the end of the render",
+        "fr": "Délai avant lequel le rendu sera stoppé. 0 consommera tout vos crédits le temps du rendu. Vous serez remboursé du temps restant à la fin du rendu"
     },
     "uploading": {
         "eng": "Uploading file ...",
@@ -66,5 +66,17 @@
     "upload_failed": {
         "eng": "The upload failed, please retry",
         "fr": "L'envoi du fichier a échoué, veuillez réessayer"
+    },
+    "render_types": {
+        "eng": "Type of the render",
+        "fr": "Type du rendu"
+    },
+    "render_type_frame": {
+        "eng": "Render the current frame on Tresorio's servers",
+        "fr": "Effectuer le rendu de la frame actuelle sur les serveurs de Tresorio"
+    },
+    "render_type_animation": {
+        "eng": "Render the whole animation on Tresorio's servers",
+        "fr": "Effectuer le rendu de toutes les frames sur les serveurs de Tresorio"
     }
 }

@@ -21,16 +21,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         report_props = bpy.context.window_manager.tresorio_report_props
 
         layout = self.layout
-
-        # CONFIGURATION
-        layout = layout.split(factor=0.020)
-        layout.column()
-        layout = layout.split(factor=0.980).column()
-        layout.label(text=TRADUCTOR['field']['configuration'][CONFIG_LANG]+':')
-
-        col = layout.column()
-
-        box = col.box()
+        box = layout.box()
 
         row = box.row().split(factor=0.4)
         row.label(
@@ -45,24 +36,25 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row.label(text=TRADUCTOR['field']['format'][CONFIG_LANG]+':')
         row.prop(render_form, 'output_formats_list')
 
-        box = col.box()
-        box.label(text=TRADUCTOR['field']['timeout'][CONFIG_LANG]+':')
-        row = box.row().split(factor=0.15)
-        row.label(icon='PREVIEW_RANGE')
-        row.prop(render_form, 'timeout', text='Hours')
+        row = box.row().split(factor=0.4)
+        row.label(text=TRADUCTOR['field']['timeout'][CONFIG_LANG]+':')
+        row.prop(render_form, 'timeout',
+                 text=TRADUCTOR['field']['hours'][CONFIG_LANG])
 
+        row = box.row().split(factor=0.4)
+        row.label(text=TRADUCTOR['field']['render_type'][CONFIG_LANG]+':')
+        row.props_enum(render_form, 'render_types')
+
+        box = layout.box()
         box.row().label(text=TRADUCTOR['field']
                         ['render_pack'][CONFIG_LANG]+':')
         row = box.row()
         for pack in render_packs:
-            row.prop(pack, 'is_selected', text=pack.name, toggle=1)
-
-        box.label(text=TRADUCTOR['field']['render_type'][CONFIG_LANG]+':')
-        box.row().prop_tabs_enum(render_form, 'render_types')
-
-        row = box.row().split(factor=0.5)
-        row.label(text='Max cost:')
-        row.label(text=f'{render_form.max_cost:2.2f}€')
+            row.prop(pack, 'is_selected', text=pack.name.upper(), toggle=1)
+            if pack.is_selected is True:
+                desc = pack.description.split('|')
+                for line in desc:
+                    box.label(text=line)
 
         # LAUNCH
         box = layout.box()
@@ -79,3 +71,8 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             layout.box().label(text=TRADUCTOR['desc']['upload_failed'][CONFIG_LANG],
                                icon='ERROR')
             layout.separator(factor=0.3)
+
+        row = layout.row().split(factor=0.4)
+        row.label(text=TRADUCTOR['field']['max_cost'][CONFIG_LANG]+':')
+        row.label(text=f'{render_form.max_cost:2.2f} ' +
+                  TRADUCTOR['field']['credits'][CONFIG_LANG])

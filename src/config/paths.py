@@ -18,3 +18,5 @@ EMAIL_CONFIG_PATH = os.path.join(bpy.utils.user_resource(
     'CONFIG', path='tresorio', create=True), "email.json")
 LANG_CONFIG_PATH = os.path.join(bpy.utils.user_resource(
     'CONFIG', path='tresorio', create=True), 'lang.json')
+LOGS_PATH = os.path.join(bpy.utils.user_resource(
+    'CONFIG', path='tresorio', create=True), "logs.txt")

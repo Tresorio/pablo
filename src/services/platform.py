@@ -91,7 +91,7 @@ class Platform:
             'Content-Type': 'application/json'
         }
         url = urljoin(self.url, API_CONFIG['routes']['create_render'])
-        return await self._session.post(url, data=render_desc, headers=headers, raise_for_status=True)
+        return await self._session.post(url, json=render_desc, headers=headers, raise_for_status=True)
 
     @_platformrequest.__func__
     async def req_get_user_info(self, jwt: str) -> aiohttp.ClientResponse:
@@ -110,6 +110,16 @@ class Platform:
         }
         url = urljoin(self.url, API_CONFIG['routes']['renderpacks'])
         return await self._session.get(url, raise_for_status=True, headers=headers)
+
+    @_platformrequest.__func__
+    async def req_get_nassim_upload(self, jwt: str, size: int):
+        headers = {
+            'Authorization': f'JWT {jwt}',
+            'Content-Type': 'application/json'
+        }
+        data = {'size': size}
+        url = urljoin(self.url, API_CONFIG['routes']['get_nassim_upload'])
+        return await self._session.get(url, params=data, raise_for_status=True, headers=headers)
 
     async def close(self):
         """Closes the aiohttp session."""
