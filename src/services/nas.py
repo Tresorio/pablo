@@ -91,7 +91,7 @@ class Nas:
             if self.mocked is True:
                 return await func(*args, **kwargs)
             if self._session is None:
-                self._session = aiohttp.ClientSession()
+                self._session = aiohttp.ClientSession(conn_timeout=5)
             res = await func(self, *args, **kwargs)
             if read is True:
                 return await res.read()
@@ -152,6 +152,7 @@ class Nas:
             uuid: main directory where the content will be stored
             content (str, bytes, fd): content to upload on the Nas
             filename: name of the uploaded file on the Nas
+            jwt: write authorization token on Nas
 
         Example:
             >>> async with Nas('http://0.0.0.0:3000') as nas:

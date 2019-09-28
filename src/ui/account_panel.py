@@ -17,8 +17,6 @@ class TresorioAccountPanel(bpy.types.Panel):
     def draw(self, context: bpy.types.Context):
         """Draws the account informations"""
         user_props = context.window_manager.tresorio_user_props
-        # report_props = context.window_manager.tresorio_report_props
-
         layout = self.layout
 
         case = layout.row().grid_flow(columns=10)
@@ -27,7 +25,6 @@ class TresorioAccountPanel(bpy.types.Panel):
         align_case.column().prop(user_props, 'langs')
 
         layout.label(text=f'Credits: {user_props.total_credits}')
-
         layout.operator('tresorio.logout',
                         text=TRADUCTOR['field']['logout'][CONFIG_LANG],
                         icon='LOCKED')

@@ -8,7 +8,9 @@
         "signin": "/auth/signin",
         "user_info": "/user/informations",
         "renderpacks": "/user/products/render/renderpacks",
-        "get_nassim_upload": "/user/products/render/nassim",
-        "create_render": "/user/products/render"
+        "create_render": "/user/products/render",
+        "launch_render": "/user/products/render/{0}",
+        "list_renderings_details": "/user/products/render/",
+        "rendering_details": "/user/products/render/{0}"
     }
 }

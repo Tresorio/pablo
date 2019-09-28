@@ -1,0 +1,9 @@
+find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
+
+mkdir tresorio
+ln -s ../config ./tresorio/config 
+ln -s ../src ./tresorio/src
+ln -s ../__init__.py ./tresorio/__init__.py
+
+zip -r tresorio.zip tresorio
+rm -rf tresorio

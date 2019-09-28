@@ -10,6 +10,7 @@ def logout():
     bpy.context.window_manager.property_unset('tresorio_report_props')
     bpy.context.window_manager.property_unset('tresorio_render_form')
     bpy.context.window_manager.property_unset('tresorio_render_packs')
+    bpy.context.window_manager.property_unset('tresorio_renders_details')
 
     if remember_email is True:
         bpy.context.window_manager.tresorio_user_props.email = user_props.email

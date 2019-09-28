@@ -1,6 +1,6 @@
 bl_info = {
     'name': 'WIP Tresorio cloud rendering',
-    'version': (0, 0, 0),
+    'version': (0, 0, 1),
     'blender': (2, 80, 0),
     'category': 'Render',
     'file': '/$HOME/.config/blender/2.80/scripts/addons/tresorio_rendering',
@@ -15,7 +15,7 @@ try:
     import aiohttp
     del aiohttp
 except ModuleNotFoundError:
-    os.system('pip install --user aiohttp')
+    os.system('pip install --user aiohttp==3.6.1')
 
 import sys
 import bpy
@@ -41,15 +41,20 @@ if 'bpy' in locals():
     import src
     reload_all(src, 2)
 
+# Properties
 from src.properties.user_props import TresorioUserProps
 from src.properties.report_props import TresorioReportProps
 from src.properties.render_form import TresorioRenderFormProps
+from src.properties.renders import TresorioRendersDetailsProps
 from src.properties.render_packs import TresorioRenderPacksProps
 
+# UI
 from src.ui.main_panel import TresorioMainPanel
 from src.ui.account_panel import TresorioAccountPanel
 from src.ui.new_render_panel import TresorioNewRenderPanel
+from src.ui.user_renders_panel import TresorioRendersPanel, TresorioRendersList
 
+# Operators
 from src.operators.login import TresorioLoginOperator
 from src.operators.logout import TresorioLogoutOperator
 from src.operators.render import TresorioRenderFrameOperator
@@ -64,6 +69,7 @@ to_register_classes = (
                        TresorioReportProps,
                        TresorioRenderPacksProps,
                        TresorioRenderFormProps,
+                       TresorioRendersDetailsProps,
 
                        # Operators
                        TresorioLoginOperator,
@@ -76,8 +82,10 @@ to_register_classes = (
 
                        # UI
                        TresorioMainPanel,
+                       TresorioRendersPanel,
                        TresorioNewRenderPanel,
                        TresorioAccountPanel,
+                       TresorioRendersList,
                       )
 
 

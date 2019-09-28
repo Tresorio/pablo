@@ -78,5 +78,9 @@
     "render_type_animation": {
         "eng": "Render the whole animation on Tresorio's servers",
         "fr": "Effectuer le rendu de toutes les frames sur les serveurs de Tresorio"
+    },
+    "render_details": {
+        "eng": "Details of the renderings",
+        "fr": "Détails des rendus"
     }
 }

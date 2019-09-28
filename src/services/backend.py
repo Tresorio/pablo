@@ -15,6 +15,7 @@ from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.services.async_loop import ensure_async_loop
 from src.config.debug import NAS_DEBUG, PLATFORM_DEBUG
 from aiohttp import ClientResponseError, ClientResponse
+from src.properties.renders import update_renders_details_prop
 
 
 def logout_if_unauthorized(err: Exception):
@@ -31,23 +32,23 @@ def new_render():
     bpy.data.window_managers['WinMan'].tresorio_report_props.upload_failed = 0
     props = bpy.data.window_managers['WinMan'].tresorio_render_form
 
-    render = {
+    create_render = {
         'name': props.rendering_name,
         'engine': props.render_engines_list,
         'outputFormat': props.output_formats_list,
         'timeout': props.timeout,
         'farm': props.render_pack,
         'renderType': props.render_types,
-        'currentFrame': bpy.data.scenes[0].frame_current,
-    }
-    blendfile = {
-        'path': bpy.data.filepath,
-        'name': os.path.basename(bpy.data.filepath),
         'size': os.path.getsize(bpy.data.filepath),
+    }
+    launch_render = {
+        'currentFrame': bpy.data.scenes[0].frame_current,
+        'startingFrame': bpy.data.scenes[0].frame_start,
+        'endingFrame': bpy.data.scenes[0].frame_end,
     }
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
 
-    future = _new_render(token, render, blendfile)
+    future = _new_render(token, create_render, launch_render)
     asyncio.ensure_future(future)
     ensure_async_loop()
 
@@ -77,6 +78,7 @@ def set_connection_error(err: Exception, msg: str):
 
 
 async def _connect_to_tresorio(data: Dict[str, str]):
+    # Get token
     async with Platform(debug=PLATFORM_DEBUG) as plt:
         try:
             res_connect = await plt.req_connect_to_tresorio(data, jsonify=True)
@@ -89,6 +91,7 @@ async def _connect_to_tresorio(data: Dict[str, str]):
                     err, TRADUCTOR['notif']['err_connection'][CONFIG_LANG])
             return
 
+    # Get user specific information
         try:
             res_user_info = await plt.req_get_user_info(res_connect['token'], jsonify=True)
             _get_user_info_callback(res_user_info)
@@ -101,6 +104,7 @@ async def _connect_to_tresorio(data: Dict[str, str]):
                     err, TRADUCTOR['notif']['err_acc_info'][CONFIG_LANG])
             return
 
+    # Get render packs information
         try:
             res_renderpacks = await plt.req_get_renderpacks(res_connect['token'], jsonify=True)
             _get_renderpacks_callback(res_renderpacks)
@@ -114,13 +118,14 @@ async def _connect_to_tresorio(data: Dict[str, str]):
             return
 
 
-async def _new_render(token: str, render: Dict[str, Any], blendfile: Dict[str, Any]):
-    with Lockfile(blendfile['path'], 'a'):
+async def _new_render(token: str, create_render: Dict[str, Any], launch_render: Dict[str, Any]):
+    blendfile = bpy.data.filepath
+    # Create render and upload blend file
+    with Lockfile(blendfile, 'a'):
         try:
             async with Platform(debug=PLATFORM_DEBUG) as plt:
-                nas_info = await plt.req_get_nassim_upload(token, blendfile['size'], jsonify=True)
-            render['srcNassim'] = nas_info['ip']
-            res = await _upload_blend_file(blendfile, nas_info)
+                render_info = await plt.req_create_render(token, create_render, jsonify=True)
+            res = await _upload_blend_file(blendfile, render_info)
             _upload_blend_file_callback(res)
         except (ClientResponseError, Exception) as err:
             BACKEND_LOGGER.error(err)
@@ -131,26 +136,33 @@ async def _new_render(token: str, render: Dict[str, Any], blendfile: Dict[str, A
                     err, TRADUCTOR['notif']['err_upl_blendfile'][CONFIG_LANG])
             return
 
+    # Launch rendering
     try:
         async with Platform(debug=PLATFORM_DEBUG) as plt:
-            res = await plt.req_create_render(token, render)
+            res = await plt.req_launch_render(token, render_info['id'], launch_render, jsonify=True)
+            _new_render_callback(res)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
             set_connection_error(
-                err, 'Error while creating the new render (TODO Trad)')
+                err, 'Error while creating the new render (TODO Traduction)')
         return
 
 
-async def _upload_blend_file(blendfile: dict, nas_info: dict):
+async def _upload_blend_file(blendfile: str, render_info: Dict[str, Any]):
     bpy.data.window_managers['WinMan'].tresorio_report_props.uploading_blend_file = 1
-    async with Nas(nas_info['ip'], debug=NAS_DEBUG) as nas:
-        with PercentReader(blendfile['path']) as file:
-            return await nas.upload_content('tmp_blender', file, blendfile['name'], nas_info['jwt'])
+    async with Nas(render_info['ip'], debug=NAS_DEBUG) as nas:
+        with PercentReader(blendfile) as file:
+            return await nas.upload_content(render_info['id'], file, 'scene.blend', render_info['jwt'])
 
 
 # CALLBACKS--------------------------------------------------------------------
+def _new_render_callback(res: Dict[str, Any]):
+    update_renders_details_prop(res)
+
+
 def _get_renderpacks_callback(res: ClientResponse) -> None:
+    bpy.context.window_manager.property_unset('tresorio_render_packs')
     for i, pack in enumerate(res):
         new_pack = bpy.context.window_manager.tresorio_render_packs.add()
         cost = pack['cost']
@@ -179,7 +191,7 @@ def _upload_blend_file_callback(res: ClientResponse) -> None:
     bpy.data.window_managers['WinMan'].tresorio_report_props.uploading_blend_file = False
 
 
-# ERROR HANDLERS-----------------------------------------------------------
+# ERROR HANDLERS---------------------------------------------------------------
 def _get_renderpacks_error(err: Exception) -> None:
     bpy.data.window_managers['WinMan'].tresorio_render_form.render_pack = ''
 

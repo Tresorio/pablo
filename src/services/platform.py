@@ -3,6 +3,7 @@ import json
 import asyncio
 import logging
 import aiohttp
+from typing import Dict, Any
 from typing import Callable, Any
 from urllib.parse import urljoin
 from src.config.api import API_CONFIG
@@ -70,7 +71,7 @@ class Platform:
             if self.mocked is True:
                 return await func(*args, **kwargs)
             if self._session is None:
-                self._session = aiohttp.ClientSession()
+                self._session = aiohttp.ClientSession(conn_timeout=5)
             res = await func(self, *args, **kwargs)
             if jsonify is True:
                 return await res.json()
@@ -80,18 +81,19 @@ class Platform:
         return wrapper
 
     @_platformrequest.__func__
-    async def req_connect_to_tresorio(self, credentials: dict) -> aiohttp.ClientResponse:
+    async def req_connect_to_tresorio(self, credentials: Dict[str, Any]) -> aiohttp.ClientResponse:
         url = urljoin(self.url, API_CONFIG['routes']['signin'])
-        return await self._session.post(url, data=credentials, raise_for_status=True)
+        return await self._session.post(url, json=credentials, raise_for_status=True)
 
     @_platformrequest.__func__
-    async def req_create_render(self, jwt: str, render_desc: dict) -> aiohttp.ClientResponse:
+    async def req_launch_render(self, jwt: str, render_id: str, launch_render: Dict[str, Any]) -> aiohttp.ClientResponse:
         headers = {
             'Authorization': f'JWT {jwt}',
             'Content-Type': 'application/json'
         }
-        url = urljoin(self.url, API_CONFIG['routes']['create_render'])
-        return await self._session.post(url, json=render_desc, headers=headers, raise_for_status=True)
+        url = urljoin(
+            self.url, API_CONFIG['routes']['launch_render'].format(render_id))
+        return await self._session.post(url, json=launch_render, headers=headers, raise_for_status=True)
 
     @_platformrequest.__func__
     async def req_get_user_info(self, jwt: str) -> aiohttp.ClientResponse:
@@ -112,14 +114,35 @@ class Platform:
         return await self._session.get(url, raise_for_status=True, headers=headers)
 
     @_platformrequest.__func__
-    async def req_get_nassim_upload(self, jwt: str, size: int):
+    async def req_create_render(self, jwt: str, render: Dict[str, Any]):
         headers = {
             'Authorization': f'JWT {jwt}',
             'Content-Type': 'application/json'
         }
-        data = {'size': size}
-        url = urljoin(self.url, API_CONFIG['routes']['get_nassim_upload'])
-        return await self._session.get(url, params=data, raise_for_status=True, headers=headers)
+        url = urljoin(self.url, API_CONFIG['routes']['create_render'])
+        return await self._session.post(url, json=render, raise_for_status=True, headers=headers)
+
+    @_platformrequest.__func__
+    async def req_list_renderings_details(self, jwt: str):
+        headers = {
+            'Authorization': f'JWT {jwt}',
+            'Content-Type': 'application/json'
+        }
+        params = {
+            'offset': 0,
+            'count': 10,
+        }
+        url = urljoin(self.url, API_CONFIG['routes']['list_renderings_details'])
+        return await self._session.get(url, params=params, raise_for_status=True, headers=headers)
+
+    @_platformrequest.__func__
+    async def req_get_rendering_details(self, jwt: str, render_id: str):
+        headers = {
+            'Authorization': f'JWT {jwt}',
+            'Content-Type': 'application/json'
+        }
+        url = urljoin(self.url, API_CONFIG['routes']['rendering_details'].format(render_id))
+        return await self._session.get(url, headers=headers)
 
     async def close(self):
         """Closes the aiohttp session."""

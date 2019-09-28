@@ -48,7 +48,7 @@
         "fr": "Compte"
     },
     "new_render_panel": {
-        "eng": "New rendering",
+        "eng": "New render",
         "fr": "Nouveau rendu"
     },
     "new_rendering_name": {
@@ -98,5 +98,9 @@
     "max_cost": {
         "eng": "Max cost",
         "fr": "Coût max"
+    },
+    "your_renders": {
+        "eng": "Your renders",
+        "fr": "Vos rendus"
     }
 }
