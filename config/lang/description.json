@@ -82,5 +82,21 @@
     "render_details": {
         "eng": "Details of the renderings",
         "fr": "Détails des rendus"
+    },
+    "download_render_results": {
+        "eng": "Download the results of the render",
+        "fr": "Télécharge les résultats du rendu"
+    },
+    "delete_render": {
+        "eng": "Permantly delete the render and its results",
+        "fr": "Supprime de manière permanente le rendu et ses résultats"
+    },
+    "stop_render": {
+        "eng": "Stop the render and keep its results",
+        "fr": "Stop le rendu et garde ses résultats"
+    },
+    "render_advancement_percent": {
+        "eng": "Advancement of the render",
+        "fr": "Avancée du rendu"
     }
 }

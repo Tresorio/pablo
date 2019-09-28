@@ -4,8 +4,8 @@ import os
 import bpy
 import asyncio
 from http import HTTPStatus
-from typing import Dict, Any
 from src.services.nas import Nas
+from typing import Dict, Any, List
 from src.operators.logout import logout
 from src.utils.lockfile import Lockfile
 from src.services.platform import Platform
@@ -70,11 +70,51 @@ def connect_to_tresorio(email: str, password: str):
     ensure_async_loop()
 
 
+def delete_render(render_id: str):
+    print('TODO DELETE RENDER')
+
+
+def stop_render(render_id: str):
+    print('TODO STOP RENDER')
+
+
+def download_render_results(render_id: str, render_result_path: str):
+    token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    future = _download_render_results(token, render_id, render_result_path)
+    asyncio.ensure_future(future)
+    ensure_async_loop()
+
+
 def set_connection_error(err: Exception, msg: str):
     bpy.data.window_managers['WinMan'].tresorio_report_props.connection_error = True
     bpy.data.window_managers['WinMan'].tresorio_report_props.connection_error_msg = msg
 
 # ASYNC CORE-------------------------------------------------------------------
+
+
+async def _download_render_results(token: str, render_id: str, render_result_path: str):
+    try:
+        async with Platform(debug=PLATFORM_DEBUG) as plt:
+            render = await plt.req_get_rendering_details(token, render_id, jsonify=True)
+        fragments = render['fragments']
+        async with Nas('', debug=PLATFORM_DEBUG) as nas:
+            for frag in fragments:
+                nas.url = frag['ip']
+                filename = '%04.d.png' % frag['frameNumber']
+                nas_filename = os.path.join('artifacts', filename)
+                frame = await nas.download(frag['id'], nas_filename, read=True)
+                user_filepath = os.path.join(render_result_path, filename)
+                with open(user_filepath, 'wb') as file:
+                    file.write(frame)
+                    BACKEND_LOGGER.debug(f'Wrote file {user_filepath}')
+    except (ClientResponseError, Exception) as err:
+        BACKEND_LOGGER.error(err)
+        if logout_if_unauthorized(err) is False:
+            pass
+        if type(err) is not ClientResponseError:
+            set_connection_error(
+                err, TRADUCTOR['notif']['err_download_results'][CONFIG_LANG])
+        return
 
 
 async def _connect_to_tresorio(data: Dict[str, str]):
@@ -117,6 +157,19 @@ async def _connect_to_tresorio(data: Dict[str, str]):
                     err, TRADUCTOR['notif']['err_renderpacks'][CONFIG_LANG])
             return
 
+    # Get user renders
+        try:
+            res_renders = await plt.req_list_renderings_details(res_connect['token'], jsonify=True)
+            _list_renderings_details_callback(res_renders)
+        except (ClientResponseError, Exception) as err:
+            BACKEND_LOGGER.error(err)
+            if logout_if_unauthorized(err) is False:
+                pass
+            if type(err) is not ClientResponseError:
+                set_connection_error(
+                    err, TRADUCTOR['notif']['err_renders'][CONFIG_LANG])
+            return
+
 
 async def _new_render(token: str, create_render: Dict[str, Any], launch_render: Dict[str, Any]):
     blendfile = bpy.data.filepath
@@ -157,8 +210,14 @@ async def _upload_blend_file(blendfile: str, render_info: Dict[str, Any]):
 
 
 # CALLBACKS--------------------------------------------------------------------
+
 def _new_render_callback(res: Dict[str, Any]):
     update_renders_details_prop(res)
+
+
+def _list_renderings_details_callback(res: List[Dict[str, Any]]):
+    for render in res:
+        update_renders_details_prop(render)
 
 
 def _get_renderpacks_callback(res: ClientResponse) -> None:

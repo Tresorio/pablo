@@ -56,6 +56,11 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                 for line in desc:
                     box.label(text=line)
 
+        row = layout.row()
+        row.label(text=TRADUCTOR['field']['max_cost'][CONFIG_LANG]+':')
+        row.label(text=f'{render_form.max_cost:2.2f} ' +
+                  TRADUCTOR['field']['credits'][CONFIG_LANG])
+
         # LAUNCH
         box = layout.box()
         box.enabled = not report_props.uploading_blend_file
@@ -71,8 +76,3 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             layout.box().label(text=TRADUCTOR['desc']['upload_failed'][CONFIG_LANG],
                                icon='ERROR')
             layout.separator(factor=0.3)
-
-        row = layout.row().split(factor=0.4)
-        row.label(text=TRADUCTOR['field']['max_cost'][CONFIG_LANG]+':')
-        row.label(text=f'{render_form.max_cost:2.2f} ' +
-                  TRADUCTOR['field']['credits'][CONFIG_LANG])

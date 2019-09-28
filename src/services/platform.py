@@ -130,7 +130,7 @@ class Platform:
         }
         params = {
             'offset': 0,
-            'count': 10,
+            'count': 30,
         }
         url = urljoin(self.url, API_CONFIG['routes']['list_renderings_details'])
         return await self._session.get(url, params=params, raise_for_status=True, headers=headers)

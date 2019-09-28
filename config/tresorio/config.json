@@ -10,7 +10,7 @@
         "renderpacks": "/user/products/render/renderpacks",
         "create_render": "/user/products/render",
         "launch_render": "/user/products/render/{0}",
-        "list_renderings_details": "/user/products/render/",
+        "list_renderings_details": "/user/products/render",
         "rendering_details": "/user/products/render/{0}"
     }
 }

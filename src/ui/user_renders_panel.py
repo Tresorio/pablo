@@ -5,12 +5,30 @@ from src.config.langs import TRADUCTOR, CONFIG_LANG
 class TresorioRendersList(bpy.types.UIList):
     bl_idname = 'OBJECT_UL_TRESORIO_RENDERS_LIST'
 
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        icon = 'RENDER_ANIMATION' if item.type == 'ANIMATION' else 'RESTRICT_RENDER_OFF'
-        layout.label(text=item.name, icon=icon)
-        layout.operator('tresorio.redirect_home',
-                        text='Tresorio',
-                        icon='INFO')
+    def draw_item(self, context, layout, data, render, icon, active_data, active_propname, index):
+        layout = layout.split(factor=0.05)
+        if render.is_finished is True:
+            layout.label(text='', icon='KEYTYPE_JITTER_VEC')
+        else:
+            layout.label(text='', icon='KEYTYPE_BREAKDOWN_VEC')
+
+        layout = layout.split(factor=0.5)
+        icon = 'RENDER_ANIMATION' if render.type == 'ANIMATION' else 'RESTRICT_RENDER_OFF'
+        layout.label(text=render.name, icon=icon)
+        row = layout.row(align=True)
+        row.alignment = 'RIGHT'
+        if render.is_finished is False:
+            row.prop(render, 'progression')
+            row.operator('tresorio.stop_render',
+                         text='',
+                         icon='CANCEL').index = index
+        else:
+            row.operator('tresorio.download_render_results',
+                         text='',
+                         icon='SORT_ASC').index = index
+        row.operator('tresorio.delete_render',
+                     text='',
+                     icon='TRASH').index = index
 
 
 class TresorioRendersPanel(bpy.types.Panel):
@@ -29,7 +47,11 @@ class TresorioRendersPanel(bpy.types.Panel):
         data = context.window_manager
         layout = self.layout
 
+        nb_renders = len(data.tresorio_renders_details)
+        rows = nb_renders if nb_renders < 5 else 5
+        if rows == 0:
+            rows = 1
         layout.template_list('OBJECT_UL_TRESORIO_RENDERS_LIST', 'The_List',
                              data, 'tresorio_renders_details',
-                             data, 'renders_list_index',
-                             rows=3, maxrows=len(data.tresorio_renders_details))
+                             data, 'tresorio_renders_list_index',
+                             rows=rows, maxrows=nb_renders)

@@ -59,8 +59,11 @@ from src.operators.login import TresorioLoginOperator
 from src.operators.logout import TresorioLogoutOperator
 from src.operators.render import TresorioRenderFrameOperator
 from src.operators.redirect import TresorioRedirectHomeOperator
+from src.operators.stop_render import TresorioStopRenderOperator
 from src.operators.redirect import TresorioRedirectRegisterOperator
+from src.operators.delete_render import TresorioDeleteRenderOperator
 from src.operators.redirect import TresorioRedirectForgotPasswordOperator
+from src.operators.download_render_results import TresorioDownloadRenderResultsOperator
 from src.services.async_loop import AsyncLoopModalOperator
 
 to_register_classes = (
@@ -78,6 +81,9 @@ to_register_classes = (
                        TresorioRedirectRegisterOperator,
                        TresorioRedirectHomeOperator,
                        TresorioRenderFrameOperator,
+                       TresorioDownloadRenderResultsOperator,
+                       TresorioStopRenderOperator,
+                       TresorioDeleteRenderOperator,
                        AsyncLoopModalOperator,
 
                        # UI

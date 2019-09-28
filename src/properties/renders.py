@@ -38,11 +38,15 @@ from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 def update_renders_details_prop(res: Dict[str, Any]) -> None:
     render = bpy.context.window_manager.tresorio_renders_details.add()
+    render.id = res['id']
     render.name = res['name']
-    
+    if 'progression' in res and res['progression'] == 100:
+        render.is_finished = True#res['finished']
+    else:
+        render.progression = res['progression']
+
 
 class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
-
     # Internal
     id: bpy.props.StringProperty(lambda a, b: None)
 
@@ -58,7 +62,18 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
     # Advancement
     uptime: bpy.props.IntProperty(lambda a, b: None)
     is_finished: bpy.props.BoolProperty(lambda a, b: None)
-    progression: bpy.props.FloatProperty(lambda a, b: None)
+
+    desc = TRADUCTOR['desc']['render_advancement_percent'][CONFIG_LANG]
+    progression: bpy.props.FloatProperty(
+        min=0,
+        max=100,
+        name='',
+        description=desc,
+        default=0,
+        subtype='PERCENTAGE',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
+    )
     created_at: bpy.props.StringProperty(lambda a, b: None)
     render_frames_count: bpy.props.IntProperty(lambda a, b: None)
 
@@ -75,7 +90,10 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
             description=desc,
             options={'HIDDEN', 'SKIP_SAVE'},
         )
-        bpy.types.WindowManager.renders_list_index = bpy.props.IntProperty(default = 0)
+        bpy.types.WindowManager.tresorio_renders_list_index = bpy.props.IntProperty(
+            name='',
+            description='',
+        )
 
     @classmethod
     def unregister(cls):
