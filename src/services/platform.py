@@ -96,6 +96,26 @@ class Platform:
         return await self._session.post(url, json=launch_render, headers=headers, raise_for_status=True)
 
     @_platformrequest.__func__
+    async def req_stop_render(self, jwt: str, render_id: str):
+        headers = {
+            'Authorization': f'JWT {jwt}',
+            'Content-Type': 'application/json'
+        }
+        url = urljoin(
+            self.url, API_CONFIG['routes']['stop_render'].format(render_id))
+        return await self._session.put(url, headers=headers, raise_for_status=True)
+
+    @_platformrequest.__func__
+    async def req_delete_render(self, jwt: str, render_id: str):
+        headers = {
+            'Authorization': f'JWT {jwt}',
+            'Content-Type': 'application/json'
+        }
+        url = urljoin(
+            self.url, API_CONFIG['routes']['delete_render'].format(render_id))
+        return await self._session.delete(url, headers=headers, raise_for_status=True)
+
+    @_platformrequest.__func__
     async def req_get_user_info(self, jwt: str) -> aiohttp.ClientResponse:
         headers = {
             'Authorization': f'JWT {jwt}',
@@ -132,7 +152,8 @@ class Platform:
             'offset': 0,
             'count': 30,
         }
-        url = urljoin(self.url, API_CONFIG['routes']['list_renderings_details'])
+        url = urljoin(
+            self.url, API_CONFIG['routes']['list_renderings_details'])
         return await self._session.get(url, params=params, raise_for_status=True, headers=headers)
 
     @_platformrequest.__func__
@@ -141,7 +162,8 @@ class Platform:
             'Authorization': f'JWT {jwt}',
             'Content-Type': 'application/json'
         }
-        url = urljoin(self.url, API_CONFIG['routes']['rendering_details'].format(render_id))
+        url = urljoin(
+            self.url, API_CONFIG['routes']['rendering_details'].format(render_id))
         return await self._session.get(url, headers=headers)
 
     async def close(self):

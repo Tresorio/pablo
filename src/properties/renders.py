@@ -40,10 +40,14 @@ def update_renders_details_prop(res: Dict[str, Any]) -> None:
     render = bpy.context.window_manager.tresorio_renders_details.add()
     render.id = res['id']
     render.name = res['name']
-    if 'progression' in res and res['progression'] == 100:
-        render.is_finished = True#res['finished']
-    else:
-        render.progression = res['progression']
+    render.timeout = res['timeout']
+    if res['uptime'] is not None:
+        render.uptime = res['uptime']
+    if 'progression' in res:
+        if res['progression'] == 100:
+            render.is_finished = True
+        else:
+            render.progression = res['progression']
 
 
 class TresorioRendersDetailsProps(bpy.types.PropertyGroup):

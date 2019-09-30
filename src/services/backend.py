@@ -71,16 +71,31 @@ def connect_to_tresorio(email: str, password: str):
 
 
 def delete_render(render_id: str):
-    print('TODO DELETE RENDER')
+    token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    future = _delete_render(token, render_id)
+    asyncio.ensure_future(future)
+    ensure_async_loop()
 
 
 def stop_render(render_id: str):
-    print('TODO STOP RENDER')
+    token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    future = _stop_render(token, render_id)
+    asyncio.ensure_future(future)
+    ensure_async_loop()
 
 
 def download_render_results(render_id: str, render_result_path: str):
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    bpy.data.window_managers['WinMan'].tresorio_report_props.downloading_render_results = True
     future = _download_render_results(token, render_id, render_result_path)
+    asyncio.ensure_future(future)
+    ensure_async_loop()
+
+
+def update_list_renderings():
+    bpy.data.window_managers['WinMan'].tresorio_report_props.are_renders_refreshing = True
+    token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    future = _update_list_renderings(token)
     asyncio.ensure_future(future)
     ensure_async_loop()
 
@@ -103,14 +118,16 @@ async def _download_render_results(token: str, render_id: str, render_result_pat
                 filename = '%04.d.png' % frag['frameNumber']
                 nas_filename = os.path.join('artifacts', filename)
                 frame = await nas.download(frag['id'], nas_filename, read=True)
-                user_filepath = os.path.join(render_result_path, filename)
+                user_filepath = os.path.join(
+                    render_result_path, render['name']+'_'+filename)
                 with open(user_filepath, 'wb') as file:
                     file.write(frame)
                     BACKEND_LOGGER.debug(f'Wrote file {user_filepath}')
+        _download_render_results_callback(success=True)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
-            pass
+            _download_render_results_callback(success=False)
         if type(err) is not ClientResponseError:
             set_connection_error(
                 err, TRADUCTOR['notif']['err_download_results'][CONFIG_LANG])
@@ -171,6 +188,20 @@ async def _connect_to_tresorio(data: Dict[str, str]):
             return
 
 
+async def _update_list_renderings(token: str):
+    try:
+        async with Platform(debug=PLATFORM_DEBUG) as plt:
+            res_renders = await plt.req_list_renderings_details(token, jsonify=True)
+            bpy.context.window_manager.property_unset(
+                'tresorio_renders_details')
+            _list_renderings_details_callback(res_renders)
+    except (ClientResponseError, Exception) as err:
+        BACKEND_LOGGER.error(err)
+        if logout_if_unauthorized(err) is False:
+            _list_renderings_details_error(err)
+        return
+
+
 async def _new_render(token: str, create_render: Dict[str, Any], launch_render: Dict[str, Any]):
     blendfile = bpy.data.filepath
     # Create render and upload blend file
@@ -202,14 +233,44 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
         return
 
 
+async def _stop_render(token: str, render_id: str):
+    try:
+        async with Platform(debug=PLATFORM_DEBUG) as plt:
+            res = await plt.req_stop_render(token, render_id, jsonify=True)
+            print(res)
+    except (ClientResponseError, Exception) as err:
+        BACKEND_LOGGER.error(err)
+        if logout_if_unauthorized(err) is False:
+            set_connection_error(
+                err, 'Error while stopping render (TODO Traduction)')
+        return
+
+
+async def _delete_render(token: str, render_id: str):
+    try:
+        async with Platform(debug=PLATFORM_DEBUG) as plt:
+            res = await plt.req_delete_render(token, render_id, jsonify=True)
+            print(res)
+    except (ClientResponseError, Exception) as err:
+        BACKEND_LOGGER.error(err)
+        if logout_if_unauthorized(err) is False:
+            set_connection_error(
+                err, 'Error while deleting render (TODO Traduction)')
+        return
+
+
 async def _upload_blend_file(blendfile: str, render_info: Dict[str, Any]):
-    bpy.data.window_managers['WinMan'].tresorio_report_props.uploading_blend_file = 1
+    bpy.data.window_managers['WinMan'].tresorio_report_props.uploading_blend_file = True
     async with Nas(render_info['ip'], debug=NAS_DEBUG) as nas:
         with PercentReader(blendfile) as file:
             return await nas.upload_content(render_info['id'], file, 'scene.blend', render_info['jwt'])
 
 
 # CALLBACKS--------------------------------------------------------------------
+def _download_render_results_callback(success: bool):
+    bpy.data.window_managers['WinMan'].tresorio_report_props.downloading_render_results = False
+    bpy.data.window_managers['WinMan'].tresorio_report_props.success_render_download = success
+
 
 def _new_render_callback(res: Dict[str, Any]):
     update_renders_details_prop(res)
@@ -218,6 +279,7 @@ def _new_render_callback(res: Dict[str, Any]):
 def _list_renderings_details_callback(res: List[Dict[str, Any]]):
     for render in res:
         update_renders_details_prop(render)
+    bpy.data.window_managers['WinMan'].tresorio_report_props.are_renders_refreshing = False
 
 
 def _get_renderpacks_callback(res: ClientResponse) -> None:
@@ -251,6 +313,14 @@ def _upload_blend_file_callback(res: ClientResponse) -> None:
 
 
 # ERROR HANDLERS---------------------------------------------------------------
+
+def _list_renderings_details_error(err: Exception) -> None:
+    bpy.data.window_managers['WinMan'].tresorio_report_props.are_renders_refreshing = False
+    if type(err) is not ClientResponseError:
+        set_connection_error(
+            err, TRADUCTOR['notif']['err_renders'][CONFIG_LANG])
+
+
 def _get_renderpacks_error(err: Exception) -> None:
     bpy.data.window_managers['WinMan'].tresorio_render_form.render_pack = ''
 

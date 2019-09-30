@@ -102,5 +102,17 @@
     "your_renders": {
         "eng": "Your renders",
         "fr": "Vos rendus"
+    },
+    "selected_render_details": {
+        "eng": "Selected render details",
+        "fr": "Détails du rendu sélectionné"
+    },
+    "name": {
+        "eng": "Name",
+        "fr": "Nom"
+    },
+    "max_timeout": {
+        "eng": "Max credits",
+        "fr": "Crédits max"
     }
 }

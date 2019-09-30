@@ -52,6 +52,7 @@ from src.properties.render_packs import TresorioRenderPacksProps
 from src.ui.main_panel import TresorioMainPanel
 from src.ui.account_panel import TresorioAccountPanel
 from src.ui.new_render_panel import TresorioNewRenderPanel
+from src.ui.selected_render_panel import TresorioSelectedRenderPanel
 from src.ui.user_renders_panel import TresorioRendersPanel, TresorioRendersList
 
 # Operators
@@ -62,6 +63,7 @@ from src.operators.redirect import TresorioRedirectHomeOperator
 from src.operators.stop_render import TresorioStopRenderOperator
 from src.operators.redirect import TresorioRedirectRegisterOperator
 from src.operators.delete_render import TresorioDeleteRenderOperator
+from src.operators.refresh_renders import TresorioRefreshRendersOperator
 from src.operators.redirect import TresorioRedirectForgotPasswordOperator
 from src.operators.download_render_results import TresorioDownloadRenderResultsOperator
 from src.services.async_loop import AsyncLoopModalOperator
@@ -84,6 +86,7 @@ to_register_classes = (
                        TresorioDownloadRenderResultsOperator,
                        TresorioStopRenderOperator,
                        TresorioDeleteRenderOperator,
+                       TresorioRefreshRendersOperator,
                        AsyncLoopModalOperator,
 
                        # UI
@@ -92,6 +95,7 @@ to_register_classes = (
                        TresorioNewRenderPanel,
                        TresorioAccountPanel,
                        TresorioRendersList,
+                       TresorioSelectedRenderPanel,
                       )
 
 

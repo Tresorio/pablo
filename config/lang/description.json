@@ -98,5 +98,9 @@
     "render_advancement_percent": {
         "eng": "Advancement of the render",
         "fr": "Avancée du rendu"
+    },
+    "refresh_renders": {
+        "eng": "Refresh the status of the renders",
+        "fr": "Rafraichis le statut des rendus"
     }
 }

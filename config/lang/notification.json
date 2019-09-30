@@ -70,5 +70,9 @@
     "err_download_results": {
         "eng": "Couldn't download your results",
         "fr": "Erreur pendant le téléchargement des résultats"
+    },
+    "refreshing": {
+        "eng": "Refreshing ...",
+        "fr": "Rafraichissement ..."
     }
 }

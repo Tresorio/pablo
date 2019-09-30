@@ -23,7 +23,10 @@ class TresorioRendersList(bpy.types.UIList):
                          text='',
                          icon='CANCEL').index = index
         else:
-            row.operator('tresorio.download_render_results',
+            col = row.column()
+            if context.window_manager.tresorio_report_props.downloading_render_results is True:
+                col.enabled = False
+            col.operator('tresorio.download_render_results',
                          text='',
                          icon='SORT_ASC').index = index
         row.operator('tresorio.delete_render',
@@ -44,14 +47,23 @@ class TresorioRendersPanel(bpy.types.Panel):
         return context.window_manager.tresorio_user_props.is_logged
 
     def draw(self, context: bpy.types.Context):
+        report_props = context.window_manager.tresorio_report_props
         data = context.window_manager
         layout = self.layout
 
         nb_renders = len(data.tresorio_renders_details)
-        rows = nb_renders if nb_renders < 5 else 5
-        if rows == 0:
-            rows = 1
+        rows = 1
+        if report_props.are_renders_refreshing is True:
+            layout.label(text=TRADUCTOR['notif']['refreshing'][CONFIG_LANG])
+        else:
+            layout.operator('tresorio.refresh_renders',
+                            text='', icon='FILE_REFRESH')
         layout.template_list('OBJECT_UL_TRESORIO_RENDERS_LIST', 'The_List',
                              data, 'tresorio_renders_details',
                              data, 'tresorio_renders_list_index',
                              rows=rows, maxrows=nb_renders)
+
+        row = layout.row()
+        row.alignment = 'CENTER'
+        if report_props.downloading_render_results is True:
+            row.label(text='Downloading results ...')

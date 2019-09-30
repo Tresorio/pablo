@@ -11,6 +11,8 @@
         "create_render": "/user/products/render",
         "launch_render": "/user/products/render/{0}",
         "list_renderings_details": "/user/products/render",
-        "rendering_details": "/user/products/render/{0}"
+        "rendering_details": "/user/products/render/{0}",
+        "stop_render": "/user/products/render/{0}/stop",
+        "delete_render": "/user/products/render/{0}"
     }
 }
