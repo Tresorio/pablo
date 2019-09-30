@@ -41,13 +41,19 @@ def update_renders_details_prop(res: Dict[str, Any]) -> None:
     render.id = res['id']
     render.name = res['name']
     render.timeout = res['timeout']
-    if res['uptime'] is not None:
-        render.uptime = res['uptime']
+    render.type = res['renderType']
+    render.engine = res['engine']
+    render.farm = res['farm']
+    render.output_format = res['outputFormat']
+    render.is_finished = res['finished']
+
+    #render.uptime = res['uptime'] # TODO fix None uptime (not updated in gandalf)
+    # TODO show the number of rendered frames and get the total number of frames (x / 250)
+    # TODO get launch date (how to convert it depending of pc time zone ?)
     if 'progression' in res:
         if res['progression'] == 100:
-            render.is_finished = True
-        else:
-            render.progression = res['progression']
+            render.is_finished = True # TODO send the right value in res['finished']
+        render.progression = res['progression']
 
 
 class TresorioRendersDetailsProps(bpy.types.PropertyGroup):

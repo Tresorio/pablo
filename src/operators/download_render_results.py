@@ -5,7 +5,7 @@ from src.services.backend import download_render_results
 
 class TresorioDownloadRenderResultsOperator(bpy.types.Operator):
     bl_idname = 'tresorio.download_render_results'
-    bl_label = ''
+    bl_label = TRADUCTOR['field']['download_results'][CONFIG_LANG]
 
     index: bpy.props.IntProperty()
     filter_glob: bpy.props.StringProperty(
@@ -14,7 +14,7 @@ class TresorioDownloadRenderResultsOperator(bpy.types.Operator):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
     directory: bpy.props.StringProperty(
-        name='',
+        name='ICI HEHEHE',
         description='',
         options={'HIDDEN', 'SKIP_SAVE'}
     )

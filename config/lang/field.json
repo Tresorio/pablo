@@ -114,5 +114,13 @@
     "max_timeout": {
         "eng": "Max credits",
         "fr": "Crédits max"
+    },
+    "download_results": {
+        "eng": "Download results",
+        "fr": "Télécharger les résultats"
+    },
+    "uptime": {
+        "eng": "Uptime",
+        "fr": "Temps"
     }
 }
