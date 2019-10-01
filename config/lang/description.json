@@ -106,5 +106,9 @@
     "get_credits": {
         "eng": "Redirects to the Tresorio website page handling credits purchase",
         "fr": "Redirige vers la page de Tresorio gérant l'achat de crédits"
+    },
+    "pack_description": {
+        "eng": "{0} credits per hour|{1} Gpu and {2} Vcpu",
+        "fr": "{0} crédits par heure|{1} Gpu et {2} Vcpu"
     }
 }

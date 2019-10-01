@@ -294,11 +294,12 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
         cost = pack['cost']
         gpu = pack['gpu']
         vcpu = pack['vcpu']
-        ram = pack['ram'] / 1024  # Mib to Gio
+        # ram = pack['ram'] / 1024  # Mib to Gio
 
         new_pack.name = pack['name']
         new_pack.cost = pack['cost']
-        new_pack.description = f'{cost} credits per hour|{gpu} gpu and {vcpu} vcpu|{ram} Gio of ram'
+        new_pack.description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
+            cost, gpu, vcpu)
         if i == 0:
             new_pack.is_selected = True
 
