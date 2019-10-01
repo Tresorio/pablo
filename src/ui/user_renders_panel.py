@@ -12,7 +12,7 @@ class TresorioRendersList(bpy.types.UIList):
         else:
             layout.label(text='', icon='KEYTYPE_BREAKDOWN_VEC')
 
-        layout = layout.split(factor=0.5)
+        layout = layout.split(factor=0.6)
         icon = 'RENDER_ANIMATION' if render.type == 'ANIMATION' else 'RESTRICT_RENDER_OFF'
         layout.label(text=render.name, icon=icon)
         row = layout.row(align=True)
