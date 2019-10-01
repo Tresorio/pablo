@@ -98,6 +98,7 @@ to_register_classes = (
                        TresorioSelectedRenderPanel,
                       )
 
+from src.services.async_loop import erase_async_loop
 
 def unregister():
     for cls in reversed(to_register_classes):
@@ -105,7 +106,7 @@ def unregister():
             bpy.utils.unregister_class(cls)
         except RuntimeError as exc:
             print(exc)
-            return
+    erase_async_loop()
 
 
 def register():

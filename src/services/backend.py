@@ -3,6 +3,7 @@
 import os
 import bpy
 import asyncio
+import functools
 from http import HTTPStatus
 from src.services.nas import Nas
 from typing import Dict, Any, List
@@ -115,7 +116,8 @@ async def _download_render_results(token: str, render_id: str, render_result_pat
         async with Nas('', debug=PLATFORM_DEBUG) as nas:
             for frag in fragments:
                 nas.url = frag['ip']
-                filename = '%04.d.png' % frag['frameNumber']
+                filename = '%04.d.%s' % (
+                    frag['frameNumber'], render['outputFormat'].lower())
                 nas_filename = os.path.join('artifacts', filename)
                 frame = await nas.download(frag['id'], nas_filename, read=True)
                 user_filepath = os.path.join(
