@@ -74,5 +74,13 @@
     "refreshing": {
         "eng": "Refreshing ...",
         "fr": "Rafraichissement ..."
+    },
+    "not_enough_credits": {
+        "eng": "Not enough credits",
+        "fr": "Pas assez de crédits"
+    },
+    "downloading": {
+        "eng": "Downloading ...",
+        "fr": "Téléchargement ..."
     }
 }

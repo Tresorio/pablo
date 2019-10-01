@@ -17,7 +17,7 @@ class TresorioSelectedRenderPanel(bpy.types.Panel):
         box = layout.box()
 
         if nb_renders == 0:
-            box.label(text='It\'s all empty :( Start a render !')
+            box.label(text=TRADUCTOR['field']['its_all_empty'][CONFIG_LANG])
         else:
             render_index = context.window_manager.tresorio_renders_list_index
             render = context.window_manager.tresorio_renders_details[render_index]
@@ -47,7 +47,7 @@ class TresorioSelectedRenderPanel(bpy.types.Panel):
             right.label(text=render.output_format.capitalize())
             
 
-            left.label(text=TRADUCTOR['field']['engine'][CONFIG_LANG]+':')
+            left.label(text=TRADUCTOR['field']['uptime'][CONFIG_LANG]+':')
             right.label(text=str(render.uptime))
             
         # if render.is_finished is False:

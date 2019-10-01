@@ -66,4 +66,4 @@ class TresorioRendersPanel(bpy.types.Panel):
         row = layout.row()
         row.alignment = 'CENTER'
         if report_props.downloading_render_results is True:
-            row.label(text='Downloading results ...')
+            row.label(text=TRADUCTOR['notif']['downloading'][CONFIG_LANG])

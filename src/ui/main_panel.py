@@ -1,5 +1,5 @@
 import bpy
-from .draw_connection_panel import draw_connection_panel
+from src.ui.draw_connection_panel import draw_connection_panel
 
 
 class TresorioMainPanel(bpy.types.Panel):

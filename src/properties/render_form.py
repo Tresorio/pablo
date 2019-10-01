@@ -69,7 +69,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
     desc = TRADUCTOR['desc']['timeout'][CONFIG_LANG]
     timeout: bpy.props.IntProperty(
         min=0,
-        max=1024,
+        max=100_000,
         description=desc,
         name='',
         default=12,

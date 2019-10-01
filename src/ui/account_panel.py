@@ -24,7 +24,11 @@ class TresorioAccountPanel(bpy.types.Panel):
         align_case = case.row()
         align_case.column().prop(user_props, 'langs')
 
-        layout.label(text=f'Credits: {user_props.total_credits}')
+        split = layout.split(factor=0.5)
+        split.label(text=f'Credits: {user_props.total_credits}')
+        split.operator('tresorio.redirect_get_credits',
+                        text=TRADUCTOR['field']['get_credits'][CONFIG_LANG],
+                        icon='MOD_FLUIDSIM')
         layout.operator('tresorio.logout',
                         text=TRADUCTOR['field']['logout'][CONFIG_LANG],
                         icon='LOCKED')

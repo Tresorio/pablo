@@ -14,7 +14,7 @@ class TresorioDownloadRenderResultsOperator(bpy.types.Operator):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
     directory: bpy.props.StringProperty(
-        name='ICI HEHEHE',
+        name='',
         description='',
         options={'HIDDEN', 'SKIP_SAVE'}
     )

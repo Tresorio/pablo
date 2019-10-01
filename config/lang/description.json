@@ -84,8 +84,8 @@
         "fr": "Détails des rendus"
     },
     "download_render_results": {
-        "eng": "Download the results of the render",
-        "fr": "Télécharge les résultats du rendu"
+        "eng": "Open a file selector to download the results of the render",
+        "fr": "Ouvre un explorateur de fichiers pour télécharger les résultats du rendu"
     },
     "delete_render": {
         "eng": "Permantly delete the render and its results",
@@ -102,5 +102,9 @@
     "refresh_renders": {
         "eng": "Refresh the status of the renders",
         "fr": "Rafraichis le statut des rendus"
+    },
+    "get_credits": {
+        "eng": "Redirects to the Tresorio website page handling credits purchase",
+        "fr": "Redirige vers la page de Tresorio gérant l'achat de crédits"
     }
 }

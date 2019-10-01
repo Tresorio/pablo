@@ -215,6 +215,9 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
             _upload_blend_file_callback(res)
         except (ClientResponseError, Exception) as err:
             BACKEND_LOGGER.error(err)
+            if type(err) is ClientResponseError and err.status == 403:
+                set_connection_error(
+                    err, TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG])
             if logout_if_unauthorized(err) is False:
                 _upload_blend_file_error(err)
             if type(err) is not ClientResponseError:

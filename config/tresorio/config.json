@@ -7,6 +7,7 @@
         "register": "/register",
         "signin": "/auth/signin",
         "user_info": "/user/informations",
+        "get_credits": "/profile/credits/get",
         "renderpacks": "/user/products/render/renderpacks",
         "create_render": "/user/products/render",
         "launch_render": "/user/products/render/{0}",

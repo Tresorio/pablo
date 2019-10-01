@@ -122,5 +122,13 @@
     "uptime": {
         "eng": "Uptime",
         "fr": "Temps"
+    },
+    "get_credits": {
+        "eng": "Get credits",
+        "fr": "Créditer"
+    },
+    "its_all_empty": {
+        "eng": "It's all empty :( Start a render !",
+        "fr": "C'est vide :( Lancez un render !"
     }
 }
