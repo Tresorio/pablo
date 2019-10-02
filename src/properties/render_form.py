@@ -31,7 +31,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         name='',
         items=(
             ('CYCLES', 'Cycles', ''),
-            ('EEVEE', 'Eevee', ''),
+            #('EEVEE', 'Eevee', ''), # TODO fix hardware specific problem (X11, OpenGL) ...
         ),
         default='CYCLES'
     )

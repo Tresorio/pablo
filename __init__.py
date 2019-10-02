@@ -17,7 +17,9 @@ from types import ModuleType
 
 user_path = bpy.utils.resource_path('USER')
 addon_path = os.path.join(user_path, 'scripts', 'addons', 'tresorio')
+modules_path = os.path.join(user_path, 'scripts', 'addons', 'tresorio', 'bundle_modules')
 sys.path.append(addon_path)
+sys.path.append(modules_path)
 
 def reload_all(module: ModuleType, layers: int):
     if layers == 0: return
