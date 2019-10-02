@@ -3,27 +3,33 @@ bl_info = {
     'version': (0, 0, 1),
     'blender': (2, 80, 0),
     'category': 'Render',
-    'file': '/$HOME/.config/blender/2.80/scripts/addons/tresorio_rendering',
+    'file': '/$HOME/.config/blender/2.80/scripts/addons/tresorio',
     'location': 'Properties: Render > Tresorio Rendering',
     'description': 'Cloud distributed rendering for Blender, by Tresorio',
     'wiki_url': 'http://192.168.15.20:3000',
 }
 
 import os
+import bpy
 
 try:
     import aiohttp
     del aiohttp
 except ModuleNotFoundError:
-    os.system('pip install --user aiohttp==3.6.1')
+    from os.path import join
+    path = join(bpy.utils.resource_path('LOCAL'), 'python', 'bin')
+    python = join(path, 'python3.7m')
+    os.system(python + ' ' + '-m pip install aiohttp==3.6.1')
+
+# pip = join(path, 'pip3.7')
+# os.system(pip + ' ' + 'install --user ')
 
 import sys
-import bpy
 from importlib import reload
 from types import ModuleType
 
 user_path = bpy.utils.resource_path('USER')
-addon_path = os.path.join(user_path, 'scripts', 'addons', 'pablo')
+addon_path = os.path.join(user_path, 'scripts', 'addons', 'tresorio')
 sys.path.append(addon_path)
 
 def reload_all(module: ModuleType, layers: int):
