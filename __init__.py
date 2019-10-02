@@ -11,19 +11,6 @@ bl_info = {
 
 import os
 import bpy
-
-try:
-    import aiohttp
-    del aiohttp
-except ModuleNotFoundError:
-    from os.path import join
-    path = join(bpy.utils.resource_path('LOCAL'), 'python', 'bin')
-    python = join(path, 'python3.7m')
-    os.system(python + ' ' + '-m pip install aiohttp==3.6.1')
-
-# pip = join(path, 'pip3.7')
-# os.system(pip + ' ' + 'install --user ')
-
 import sys
 from importlib import reload
 from types import ModuleType

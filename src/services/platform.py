@@ -2,10 +2,10 @@ import bpy
 import json
 import asyncio
 import logging
-import aiohttp
 from typing import Dict, Any
 from typing import Callable, Any
 from urllib.parse import urljoin
+from bundle_modules import aiohttp
 from src.config.api import API_CONFIG
 import src.services.async_loop as async_loop
 from src.services.loggers import PLATFORM_LOGGER

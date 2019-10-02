@@ -1,6 +1,6 @@
 """This module provides the sdk for Tresorio's Nas."""
 
-import aiohttp
+from bundle_modules import aiohttp
 from urllib.parse import urljoin
 from typing import Callable, Any
 from src.services.loggers import NAS_LOGGER
