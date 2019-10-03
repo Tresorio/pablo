@@ -7,9 +7,9 @@ class TresorioRendersList(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, render, icon, active_data, active_propname, index):
         layout = layout.split(factor=0.05)
-        if render.is_finished is True:
+        if render.status == 'FINISHED':
             layout.label(text='', icon='KEYTYPE_JITTER_VEC')
-        else:
+        elif render.status == 'RUNNING':
             layout.label(text='', icon='KEYTYPE_BREAKDOWN_VEC')
 
         layout = layout.split(factor=0.6)
@@ -17,16 +17,15 @@ class TresorioRendersList(bpy.types.UIList):
         layout.label(text=render.name, icon=icon)
         row = layout.row(align=True)
         row.alignment = 'RIGHT'
-        if render.is_finished is False:
+        if render.status == 'RUNNING':
             row.prop(render, 'progression')
             row.operator('tresorio.stop_render',
                          text='',
                          icon='CANCEL').index = index
-        else:
-            col = row.column()
+        elif render.status == 'FINISHED':
             if context.window_manager.tresorio_report_props.downloading_render_results is True:
-                col.enabled = False
-            col.operator('tresorio.download_render_results',
+                row.enabled = False
+            row.operator('tresorio.download_render_results',
                          text='',
                          icon='SORT_ASC').index = index
         row.operator('tresorio.delete_render',

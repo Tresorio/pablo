@@ -72,7 +72,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
     )
 
     #desc = TRADUCTOR['desc']['credits'][CONFIG_LANG]
-    total_credits: bpy.props.IntProperty(
+    total_credits: bpy.props.FloatProperty(
         name='',
         #   description=desc
         options={'HIDDEN', 'SKIP_SAVE'},

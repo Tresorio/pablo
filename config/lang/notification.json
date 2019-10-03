@@ -82,5 +82,17 @@
     "downloading": {
         "eng": "Downloading ...",
         "fr": "Téléchargement ..."
+    },
+    "err_stop_render": {
+        "eng": "Error while stopping render",
+        "fr": "Erreur pendant le stop du rendu"
+    },
+    "err_launch_render": {
+        "eng": "Error while creating the new render",
+        "fr": "Erreur pendant la création du nouveau rendu"
+    },
+    "err_delete_render": {
+        "eng": "Error while deleting render",
+        "fr": "Erreur pendant la suppression du rendu"
     }
 }

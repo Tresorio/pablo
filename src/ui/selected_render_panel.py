@@ -49,5 +49,3 @@ class TresorioSelectedRenderPanel(bpy.types.Panel):
 
             left.label(text=TRADUCTOR['field']['uptime'][CONFIG_LANG]+':')
             right.label(text=str(render.uptime))
-            
-        # if render.is_finished is False:

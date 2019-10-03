@@ -56,10 +56,12 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                 for line in desc:
                     box.label(text=line)
 
-        row = layout.row()
+        row = layout.split(factor=0.3)
         row.label(text=TRADUCTOR['field']['max_cost'][CONFIG_LANG]+':')
-        row.label(text=f'{render_form.max_cost:2.2f} ' +
-                  TRADUCTOR['field']['credits'][CONFIG_LANG])
+        max_cost = render_form.max_cost - 0.005 if render_form.max_cost >= 0.005 else 0.0
+        row.label(text=f'{max_cost:2.2f} ' +
+                  TRADUCTOR['field']['credits'][CONFIG_LANG] +
+                  f' ({render_form.max_timeout} h)')
 
         # LAUNCH
         box = layout.box()

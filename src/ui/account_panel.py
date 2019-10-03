@@ -25,7 +25,8 @@ class TresorioAccountPanel(bpy.types.Panel):
         align_case.column().prop(user_props, 'langs')
 
         split = layout.split(factor=0.5)
-        split.label(text=f'Credits: {user_props.total_credits}')
+        rounded_credits = user_props.total_credits - 0.005 if user_props.total_credits >= 0.005 else 0.0
+        split.label(text=f'Credits: {rounded_credits:.2f}')
         split.operator('tresorio.redirect_get_credits',
                         text=TRADUCTOR['field']['get_credits'][CONFIG_LANG],
                         icon='MOD_FLUIDSIM')

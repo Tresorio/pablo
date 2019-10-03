@@ -1,4 +1,5 @@
 import bpy
+import math
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
@@ -7,8 +8,10 @@ def update_max_cost(prop, ctx):
     render_form = ctx.window_manager.tresorio_render_form
     user_credits = ctx.window_manager.tresorio_user_props.total_credits
     if render_form.timeout == 0:
-        render_form.max_cost = render_form.price_per_hour * user_credits
+        render_form.max_timeout = math.floor(user_credits / render_form.price_per_hour)
+        render_form.max_cost =  render_form.max_timeout * render_form.price_per_hour
     else:
+        render_form.max_timeout = render_form.timeout
         render_form.max_cost = render_form.price_per_hour * render_form.timeout
 
 
@@ -89,6 +92,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
     )
 
     max_cost: bpy.props.FloatProperty()
+    max_timeout: bpy.props.IntProperty()
     current_pack_index: bpy.props.IntProperty()
     price_per_hour: bpy.props.FloatProperty()
 

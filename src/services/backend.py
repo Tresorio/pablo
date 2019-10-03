@@ -15,8 +15,8 @@ from src.utils.percent_reader import PercentReader
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.services.async_loop import ensure_async_loop
 from src.config.debug import NAS_DEBUG, PLATFORM_DEBUG
-from aiohttp import ClientResponseError, ClientResponse
 from src.properties.renders import update_renders_details_prop
+from bundle_modules.aiohttp import ClientResponseError, ClientResponse
 
 
 def logout_if_unauthorized(err: Exception):
@@ -229,13 +229,15 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
     try:
         async with Platform(debug=PLATFORM_DEBUG) as plt:
             res = await plt.req_launch_render(token, render_info['id'], launch_render, jsonify=True)
-            _new_render_callback(res)
+            print('HERE', res, '\nOVER')
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
             set_connection_error(
-                err, 'Error while creating the new render (TODO Traduction)')
+                err, TRADUCTOR['notif']['err_launch_render'][CONFIG_LANG])
         return
+
+    await _update_list_renderings(token)
 
 
 async def _stop_render(token: str, render_id: str):
@@ -247,8 +249,10 @@ async def _stop_render(token: str, render_id: str):
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
             set_connection_error(
-                err, 'Error while stopping render (TODO Traduction)')
+                err, TRADUCTOR['notif']['err_stop_render'][CONFIG_LANG])
         return
+
+    await _update_list_renderings(token)
 
 
 async def _delete_render(token: str, render_id: str):
@@ -260,8 +264,10 @@ async def _delete_render(token: str, render_id: str):
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
             set_connection_error(
-                err, 'Error while deleting render (TODO Traduction)')
+                err, TRADUCTOR['notif']['err_delete_render'][CONFIG_LANG])
         return
+
+    await _update_list_renderings(token)
 
 
 async def _upload_blend_file(blendfile: str, render_info: Dict[str, Any]):
@@ -277,10 +283,6 @@ def _download_render_results_callback(success: bool):
     bpy.data.window_managers['WinMan'].tresorio_report_props.success_render_download = success
 
 
-def _new_render_callback(res: Dict[str, Any]):
-    update_renders_details_prop(res)
-
-
 def _list_renderings_details_callback(res: List[Dict[str, Any]]):
     for render in res:
         update_renders_details_prop(render)
@@ -294,7 +296,6 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
         cost = pack['cost']
         gpu = pack['gpu']
         vcpu = pack['vcpu']
-        # ram = pack['ram'] / 1024  # Mib to Gio
 
         new_pack.name = pack['name']
         new_pack.cost = pack['cost']
@@ -305,6 +306,7 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
 
 
 def _get_user_info_callback(res: ClientResponse) -> None:
+    print(res['credits'])
     bpy.data.window_managers['WinMan'].tresorio_user_props.total_credits = res['credits']
 
 
