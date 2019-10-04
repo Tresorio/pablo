@@ -68,12 +68,6 @@ class TresorioReportProps(bpy.types.PropertyGroup):
         update=lambda a, b: None,
     )
 
-    are_renders_refreshing: bpy.props.BoolProperty(
-        name='',
-        description='',
-        options={'HIDDEN', 'SKIP_SAVE'},
-        update=lambda a, b: None,
-    )
 
     downloading_render_results: bpy.props.BoolProperty(
         name='',
@@ -88,6 +82,7 @@ class TresorioReportProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
         update=lambda a, b: None,
     )
+
     # TODO not enough credit on 403 on req_create_render
 
     @classmethod

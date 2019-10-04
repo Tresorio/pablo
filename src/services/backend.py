@@ -51,7 +51,6 @@ def new_render():
 
     future = _new_render(token, create_render, launch_render)
     asyncio.ensure_future(future)
-    ensure_async_loop()
 
 
 def connect_to_tresorio(email: str, password: str):
@@ -75,14 +74,12 @@ def delete_render(render_id: str):
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
     future = _delete_render(token, render_id)
     asyncio.ensure_future(future)
-    ensure_async_loop()
 
 
 def stop_render(render_id: str):
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
     future = _stop_render(token, render_id)
     asyncio.ensure_future(future)
-    ensure_async_loop()
 
 
 def download_render_results(render_id: str, render_result_path: str):
@@ -90,7 +87,6 @@ def download_render_results(render_id: str, render_result_path: str):
     bpy.data.window_managers['WinMan'].tresorio_report_props.downloading_render_results = True
     future = _download_render_results(token, render_id, render_result_path)
     asyncio.ensure_future(future)
-    ensure_async_loop()
 
 
 def update_list_renderings():
@@ -98,7 +94,6 @@ def update_list_renderings():
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
     future = _update_list_renderings(token)
     asyncio.ensure_future(future)
-    ensure_async_loop()
 
 
 def set_connection_error(err: Exception, msg: str):
@@ -116,8 +111,7 @@ async def _download_render_results(token: str, render_id: str, render_result_pat
         async with Nas('', debug=PLATFORM_DEBUG) as nas:
             for frag in fragments:
                 nas.url = frag['ip']
-                filename = '%04.d.%s' % (
-                    frag['frameNumber'], render['outputFormat'].lower())
+                filename = '%04.d' % frag['frameNumber']
                 nas_filename = os.path.join('artifacts', filename)
                 frame = await nas.download(frag['id'], nas_filename, read=True)
                 user_filepath = os.path.join(
@@ -136,8 +130,46 @@ async def _download_render_results(token: str, render_id: str, render_result_pat
         return
 
 
+async def _update_user_info(token: str):
+    async with Platform(debug=PLATFORM_DEBUG) as plt:
+        try:
+            res_user_info = await plt.req_get_user_info(token, jsonify=True)
+            _get_user_info_callback(res_user_info)
+        except (ClientResponseError, Exception) as err:
+            BACKEND_LOGGER.error(err)
+            if logout_if_unauthorized(err) is False:
+                _get_user_info_error(err)
+            if type(err) is not ClientResponseError:
+                set_connection_error(
+                    err, TRADUCTOR['notif']['err_acc_info'][CONFIG_LANG])
+            return
+
+
+async def _update_renderpacks_info(token: str):
+    async with Platform(debug=PLATFORM_DEBUG) as plt:
+        try:
+            res_renderpacks = await plt.req_get_renderpacks(token, jsonify=True)
+            _get_renderpacks_callback(res_renderpacks)
+        except (ClientResponseError, Exception) as err:
+            BACKEND_LOGGER.error(err)
+            if logout_if_unauthorized(err) is False:
+                _get_renderpacks_error(err)
+            if type(err) is not ClientResponseError:
+                set_connection_error(
+                    err, TRADUCTOR['notif']['err_renderpacks'][CONFIG_LANG])
+            return
+
+
+async def _refresh_loop(token: str):
+    while True:
+        await _update_user_info(token)
+        await _update_list_renderings(token)
+        if bpy.data.window_managers['WinMan'].tresorio_user_props.is_logged is False:
+            break
+        await asyncio.sleep(2.5)
+
+
 async def _connect_to_tresorio(data: Dict[str, str]):
-    # Get token
     async with Platform(debug=PLATFORM_DEBUG) as plt:
         try:
             res_connect = await plt.req_connect_to_tresorio(data, jsonify=True)
@@ -150,44 +182,8 @@ async def _connect_to_tresorio(data: Dict[str, str]):
                     err, TRADUCTOR['notif']['err_connection'][CONFIG_LANG])
             return
 
-    # Get user specific information
-        try:
-            res_user_info = await plt.req_get_user_info(res_connect['token'], jsonify=True)
-            _get_user_info_callback(res_user_info)
-        except (ClientResponseError, Exception) as err:
-            BACKEND_LOGGER.error(err)
-            if logout_if_unauthorized(err) is False:
-                _get_user_info_error(err)
-            if type(err) is not ClientResponseError:
-                set_connection_error(
-                    err, TRADUCTOR['notif']['err_acc_info'][CONFIG_LANG])
-            return
-
-    # Get render packs information
-        try:
-            res_renderpacks = await plt.req_get_renderpacks(res_connect['token'], jsonify=True)
-            _get_renderpacks_callback(res_renderpacks)
-        except (ClientResponseError, Exception) as err:
-            BACKEND_LOGGER.error(err)
-            if logout_if_unauthorized(err) is False:
-                _get_renderpacks_error(err)
-            if type(err) is not ClientResponseError:
-                set_connection_error(
-                    err, TRADUCTOR['notif']['err_renderpacks'][CONFIG_LANG])
-            return
-
-    # Get user renders
-        try:
-            res_renders = await plt.req_list_renderings_details(res_connect['token'], jsonify=True)
-            _list_renderings_details_callback(res_renders)
-        except (ClientResponseError, Exception) as err:
-            BACKEND_LOGGER.error(err)
-            if logout_if_unauthorized(err) is False:
-                pass
-            if type(err) is not ClientResponseError:
-                set_connection_error(
-                    err, TRADUCTOR['notif']['err_renders'][CONFIG_LANG])
-            return
+    await _update_renderpacks_info(res_connect['token'])
+    await _refresh_loop(res_connect['token'])
 
 
 async def _update_list_renderings(token: str):
@@ -228,45 +224,39 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
     # Launch rendering
     try:
         async with Platform(debug=PLATFORM_DEBUG) as plt:
-            res = await plt.req_launch_render(token, render_info['id'], launch_render, jsonify=True)
-            print('HERE', res, '\nOVER')
+            await plt.req_launch_render(token, render_info['id'], launch_render, jsonify=True)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
             set_connection_error(
                 err, TRADUCTOR['notif']['err_launch_render'][CONFIG_LANG])
         return
-
     await _update_list_renderings(token)
 
 
 async def _stop_render(token: str, render_id: str):
     try:
         async with Platform(debug=PLATFORM_DEBUG) as plt:
-            res = await plt.req_stop_render(token, render_id, jsonify=True)
-            print(res)
+            await plt.req_stop_render(token, render_id, jsonify=True)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
             set_connection_error(
                 err, TRADUCTOR['notif']['err_stop_render'][CONFIG_LANG])
         return
-
     await _update_list_renderings(token)
 
 
 async def _delete_render(token: str, render_id: str):
     try:
         async with Platform(debug=PLATFORM_DEBUG) as plt:
-            res = await plt.req_delete_render(token, render_id, jsonify=True)
-            print(res)
+            await plt.req_delete_render(token, render_id)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
             set_connection_error(
                 err, TRADUCTOR['notif']['err_delete_render'][CONFIG_LANG])
         return
-
     await _update_list_renderings(token)
 
 
@@ -306,7 +296,6 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
 
 
 def _get_user_info_callback(res: ClientResponse) -> None:
-    print(res['credits'])
     bpy.data.window_managers['WinMan'].tresorio_user_props.total_credits = res['credits']
 
 

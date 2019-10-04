@@ -11,6 +11,10 @@ class TresorioRendersList(bpy.types.UIList):
             layout.label(text='', icon='KEYTYPE_JITTER_VEC')
         elif render.status == 'RUNNING':
             layout.label(text='', icon='KEYTYPE_BREAKDOWN_VEC')
+        elif render.status == 'STOPPING':
+            layout.label(text='', icon='CANCEL')
+        elif render.status == 'LAUNCHING':
+            layout.label(text='', icon='FILE_REFRESH')
 
         layout = layout.split(factor=0.6)
         icon = 'RENDER_ANIMATION' if render.type == 'ANIMATION' else 'RESTRICT_RENDER_OFF'
@@ -21,13 +25,17 @@ class TresorioRendersList(bpy.types.UIList):
             row.prop(render, 'progression')
             row.operator('tresorio.stop_render',
                          text='',
-                         icon='CANCEL').index = index
+                         icon='X').index = index
         elif render.status == 'FINISHED':
             if context.window_manager.tresorio_report_props.downloading_render_results is True:
                 row.enabled = False
             row.operator('tresorio.download_render_results',
                          text='',
                          icon='SORT_ASC').index = index
+        elif render.status == 'STOPPING':
+            row.label(text=TRADUCTOR['notif']['stopping'][CONFIG_LANG])
+        elif render.status == 'LAUNCHING':
+            row.label(text=TRADUCTOR['notif']['launching'][CONFIG_LANG])
         row.operator('tresorio.delete_render',
                      text='',
                      icon='TRASH').index = index
@@ -52,11 +60,6 @@ class TresorioRendersPanel(bpy.types.Panel):
 
         nb_renders = len(data.tresorio_renders_details)
         rows = 1
-        if report_props.are_renders_refreshing is True:
-            layout.label(text=TRADUCTOR['notif']['refreshing'][CONFIG_LANG])
-        else:
-            layout.operator('tresorio.refresh_renders',
-                            text='', icon='FILE_REFRESH')
         layout.template_list('OBJECT_UL_TRESORIO_RENDERS_LIST', 'The_List',
                              data, 'tresorio_renders_details',
                              data, 'tresorio_renders_list_index',

@@ -5,7 +5,6 @@ from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 def update_renders_details_prop(res: Dict[str, Any]) -> None:
     try:
-        print(res)
         render = bpy.context.window_manager.tresorio_renders_details.add()
         render.id = res['id']
         render.name = res['name']
@@ -17,6 +16,8 @@ def update_renders_details_prop(res: Dict[str, Any]) -> None:
         render.status = res['status']
         if res['uptime'] is not None:
             render.uptime = res['uptime']
+        if res['progression'] > 0:
+            render.status = 'FINISHED' # TODO REMOVE
         if res['progression'] is not None:
             render.progression = res['progression']
         # render.uptime = res['uptime'] # TODO fix None uptime (not updated in gandalf)

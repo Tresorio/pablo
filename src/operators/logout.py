@@ -1,5 +1,6 @@
 import bpy
 from src.config.langs import TRADUCTOR, CONFIG_LANG
+from src.services.async_loop import erase_async_loop
 
 
 def logout():
@@ -19,6 +20,7 @@ def logout():
         bpy.context.window_manager.tresorio_user_props.email = ''
         bpy.context.window_manager.tresorio_user_props.remember_email = False
 
+    erase_async_loop()
 
 class TresorioLogoutOperator(bpy.types.Operator):
     bl_idname = 'tresorio.logout'

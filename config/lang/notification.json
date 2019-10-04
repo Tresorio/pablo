@@ -94,5 +94,13 @@
     "err_delete_render": {
         "eng": "Error while deleting render",
         "fr": "Erreur pendant la suppression du rendu"
+    },
+    "launching": {
+        "eng": "Launching ...",
+        "fr": "Lancement ..."
+    },
+    "stopping": {
+        "eng": "Stopping ...",
+        "fr": "Arrêt ..."
     }
 }

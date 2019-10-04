@@ -59,7 +59,6 @@ from src.operators.stop_render import TresorioStopRenderOperator
 from src.operators.redirect import TresorioRedirectRegisterOperator
 from src.operators.delete_render import TresorioDeleteRenderOperator
 from src.operators.redirect import TresorioRedirectGetCreditsOperator
-from src.operators.refresh_renders import TresorioRefreshRendersOperator
 from src.operators.redirect import TresorioRedirectForgotPasswordOperator
 from src.operators.download_render_results import TresorioDownloadRenderResultsOperator
 from src.services.async_loop import AsyncLoopModalOperator
@@ -82,7 +81,6 @@ to_register_classes = (
                        TresorioDownloadRenderResultsOperator,
                        TresorioStopRenderOperator,
                        TresorioDeleteRenderOperator,
-                       TresorioRefreshRendersOperator,
                        TresorioRedirectGetCreditsOperator,
                        AsyncLoopModalOperator,
 
@@ -95,15 +93,15 @@ to_register_classes = (
                        TresorioSelectedRenderPanel,
                       )
 
-from src.services.async_loop import erase_async_loop
+from src.operators.logout import logout
 
 def unregister():
+    logout()
     for cls in reversed(to_register_classes):
         try:
             bpy.utils.unregister_class(cls)
         except RuntimeError as exc:
             print(exc)
-    erase_async_loop()
 
 
 def register():
