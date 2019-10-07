@@ -94,12 +94,11 @@ to_register_classes = (
                       )
 
 from src.operators.logout import logout
+from src.services.async_loop import erase_async_loop, setup_asyncio_executor
 import asyncio
 
 def unregister():
-    logout(erase_loop=True) # this stops the loop
-    loop = asyncio.get_event_loop()
-    loop.close()
+    logout()
     for cls in reversed(to_register_classes):
         try:
             bpy.utils.unregister_class(cls)
@@ -108,7 +107,11 @@ def unregister():
 
 
 def register():
-    asyncio.set_event_loop(asyncio.new_event_loop())
+    # Setup loop
+    asyncio.get_event_loop().close()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    setup_asyncio_executor()
     for cls in to_register_classes:
         ## Add description with language translation
         set_doc = getattr(cls, 'set_doc', None)

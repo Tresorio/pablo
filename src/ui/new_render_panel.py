@@ -45,8 +45,9 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row.label(text=TRADUCTOR['field']['render_type'][CONFIG_LANG]+':')
         row.props_enum(render_form, 'render_types')
 
-        row = box.row().split(factor=0.5)
-        row.prop(render_form, 'pack_textures', text='TODO')
+        row = box.row().split(factor=0.4)
+        row.label(text='hehe')
+        row.prop(render_form, 'pack_textures', text=TRADUCTOR['field']['pack_textures'][CONFIG_LANG])
 
         box = layout.box()
         box.row().label(text=TRADUCTOR['field']

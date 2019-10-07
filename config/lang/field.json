@@ -142,5 +142,9 @@
     "frame_plural": {
         "eng": "frames",
         "fr": "frames"
+    },
+    "pack_textures": {
+        "eng": "Load textures",
+        "fr": "Charger les textures"
     }
 }

@@ -37,7 +37,9 @@ def setup_asyncio_executor():
     import sys
 
     if sys.platform == 'win32':
-        asyncio.get_event_loop().close()
+        loop = asyncio.get_event_loop()
+        if loop.is_closed is False:
+            asyncio.get_event_loop().close()
         loop = asyncio.ProactorEventLoop()
         asyncio.set_event_loop(loop)
     else:
@@ -45,7 +47,7 @@ def setup_asyncio_executor():
 
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=10)
     loop.set_default_executor(executor)
-    loop.set_debug(True)
+    loop.set_debug(False)
 
 
 def kick_async_loop(*args) -> bool:
