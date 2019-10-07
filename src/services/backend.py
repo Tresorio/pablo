@@ -202,9 +202,11 @@ async def _update_list_renderings(token: str):
 
 async def _new_render(token: str, create_render: Dict[str, Any], launch_render: Dict[str, Any]):
     blendfile = bpy.data.filepath
+    render_form = bpy.context.window_manager.tresorio_render_form
     try:
-        bpy.ops.file.pack_all()
-        bpy.ops.wm.save_as_mainfile(filepath=blendfile)
+        if render_form.pack_textures is True:
+            bpy.ops.file.pack_all()
+            bpy.ops.wm.save_as_mainfile(filepath=blendfile)
     except RuntimeError:
         BACKEND_LOGGER.error('Cant pack textures')
     try:
@@ -226,8 +228,9 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
         return
     finally:
         try:
-            bpy.ops.file.unpack_all()
-            bpy.ops.wm.save_as_mainfile(filepath=blendfile)
+            if render_form.pack_textures is True:
+                bpy.ops.file.unpack_all()
+                bpy.ops.wm.save_as_mainfile(filepath=blendfile)
         except RuntimeError:
             BACKEND_LOGGER.error('Cant unpack textures')
 

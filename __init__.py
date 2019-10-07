@@ -12,6 +12,7 @@ bl_info = {
 import os
 import bpy
 import sys
+import src
 from importlib import reload
 from types import ModuleType
 
@@ -32,9 +33,7 @@ def reload_all(module: ModuleType, layers: int):
         reload_all(attr, layers - 1)
         reload(attr)
 
-if 'src' not in locals():
-    import src
-    reload_all(src, 2)
+reload_all(src, 2)
 
 # Properties
 from src.properties.user_props import TresorioUserProps
@@ -93,9 +92,9 @@ to_register_classes = (
                        TresorioSelectedRenderPanel,
                       )
 
-from src.operators.logout import logout
-from src.services.async_loop import erase_async_loop, setup_asyncio_executor
 import asyncio
+from src.operators.logout import logout
+from src.services.async_loop import setup_asyncio_executor
 
 def unregister():
     logout()
