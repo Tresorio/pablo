@@ -6,8 +6,7 @@
         - Add a way for the user to compose its farm ?
 
     On Gandalf:
-        - Fix the multiple fragments for one frame progress bar
-        - Do the `stop render` and `delete render` routes
+        - Fix credit debit (way more than expected atm)
         - Add a way to loadBalance using single frame separation
 
     On Paulette:

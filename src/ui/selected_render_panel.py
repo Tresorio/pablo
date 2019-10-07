@@ -45,7 +45,11 @@ class TresorioSelectedRenderPanel(bpy.types.Panel):
 
             left.label(text=TRADUCTOR['field']['format'][CONFIG_LANG]+':')
             right.label(text=render.output_format.capitalize())
-            
 
             left.label(text=TRADUCTOR['field']['uptime'][CONFIG_LANG]+':')
             right.label(text=str(render.uptime))
+
+            left.label(text=TRADUCTOR['field']['advancement'][CONFIG_LANG]+':')
+            suffix = TRADUCTOR['field']['frame_singular'][CONFIG_LANG] if render.total_frames == 1 else TRADUCTOR['field']['frame_plural'][CONFIG_LANG]
+            right.label(
+                text=f'{render.rendered_frames} / {render.total_frames} {suffix}')

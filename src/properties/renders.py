@@ -5,6 +5,7 @@ from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 def update_renders_details_prop(res: Dict[str, Any]) -> None:
     try:
+        print(res)
         render = bpy.context.window_manager.tresorio_renders_details.add()
         render.id = res['id']
         render.name = res['name']
@@ -14,35 +15,36 @@ def update_renders_details_prop(res: Dict[str, Any]) -> None:
         render.farm = res['farm']
         render.output_format = res['outputFormat']
         render.status = res['status']
+        render.total_frames = res['totalFragments']
+        render.rendered_frames = res['finishedFragments']
         if res['uptime'] is not None:
             render.uptime = res['uptime']
-        if res['progression'] > 0:
-            render.status = 'FINISHED' # TODO REMOVE
         if res['progression'] is not None:
             render.progression = res['progression']
-        # render.uptime = res['uptime'] # TODO fix None uptime (not updated in gandalf)
+        render.uptime = res['uptime'] # TODO fix None uptime (not updated in gandalf)
         # TODO get launch date (how to convert it depending of pc time zone ?)
-        # TODO show the number of rendered frames and get the total number of frames (x / 250)
     except Exception as err:
         print('Wrong result in render details callback:', err)
 
 
 class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
     # Internal
-    id: bpy.props.StringProperty(lambda a, b: None)
+    id: bpy.props.StringProperty(update=lambda a, b: None)
 
     # Render specifics
-    name: bpy.props.StringProperty(lambda a, b: None)
-    engine: bpy.props.StringProperty(lambda a, b: None)
-    farm: bpy.props.StringProperty(lambda a, b: None)
-    timeout: bpy.props.IntProperty(lambda a, b: None)
-    type: bpy.props.StringProperty(lambda a, b: None)
-    output_format: bpy.props.StringProperty(lambda a, b: None)
-    launched: bpy.props.BoolProperty(lambda a, b: None)
+    name: bpy.props.StringProperty(update=lambda a, b: None)
+    engine: bpy.props.StringProperty(update=lambda a, b: None)
+    farm: bpy.props.StringProperty(update=lambda a, b: None)
+    timeout: bpy.props.IntProperty(update=lambda a, b: None)
+    type: bpy.props.StringProperty(update=lambda a, b: None)
+    output_format: bpy.props.StringProperty(update=lambda a, b: None)
+    launched: bpy.props.BoolProperty(update=lambda a, b: None)
 
     # Advancement
-    uptime: bpy.props.IntProperty(lambda a, b: None)
-    status: bpy.props.StringProperty(lambda a, b: None)
+    total_frames: bpy.props.IntProperty(update=lambda a, b: None)
+    rendered_frames: bpy.props.IntProperty(update=lambda a, b: None)
+    uptime: bpy.props.IntProperty(update=lambda a, b: None)
+    status: bpy.props.StringProperty(update=lambda a, b: None)
 
     desc = TRADUCTOR['desc']['render_advancement_percent'][CONFIG_LANG]
     progression: bpy.props.FloatProperty(

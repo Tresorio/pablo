@@ -130,5 +130,17 @@
     "its_all_empty": {
         "eng": "It's all empty :( Start a render !",
         "fr": "C'est vide :( Lancez un render !"
+    },
+    "advancement": {
+        "eng": "Advancement",
+        "fr": "Anvancée"
+    },
+    "frame_singular": {
+        "eng": "frame",
+        "fr": "frame"
+    },
+    "frame_plural": {
+        "eng": "frames",
+        "fr": "frames"
     }
 }

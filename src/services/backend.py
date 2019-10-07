@@ -111,7 +111,7 @@ async def _download_render_results(token: str, render_id: str, render_result_pat
         async with Nas('', debug=PLATFORM_DEBUG) as nas:
             for frag in fragments:
                 nas.url = frag['ip']
-                filename = '%04.d' % frag['frameNumber']
+                filename = '%04.d.png' % frag['frameNumber']
                 nas_filename = os.path.join('artifacts', filename)
                 frame = await nas.download(frag['id'], nas_filename, read=True)
                 user_filepath = os.path.join(
@@ -202,17 +202,21 @@ async def _update_list_renderings(token: str):
 
 async def _new_render(token: str, create_render: Dict[str, Any], launch_render: Dict[str, Any]):
     blendfile = bpy.data.filepath
-    # Create render and upload blend file
-    with Lockfile(blendfile, 'a'):
-        try:
+    try:
+        bpy.ops.file.pack_all()
+        bpy.ops.wm.save_as_mainfile(filepath=blendfile)
+    except RuntimeError:
+        BACKEND_LOGGER.error('Cant pack textures')
+    try:
+        with Lockfile(blendfile, 'a'):
             async with Platform(debug=PLATFORM_DEBUG) as plt:
                 render_info = await plt.req_create_render(token, create_render, jsonify=True)
             res = await _upload_blend_file(blendfile, render_info)
             _upload_blend_file_callback(res)
-        except (ClientResponseError, Exception) as err:
+    except (ClientResponseError, Exception) as err:
             BACKEND_LOGGER.error(err)
             if type(err) is ClientResponseError and err.status == 403:
-                set_connection_error(
+                return set_connection_error(
                     err, TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG])
             if logout_if_unauthorized(err) is False:
                 _upload_blend_file_error(err)
@@ -220,6 +224,12 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
                 set_connection_error(
                     err, TRADUCTOR['notif']['err_upl_blendfile'][CONFIG_LANG])
             return
+    finally:
+        try:
+            bpy.ops.file.unpack_all()
+            bpy.ops.wm.save_as_mainfile(filepath=blendfile)
+        except RuntimeError:
+            BACKEND_LOGGER.error('Cant unpack textures')
 
     # Launch rendering
     try:
