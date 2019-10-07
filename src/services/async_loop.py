@@ -58,12 +58,10 @@ def kick_async_loop(*args) -> bool:
     stop_after_this_kick = False
 
     if loop.is_closed():
-        log.warning('loop closed, stopping immediately.')
         return True
 
     all_tasks = asyncio.Task.all_tasks()
     if not len(all_tasks):
-        log.debug('no more scheduled tasks, stopping after this kick.')
         stop_after_this_kick = True
 
     elif all(task.done() for task in all_tasks):
@@ -91,14 +89,11 @@ def kick_async_loop(*args) -> bool:
 
 
 def ensure_async_loop():
-    log.debug('Starting asyncio loop')
-    result = bpy.ops.asyncio.loop()
-    log.debug('Result of starting modal operator is %r', result)
+    bpy.ops.asyncio.loop()
 
 
 def erase_async_loop():
     global _loop_kicking_operator_running
-    log.debug('Erasing async loop')
     loop = asyncio.get_event_loop()
     loop.stop()
 
@@ -106,9 +101,7 @@ def erase_async_loop():
 class AsyncLoopModalOperator(bpy.types.Operator):
     bl_idname = 'asyncio.loop'
     bl_label = 'Runs the asyncio main loop'
-
     timer = None
-    log = logging.getLogger(__name__ + '.AsyncLoopModalOperator')
 
     def __del__(self):
         global _loop_kicking_operator_running
@@ -121,7 +114,6 @@ class AsyncLoopModalOperator(bpy.types.Operator):
         global _loop_kicking_operator_running
 
         if _loop_kicking_operator_running:
-            self.log.debug('Another loop-kicking operator is already running.')
             return {'PASS_THROUGH'}
 
         context.window_manager.modal_handler_add(self)
@@ -135,22 +127,16 @@ class AsyncLoopModalOperator(bpy.types.Operator):
     def modal(self, context, event):
         global _loop_kicking_operator_running
 
-        # If _loop_kicking_operator_running is set to False, someone called
-        # erase_async_loop(). This is a signal that we really should stop
-        # running.
         if not _loop_kicking_operator_running:
             return {'FINISHED'}
 
         if event.type != 'TIMER':
             return {'PASS_THROUGH'}
 
-        # self.log.debug('KICKING LOOP')
         stop_after_this_kick = kick_async_loop()
         if stop_after_this_kick:
             context.window_manager.event_timer_remove(self.timer)
             _loop_kicking_operator_running = False
-
-            self.log.debug('Stopped asyncio loop kicking')
             return {'FINISHED'}
 
         return {'RUNNING_MODAL'}

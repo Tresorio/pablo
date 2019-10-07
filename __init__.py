@@ -32,7 +32,7 @@ def reload_all(module: ModuleType, layers: int):
         reload_all(attr, layers - 1)
         reload(attr)
 
-if 'bpy' in locals():
+if 'src' not in locals():
     import src
     reload_all(src, 2)
 
@@ -94,9 +94,12 @@ to_register_classes = (
                       )
 
 from src.operators.logout import logout
+import asyncio
 
 def unregister():
-    logout()
+    logout(erase_loop=True) # this stops the loop
+    loop = asyncio.get_event_loop()
+    loop.close()
     for cls in reversed(to_register_classes):
         try:
             bpy.utils.unregister_class(cls)
@@ -105,6 +108,7 @@ def unregister():
 
 
 def register():
+    asyncio.set_event_loop(asyncio.new_event_loop())
     for cls in to_register_classes:
         ## Add description with language translation
         set_doc = getattr(cls, 'set_doc', None)

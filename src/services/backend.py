@@ -66,7 +66,7 @@ def connect_to_tresorio(email: str, password: str):
     }
 
     future = _connect_to_tresorio(credentials)
-    asyncio.ensure_future(future)
+    asyncio.ensure_future(future)        
     ensure_async_loop()
 
 
@@ -214,16 +214,16 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
             res = await _upload_blend_file(blendfile, render_info)
             _upload_blend_file_callback(res)
     except (ClientResponseError, Exception) as err:
-            BACKEND_LOGGER.error(err)
-            if type(err) is ClientResponseError and err.status == 403:
-                return set_connection_error(
-                    err, TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG])
-            if logout_if_unauthorized(err) is False:
-                _upload_blend_file_error(err)
-            if type(err) is not ClientResponseError:
-                set_connection_error(
-                    err, TRADUCTOR['notif']['err_upl_blendfile'][CONFIG_LANG])
-            return
+        BACKEND_LOGGER.error(err)
+        if type(err) is ClientResponseError and err.status == 403:
+            return set_connection_error(
+                err, TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG])
+        if logout_if_unauthorized(err) is False:
+            _upload_blend_file_error(err)
+        if type(err) is not ClientResponseError:
+            set_connection_error(
+                err, TRADUCTOR['notif']['err_upl_blendfile'][CONFIG_LANG])
+        return
     finally:
         try:
             bpy.ops.file.unpack_all()
