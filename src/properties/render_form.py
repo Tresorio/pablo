@@ -8,8 +8,9 @@ def update_max_cost(prop, ctx):
     render_form = ctx.window_manager.tresorio_render_form
     user_credits = ctx.window_manager.tresorio_user_props.total_credits
     if render_form.timeout == 0:
-        render_form.max_timeout = math.floor(user_credits / render_form.price_per_hour)
-        render_form.max_cost =  render_form.max_timeout * render_form.price_per_hour
+        render_form.max_timeout = math.floor(
+            user_credits / render_form.price_per_hour)
+        render_form.max_cost = render_form.max_timeout * render_form.price_per_hour
     else:
         render_form.max_timeout = render_form.timeout
         render_form.max_cost = render_form.price_per_hour * render_form.timeout
@@ -34,7 +35,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         name='',
         items=(
             ('CYCLES', 'Cycles', ''),
-            #('EEVEE', 'Eevee', ''), # TODO fix hardware specific problem (X11, OpenGL) ...
+            # ('EEVEE', 'Eevee', ''), # TODO fix hardware specific problem (X11, OpenGL) ...
         ),
         default='CYCLES'
     )
@@ -67,6 +68,12 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
             ('ANIMATION', 'Animation', desc_animation, 'RENDER_ANIMATION', 1),
         ),
         default='FRAME'
+    )
+
+    desc = TRADUCTOR['desc']['pack_textures'][CONFIG_LANG]
+    pack_textures: bpy.props.BoolProperty(
+        description=desc,
+        name='',
     )
 
     desc = TRADUCTOR['desc']['timeout'][CONFIG_LANG]

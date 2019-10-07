@@ -128,7 +128,7 @@ class AsyncLoopModalOperator(bpy.types.Operator):
         _loop_kicking_operator_running = True
 
         wm = context.window_manager
-        self.timer = wm.event_timer_add(0.00000001, window=context.window)
+        self.timer = wm.event_timer_add(0.000001, window=context.window)
 
         return {'RUNNING_MODAL'}
 
