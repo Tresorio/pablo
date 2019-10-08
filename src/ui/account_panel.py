@@ -1,4 +1,5 @@
 import bpy
+from src.ui.icons import TresorioIconsLoader as til
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
@@ -29,10 +30,10 @@ class TresorioAccountPanel(bpy.types.Panel):
         split.label(text=f'Credits: {rounded_credits:.2f}')
         split.operator('tresorio.redirect_get_credits',
                         text=TRADUCTOR['field']['get_credits'][CONFIG_LANG],
-                        icon='MOD_FLUIDSIM')
+                        icon_value=til.icon('TRESORIO_GET_CREDITS'))
         layout.operator('tresorio.logout',
                         text=TRADUCTOR['field']['logout'][CONFIG_LANG],
-                        icon='LOCKED')
+                        icon_value=til.icon('TRESORIO_LOGOUT'))
         layout.operator('tresorio.redirect_home',
                         text='Tresorio',
-                        icon='INFO')
+                        icon_value=til.icon('TRESORIO_TRESORIO'))

@@ -72,6 +72,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
 
     desc = TRADUCTOR['desc']['pack_textures'][CONFIG_LANG]
     pack_textures: bpy.props.BoolProperty(
+        default=True,
         description=desc,
         name='',
     )

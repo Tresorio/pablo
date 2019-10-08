@@ -142,3 +142,11 @@ class AsyncLoopModalOperator(bpy.types.Operator):
             return {'FINISHED'}
 
         return {'RUNNING_MODAL'}
+
+
+def shutdown_loop():
+    tasks = asyncio.Task.all_tasks()
+    for task in tasks:
+        task.cancel()
+    kick_async_loop() # kick the loop so the cancel takes effect
+    erase_async_loop()

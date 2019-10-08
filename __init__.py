@@ -12,15 +12,16 @@ bl_info = {
 import os
 import bpy
 import sys
-import src
-from importlib import reload
-from types import ModuleType
 
 user_path = bpy.utils.resource_path('USER')
 addon_path = os.path.join(user_path, 'scripts', 'addons', 'tresorio')
 modules_path = os.path.join(user_path, 'scripts', 'addons', 'tresorio', 'bundle_modules')
 sys.path.append(addon_path)
 sys.path.append(modules_path)
+
+import src
+from importlib import reload
+from types import ModuleType
 
 def reload_all(module: ModuleType, layers: int):
     if layers == 0: return
@@ -62,6 +63,9 @@ from src.operators.redirect import TresorioRedirectForgotPasswordOperator
 from src.operators.download_render_results import TresorioDownloadRenderResultsOperator
 from src.services.async_loop import AsyncLoopModalOperator
 
+# Icons
+from src.ui.icons import TresorioIconsLoader
+
 to_register_classes = (
                        # Properties 
                        TresorioUserProps,
@@ -98,6 +102,8 @@ from src.services.async_loop import setup_asyncio_executor
 
 def unregister():
     logout()
+
+    TresorioIconsLoader.unregister()
     for cls in reversed(to_register_classes):
         try:
             bpy.utils.unregister_class(cls)
@@ -111,6 +117,8 @@ def register():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     setup_asyncio_executor()
+
+    TresorioIconsLoader.register()
     for cls in to_register_classes:
         ## Add description with language translation
         set_doc = getattr(cls, 'set_doc', None)

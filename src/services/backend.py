@@ -161,11 +161,9 @@ async def _update_renderpacks_info(token: str):
 
 
 async def _refresh_loop(token: str):
-    while True:
+    while bpy.data.window_managers['WinMan'].tresorio_user_props.is_logged is True:
         await _update_user_info(token)
         await _update_list_renderings(token)
-        if bpy.data.window_managers['WinMan'].tresorio_user_props.is_logged is False:
-            break
         await asyncio.sleep(2.5)
 
 

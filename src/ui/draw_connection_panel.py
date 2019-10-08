@@ -1,4 +1,5 @@
 import bpy
+from src.ui.icons import TresorioIconsLoader as til
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
@@ -34,7 +35,7 @@ def draw_connection_panel(layout: bpy.types.UILayout, context: bpy.types.Context
                       text=TRADUCTOR['field']['remember_email'][CONFIG_LANG])
     col = row.column()
     if report_props.login_in is False:
-        col.operator('tresorio.login', icon='UNLOCKED',
+        col.operator('tresorio.login', icon_value=til.icon('TRESORIO_LOGIN'),
                      text=TRADUCTOR['field']['login'][CONFIG_LANG])
     else:
         col.label(text=TRADUCTOR['notif']['login_in'][CONFIG_LANG])
@@ -43,7 +44,7 @@ def draw_connection_panel(layout: bpy.types.UILayout, context: bpy.types.Context
 
     layout.operator('tresorio.redirect_forgot_password',
                     text=TRADUCTOR['field']['forgot_password'][CONFIG_LANG],
-                    icon='QUESTION')
+                    icon_value=til.icon('TRESORIO_KEY'))
     layout.operator('tresorio.redirect_register',
                     text=TRADUCTOR['field']['create_account'][CONFIG_LANG],
-                    icon='PLUS')
+                    icon_value=til.icon('TRESORIO_PROFILE'))

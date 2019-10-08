@@ -6,6 +6,7 @@
         - Automatic refresh of UI (user information, renderpacks and user's renders)
         - Include more output formats and engines (Renderman ?)
         - Include Eevee (see if it is interesting)
+        - use threading for upload and download tasks (as they're heavier, it's not performant to use asyncio for this)
         - Add a way for the user to select a pack and the number of farmers (farmers * pack)
 
     On Gandalf:
@@ -17,3 +18,7 @@
         - Vcpus are not allocated correctly, atm we allocate full cpus
         - Add a way to upload renders as they appear
         - Add a way to merge multiple frame fragments into one
+
+**Legals:**
+
+    - Credit the authors of the icons (actually get our own icons would be better)
