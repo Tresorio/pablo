@@ -25,10 +25,26 @@ def set_render_pack(pack, context):
 
 class TresorioRenderPacksProps(bpy.types.PropertyGroup):
 
-    is_selected: bpy.props.BoolProperty(update=set_render_pack)
-    name: bpy.props.StringProperty(update=lambda a, b: None)
-    cost: bpy.props.FloatProperty(min=0, update=lambda a, b: None)
-    description: bpy.props.StringProperty(update=lambda a, b: None)
+    is_selected: bpy.props.BoolProperty(
+        update=set_render_pack,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    name: bpy.props.StringProperty(
+        update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    cost: bpy.props.FloatProperty(
+        min=0,
+        update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    description: bpy.props.StringProperty(
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
+    )
 
     @classmethod
     def register(cls):

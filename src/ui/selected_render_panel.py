@@ -1,4 +1,5 @@
 import bpy
+from src.ui.icons import TresorioIconsLoader as til
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
@@ -17,7 +18,8 @@ class TresorioSelectedRenderPanel(bpy.types.Panel):
         box = layout.box()
 
         if nb_renders == 0:
-            box.label(text=TRADUCTOR['field']['its_all_empty'][CONFIG_LANG])
+            box.label(text=TRADUCTOR['field']['its_all_empty'][CONFIG_LANG],
+                      icon_value=til.icon('TRESORIO_SADFACE'))
         else:
             render_index = context.window_manager.tresorio_renders_list_index
             render = context.window_manager.tresorio_renders_details[render_index]

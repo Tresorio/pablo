@@ -1,4 +1,5 @@
 import bpy
+from src.ui.icons import TresorioIconsLoader as til
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
@@ -12,9 +13,9 @@ class TresorioRendersList(bpy.types.UIList):
         elif render.status == 'RUNNING':
             layout.label(text='', icon='KEYTYPE_BREAKDOWN_VEC')
         elif render.status == 'STOPPING':
-            layout.label(text='', icon='CANCEL')
+            layout.label(text='', icon=til.icon('TRESORIO_STOPPING'))
         elif render.status == 'LAUNCHING':
-            layout.label(text='', icon='FILE_REFRESH')
+            layout.label(text='', icon_value=til.icon('TRESORIO_LAUNCHING'))
 
         layout = layout.split(factor=0.6)
         icon = 'RENDER_ANIMATION' if render.type == 'ANIMATION' else 'RESTRICT_RENDER_OFF'
@@ -31,7 +32,7 @@ class TresorioRendersList(bpy.types.UIList):
                 row.enabled = False
             row.operator('tresorio.download_render_results',
                          text='',
-                         icon='SORT_ASC').index = index
+                         icon_value=til.icon('TRESORIO_DOWNLOAD')).index = index
         elif render.status == 'STOPPING':
             row.label(text=TRADUCTOR['notif']['stopping'][CONFIG_LANG])
         elif render.status == 'LAUNCHING':

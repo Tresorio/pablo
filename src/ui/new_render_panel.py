@@ -1,4 +1,5 @@
 import bpy
+from src.ui.icons import TresorioIconsLoader as til
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
@@ -30,29 +31,33 @@ class TresorioNewRenderPanel(bpy.types.Panel):
 
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['engine'][CONFIG_LANG]+':')
-        row.prop(render_form, 'render_engines_list')
+        row.prop(render_form, 'render_engines_list', icon='EMPTY_AXIS')
 
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['format'][CONFIG_LANG]+':')
-        row.prop(render_form, 'output_formats_list')
+        row.prop(render_form, 'output_formats_list', icon='FILE_IMAGE')
 
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['timeout'][CONFIG_LANG]+':')
         row.prop(render_form, 'timeout',
-                 text=TRADUCTOR['field']['hours'][CONFIG_LANG])
+                 text=TRADUCTOR['field']['hours'][CONFIG_LANG],
+                 expand=True)
 
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['render_type'][CONFIG_LANG]+':')
         row.props_enum(render_form, 'render_types')
 
         box = box.split(factor=0.4)
-        left = box.column() ; right = box.column()
+        left = box.column()
+        right = box.column()
         left.label(text=TRADUCTOR['field']['options'][CONFIG_LANG]+':')
-        right.prop(render_form, 'pack_textures', text=TRADUCTOR['field']['pack_textures'][CONFIG_LANG])
+        right.prop(render_form, 'pack_textures',
+                   text=TRADUCTOR['field']['pack_textures'][CONFIG_LANG])
 
         box = layout.box()
         box.row().label(text=TRADUCTOR['field']
-                        ['render_pack'][CONFIG_LANG]+':')
+                        ['render_pack'][CONFIG_LANG]+':',
+                        icon_value=til.icon('TRESORIO_TRESORIO'))
         row = box.row()
         for pack in render_packs:
             row.prop(pack, 'is_selected', text=pack.name.upper(), toggle=1)
@@ -77,7 +82,8 @@ class TresorioNewRenderPanel(bpy.types.Panel):
 
         if report_props.uploading_blend_file is True:
             layout.box().prop(render_form, 'upload_percent',
-                              text=TRADUCTOR['desc']['uploading'][CONFIG_LANG])
+                              text=TRADUCTOR['desc']['uploading'][CONFIG_LANG],
+                              slider=True)
             layout.separator(factor=0.3)
         if report_props.upload_failed is True:
             layout.box().label(text=TRADUCTOR['desc']['upload_failed'][CONFIG_LANG],

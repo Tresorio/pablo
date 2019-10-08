@@ -36,4 +36,4 @@ class TresorioAccountPanel(bpy.types.Panel):
                         icon_value=til.icon('TRESORIO_LOGOUT'))
         layout.operator('tresorio.redirect_home',
                         text='Tresorio',
-                        icon_value=til.icon('TRESORIO_TRESORIO'))
+                        icon_value=til.icon('TRESORIO_LEAF'))

@@ -128,8 +128,8 @@
         "fr": "Créditer"
     },
     "its_all_empty": {
-        "eng": "It's all empty :( Start a render !",
-        "fr": "C'est vide :( Lancez un render !"
+        "eng": "It's all empty, start a render !",
+        "fr": "C'est vide, lancez un rendu !"
     },
     "advancement": {
         "eng": "Advancement",
