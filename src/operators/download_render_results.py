@@ -24,7 +24,6 @@ class TresorioDownloadRenderResultsOperator(bpy.types.Operator):
         cls.__doc__ = TRADUCTOR['desc']['download_render_results'][CONFIG_LANG]
 
     def execute(self, context):
-        print(self.directory)
         render_id = context.window_manager.tresorio_renders_details[self.index].id
         download_render_results(render_id, self.directory)
         return {'FINISHED'}

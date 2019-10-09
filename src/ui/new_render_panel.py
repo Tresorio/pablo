@@ -39,7 +39,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['engine'][CONFIG_LANG]+':')
         row.prop_menu_enum(render_form, 'render_engines_list', icon='EMPTY_AXIS',
-                            text=render_form.render_engines_list)
+                            text=render_form.render_engines_list.capitalize())
 
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['format'][CONFIG_LANG]+':')
@@ -62,8 +62,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row = box.row()
         description = ''
         for pack in render_packs:
-            row.prop(pack, 'is_selected', text=pack.name.upper(), toggle=1)
-
+            row.prop(pack, 'is_selected', text=pack.name.capitalize(), toggle=1)
             if pack.is_selected is True:
                 description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
                     pack.cost * render_form.nb_farmers,
@@ -85,8 +84,8 @@ class TresorioNewRenderPanel(bpy.types.Panel):
 
         row = box.row().split(factor=0.3)
         row.label(text=TRADUCTOR['field']['max_cost'][CONFIG_LANG]+':')
-        max_cost = render_form.max_cost - 0.005 if render_form.max_cost >= 0.005 else 0.0
-        row.label(text=f'{max_cost:2.2f} ' +
+        max_cost = round(render_form.max_cost * 100) / 100
+        row.label(text=f'{max_cost:.2f} ' +
                   TRADUCTOR['field']['credits'][CONFIG_LANG] +
                   f' ({render_form.max_timeout} h)')
 

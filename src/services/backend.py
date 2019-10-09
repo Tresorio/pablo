@@ -40,11 +40,12 @@ def new_render():
         'farm': props.render_pack,
         'renderType': props.render_types,
         'size': os.path.getsize(bpy.data.filepath),
+        'numberFarmers': props.nb_farmers
     }
     launch_render = {
-        'currentFrame': bpy.data.scenes[0].frame_current,
-        'startingFrame': bpy.data.scenes[0].frame_start,
-        'endingFrame': bpy.data.scenes[0].frame_end,
+        'currentFrame': bpy.context.scene.frame_current,
+        'startingFrame': bpy.context.scene.frame_start,
+        'endingFrame': bpy.context.scene.frame_end,
     }
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
 
