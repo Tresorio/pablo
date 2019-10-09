@@ -13,7 +13,7 @@ class TresorioRendersList(bpy.types.UIList):
         elif render.status == 'RUNNING':
             layout.label(text='', icon='KEYTYPE_BREAKDOWN_VEC')
         elif render.status == 'STOPPING':
-            layout.label(text='', icon=til.icon('TRESORIO_STOPPING'))
+            layout.label(text='', icon_value=til.icon('TRESORIO_STOPPING'))
         elif render.status == 'LAUNCHING':
             layout.label(text='', icon_value=til.icon('TRESORIO_LAUNCHING'))
 
@@ -32,7 +32,7 @@ class TresorioRendersList(bpy.types.UIList):
                 row.enabled = False
             row.operator('tresorio.download_render_results',
                          text='',
-                         icon_value=til.icon('TRESORIO_DOWNLOAD')).index = index
+                         icon='IMPORT').index = index
         elif render.status == 'STOPPING':
             row.label(text=TRADUCTOR['notif']['stopping'][CONFIG_LANG])
         elif render.status == 'LAUNCHING':
@@ -48,7 +48,7 @@ class TresorioRendersPanel(bpy.types.Panel):
     bl_parent_id = 'OBJECT_PT_TRESORIO_PANEL'
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = 'render'
+    bl_context = 'output'
 
     @classmethod
     def poll(cls, context: bpy.types.Context):

@@ -4,7 +4,7 @@ bl_info = {
     'blender': (2, 80, 0),
     'category': 'Render',
     'file': '/$HOME/.config/blender/2.80/scripts/addons/tresorio',
-    'location': 'Properties: Render > Tresorio Rendering',
+    'location': 'Properties: Output > Tresorio',
     'description': 'Cloud distributed rendering for Blender, by Tresorio',
     'wiki_url': 'http://192.168.15.20:3000',
 }
@@ -21,20 +21,7 @@ sys.path.append(modules_path)
 
 import src
 from importlib import reload
-from types import ModuleType
-
-def reload_all(module: ModuleType, layers: int):
-    if layers == 0: return
-    for key in module.__dict__:
-        if key == 'bpy':
-            continue
-        attr = module.__dict__[key]
-        if type(attr) is not ModuleType:
-            continue
-        reload_all(attr, layers - 1)
-        reload(attr)
-
-reload_all(src, 2)
+reload(src)
 
 # Properties
 from src.properties.user_props import TresorioUserProps
@@ -112,7 +99,6 @@ def unregister():
 
 
 def register():
-    # Setup loop
     asyncio.get_event_loop().close()
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -120,7 +106,6 @@ def register():
 
     TresorioIconsLoader.register()
     for cls in to_register_classes:
-        ## Add description with language translation
         set_doc = getattr(cls, 'set_doc', None)
         if callable(set_doc):
             cls.set_doc()

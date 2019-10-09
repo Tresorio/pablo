@@ -102,5 +102,13 @@
     "stopping": {
         "eng": "Stopping ...",
         "fr": "Arrêt ..."
+    },
+    "cant_pack_textures": {
+        "eng": "Can't pack the textures into the file",
+        "fr": "Impossible de charger les textures dans le fichier"
+    },
+    "cant_unpack_textures": {
+        "eng": "Can't unpack the textures out of the file",
+        "fr": "Impossible de décharger les textures du fichier"
     }
 }

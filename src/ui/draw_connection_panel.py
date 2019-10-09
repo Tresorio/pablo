@@ -9,7 +9,8 @@ def draw_connection_panel(layout: bpy.types.UILayout, context: bpy.types.Context
     report_props = bpy.context.window_manager.tresorio_report_props
 
     case = layout.row().grid_flow(columns=10)
-    case.label(text=TRADUCTOR['field']['connection'][CONFIG_LANG])
+    case.label(text=TRADUCTOR['field']['connection'][CONFIG_LANG],
+               icon_value=til.icon('TRESORIO_TRESORIO'))
     align_case = case.row()
     align_case.column().prop(user_props, 'langs')
 

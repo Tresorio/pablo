@@ -10,10 +10,12 @@ def update_max_cost(prop, ctx):
     if render_form.timeout == 0 and render_form.price_per_hour > 0.0:
         render_form.max_timeout = math.floor(
             user_credits / render_form.price_per_hour)
-        render_form.max_cost = render_form.max_timeout * render_form.price_per_hour
+        render_form.max_cost = render_form.max_timeout * \
+            render_form.price_per_hour * render_form.nb_farmers
     else:
         render_form.max_timeout = render_form.timeout
-        render_form.max_cost = render_form.price_per_hour * render_form.timeout
+        render_form.max_cost = render_form.price_per_hour * \
+            render_form.timeout * render_form.nb_farmers
 
 
 class TresorioRenderFormProps(bpy.types.PropertyGroup):
@@ -47,24 +49,24 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         description=desc,
         name='',
         items=(
-            ('PNG', 'PNG', '', 'FILE_IMAGE', 1),
-            ('JPEG', 'JPEG', '', 'FILE_IMAGE', 1),
-            ('BMP', 'BMP', '', 'FILE_IMAGE', 1),
-            ('AVIRAW', 'Avi_Raw', '', 'FILE_IMAGE', 1),
-            ('AVIJPEG', 'Avi_JPEG', '', 'FILE_IMAGE', 1),
-            ('IRIS', 'Iris', '', 'FILE_IMAGE', 1),
-            ('IRIZ', 'Iriz', '', 'FILE_IMAGE', 1),
-            ('JP2', 'JPEG_2000', '', 'FILE_IMAGE', 1),
-            ('TGA', 'Targa', '', 'FILE_IMAGE', 1),
-            ('RAWTGA', 'Targa_Raw', '', 'FILE_IMAGE', 1),
-            ('HDR', 'HDR', '', 'FILE_IMAGE', 1),
-            ('TIFF', 'TIFF', '', 'FILE_IMAGE', 1),
-            ('CINEON', 'Cineon', '', 'FILE_IMAGE', 1),
-            ('OPEN_EXR', 'OpenEXR', '', 'FILE_IMAGE', 1),
-            ('OPEN_EXR_MULTILAYER', 'OpenEXR Multilayer', '', 'FILE_IMAGE', 1),
-            ('DPX', 'DPX', '', 'FILE_IMAGE', 1),
-            ('DDS', 'DDS', '', 'FILE_IMAGE', 1),
-            ('JP2', 'JP2', '', 'FILE_IMAGE', 1),
+            ('PNG', 'PNG', ''),
+            # ('JPEG', 'JPEG', ''),
+            # ('BMP', 'BMP', ''),
+            # ('AVIRAW', 'Avi_Raw', ''),
+            # ('AVIJPEG', 'Avi_JPEG', ''),
+            # ('IRIS', 'Iris', ''),
+            # ('IRIZ', 'Iriz', ''),
+            # ('JP2', 'JPEG_2000', ''),
+            # ('TGA', 'Targa', ''),
+            # ('RAWTGA', 'Targa_Raw', ''),
+            # ('HDR', 'HDR', ''),
+            # ('TIFF', 'TIFF', ''),
+            # ('CINEON', 'Cineon', ''),
+            # ('OPEN_EXR', 'OpenEXR', ''),
+            # ('OPEN_EXR_MULTILAYER', 'OpenEXR Multilayer', ''),
+            # ('DPX', 'DPX', ''),
+            # ('DDS', 'DDS', ''),
+            # ('JP2', 'JP2', ''),
         ),
         default='PNG',
         options={'HIDDEN', 'SKIP_SAVE'},
@@ -106,6 +108,17 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         name='',
         default=12,
         subtype='TIME',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=update_max_cost,
+    )
+
+    desc = TRADUCTOR['desc']['nb_farmers'][CONFIG_LANG]
+    nb_farmers: bpy.props.IntProperty(
+        min=1,
+        max=10,
+        description=desc,
+        name='',
+        default=1,
         options={'HIDDEN', 'SKIP_SAVE'},
         update=update_max_cost,
     )

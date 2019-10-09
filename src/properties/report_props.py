@@ -53,21 +53,20 @@ class TresorioReportProps(bpy.types.PropertyGroup):
     )
 
     # Network issue
-    connection_error: bpy.props.BoolProperty(
+    error: bpy.props.BoolProperty(
         default=False,
         name='',
         description='',
         options={'HIDDEN', 'SKIP_SAVE'},
         update=lambda a, b: None,
     )
-    connection_error_msg: bpy.props.StringProperty(
+    error_msg: bpy.props.StringProperty(
         default='',
         name='',
         description='',
         options={'HIDDEN', 'SKIP_SAVE'},
         update=lambda a, b: None,
     )
-
 
     downloading_render_results: bpy.props.BoolProperty(
         name='',
@@ -77,6 +76,20 @@ class TresorioReportProps(bpy.types.PropertyGroup):
     )
 
     success_render_download: bpy.props.BoolProperty(
+        name='',
+        description='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
+    )
+
+    packing_textures: bpy.props.BoolProperty(
+        name='',
+        description='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
+    )
+
+    unpacking_textures: bpy.props.BoolProperty(
         name='',
         description='',
         options={'HIDDEN', 'SKIP_SAVE'},

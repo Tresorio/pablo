@@ -150,5 +150,13 @@
     "options": {
         "eng": "Options",
         "fr": "Options"
+    },
+    "nb_farmers": {
+        "eng": "Farmers",
+        "fr": "Farmers"
+    },
+    "settings": {
+        "eng": "Settings",
+        "fr": "Paramètres"
     }
 }

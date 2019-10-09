@@ -41,9 +41,22 @@ class TresorioRenderPacksProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    description: bpy.props.StringProperty(
-        options={'HIDDEN', 'SKIP_SAVE'},
+    gpu: bpy.props.IntProperty(
+        min=0,
         update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    cpu: bpy.props.IntProperty(
+        min=0,
+        update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    ram: bpy.props.IntProperty(
+        min=0,
+        update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
     )
 
     @classmethod

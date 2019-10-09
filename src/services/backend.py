@@ -22,14 +22,13 @@ from bundle_modules.aiohttp import ClientResponseError, ClientResponse
 def logout_if_unauthorized(err: Exception):
     if type(err) is ClientResponseError and err.status == HTTPStatus.UNAUTHORIZED:
         logout()
-        set_connection_error(
-            err, TRADUCTOR['notif']['expired_session'][CONFIG_LANG])
+        set_error_string(TRADUCTOR['notif']['expired_session'][CONFIG_LANG])
         return True
     return False
 
 
 def new_render():
-    bpy.data.window_managers['WinMan'].tresorio_report_props.connection_error = False
+    bpy.data.window_managers['WinMan'].tresorio_report_props.error = False
     bpy.data.window_managers['WinMan'].tresorio_report_props.upload_failed = 0
     props = bpy.data.window_managers['WinMan'].tresorio_render_form
 
@@ -55,7 +54,7 @@ def new_render():
 
 def connect_to_tresorio(email: str, password: str):
     """Connects the user to Tresorio and fetch required data"""
-    bpy.data.window_managers['WinMan'].tresorio_report_props.connection_error = False
+    bpy.data.window_managers['WinMan'].tresorio_report_props.error = False
     bpy.data.window_managers['WinMan'].tresorio_user_props.token = ''
     bpy.data.window_managers['WinMan'].tresorio_report_props.invalid_logs = 0
     bpy.data.window_managers['WinMan'].tresorio_report_props.login_in = 1
@@ -66,7 +65,7 @@ def connect_to_tresorio(email: str, password: str):
     }
 
     future = _connect_to_tresorio(credentials)
-    asyncio.ensure_future(future)        
+    asyncio.ensure_future(future)
     ensure_async_loop()
 
 
@@ -96,9 +95,9 @@ def update_list_renderings():
     asyncio.ensure_future(future)
 
 
-def set_connection_error(err: Exception, msg: str):
-    bpy.data.window_managers['WinMan'].tresorio_report_props.connection_error = True
-    bpy.data.window_managers['WinMan'].tresorio_report_props.connection_error_msg = msg
+def set_error_string(msg: str):
+    bpy.data.window_managers['WinMan'].tresorio_report_props.error = True
+    bpy.data.window_managers['WinMan'].tresorio_report_props.error_msg = msg
 
 # ASYNC CORE-------------------------------------------------------------------
 
@@ -111,11 +110,11 @@ async def _download_render_results(token: str, render_id: str, render_result_pat
         async with Nas('', debug=PLATFORM_DEBUG) as nas:
             for frag in fragments:
                 nas.url = frag['ip']
-                filename = '%04.d.png' % frag['frameNumber']
+                filename = '%04.d' % frag['frameNumber']
                 nas_filename = os.path.join('artifacts', filename)
                 frame = await nas.download(frag['id'], nas_filename, read=True)
                 user_filepath = os.path.join(
-                    render_result_path, render['name']+'_'+filename)
+                    render_result_path, render['name']+'_'+filename+'.'+render['outputFormat'].lower())
                 with open(user_filepath, 'wb') as file:
                     file.write(frame)
                     BACKEND_LOGGER.debug(f'Wrote file {user_filepath}')
@@ -125,8 +124,8 @@ async def _download_render_results(token: str, render_id: str, render_result_pat
         if logout_if_unauthorized(err) is False:
             _download_render_results_callback(success=False)
         if type(err) is not ClientResponseError:
-            set_connection_error(
-                err, TRADUCTOR['notif']['err_download_results'][CONFIG_LANG])
+            set_error_string(TRADUCTOR['notif']
+                             ['err_download_results'][CONFIG_LANG])
         return
 
 
@@ -140,8 +139,8 @@ async def _update_user_info(token: str):
             if logout_if_unauthorized(err) is False:
                 _get_user_info_error(err)
             if type(err) is not ClientResponseError:
-                set_connection_error(
-                    err, TRADUCTOR['notif']['err_acc_info'][CONFIG_LANG])
+                set_error_string(TRADUCTOR['notif']
+                                 ['err_acc_info'][CONFIG_LANG])
             return
 
 
@@ -155,8 +154,8 @@ async def _update_renderpacks_info(token: str):
             if logout_if_unauthorized(err) is False:
                 _get_renderpacks_error(err)
             if type(err) is not ClientResponseError:
-                set_connection_error(
-                    err, TRADUCTOR['notif']['err_renderpacks'][CONFIG_LANG])
+                set_error_string(TRADUCTOR['notif']
+                                 ['err_renderpacks'][CONFIG_LANG])
             return
 
 
@@ -176,8 +175,8 @@ async def _connect_to_tresorio(data: Dict[str, str]):
             BACKEND_LOGGER.error(err)
             _connect_to_tresorio_error(err)
             if type(err) is not ClientResponseError:
-                set_connection_error(
-                    err, TRADUCTOR['notif']['err_connection'][CONFIG_LANG])
+                set_error_string(TRADUCTOR['notif']
+                                 ['err_connection'][CONFIG_LANG])
             return
 
     await _update_renderpacks_info(res_connect['token'])
@@ -203,10 +202,15 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
     render_form = bpy.context.window_manager.tresorio_render_form
     try:
         if render_form.pack_textures is True:
+            bpy.context.window_manager.tresorio_report_props.packing_textures = True
             bpy.ops.file.pack_all()
             bpy.ops.wm.save_as_mainfile(filepath=blendfile)
-    except RuntimeError:
-        BACKEND_LOGGER.error('Cant pack textures')
+    except RuntimeError as err:
+        BACKEND_LOGGER.error(err)
+        set_error_string(TRADUCTOR['notif']['cant_pack_textures'][CONFIG_LANG])
+        return
+    finally:
+        bpy.context.window_manager.tresorio_report_props.packing_textures = False
     try:
         with Lockfile(blendfile, 'a'):
             async with Platform(debug=PLATFORM_DEBUG) as plt:
@@ -216,21 +220,25 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if type(err) is ClientResponseError and err.status == 403:
-            return set_connection_error(
-                err, TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG])
+            return set_error_string(TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG])
         if logout_if_unauthorized(err) is False:
             _upload_blend_file_error(err)
         if type(err) is not ClientResponseError:
-            set_connection_error(
-                err, TRADUCTOR['notif']['err_upl_blendfile'][CONFIG_LANG])
+            set_error_string(TRADUCTOR['notif']
+                             ['err_upl_blendfile'][CONFIG_LANG])
         return
     finally:
         try:
             if render_form.pack_textures is True:
+                bpy.context.window_manager.tresorio_report_props.unpacking_textures = True
                 bpy.ops.file.unpack_all()
                 bpy.ops.wm.save_as_mainfile(filepath=blendfile)
-        except RuntimeError:
-            BACKEND_LOGGER.error('Cant unpack textures')
+        except RuntimeError as err:
+            BACKEND_LOGGER.error(err)
+            set_error_string(TRADUCTOR['notif']
+                             ['cant_unpack_textures'][CONFIG_LANG])
+        finally:
+            bpy.context.window_manager.tresorio_report_props.unpacking_textures = False
 
     # Launch rendering
     try:
@@ -239,8 +247,8 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
-            set_connection_error(
-                err, TRADUCTOR['notif']['err_launch_render'][CONFIG_LANG])
+            set_error_string(TRADUCTOR['notif']
+                             ['err_launch_render'][CONFIG_LANG])
         return
     await _update_list_renderings(token)
 
@@ -252,8 +260,8 @@ async def _stop_render(token: str, render_id: str):
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
-            set_connection_error(
-                err, TRADUCTOR['notif']['err_stop_render'][CONFIG_LANG])
+            set_error_string(TRADUCTOR['notif']
+                             ['err_stop_render'][CONFIG_LANG])
         return
     await _update_list_renderings(token)
 
@@ -265,8 +273,8 @@ async def _delete_render(token: str, render_id: str):
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
-            set_connection_error(
-                err, TRADUCTOR['notif']['err_delete_render'][CONFIG_LANG])
+            set_error_string(TRADUCTOR['notif']
+                             ['err_delete_render'][CONFIG_LANG])
         return
     await _update_list_renderings(token)
 
@@ -294,14 +302,11 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
     bpy.context.window_manager.property_unset('tresorio_render_packs')
     for i, pack in enumerate(res):
         new_pack = bpy.context.window_manager.tresorio_render_packs.add()
-        cost = pack['cost']
-        gpu = pack['gpu']
-        vcpu = pack['vcpu']
-
         new_pack.name = pack['name']
         new_pack.cost = pack['cost']
-        new_pack.description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
-            cost, gpu, vcpu)
+        new_pack.gpu = pack['gpu']
+        new_pack.cpu = pack['vcpu']
+        new_pack.ram = pack['ram']
         if i == 0:
             new_pack.is_selected = True
 
@@ -325,8 +330,7 @@ def _upload_blend_file_callback(res: ClientResponse) -> None:
 def _list_renderings_details_error(err: Exception) -> None:
     bpy.data.window_managers['WinMan'].tresorio_report_props.are_renders_refreshing = False
     if type(err) is not ClientResponseError:
-        set_connection_error(
-            err, TRADUCTOR['notif']['err_renders'][CONFIG_LANG])
+        set_error_string(TRADUCTOR['notif']['err_renders'][CONFIG_LANG])
 
 
 def _get_renderpacks_error(err: Exception) -> None:

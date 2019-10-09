@@ -9,7 +9,7 @@ class TresorioSelectedRenderPanel(bpy.types.Panel):
     bl_parent_id = 'OBJECT_PT_TRESORIO_RENDERS_PANEL'
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = 'render'
+    bl_context = 'output'
 
     def draw(self, context: bpy.types.Context):
         nb_renders = len(context.window_manager.tresorio_renders_details)

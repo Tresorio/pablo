@@ -9,7 +9,7 @@ class TresorioAccountPanel(bpy.types.Panel):
     bl_label = TRADUCTOR['field']['account_panel'][CONFIG_LANG]
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = 'render'
+    bl_context = 'output'
 
     @classmethod
     def poll(cls, context: bpy.types.Context):
