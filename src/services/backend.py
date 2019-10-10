@@ -20,7 +20,7 @@ from bundle_modules.aiohttp import ClientResponseError, ClientResponse
 
 
 def logout_if_unauthorized(err: Exception):
-    if type(err) is ClientResponseError and err.status == HTTPStatus.UNAUTHORIZED:
+    if isinstance(err, ClientResponseError) and err.status == HTTPStatus.UNAUTHORIZED:
         logout()
         set_error_string(TRADUCTOR['notif']['expired_session'][CONFIG_LANG])
         return True
@@ -124,7 +124,7 @@ async def _download_render_results(token: str, render_id: str, render_result_pat
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
             _download_render_results_callback(success=False)
-        elif type(err) is not ClientResponseError:
+        elif isinstance(err, ClientResponseError) is False:
             set_error_string(TRADUCTOR['notif']
                              ['err_download_results'][CONFIG_LANG])
         return
@@ -139,7 +139,7 @@ async def _update_user_info(token: str):
             BACKEND_LOGGER.error(err)
             if logout_if_unauthorized(err) is False:
                 _get_user_info_error(err)
-            elif type(err) is not ClientResponseError:
+            elif isinstance(err, ClientResponseError) is False:
                 set_error_string(TRADUCTOR['notif']
                                  ['err_acc_info'][CONFIG_LANG])
             return
@@ -154,7 +154,7 @@ async def _update_renderpacks_info(token: str):
             BACKEND_LOGGER.error(err)
             if logout_if_unauthorized(err) is False:
                 _get_renderpacks_error(err)
-            elif type(err) is not ClientResponseError:
+            elif isinstance(err, ClientResponseError) is False:
                 set_error_string(TRADUCTOR['notif']
                                  ['err_renderpacks'][CONFIG_LANG])
             return
@@ -175,7 +175,7 @@ async def _connect_to_tresorio(data: Dict[str, str]):
         except (ClientResponseError, Exception) as err:
             BACKEND_LOGGER.error(err)
             _connect_to_tresorio_error(err)
-            if type(err) is not ClientResponseError:
+            if isinstance(err, ClientResponseError) is False:
                 set_error_string(TRADUCTOR['notif']
                                  ['err_connection'][CONFIG_LANG])
             return
@@ -242,11 +242,11 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
 
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
-        if type(err) is ClientResponseError and err.status == 403:
+        if isinstance(err, ClientResponseError) and err.status == HTTPStatus.FORBIDDEN:
             return set_error_string(TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG])
         elif logout_if_unauthorized(err) is False:
             _upload_blend_file_error(err)
-        elif type(err) is not ClientResponseError:
+        elif not isinstance(err, ClientResponseError):
             set_error_string(TRADUCTOR['notif']
                              ['err_upl_blendfile'][CONFIG_LANG])
         return
@@ -352,7 +352,7 @@ def _upload_blend_file_callback(res: ClientResponse) -> None:
 
 def _list_renderings_details_error(err: Exception) -> None:
     bpy.data.window_managers['WinMan'].tresorio_report_props.are_renders_refreshing = False
-    if type(err) is not ClientResponseError:
+    if isinstance(err, ClientResponseError) is False:
         set_error_string(TRADUCTOR['notif']['err_renders'][CONFIG_LANG])
 
 
@@ -372,7 +372,7 @@ def _upload_blend_file_error(err: Exception) -> None:
 
 def _connect_to_tresorio_error(err: Exception) -> None:
     bpy.data.window_managers['WinMan'].tresorio_report_props.login_in = False
-    if type(err) is not ClientResponseError:
+    if isinstance(err, ClientResponseError) is False:
         return
     if err.status == HTTPStatus.UNAUTHORIZED:
         bpy.data.window_managers['WinMan'].tresorio_report_props.invalid_logs = True
