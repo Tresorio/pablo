@@ -7,6 +7,10 @@
         - Send the last line of logs to blender (so the user can see what happens) ?
         - Have an option to enable the plugin in every .blend of the user
         - Include Eevee (see if it is interesting)
+        - Set the language according to blender
+        - Alias bpy.data.wm['WinMan'] (at least try it)
+        - IsInstance instead of type(cls)
+        - error 403 -> httpstatus
 
     On Gandalf:
         - Fix credit debit (way more than expected atm)

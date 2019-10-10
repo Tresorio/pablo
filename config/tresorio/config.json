@@ -1,7 +1,7 @@
 {
     "backend": "http://192.168.15.20:8001",
     "frontend": "http://192.168.15.20:3000",
-    "homepage": "https://www.tresorio.com/",
+    "homepage": "https://www.tresorio.com",
     "routes": {
         "forgot_password": "/password",
         "register": "/register",

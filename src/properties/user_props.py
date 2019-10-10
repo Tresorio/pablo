@@ -20,7 +20,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
 
     langs: bpy.props.EnumProperty(
         name='',
-        items=(ALL_LANGS['eng'], ALL_LANGS['fr']),
+        items=(ALL_LANGS['en'], ALL_LANGS['fr']),
         update=set_new_lang,
         default=ALL_LANGS[CONFIG_LANG][0],
     )
@@ -71,10 +71,8 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         default=conf_email != '',
     )
 
-    #desc = TRADUCTOR['desc']['credits'][CONFIG_LANG]
     total_credits: bpy.props.FloatProperty(
         name='',
-        #   description=desc
         options={'HIDDEN', 'SKIP_SAVE'},
         update=lambda a, b: None,
     )

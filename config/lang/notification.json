@@ -1,114 +1,114 @@
 {
     "no_password": {
-        "eng": "Please enter a valid password",
+        "en": "Please enter a valid password",
         "fr": "Veuillez entrer un mot de passe valide"
     },
     "no_mail": {
-        "eng": "Please enter a valid email",
+        "en": "Please enter a valid email",
         "fr": "Veuillez entrer un mail valide"
     },
     "already_logged_in": {
-        "eng": "Already logged in",
+        "en": "Already logged in",
         "fr": "Déjà connecté"
     },
     "not_logged_in": {
-        "eng": "Not logged in",
+        "en": "Not logged in",
         "fr": "Pas encore connecté"
     },
     "no_mail_password": {
-        "eng": "Please enter your email and password",
+        "en": "Please enter your email and password",
         "fr": "Veuillez entrer votre mail et mot de passe"
     },
     "invalid_login": {
-        "eng": "Invalid email or password",
+        "en": "Invalid email or password",
         "fr": "Mail ou mot de passe invalide"
     },
     "success_login": {
-        "eng": "Successfully logged in",
+        "en": "Successfully logged in",
         "fr": "Connexion effectuée avec succès"
     },
     "success_logout": {
-        "eng": "Successfully logged out",
+        "en": "Successfully logged out",
         "fr": "Déconnexion effectuée avec succès"
     },
     "file_not_saved": {
-        "eng": "Your file isn't saved",
+        "en": "Your file isn't saved",
         "fr": "Votre fichier n'est pas sauvegardé"
     },
     "internal_error_login": {
-        "eng": "An internal error occured on login, please retry",
+        "en": "An internal error occured on login, please retry",
         "fr": "Une erreur interne est survenue, veuillez réessayer"
     },
     "login_in": {
-        "eng": "Login in ...",
+        "en": "Login in ...",
         "fr": "Connexion ..."
     },
     "err_connection": {
-        "eng": "Error while connecting",
+        "en": "Error while connecting",
         "fr": "Erreur pendant la connexion"
     },
     "err_acc_info": {
-        "eng": "Error while getting account profile information",
+        "en": "Error while getting account profile information",
         "fr": "Erreur pendant la récupération de votre profil utilisateur"
     },
     "err_renderpacks": {
-        "eng": "Error while getting renderpacks information",
+        "en": "Error while getting renderpacks information",
         "fr": "Erreur lors de l'obtention des packs de rendu disponibles"
     },
     "err_upl_blendfile": {
-        "eng": "Error while uploading blend file",
+        "en": "Error while uploading blend file",
         "fr": "Erreur lors de l'envoi du fichier blend"
     },
     "expired_session": {
-        "eng": "Your session expired, please reconnect",
+        "en": "Your session expired, please reconnect",
         "fr": "Votre session a expiré, veuillez vous reconnecter"
     },
     "err_renders": {
-        "eng": "Couldn't get your renderings",
+        "en": "Couldn't get your renderings",
         "fr": "Erreur pendant la récupération de vos rendus"
     },
     "err_download_results": {
-        "eng": "Couldn't download your results",
+        "en": "Couldn't download your results",
         "fr": "Erreur pendant le téléchargement des résultats"
     },
     "refreshing": {
-        "eng": "Refreshing ...",
+        "en": "Refreshing ...",
         "fr": "Rafraichissement ..."
     },
     "not_enough_credits": {
-        "eng": "Not enough credits",
+        "en": "Not enough credits",
         "fr": "Pas assez de crédits"
     },
     "downloading": {
-        "eng": "Downloading ...",
+        "en": "Downloading ...",
         "fr": "Téléchargement ..."
     },
     "err_stop_render": {
-        "eng": "Error while stopping render",
+        "en": "Error while stopping render",
         "fr": "Erreur pendant le stop du rendu"
     },
     "err_launch_render": {
-        "eng": "Error while creating the new render",
+        "en": "Error while creating the new render",
         "fr": "Erreur pendant la création du nouveau rendu"
     },
     "err_delete_render": {
-        "eng": "Error while deleting render",
+        "en": "Error while deleting render",
         "fr": "Erreur pendant la suppression du rendu"
     },
     "launching": {
-        "eng": "Launching ...",
+        "en": "Launching ...",
         "fr": "Lancement ..."
     },
     "stopping": {
-        "eng": "Stopping ...",
+        "en": "Stopping ...",
         "fr": "Arrêt ..."
     },
     "cant_pack_textures": {
-        "eng": "Can't pack the textures into the file",
+        "en": "Can't pack the textures into the file",
         "fr": "Impossible de charger les textures dans le fichier"
     },
     "cant_unpack_textures": {
-        "eng": "Can't unpack the textures out of the file",
+        "en": "Can't unpack the textures out of the file",
         "fr": "Impossible de décharger les textures du fichier"
     }
 }

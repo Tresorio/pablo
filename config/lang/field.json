@@ -1,162 +1,162 @@
 {
     "connection": {
-        "eng": "Connection",
+        "en": "Connection",
         "fr": "Connexion"
     },
     "login": {
-        "eng": "Login",
+        "en": "Login",
         "fr": "Se connecter"
     },
     "logout": {
-        "eng": "Logout",
+        "en": "Logout",
         "fr": "Se déconnecter"
     },
     "mail": {
-        "eng": "Email",
+        "en": "Email",
         "fr": "Mail"
     },
     "password": {
-        "eng": "Password",
+        "en": "Password",
         "fr": "Mot de passe"
     },
     "remember_email": {
-        "eng": "Remember email",
+        "en": "Remember email",
         "fr": "Se souvenir du mail"
     },
     "forgot_password": {
-        "eng": "Forgot your password ?",
+        "en": "Forgot your password ?",
         "fr": "Mot de passe oublié ?"
     },
     "create_account": {
-        "eng": "Create an account",
+        "en": "Create an account",
         "fr": "Créer un compte"
     },
     "render_frame": {
-        "eng": "Render frame",
+        "en": "Render frame",
         "fr": "Rendu image"
     },
     "render_animation": {
-        "eng": "Render animation",
+        "en": "Render animation",
         "fr": "Rendu animation"
     },
     "rendering": {
-        "eng": "Rendering",
+        "en": "Rendering",
         "fr": "Rendu"
     },
     "account_panel": {
-        "eng": "Account",
+        "en": "Account",
         "fr": "Compte"
     },
     "new_render_panel": {
-        "eng": "New render",
+        "en": "New render",
         "fr": "Nouveau rendu"
     },
     "new_rendering_name": {
-        "eng": "Name",
+        "en": "Name",
         "fr": "Nom"
     },
     "engine": {
-        "eng": "Engine",
+        "en": "Engine",
         "fr": "Moteur"
     },
     "format": {
-        "eng": "Format",
+        "en": "Format",
         "fr": "Format"
     },
     "timeout": {
-        "eng": "Timeout",
+        "en": "Timeout",
         "fr": "Délai"
     },
     "hours": {
-        "eng": "Hours",
+        "en": "Hours",
         "fr": "Heures"
     },
     "render_pack": {
-        "eng": "Render pack",
+        "en": "Render pack",
         "fr": "Pack de rendu"
     },
     "default_render_name": {
-        "eng": "My_new_render",
+        "en": "My_new_render",
         "fr": "Mon_nouveau_rendu"
     },
     "configuration": {
-        "eng": "Configuration",
+        "en": "Configuration",
         "fr": "Configuration"
     },
     "launch": {
-        "eng": "Launch",
+        "en": "Launch",
         "fr": "Lancer"
     },
     "render_type": {
-        "eng": "Render type",
+        "en": "Render type",
         "fr": "Type de rendu"
     },
     "credits": {
-        "eng": "credits",
+        "en": "credits",
         "fr": "crédits"
     },
     "max_cost": {
-        "eng": "Max cost",
+        "en": "Max cost",
         "fr": "Coût max"
     },
     "your_renders": {
-        "eng": "Your renders",
+        "en": "Your renders",
         "fr": "Vos rendus"
     },
     "selected_render_details": {
-        "eng": "Selected render details",
+        "en": "Selected render details",
         "fr": "Détails du rendu sélectionné"
     },
     "name": {
-        "eng": "Name",
+        "en": "Name",
         "fr": "Nom"
     },
     "max_timeout": {
-        "eng": "Max credits",
+        "en": "Max credits",
         "fr": "Crédits max"
     },
     "download_results": {
-        "eng": "Download results",
+        "en": "Download results",
         "fr": "Télécharger les résultats"
     },
     "uptime": {
-        "eng": "Uptime",
+        "en": "Uptime",
         "fr": "Temps"
     },
     "get_credits": {
-        "eng": "Get credits",
+        "en": "Get credits",
         "fr": "Créditer"
     },
     "its_all_empty": {
-        "eng": "It's all empty, start a render !",
+        "en": "It's all empty, start a render !",
         "fr": "C'est vide, lancez un rendu !"
     },
     "advancement": {
-        "eng": "Advancement",
+        "en": "Advancement",
         "fr": "Anvancée"
     },
     "frame_singular": {
-        "eng": "frame",
+        "en": "frame",
         "fr": "frame"
     },
     "frame_plural": {
-        "eng": "frames",
+        "en": "frames",
         "fr": "frames"
     },
     "pack_textures": {
-        "eng": "Load textures",
+        "en": "Load textures",
         "fr": "Charger les textures"
     },
     "options": {
-        "eng": "Options",
+        "en": "Options",
         "fr": "Options"
     },
     "nb_farmers": {
-        "eng": "Farmers",
+        "en": "Farmers",
         "fr": "Farmers"
     },
     "settings": {
-        "eng": "Settings",
+        "en": "Settings",
         "fr": "Paramètres"
     }
 }
