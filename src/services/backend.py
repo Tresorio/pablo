@@ -124,7 +124,7 @@ async def _download_render_results(token: str, render_id: str, render_result_pat
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
             _download_render_results_callback(success=False)
-        if type(err) is not ClientResponseError:
+        elif type(err) is not ClientResponseError:
             set_error_string(TRADUCTOR['notif']
                              ['err_download_results'][CONFIG_LANG])
         return
@@ -139,7 +139,7 @@ async def _update_user_info(token: str):
             BACKEND_LOGGER.error(err)
             if logout_if_unauthorized(err) is False:
                 _get_user_info_error(err)
-            if type(err) is not ClientResponseError:
+            elif type(err) is not ClientResponseError:
                 set_error_string(TRADUCTOR['notif']
                                  ['err_acc_info'][CONFIG_LANG])
             return
@@ -154,7 +154,7 @@ async def _update_renderpacks_info(token: str):
             BACKEND_LOGGER.error(err)
             if logout_if_unauthorized(err) is False:
                 _get_renderpacks_error(err)
-            if type(err) is not ClientResponseError:
+            elif type(err) is not ClientResponseError:
                 set_error_string(TRADUCTOR['notif']
                                  ['err_renderpacks'][CONFIG_LANG])
             return
@@ -164,7 +164,7 @@ async def _refresh_loop(token: str):
     while bpy.data.window_managers['WinMan'].tresorio_user_props.is_logged is True:
         await _update_user_info(token)
         await _update_list_renderings(token)
-        await asyncio.sleep(2.5)
+        await asyncio.sleep(1)
 
 
 async def _connect_to_tresorio(data: Dict[str, str]):
@@ -198,9 +198,25 @@ async def _update_list_renderings(token: str):
         return
 
 
+def force_sync(fn):
+    """Convert async function to sync"""
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        res = fn(*args, **kwargs)
+        if asyncio.iscoroutine(res):
+            loop = asyncio.new_event_loop()
+            return loop.run_until_complete(res)
+        return res
+    return wrapper
+
+
 async def _new_render(token: str, create_render: Dict[str, Any], launch_render: Dict[str, Any]):
+    """This function creates a new render, packs the textures, uploads the blend
+       file, unpacks the textures, and finally launches the rendering."""
+
     blendfile = bpy.data.filepath
     render_form = bpy.context.window_manager.tresorio_render_form
+
     try:
         if render_form.pack_textures is True:
             bpy.context.window_manager.tresorio_report_props.packing_textures = True
@@ -212,22 +228,29 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
         return
     finally:
         bpy.context.window_manager.tresorio_report_props.packing_textures = False
+
     try:
         with Lockfile(blendfile, 'a'):
             async with Platform(debug=PLATFORM_DEBUG) as plt:
                 render_info = await plt.req_create_render(token, create_render, jsonify=True)
-            res = await _upload_blend_file(blendfile, render_info)
+
+            loop = asyncio.get_running_loop()
+            upload = functools.partial(
+                force_sync(_upload_blend_file), blendfile, render_info)
+            res = await loop.run_in_executor(None, upload)
             _upload_blend_file_callback(res)
+
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if type(err) is ClientResponseError and err.status == 403:
             return set_error_string(TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG])
-        if logout_if_unauthorized(err) is False:
+        elif logout_if_unauthorized(err) is False:
             _upload_blend_file_error(err)
-        if type(err) is not ClientResponseError:
+        elif type(err) is not ClientResponseError:
             set_error_string(TRADUCTOR['notif']
                              ['err_upl_blendfile'][CONFIG_LANG])
         return
+
     finally:
         try:
             if render_form.pack_textures is True:
@@ -241,7 +264,6 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
         finally:
             bpy.context.window_manager.tresorio_report_props.unpacking_textures = False
 
-    # Launch rendering
     try:
         async with Platform(debug=PLATFORM_DEBUG) as plt:
             await plt.req_launch_render(token, render_info['id'], launch_render, jsonify=True)

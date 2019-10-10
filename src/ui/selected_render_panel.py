@@ -43,7 +43,7 @@ class TresorioSelectedRenderPanel(bpy.types.Panel):
             right.label(text=render.engine.capitalize())
 
             left.label(text=TRADUCTOR['field']['render_pack'][CONFIG_LANG]+':')
-            right.label(text=render.farm.upper())
+            right.label(text=render.farm.capitalize())
 
             left.label(text=TRADUCTOR['field']['format'][CONFIG_LANG]+':')
             right.label(text=render.output_format.capitalize())

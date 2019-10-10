@@ -45,14 +45,10 @@ class Nas:
 
     async def __aenter__(self):
         """Entrypoint of `async with`"""
-        if self.debug is True:
-            self._logger.debug('__aenter__: initiating Nas instance')
         return self
 
     async def __aexit__(self, *args):
         """Callback once out of the `async with` block"""
-        if self.debug is True:
-            self._logger.debug('__aexit__: leaving Nas instance')
         if self._session is not None:
             return await self._session.close()
 
