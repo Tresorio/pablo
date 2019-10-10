@@ -62,7 +62,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row = box.row()
         description = ''
         for pack in render_packs:
-            row.prop_with_popover(pack, 'is_selected', text=pack.name.capitalize(), toggle=1)
+            row.prop(pack, 'is_selected', text=pack.name.capitalize(), toggle=1)
             if pack.is_selected is True:
                 description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
                     pack.cost * render_form.nb_farmers,
