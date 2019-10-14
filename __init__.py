@@ -41,6 +41,7 @@ from src.ui.user_renders_panel import TresorioRendersPanel, TresorioRendersList
 from src.operators.login import TresorioLoginOperator
 from src.operators.logout import TresorioLogoutOperator
 from src.operators.render import TresorioRenderFrameOperator
+from src.operators.popup import TresorioPackDescriptionPopup
 from src.operators.redirect import TresorioRedirectHomeOperator
 from src.operators.stop_render import TresorioStopRenderOperator
 from src.operators.redirect import TresorioRedirectRegisterOperator
@@ -73,6 +74,7 @@ to_register_classes = (
                        TresorioDeleteRenderOperator,
                        TresorioRedirectGetCreditsOperator,
                        AsyncLoopModalOperator,
+                       TresorioPackDescriptionPopup,
 
                        # UI
                        TresorioMainPanel,

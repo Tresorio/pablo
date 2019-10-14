@@ -324,12 +324,13 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
     for i, pack in enumerate(res):
         new_pack = bpy.context.window_manager.tresorio_render_packs.add()
         new_pack.bl_rna.description.__format__('1')
-        # new_pack.bl_rna.description = 'THIS IS A TEST'
         new_pack.name = pack['name']
         new_pack.cost = pack['cost']
         new_pack.gpu = pack['gpu']
         new_pack.cpu = pack['vcpu']
         new_pack.ram = pack['ram']
+        new_pack.description = TRADUCTOR['desc']['pack_full_description_popup'][CONFIG_LANG].format(
+            new_pack.cost, new_pack.gpu, new_pack.cpu, new_pack.ram)
         if i == 0:
             new_pack.is_selected = True
 

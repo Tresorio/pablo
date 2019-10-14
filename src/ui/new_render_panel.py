@@ -39,7 +39,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['engine'][CONFIG_LANG]+':')
         row.prop_menu_enum(render_form, 'render_engines_list', icon='EMPTY_AXIS',
-                            text=render_form.render_engines_list.capitalize())
+                           text=render_form.render_engines_list.capitalize())
 
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['format'][CONFIG_LANG]+':')
@@ -59,10 +59,17 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                         ['render_pack'][CONFIG_LANG]+':',
                         icon_value=til.icon('TRESORIO_PACK'))
 
-        row = box.row()
+        split = box.row(align=True).split(factor=0.90)
+        left = split.column()
+        right = split.column()
         description = ''
+
         for pack in render_packs:
-            row.prop(pack, 'is_selected', text=pack.name.capitalize(), toggle=1)
+            left.prop(pack, 'is_selected',
+                      text=pack.name.capitalize(), toggle=1)
+            right.operator('tresorio.pack_desc_popup', text='',
+                           icon='PREFERENCES',
+                           emboss=False).msg = pack.description
             if pack.is_selected is True:
                 description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
                     pack.cost * render_form.nb_farmers,

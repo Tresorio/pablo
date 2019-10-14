@@ -1,6 +1,7 @@
 import bpy
-from src.properties.render_form import update_max_cost
+from src.ui.popup import popup
 from src.config.langs import TRADUCTOR, CONFIG_LANG
+from src.properties.render_form import update_max_cost
 
 
 def set_render_pack(pack, context):
@@ -25,9 +26,10 @@ def set_render_pack(pack, context):
 
 class TresorioRenderPacksProps(bpy.types.PropertyGroup):
 
+    desc = TRADUCTOR['desc']['render_packs'][CONFIG_LANG]
     is_selected: bpy.props.BoolProperty(
         update=set_render_pack,
-        description='{0}',
+        description=desc,
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
@@ -56,6 +58,11 @@ class TresorioRenderPacksProps(bpy.types.PropertyGroup):
 
     ram: bpy.props.IntProperty(
         min=0,
+        update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    description: bpy.props.StringProperty(
         update=lambda a, b: None,
         options={'HIDDEN', 'SKIP_SAVE'},
     )

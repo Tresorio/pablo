@@ -118,5 +118,13 @@
     "nb_farmers": {
         "en": "Number of farmers to deploy",
         "fr": "Nombre de farmers à déployer"
+    },
+    "pack_description_popup": {
+        "en": "Description of the pack content",
+        "fr": "Description du contenu du pack"
+    },
+    "pack_full_description_popup": {
+        "en": "{0:.2f} credits per hour, {1} Gpu, {2} Cpu, {3} Mib of Ram",
+        "fr": "{0:.2f} crédits par heure, {1} Gpu, {2} Cpu, {3} Mib de Ram"
     }
 }

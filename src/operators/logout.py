@@ -1,6 +1,7 @@
 import bpy
-from src.config.langs import TRADUCTOR, CONFIG_LANG
+from src.ui.popup import popup
 from src.services.async_loop import shutdown_loop
+from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
 def logout():
@@ -31,6 +32,5 @@ class TresorioLogoutOperator(bpy.types.Operator):
 
     def execute(self, context):
         logout()
-        self.report({'INFO'},
-                    TRADUCTOR['notif']['success_logout'][CONFIG_LANG])
+        popup(TRADUCTOR['notif']['success_logout'][CONFIG_LANG], icon='ERROR')
         return {'FINISHED'}

@@ -7,6 +7,7 @@ from . import (
     redirect,
     render,
     stop_render,
+    popup,
 )
 
 modules = (
@@ -17,6 +18,7 @@ modules = (
     redirect,
     render,
     stop_render,
+    popup,
 )
 
 for module in modules:

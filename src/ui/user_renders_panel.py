@@ -43,8 +43,8 @@ class TresorioRendersList(bpy.types.UIList):
         if render.status == RenderStatus.RUNNING:
             row.operator('tresorio.stop_render', icon='X').index = index
         elif render.rendered_frames > 0:
-            if context.window_manager.tresorio_report_props.downloading_render_results is True:
-                row.enabled = False
+            # if context.window_manager.tresorio_report_props.downloading_render_results is True:
+                # row.enabled = False
             row.operator('tresorio.download_render_results',
                               text='',
                               icon='IMPORT').index = index
