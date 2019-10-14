@@ -110,5 +110,13 @@
     "cant_unpack_textures": {
         "en": "Can't unpack the textures out of the file",
         "fr": "Impossible de décharger les textures du fichier"
+    },
+    "no_result_render": {
+        "en": "No frames rendered",
+        "fr": "Pas des frames rendues"
+    },
+    "finished_render": {
+        "en": "Finished",
+        "fr": "Fini"
     }
 }

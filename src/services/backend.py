@@ -5,6 +5,7 @@ import bpy
 import asyncio
 import functools
 from http import HTTPStatus
+from src.ui.popup import popup
 from src.services.nas import Nas
 from typing import Dict, Any, List
 from src.operators.logout import logout
@@ -22,13 +23,12 @@ from bundle_modules.aiohttp import ClientResponseError, ClientResponse
 def logout_if_unauthorized(err: Exception):
     if isinstance(err, ClientResponseError) and err.status == HTTPStatus.UNAUTHORIZED:
         logout()
-        set_error_string(TRADUCTOR['notif']['expired_session'][CONFIG_LANG])
+        popup(TRADUCTOR['notif']['expired_session'][CONFIG_LANG], icon='ERROR')
         return True
     return False
 
 
 def new_render():
-    bpy.data.window_managers['WinMan'].tresorio_report_props.error = False
     bpy.data.window_managers['WinMan'].tresorio_report_props.upload_failed = 0
     props = bpy.data.window_managers['WinMan'].tresorio_render_form
 
@@ -57,7 +57,6 @@ def connect_to_tresorio(email: str, password: str):
     """Connects the user to Tresorio and fetch required data"""
     bpy.data.window_managers['WinMan'].tresorio_report_props.error = False
     bpy.data.window_managers['WinMan'].tresorio_user_props.token = ''
-    bpy.data.window_managers['WinMan'].tresorio_report_props.invalid_logs = 0
     bpy.data.window_managers['WinMan'].tresorio_report_props.login_in = 1
 
     credentials = {
@@ -96,10 +95,6 @@ def update_list_renderings():
     asyncio.ensure_future(future)
 
 
-def set_error_string(msg: str):
-    bpy.data.window_managers['WinMan'].tresorio_report_props.error = True
-    bpy.data.window_managers['WinMan'].tresorio_report_props.error_msg = msg
-
 # ASYNC CORE-------------------------------------------------------------------
 
 
@@ -125,8 +120,8 @@ async def _download_render_results(token: str, render_id: str, render_result_pat
         if logout_if_unauthorized(err) is False:
             _download_render_results_callback(success=False)
         elif isinstance(err, ClientResponseError) is False:
-            set_error_string(TRADUCTOR['notif']
-                             ['err_download_results'][CONFIG_LANG])
+            popup(TRADUCTOR['notif']['err_download_results']
+                  [CONFIG_LANG], icon='ERROR')
         return
 
 
@@ -140,8 +135,8 @@ async def _update_user_info(token: str):
             if logout_if_unauthorized(err) is False:
                 _get_user_info_error(err)
             elif isinstance(err, ClientResponseError) is False:
-                set_error_string(TRADUCTOR['notif']
-                                 ['err_acc_info'][CONFIG_LANG])
+                popup(TRADUCTOR['notif']['err_acc_info']
+                      [CONFIG_LANG], icon='ERROR')
             return
 
 
@@ -155,8 +150,8 @@ async def _update_renderpacks_info(token: str):
             if logout_if_unauthorized(err) is False:
                 _get_renderpacks_error(err)
             elif isinstance(err, ClientResponseError) is False:
-                set_error_string(TRADUCTOR['notif']
-                                 ['err_renderpacks'][CONFIG_LANG])
+                popup(TRADUCTOR['notif']
+                      ['err_renderpacks'][CONFIG_LANG], icon='ERROR')
             return
 
 
@@ -176,8 +171,8 @@ async def _connect_to_tresorio(data: Dict[str, str]):
             BACKEND_LOGGER.error(err)
             _connect_to_tresorio_error(err)
             if isinstance(err, ClientResponseError) is False:
-                set_error_string(TRADUCTOR['notif']
-                                 ['err_connection'][CONFIG_LANG])
+                popup(TRADUCTOR['notif']
+                      ['err_connection'][CONFIG_LANG], icon='ERROR')
             return
 
     await _update_renderpacks_info(res_connect['token'])
@@ -224,7 +219,8 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
             bpy.ops.wm.save_as_mainfile(filepath=blendfile)
     except RuntimeError as err:
         BACKEND_LOGGER.error(err)
-        set_error_string(TRADUCTOR['notif']['cant_pack_textures'][CONFIG_LANG])
+        popup(TRADUCTOR['notif']['cant_pack_textures']
+              [CONFIG_LANG], icon='ERROR')
         return
     finally:
         bpy.context.window_manager.tresorio_report_props.packing_textures = False
@@ -243,12 +239,14 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError) and err.status == HTTPStatus.FORBIDDEN:
-            return set_error_string(TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG])
+            popup(TRADUCTOR['notif']['not_enough_credits']
+                  [CONFIG_LANG], icon='ERROR')
+            return
         elif logout_if_unauthorized(err) is False:
             _upload_blend_file_error(err)
         elif not isinstance(err, ClientResponseError):
-            set_error_string(TRADUCTOR['notif']
-                             ['err_upl_blendfile'][CONFIG_LANG])
+            popup(TRADUCTOR['notif']
+                  ['err_upl_blendfile'][CONFIG_LANG], icon='ERROR')
         return
 
     finally:
@@ -259,8 +257,8 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
                 bpy.ops.wm.save_as_mainfile(filepath=blendfile)
         except RuntimeError as err:
             BACKEND_LOGGER.error(err)
-            set_error_string(TRADUCTOR['notif']
-                             ['cant_unpack_textures'][CONFIG_LANG])
+            popup(TRADUCTOR['notif']
+                  ['cant_unpack_textures'][CONFIG_LANG], icon='ERROR')
         finally:
             bpy.context.window_manager.tresorio_report_props.unpacking_textures = False
 
@@ -270,8 +268,8 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
-            set_error_string(TRADUCTOR['notif']
-                             ['err_launch_render'][CONFIG_LANG])
+            popup(TRADUCTOR['notif']
+                  ['err_launch_render'][CONFIG_LANG], icon='ERROR')
         return
     await _update_list_renderings(token)
 
@@ -283,8 +281,8 @@ async def _stop_render(token: str, render_id: str):
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
-            set_error_string(TRADUCTOR['notif']
-                             ['err_stop_render'][CONFIG_LANG])
+            popup(TRADUCTOR['notif']
+                  ['err_stop_render'][CONFIG_LANG], icon='ERROR')
         return
     await _update_list_renderings(token)
 
@@ -296,8 +294,8 @@ async def _delete_render(token: str, render_id: str):
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
-            set_error_string(TRADUCTOR['notif']
-                             ['err_delete_render'][CONFIG_LANG])
+            popup(TRADUCTOR['notif']
+                  ['err_delete_render'][CONFIG_LANG], icon='ERROR')
         return
     await _update_list_renderings(token)
 
@@ -325,6 +323,8 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
     bpy.context.window_manager.property_unset('tresorio_render_packs')
     for i, pack in enumerate(res):
         new_pack = bpy.context.window_manager.tresorio_render_packs.add()
+        new_pack.bl_rna.description.__format__('1')
+        # new_pack.bl_rna.description = 'THIS IS A TEST'
         new_pack.name = pack['name']
         new_pack.cost = pack['cost']
         new_pack.gpu = pack['gpu']
@@ -353,7 +353,7 @@ def _upload_blend_file_callback(res: ClientResponse) -> None:
 def _list_renderings_details_error(err: Exception) -> None:
     bpy.data.window_managers['WinMan'].tresorio_report_props.are_renders_refreshing = False
     if isinstance(err, ClientResponseError) is False:
-        set_error_string(TRADUCTOR['notif']['err_renders'][CONFIG_LANG])
+        popup(TRADUCTOR['notif']['err_renders'][CONFIG_LANG], icon='ERROR')
 
 
 def _get_renderpacks_error(err: Exception) -> None:
@@ -375,4 +375,4 @@ def _connect_to_tresorio_error(err: Exception) -> None:
     if isinstance(err, ClientResponseError) is False:
         return
     if err.status == HTTPStatus.UNAUTHORIZED:
-        bpy.data.window_managers['WinMan'].tresorio_report_props.invalid_logs = True
+        popup(TRADUCTOR['notif']['invalid_login'][CONFIG_LANG], icon='ERROR')

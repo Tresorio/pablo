@@ -12,13 +12,6 @@ class TresorioReportProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
         update=lambda a, b: None,
     )
-    invalid_logs: bpy.props.BoolProperty(
-        name='',
-        description='',
-        default=False,
-        options={'HIDDEN', 'SKIP_SAVE'},
-        update=lambda a, b: None,
-    )
 
     # Uploading
     uploading_blend_file: bpy.props.BoolProperty(
@@ -46,22 +39,6 @@ class TresorioReportProps(bpy.types.PropertyGroup):
     )
     fetch_user_info_failed: bpy.props.BoolProperty(
         default=False,
-        name='',
-        description='',
-        options={'HIDDEN', 'SKIP_SAVE'},
-        update=lambda a, b: None,
-    )
-
-    # Network issue
-    error: bpy.props.BoolProperty(
-        default=False,
-        name='',
-        description='',
-        options={'HIDDEN', 'SKIP_SAVE'},
-        update=lambda a, b: None,
-    )
-    error_msg: bpy.props.StringProperty(
-        default='',
         name='',
         description='',
         options={'HIDDEN', 'SKIP_SAVE'},

@@ -7,6 +7,7 @@ from . import (
     selected_render_panel,
     user_renders_panel,
     account_panel,
+    popup,
 )
 
 modules = (
@@ -17,6 +18,7 @@ modules = (
     selected_render_panel,
     user_renders_panel,
     account_panel,
+    popup,
 )
 
 for module in modules:

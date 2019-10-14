@@ -2,6 +2,7 @@ import bpy
 import asyncio
 import requests
 import urllib.parse as url
+from src.ui.popup import popup
 from src.services import async_loop
 from src.config.api import API_CONFIG
 from src.services.backend import connect_to_tresorio
@@ -27,20 +28,16 @@ class TresorioLoginOperator(bpy.types.Operator):
             len(password))
 
         if user_props.is_logged == True:
-            self.report({'INFO'},
-                        TRADUCTOR['notif']['already_logged_in'][CONFIG_LANG])
+            popup(TRADUCTOR['notif']['already_logged_in'][CONFIG_LANG], icon='ERROR')
             return {'CANCELLED'}
         if email == '' and password == '':
-            self.report({'ERROR'},
-                        TRADUCTOR['notif']['no_mail_password'][CONFIG_LANG])
+            popup(TRADUCTOR['notif']['no_mail_password'][CONFIG_LANG], icon='ERROR')
             return {'CANCELLED'}
         if email == '':
-            self.report({'INFO'},
-                        TRADUCTOR['notif']['no_mail'][CONFIG_LANG])
+            popup(TRADUCTOR['notif']['no_mail'][CONFIG_LANG], icon='ERROR')
             return {'CANCELLED'}
         if password == '':
-            self.report({'INFO'},
-                        TRADUCTOR['notif']['no_password'][CONFIG_LANG])
+            popup(TRADUCTOR['notif']['no_password'][CONFIG_LANG], icon='ERROR')
             return {'CANCELLED'}
 
         if user_props.remember_email is True:

@@ -158,5 +158,15 @@
     "settings": {
         "en": "Settings",
         "fr": "Paramètres"
+    },
+    "farmer": {
+        "singular": {
+            "en": "Farmer",
+            "fr": "Farmer"
+        },
+        "plural": {
+            "en": "Farmers",
+            "fr": "Farmers"
+        }
     }
 }

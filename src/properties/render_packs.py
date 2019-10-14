@@ -27,6 +27,7 @@ class TresorioRenderPacksProps(bpy.types.PropertyGroup):
 
     is_selected: bpy.props.BoolProperty(
         update=set_render_pack,
+        description='{0}',
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
@@ -62,11 +63,9 @@ class TresorioRenderPacksProps(bpy.types.PropertyGroup):
     @classmethod
     def register(cls):
         """Link to window manager so these settings are reset at launch"""
-        desc = TRADUCTOR['desc']['render_packs'][CONFIG_LANG]
         bpy.types.WindowManager.tresorio_render_packs = bpy.props.CollectionProperty(
             type=cls,
             name='tresorio_render_form',
-            description=desc,
             options={'HIDDEN', 'SKIP_SAVE'},
         )
 

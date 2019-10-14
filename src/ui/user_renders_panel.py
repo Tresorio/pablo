@@ -1,4 +1,5 @@
 import bpy
+from src.config.enums import RenderStatus
 from src.ui.icons import TresorioIconsLoader as til
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
@@ -7,39 +8,50 @@ class TresorioRendersList(bpy.types.UIList):
     bl_idname = 'OBJECT_UL_TRESORIO_RENDERS_LIST'
 
     def draw_item(self, context, layout, data, render, icon, active_data, active_propname, index):
-        layout = layout.split(factor=0.05)
-        if render.status == 'FINISHED':
-            layout.label(text='', icon='KEYTYPE_JITTER_VEC')
-        elif render.status == 'RUNNING':
-            layout.label(text='', icon='KEYTYPE_BREAKDOWN_VEC')
-        elif render.status == 'STOPPING':
-            layout.label(text='', icon_value=til.icon('TRESORIO_STOPPING'))
-        elif render.status == 'LAUNCHING':
-            layout.label(text='', icon_value=til.icon('TRESORIO_LAUNCHING'))
+        split = layout.split(factor=0.05)
 
-        layout = layout.split(factor=0.6)
+        # STATUS_ICON
+        if render.status == RenderStatus.FINISHED:
+            split.label(text='', icon='KEYTYPE_JITTER_VEC')
+        elif render.status == RenderStatus.RUNNING:
+            split.label(text='', icon='KEYTYPE_BREAKDOWN_VEC')
+        elif render.status == RenderStatus.STOPPING:
+            split.label(text='', icon_value=til.icon('TRESORIO_STOPPING'))
+        elif render.status == RenderStatus.LAUNCHING:
+            split.label(text='', icon_value=til.icon('TRESORIO_LAUNCHING'))
         icon = 'RENDER_ANIMATION' if render.type == 'ANIMATION' else 'RESTRICT_RENDER_OFF'
-        layout.label(text=render.name, icon=icon)
-        row = layout.row(align=True)
+        split.label(text=render.name, icon=icon)
+
+
+        # INFO_CASE
+        row = split.row(align=True)
         row.alignment = 'RIGHT'
-        if render.status == 'RUNNING':
+        if render.status == RenderStatus.LAUNCHING:
+            row.label(text=TRADUCTOR['notif']['launching'][CONFIG_LANG])
+        if render.status == RenderStatus.RUNNING:
             row.prop(render, 'progression')
-            row.operator('tresorio.stop_render',
-                         text='',
-                         icon='X').index = index
-        elif render.status == 'FINISHED':
+        if render.status == RenderStatus.STOPPING:
+            row.label(text=TRADUCTOR['notif']['stopping'][CONFIG_LANG])
+        if render.status == RenderStatus.FINISHED:
+            if render.rendered_frames == 0:
+                row.label(
+                    text=TRADUCTOR['notif']['no_result_render'][CONFIG_LANG])
+            else:
+                row.label(text=TRADUCTOR['notif']['finished_render'][CONFIG_LANG])
+
+        # OPS_CASE
+        if render.status == RenderStatus.RUNNING:
+            row.operator('tresorio.stop_render', icon='X').index = index
+        elif render.rendered_frames > 0:
             if context.window_manager.tresorio_report_props.downloading_render_results is True:
                 row.enabled = False
             row.operator('tresorio.download_render_results',
-                         text='',
-                         icon='IMPORT').index = index
-        elif render.status == 'STOPPING':
-            row.label(text=TRADUCTOR['notif']['stopping'][CONFIG_LANG])
-        elif render.status == 'LAUNCHING':
-            row.label(text=TRADUCTOR['notif']['launching'][CONFIG_LANG])
-        row.operator('tresorio.delete_render',
-                     text='',
-                     icon='TRASH').index = index
+                              text='',
+                              icon='IMPORT').index = index
+        if render.status != RenderStatus.STOPPING:
+            row.operator('tresorio.delete_render',
+                              text='',
+                              icon='TRASH').index = index
 
 
 class TresorioRendersPanel(bpy.types.Panel):

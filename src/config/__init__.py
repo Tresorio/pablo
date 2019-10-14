@@ -4,6 +4,7 @@ from . import (
     debug,
     langs,
     paths,
+    enums,
 )
 
 modules = (
@@ -11,6 +12,7 @@ modules = (
     debug,
     langs,
     paths,
+    enums,
 )
 
 for module in modules:

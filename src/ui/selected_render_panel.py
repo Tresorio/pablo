@@ -43,7 +43,10 @@ class TresorioSelectedRenderPanel(bpy.types.Panel):
             right.label(text=render.engine.capitalize())
 
             left.label(text=TRADUCTOR['field']['render_pack'][CONFIG_LANG]+':')
-            right.label(text=render.farm.capitalize())
+            farmers = TRADUCTOR['field']['farmer']['singular' if render.number_farmers ==
+                                                   1 else 'plural'][CONFIG_LANG]
+            right.label(
+                text=f'{render.farm.capitalize()}  ({render.number_farmers} {farmers})')
 
             left.label(text=TRADUCTOR['field']['format'][CONFIG_LANG]+':')
             right.label(text=render.output_format.capitalize())

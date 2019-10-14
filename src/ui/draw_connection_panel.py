@@ -27,10 +27,6 @@ def draw_connection_panel(layout: bpy.types.UILayout, context: bpy.types.Context
     row.prop(user_props, 'show_password',
              icon_only=True, icon='HIDE_OFF')
 
-    if report_props.invalid_logs is True:
-        layout.label(text=TRADUCTOR['notif']
-                     ['invalid_login'][CONFIG_LANG], icon='ERROR')
-
     row = layout.row().split(factor=0.5)
     row.column().prop(user_props, 'remember_email',
                       text=TRADUCTOR['field']['remember_email'][CONFIG_LANG])

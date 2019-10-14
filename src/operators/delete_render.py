@@ -1,4 +1,5 @@
 import bpy
+from src.config.enums import RenderStatus
 from src.services.backend import delete_render
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
@@ -15,5 +16,6 @@ class TresorioDeleteRenderOperator(bpy.types.Operator):
 
     def execute(self, context):
         render_id = context.window_manager.tresorio_renders_details[self.index].id
+        context.window_manager.tresorio_renders_details[self.index].status = RenderStatus.STOPPING
         delete_render(render_id)
         return {'FINISHED'}

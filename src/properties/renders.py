@@ -16,11 +16,9 @@ def update_renders_details_prop(res: Dict[str, Any]) -> None:
         render.status = res['status']
         render.total_frames = res['totalFragments']
         render.rendered_frames = res['finishedFragments']
-        if res['uptime'] is not None:
-            render.uptime = res['uptime']
-        if res['progression'] is not None:
-            render.progression = res['progression']
-        render.uptime = res['uptime'] # TODO fix None uptime (not updated in gandalf)
+        render.number_farmers = res['numberFarmers']
+        render.progression = res['progression']
+        render.uptime = res['uptime']
         # TODO get launch date (how to convert it depending of pc time zone ?)
     except Exception as err:
         print('Wrong result in render details callback:', err)
@@ -32,6 +30,7 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
 
     # Render specifics
     name: bpy.props.StringProperty(update=lambda a, b: None)
+    number_farmers: bpy.props.IntProperty(update=lambda a, b: None)
     engine: bpy.props.StringProperty(update=lambda a, b: None)
     farm: bpy.props.StringProperty(update=lambda a, b: None)
     timeout: bpy.props.IntProperty(update=lambda a, b: None)
