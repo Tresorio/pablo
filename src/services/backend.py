@@ -15,6 +15,7 @@ from src.services.loggers import BACKEND_LOGGER
 from src.utils.percent_reader import PercentReader
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.services.async_loop import ensure_async_loop
+from src.properties.render_form import get_render_type
 from src.config.debug import NAS_DEBUG, PLATFORM_DEBUG
 from src.properties.renders import update_renders_details_prop
 from bundle_modules.aiohttp import ClientResponseError, ClientResponse
@@ -38,7 +39,7 @@ def new_render():
         'outputFormat': props.output_formats_list,
         'timeout': props.timeout,
         'farm': props.render_pack,
-        'renderType': props.render_types,
+        'renderType': get_render_type(),
         'size': os.path.getsize(bpy.data.filepath),
         'numberFarmers': props.nb_farmers
     }

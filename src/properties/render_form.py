@@ -19,6 +19,14 @@ def set_animation_type(prop, value):
         prop.is_switching_render_type = False
 
 
+def get_render_type():
+    render_form = bpy.context.window_manager.tresorio_render_form
+    if render_form.is_frame_selected is True:
+        return 'FRAME'
+    else:
+        return 'ANIMATION'
+
+
 def update_max_cost(prop, context):
     del prop
     render_form = context.window_manager.tresorio_render_form
