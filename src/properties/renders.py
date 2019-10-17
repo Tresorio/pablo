@@ -4,24 +4,21 @@ from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
 def update_renders_details_prop(res: Dict[str, Any]) -> None:
-    try:
-        render = bpy.context.window_manager.tresorio_renders_details.add()
-        render.id = res['id']
-        render.name = res['name']
-        render.timeout = res['timeout']
-        render.type = res['renderType']
-        render.engine = res['engine']
-        render.farm = res['farm']
-        render.output_format = res['outputFormat']
-        render.status = res['status']
-        render.total_frames = res['totalFragments']
-        render.rendered_frames = res['finishedFragments']
-        render.number_farmers = res['numberFarmers']
-        render.progression = res['progression']
-        render.uptime = res['uptime']
-        # TODO get launch date (how to convert it depending of pc time zone ?)
-    except Exception as err:
-        print('Wrong result in render details callback:', err)
+    # print(res)
+    render = bpy.context.window_manager.tresorio_renders_details.add()
+    render.id = res['id']
+    render.name = res['name']
+    render.timeout = res['timeout']
+    render.type = res['renderType']
+    render.engine = res['engine']
+    render.farm = res['farm']
+    render.output_format = res['outputFormat']
+    render.status = res['status']
+    render.total_frames = res['totalFragments']
+    render.rendered_frames = res['finishedFragments']
+    render.number_farmers = res['numberFarmers']
+    render.progression = res['progression']
+    render.uptime = res['uptime']
 
 
 class TresorioRendersDetailsProps(bpy.types.PropertyGroup):

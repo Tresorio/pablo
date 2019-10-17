@@ -34,7 +34,9 @@ class TresorioNewRenderPanel(bpy.types.Panel):
 
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['render_type'][CONFIG_LANG]+':')
-        row.props_enum(render_form, 'render_types')
+        split = row.split(factor=0.5)
+        split.prop(render_form, 'is_frame_selected', toggle=1, icon='RESTRICT_RENDER_OFF')
+        split.prop(render_form, 'is_animation_selected', toggle=1, icon='RENDER_ANIMATION')
 
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['engine'][CONFIG_LANG]+':')
@@ -46,42 +48,39 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row.prop_menu_enum(render_form, 'output_formats_list', icon='FILE_IMAGE',
                            text=render_form.output_formats_list)
 
-        box = box.split(factor=0.4)
-        left = box.column()
-        right = box.column()
+        subbox = box.split(factor=0.4)
+        left = subbox.column()
+        right = subbox.column()
         left.label(text=TRADUCTOR['field']['options'][CONFIG_LANG]+':')
         right.prop(render_form, 'pack_textures',
                    text=TRADUCTOR['field']['pack_textures'][CONFIG_LANG])
 
         # RENDER PACKS
-        box = layout.box()
         box.row().label(text=TRADUCTOR['field']
                         ['render_pack'][CONFIG_LANG]+':',
                         icon_value=til.icon('TRESORIO_PACK'))
-
-        split = box.row(align=True).split(factor=0.90)
-        left = split.column()
-        right = split.column()
         description = ''
 
+        packs_cols = box.column_flow(columns=len(render_packs), align=True)
         for pack in render_packs:
-            left.prop(pack, 'is_selected',
+            case = packs_cols.box().split(factor=0.95)
+            case.prop(pack, 'is_selected',
                       text=pack.name.capitalize(), toggle=1)
-            right.operator('tresorio.pack_desc_popup', text='',
-                           icon='PREFERENCES',
+            case.operator('tresorio.pack_desc_popup', text='',
+                           icon_value=til.icon('TRESORIO_QUESTION'),
                            emboss=False).msg = pack.description
             if pack.is_selected is True:
-                description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
+                description=TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
                     pack.cost * render_form.nb_farmers,
                     pack.gpu * render_form.nb_farmers,
                     pack.cpu * render_form.nb_farmers
                 )
 
-        row = box.row().split(factor=0.4)
+        row=box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['nb_farmers'][CONFIG_LANG]+':')
         row.prop(render_form, 'nb_farmers')
 
-        row = box.row().split(factor=0.4)
+        row=box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['timeout'][CONFIG_LANG]+':')
         row.prop(render_form, 'timeout',
                  text=TRADUCTOR['field']['hours'][CONFIG_LANG],
@@ -89,15 +88,14 @@ class TresorioNewRenderPanel(bpy.types.Panel):
 
         box.label(text=description)
 
-        row = box.row().split(factor=0.3)
+        row=box.row().split(factor=0.3)
         row.label(text=TRADUCTOR['field']['max_cost'][CONFIG_LANG]+':')
-        max_cost = round(render_form.max_cost * 100) / 100
+        max_cost=round(render_form.max_cost * 100) / 100
         row.label(text=f'{max_cost:.2f} ' +
                   TRADUCTOR['field']['credits'][CONFIG_LANG] +
                   f' ({render_form.max_timeout} h)')
 
         # LAUNCH
-        box = layout.box()
         if report_props.uploading_blend_file is True:
             box.prop(render_form, 'upload_percent',
                      text=TRADUCTOR['desc']['uploading'][CONFIG_LANG],

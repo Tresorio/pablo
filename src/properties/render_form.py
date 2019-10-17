@@ -3,10 +3,26 @@ import math
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
-def update_max_cost(prop, ctx):
+def set_frame_type(prop, value):
+    if prop.is_switching_render_type is False:
+        prop.is_switching_render_type = True
+        prop.is_animation_selected = False
+        prop.is_frame_selected = True
+        prop.is_switching_render_type = False
+
+
+def set_animation_type(prop, value):
+    if prop.is_switching_render_type is False:
+        prop.is_switching_render_type = True
+        prop.is_frame_selected = False
+        prop.is_animation_selected = True
+        prop.is_switching_render_type = False
+
+
+def update_max_cost(prop, context):
     del prop
-    render_form = ctx.window_manager.tresorio_render_form
-    user_credits = ctx.window_manager.tresorio_user_props.total_credits
+    render_form = context.window_manager.tresorio_render_form
+    user_credits = context.window_manager.tresorio_user_props.total_credits
     if render_form.timeout == 0 and render_form.price_per_hour > 0.0:
         render_form.max_timeout = math.floor(
             user_credits / render_form.price_per_hour)
@@ -52,14 +68,12 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
             ('PNG', 'PNG', ''),
             # ('JPEG', 'JPEG', ''),
             # ('BMP', 'BMP', ''),
-            # ('AVIRAW', 'Avi_Raw', ''),
-            # ('AVIJPEG', 'Avi_JPEG', ''),
             # ('IRIS', 'Iris', ''),
             # ('IRIZ', 'Iriz', ''),
             # ('JP2', 'JPEG_2000', ''),
             # ('TGA', 'Targa', ''),
             # ('RAWTGA', 'Targa_Raw', ''),
-            # ('HDR', 'HDR', ''),
+            # ('HDR', 'HDR', ''),aa
             # ('TIFF', 'TIFF', ''),
             # ('CINEON', 'Cineon', ''),
             # ('OPEN_EXR', 'OpenEXR', ''),
@@ -78,18 +92,28 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['render_types'][CONFIG_LANG]
-    desc_frame = TRADUCTOR['desc']['render_type_frame'][CONFIG_LANG]
-    desc_animation = TRADUCTOR['desc']['render_type_animation'][CONFIG_LANG]
-    render_types: bpy.props.EnumProperty(
-        description=desc,
+    is_switching_render_type: bpy.props.BoolProperty(
+        description='',
         name='',
-        items=(
-            ('FRAME', 'Frame', desc_frame, 'RESTRICT_RENDER_OFF', 0),
-            ('ANIMATION', 'Animation', desc_animation, 'RENDER_ANIMATION', 1),
-        ),
-        default='FRAME',
         options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    desc = TRADUCTOR['desc']['render_type_frame'][CONFIG_LANG]
+    is_frame_selected: bpy.props.BoolProperty(
+        description=desc,
+        default=True,
+        name='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=set_frame_type,
+    )
+
+    desc = TRADUCTOR['desc']['render_type_animation'][CONFIG_LANG]
+    is_animation_selected: bpy.props.BoolProperty(
+        description=desc,
+        default=False,
+        name='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=set_animation_type,
     )
 
     desc = TRADUCTOR['desc']['pack_textures'][CONFIG_LANG]

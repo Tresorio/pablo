@@ -264,7 +264,8 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
 
     try:
         async with Platform(debug=PLATFORM_DEBUG) as plt:
-            await plt.req_launch_render(token, render_info['id'], launch_render, jsonify=True)
+            res = await plt.req_launch_render(token, render_info['id'], launch_render, jsonify=True)
+            print(res)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
