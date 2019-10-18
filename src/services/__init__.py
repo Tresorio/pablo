@@ -7,13 +7,14 @@ from . import (
     platform,
 )
 
-modules = (
-    async_loop,
-    backend,
-    loggers,
-    nas,
-    platform,
-)
+if 'src.services' in locals():
+    modules = (
+        async_loop,
+        backend,
+        loggers,
+        nas,
+        platform,
+    )
 
-for module in modules:
-    reload(module)
+    for module in modules:
+        reload(module)

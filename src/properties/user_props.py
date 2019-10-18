@@ -1,5 +1,5 @@
 import bpy
-from src.utils.email import get_email_from_conf
+from src.config.user_json import USER_CONFIG
 from src.utils.password import switch_password_visibility
 from src.config.langs import set_new_lang, TRADUCTOR, CONFIG_LANG, ALL_LANGS
 
@@ -25,7 +25,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         default=ALL_LANGS[CONFIG_LANG][0],
     )
 
-    conf_email = get_email_from_conf()
+    conf_email = USER_CONFIG['email']
     desc = TRADUCTOR['desc']['mail'][CONFIG_LANG]
     email: bpy.props.StringProperty(
         name='',
@@ -40,7 +40,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         name='',
         description=desc,
         maxlen=128,
-        default='tresorio',
+        default='',
         options={'SKIP_SAVE'},
         subtype='PASSWORD',
     )

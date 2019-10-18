@@ -5,10 +5,10 @@ import urllib.parse as url
 from src.ui.popup import popup
 from src.services import async_loop
 from src.config.api import API_CONFIG
+from src.config.user_json import USER_CONFIG
 from src.services.backend import connect_to_tresorio
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.utils.password import reset_password, get_password
-from src.utils.email import set_email_in_conf, remove_email_from_conf
 
 
 class TresorioLoginOperator(bpy.types.Operator):
@@ -41,9 +41,9 @@ class TresorioLoginOperator(bpy.types.Operator):
             return {'CANCELLED'}
 
         if user_props.remember_email is True:
-            set_email_in_conf(email)
+            USER_CONFIG['email'] = email
         else:
-            remove_email_from_conf()
+            USER_CONFIG['email'] = ''
 
         connect_to_tresorio(email, password)
 

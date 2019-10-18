@@ -24,6 +24,23 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         layout = self.layout
         box = layout.box()
 
+        # LAUNCH
+        if report_props.uploading_blend_file is True:
+            box.prop(render_form, 'upload_percent',
+                     text=TRADUCTOR['desc']['uploading'][CONFIG_LANG],
+                     slider=True)
+        elif report_props.packing_textures is True:
+            box.label(text='Packing ...')
+        elif report_props.unpacking_textures is True:
+            box.label(text='Unpacking ...')
+        else:
+            box.operator('tresorio.render_frame',
+                         text=TRADUCTOR['field']['launch'][CONFIG_LANG],
+                         icon='PLAY')
+        if report_props.upload_failed is True:
+            layout.box().label(text=TRADUCTOR['desc']['upload_failed'][CONFIG_LANG],
+                               icon='ERROR')
+
         # SETTINGS
         box.label(text=TRADUCTOR['field']['settings']
                   [CONFIG_LANG], icon_value=til.icon('TRESORIO_SETTINGS'))
@@ -35,8 +52,10 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['render_type'][CONFIG_LANG]+':')
         split = row.split(factor=0.5)
-        split.prop(render_form, 'is_frame_selected', toggle=1, icon='RESTRICT_RENDER_OFF')
-        split.prop(render_form, 'is_animation_selected', toggle=1, icon='RENDER_ANIMATION')
+        split.prop(render_form, 'is_frame_selected', toggle=1,
+                   text=TRADUCTOR['field']['frame'][CONFIG_LANG], icon='RESTRICT_RENDER_OFF')
+        split.prop(render_form, 'is_animation_selected', toggle=1,
+                   text=TRADUCTOR['field']['animation'][CONFIG_LANG], icon='RENDER_ANIMATION')
 
         row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['engine'][CONFIG_LANG]+':')
@@ -55,6 +74,8 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         right.prop(render_form, 'pack_textures',
                    text=TRADUCTOR['field']['pack_textures'][CONFIG_LANG])
 
+        box.separator(factor=0.5)
+
         # RENDER PACKS
         box.row().label(text=TRADUCTOR['field']
                         ['render_pack'][CONFIG_LANG]+':',
@@ -67,20 +88,20 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             case.prop(pack, 'is_selected',
                       text=pack.name.capitalize(), toggle=1)
             case.operator('tresorio.pack_desc_popup', text='',
-                           icon_value=til.icon('TRESORIO_QUESTION'),
-                           emboss=False).msg = pack.description
+                          icon_value=til.icon('TRESORIO_QUESTION'),
+                          emboss=False).msg = pack.description
             if pack.is_selected is True:
-                description=TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
+                description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
                     pack.cost * render_form.nb_farmers,
                     pack.gpu * render_form.nb_farmers,
                     pack.cpu * render_form.nb_farmers
                 )
 
-        row=box.row().split(factor=0.4)
+        row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['nb_farmers'][CONFIG_LANG]+':')
         row.prop(render_form, 'nb_farmers')
 
-        row=box.row().split(factor=0.4)
+        row = box.row().split(factor=0.4)
         row.label(text=TRADUCTOR['field']['timeout'][CONFIG_LANG]+':')
         row.prop(render_form, 'timeout',
                  text=TRADUCTOR['field']['hours'][CONFIG_LANG],
@@ -88,9 +109,9 @@ class TresorioNewRenderPanel(bpy.types.Panel):
 
         box.label(text=description)
 
-        row=box.row().split(factor=0.3)
+        row = box.row().split(factor=0.3)
         row.label(text=TRADUCTOR['field']['max_cost'][CONFIG_LANG]+':')
-        max_cost=round(render_form.max_cost * 100) / 100
+        max_cost = round(render_form.max_cost * 100) / 100
         row.label(text=f'{max_cost:.2f} ' +
                   TRADUCTOR['field']['credits'][CONFIG_LANG] +
                   f' ({render_form.max_timeout} h)')

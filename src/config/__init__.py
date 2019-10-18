@@ -2,18 +2,21 @@ from importlib import reload
 from . import (
     api,
     debug,
-    langs,
     paths,
     enums,
-)
-
-modules = (
-    api,
-    debug,
+    user_json,
     langs,
-    paths,
-    enums,
 )
 
-for module in modules:
-    reload(module)
+if 'src.config' in locals():
+    modules = (
+        api,
+        debug,
+        paths,
+        enums,
+        langs,
+        user_json,
+    )
+
+    for module in modules:
+        reload(module)

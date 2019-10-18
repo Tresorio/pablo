@@ -32,6 +32,11 @@ def logout_if_unauthorized(err: Exception):
 def new_render():
     bpy.data.window_managers['WinMan'].tresorio_report_props.upload_failed = 0
     props = bpy.data.window_managers['WinMan'].tresorio_render_form
+    render_type = get_render_type()
+    number_of_frames = 1
+
+    if render_type == 'ANIMATION':  # TODO enum
+        number_of_frames = 1 + bpy.context.scene.frame_end - bpy.context.scene.frame_end
 
     create_render = {
         'name': props.rendering_name,
@@ -39,9 +44,10 @@ def new_render():
         'outputFormat': props.output_formats_list,
         'timeout': props.timeout,
         'farm': props.render_pack,
-        'renderType': get_render_type(),
+        'renderType': render_type,
         'size': os.path.getsize(bpy.data.filepath),
-        'numberFarmers': props.nb_farmers
+        'numberFarmers': props.nb_farmers,
+        'numberOfFrames': number_of_frames,
     }
     launch_render = {
         'currentFrame': bpy.context.scene.frame_current,

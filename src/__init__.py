@@ -1,21 +1,22 @@
 from importlib import reload
 from . import (
+    utils,
     config,
-    operators,
     properties,
+    operators,
     services,
     ui,
-    utils,
 )
 
-modules = (
-    config,
-    operators,
-    properties,
-    services,
-    ui,
-    utils,
-)
+if 'src' in locals():
+    modules = (
+        operators,
+        ui,
+        utils,
+        services,
+        properties,
+        config,
+    )
 
-for module in modules:
-    reload(module)
+    for module in modules:
+        reload(module)

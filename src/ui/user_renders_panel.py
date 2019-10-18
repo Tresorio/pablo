@@ -22,7 +22,6 @@ class TresorioRendersList(bpy.types.UIList):
         icon = 'RENDER_ANIMATION' if render.type == 'ANIMATION' else 'RESTRICT_RENDER_OFF'
         split.label(text=render.name, icon=icon)
 
-
         # INFO_CASE
         row = split.row(align=True)
         row.alignment = 'RIGHT'
@@ -37,21 +36,20 @@ class TresorioRendersList(bpy.types.UIList):
                 row.label(
                     text=TRADUCTOR['notif']['no_result_render'][CONFIG_LANG])
             else:
-                row.label(text=TRADUCTOR['notif']['finished_render'][CONFIG_LANG])
+                row.label(text=TRADUCTOR['notif']
+                          ['finished_render'][CONFIG_LANG])
 
         # OPS_CASE
         if render.status == RenderStatus.RUNNING:
             row.operator('tresorio.stop_render', icon='X').index = index
-        elif render.rendered_frames > 0:
-            # if context.window_manager.tresorio_report_props.downloading_render_results is True:
-                # row.enabled = False
+        elif render.rendered_frames > 0 and render.status != RenderStatus.STOPPING:
             row.operator('tresorio.download_render_results',
-                              text='',
-                              icon='IMPORT').index = index
+                         text='',
+                         icon='IMPORT').index = index
         if render.status != RenderStatus.STOPPING:
             row.operator('tresorio.delete_render',
-                              text='',
-                              icon='TRASH').index = index
+                         text='',
+                         icon='TRASH').index = index
 
 
 class TresorioRendersPanel(bpy.types.Panel):

@@ -168,5 +168,13 @@
             "en": "Farmers",
             "fr": "Farmers"
         }
+    },
+    "frame": {
+        "en": "Frame",
+        "fr": "Frame"
+    },
+    "animation": {
+        "en": "Animation",
+        "fr": "Animation"
     }
 }

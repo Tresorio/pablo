@@ -85,13 +85,17 @@ to_register_classes = (
                        TresorioSelectedRenderPanel,
                       )
 
+import atexit
 import asyncio
 from src.operators.logout import logout
+from src.config.user_json import set_user_config
 from src.services.async_loop import setup_asyncio_executor
 
 def unregister():
     logout()
 
+    set_user_config()
+    atexit.unregister(set_user_config)
     TresorioIconsLoader.unregister()
     for cls in reversed(to_register_classes):
         try:
@@ -101,6 +105,7 @@ def unregister():
 
 
 def register():
+    atexit.register(set_user_config)
     asyncio.get_event_loop().close()
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)

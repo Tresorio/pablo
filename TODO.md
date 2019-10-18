@@ -20,6 +20,7 @@
         - Add a way to loadBalance using single frame separation
 
     On Paulette:
+        - Use the auto tile size addon in script
         - Add a way to upload renders as they appear
         - Add a way to merge multiple frame fragments into one
 
