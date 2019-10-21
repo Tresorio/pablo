@@ -176,5 +176,9 @@
     "animation": {
         "en": "Animation",
         "fr": "Animation"
+    },
+    "auto_tile_size": {
+        "en": "Auto tile size",
+        "fr": "Tile size automatique"
     }
 }

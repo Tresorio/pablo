@@ -21,13 +21,6 @@ class TresorioReportProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
         update=lambda a, b: None,
     )
-    upload_failed: bpy.props.BoolProperty(
-        default=False,
-        name='',
-        description='',
-        options={'HIDDEN', 'SKIP_SAVE'},
-        update=lambda a, b: None,
-    )
 
     # Fetching user info
     fetching_user_info: bpy.props.BoolProperty(
@@ -78,7 +71,7 @@ class TresorioReportProps(bpy.types.PropertyGroup):
     @classmethod
     def register(cls):
         """Link to window manager so these settings are reset at launch"""
-        bpy.types.WindowManager.tresorio_report_props = bpy.props.PointerProperty(
+        bpy.types.Scene.tresorio_report_props = bpy.props.PointerProperty(
             type=cls,
             name='tresorio_report_props',
             options={'HIDDEN', 'SKIP_SAVE'}
@@ -86,4 +79,4 @@ class TresorioReportProps(bpy.types.PropertyGroup):
 
     @classmethod
     def unregister(cls):
-        del bpy.types.WindowManager.tresorio_report_props
+        del bpy.types.Scene.tresorio_report_props

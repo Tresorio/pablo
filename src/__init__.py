@@ -8,15 +8,14 @@ from . import (
     ui,
 )
 
-if 'src' in locals():
-    modules = (
-        operators,
-        ui,
-        utils,
-        services,
-        properties,
-        config,
-    )
+modules = (
+    config,
+    operators,
+    ui,
+    utils,
+    services,
+    properties,
+)
 
-    for module in modules:
-        reload(module)
+for module in modules:
+    reload(module)

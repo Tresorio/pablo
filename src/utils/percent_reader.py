@@ -20,7 +20,7 @@ class PercentReader(io.BufferedReader):
     """
 
     def __init__(self, filepath: str):
-        bpy.data.window_managers['WinMan']['tresorio_render_form']['upload_percent'] = 0.0
+        bpy.context.scene.tresorio_render_form.upload_percent = 0.0
         super().__init__(open(filepath, "rb"))
         self.filepath = filepath
         self.percent = 0.0

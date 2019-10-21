@@ -17,9 +17,9 @@ class TresorioNewRenderPanel(bpy.types.Panel):
 
     def draw(self, context: bpy.types.Context):
         """Draws the form required for a rendering"""
-        render_form = bpy.context.window_manager.tresorio_render_form
+        render_form = bpy.context.scene.tresorio_render_form
         render_packs = bpy.context.window_manager.tresorio_render_packs
-        report_props = bpy.context.window_manager.tresorio_report_props
+        report_props = bpy.context.scene.tresorio_report_props
 
         layout = self.layout
         box = layout.box()
@@ -37,9 +37,6 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             box.operator('tresorio.render_frame',
                          text=TRADUCTOR['field']['launch'][CONFIG_LANG],
                          icon='PLAY')
-        if report_props.upload_failed is True:
-            layout.box().label(text=TRADUCTOR['desc']['upload_failed'][CONFIG_LANG],
-                               icon='ERROR')
 
         # SETTINGS
         box.label(text=TRADUCTOR['field']['settings']
@@ -67,12 +64,14 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row.prop_menu_enum(render_form, 'output_formats_list', icon='FILE_IMAGE',
                            text=render_form.output_formats_list)
 
-        subbox = box.split(factor=0.4)
-        left = subbox.column()
-        right = subbox.column()
-        left.label(text=TRADUCTOR['field']['options'][CONFIG_LANG]+':')
-        right.prop(render_form, 'pack_textures',
+        split = box.split(factor=0.4)
+        split.label(text=TRADUCTOR['field']['options'][CONFIG_LANG]+':')
+        grid_flow = split.grid_flow(even_rows=False, even_columns=True, align=True)
+
+        grid_flow.prop(render_form, 'pack_textures',
                    text=TRADUCTOR['field']['pack_textures'][CONFIG_LANG])
+        grid_flow.prop(render_form, 'auto_tile_size',
+                   text=TRADUCTOR['field']['auto_tile_size'][CONFIG_LANG])
 
         box.separator(factor=0.5)
 
@@ -129,6 +128,3 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             box.operator('tresorio.render_frame',
                          text=TRADUCTOR['field']['launch'][CONFIG_LANG],
                          icon='PLAY')
-        if report_props.upload_failed is True:
-            layout.box().label(text=TRADUCTOR['desc']['upload_failed'][CONFIG_LANG],
-                               icon='ERROR')

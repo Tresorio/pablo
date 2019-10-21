@@ -11,6 +11,7 @@ from typing import Dict, Any, List
 from src.operators.logout import logout
 from src.utils.lockfile import Lockfile
 from src.services.platform import Platform
+from src.utils.force_sync import force_sync
 from src.services.loggers import BACKEND_LOGGER
 from src.utils.percent_reader import PercentReader
 from src.config.langs import TRADUCTOR, CONFIG_LANG
@@ -30,13 +31,12 @@ def logout_if_unauthorized(err: Exception):
 
 
 def new_render():
-    bpy.data.window_managers['WinMan'].tresorio_report_props.upload_failed = 0
-    props = bpy.data.window_managers['WinMan'].tresorio_render_form
+    props = bpy.context.scene.tresorio_render_form
     render_type = get_render_type()
     number_of_frames = 1
 
     if render_type == 'ANIMATION':  # TODO enum
-        number_of_frames = 1 + bpy.context.scene.frame_end - bpy.context.scene.frame_end
+        number_of_frames = 1 + bpy.context.scene.frame_end - bpy.context.scene.frame_start
 
     create_render = {
         'name': props.rendering_name,
@@ -53,7 +53,9 @@ def new_render():
         'currentFrame': bpy.context.scene.frame_current,
         'startingFrame': bpy.context.scene.frame_start,
         'endingFrame': bpy.context.scene.frame_end,
+        'autoTileSize': props.auto_tile_size,
     }
+    print(create_render)
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
 
     future = _new_render(token, create_render, launch_render)
@@ -62,9 +64,9 @@ def new_render():
 
 def connect_to_tresorio(email: str, password: str):
     """Connects the user to Tresorio and fetch required data"""
-    bpy.data.window_managers['WinMan'].tresorio_report_props.error = False
+    bpy.context.scene.tresorio_report_props.error = False
     bpy.data.window_managers['WinMan'].tresorio_user_props.token = ''
-    bpy.data.window_managers['WinMan'].tresorio_report_props.login_in = 1
+    bpy.context.scene.tresorio_report_props.login_in = 1
 
     credentials = {
         'email': email,
@@ -90,13 +92,13 @@ def stop_render(render_id: str):
 
 def download_render_results(render_id: str, render_result_path: str):
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
-    bpy.data.window_managers['WinMan'].tresorio_report_props.downloading_render_results = True
+    bpy.context.scene.tresorio_report_props.downloading_render_results = True
     future = _download_render_results(token, render_id, render_result_path)
     asyncio.ensure_future(future)
 
 
 def update_list_renderings():
-    bpy.data.window_managers['WinMan'].tresorio_report_props.are_renders_refreshing = True
+    bpy.context.scene.tresorio_report_props.are_renders_refreshing = True
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
     future = _update_list_renderings(token)
     asyncio.ensure_future(future)
@@ -166,7 +168,7 @@ async def _refresh_loop(token: str):
     while bpy.data.window_managers['WinMan'].tresorio_user_props.is_logged is True:
         await _update_user_info(token)
         await _update_list_renderings(token)
-        await asyncio.sleep(1)
+        await asyncio.sleep(5)
 
 
 async def _connect_to_tresorio(data: Dict[str, str]):
@@ -200,28 +202,16 @@ async def _update_list_renderings(token: str):
         return
 
 
-def force_sync(fn):
-    """Convert async function to sync"""
-    @functools.wraps(fn)
-    def wrapper(*args, **kwargs):
-        res = fn(*args, **kwargs)
-        if asyncio.iscoroutine(res):
-            loop = asyncio.new_event_loop()
-            return loop.run_until_complete(res)
-        return res
-    return wrapper
-
-
 async def _new_render(token: str, create_render: Dict[str, Any], launch_render: Dict[str, Any]):
     """This function creates a new render, packs the textures, uploads the blend
        file, unpacks the textures, and finally launches the rendering."""
 
     blendfile = bpy.data.filepath
-    render_form = bpy.context.window_manager.tresorio_render_form
+    render_form = bpy.context.scene.tresorio_render_form
 
     try:
         if render_form.pack_textures is True:
-            bpy.context.window_manager.tresorio_report_props.packing_textures = True
+            bpy.context.scene.tresorio_report_props.packing_textures = True
             bpy.ops.file.pack_all()
             bpy.ops.wm.save_as_mainfile(filepath=blendfile)
     except RuntimeError as err:
@@ -230,7 +220,7 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
               [CONFIG_LANG], icon='ERROR')
         return
     finally:
-        bpy.context.window_manager.tresorio_report_props.packing_textures = False
+        bpy.context.scene.tresorio_report_props.packing_textures = False
 
     try:
         with Lockfile(blendfile, 'a'):
@@ -250,6 +240,8 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
                   [CONFIG_LANG], icon='ERROR')
             return
         elif logout_if_unauthorized(err) is False:
+            popup(TRADUCTOR['desc']['upload_failed']
+                  [CONFIG_LANG], icon='ERROR')
             _upload_blend_file_error(err)
         elif not isinstance(err, ClientResponseError):
             popup(TRADUCTOR['notif']
@@ -259,7 +251,7 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
     finally:
         try:
             if render_form.pack_textures is True:
-                bpy.context.window_manager.tresorio_report_props.unpacking_textures = True
+                bpy.context.scene.tresorio_report_props.unpacking_textures = True
                 bpy.ops.file.unpack_all()
                 bpy.ops.wm.save_as_mainfile(filepath=blendfile)
         except RuntimeError as err:
@@ -267,12 +259,11 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
             popup(TRADUCTOR['notif']
                   ['cant_unpack_textures'][CONFIG_LANG], icon='ERROR')
         finally:
-            bpy.context.window_manager.tresorio_report_props.unpacking_textures = False
+            bpy.context.scene.tresorio_report_props.unpacking_textures = False
 
     try:
         async with Platform(debug=PLATFORM_DEBUG) as plt:
             res = await plt.req_launch_render(token, render_info['id'], launch_render, jsonify=True)
-            print(res)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
@@ -309,7 +300,7 @@ async def _delete_render(token: str, render_id: str):
 
 
 async def _upload_blend_file(blendfile: str, render_info: Dict[str, Any]):
-    bpy.data.window_managers['WinMan'].tresorio_report_props.uploading_blend_file = True
+    bpy.context.scene.tresorio_report_props.uploading_blend_file = True
     async with Nas(render_info['ip'], debug=NAS_DEBUG) as nas:
         with PercentReader(blendfile) as file:
             return await nas.upload_content(render_info['id'], file, 'scene.blend', render_info['jwt'])
@@ -317,21 +308,27 @@ async def _upload_blend_file(blendfile: str, render_info: Dict[str, Any]):
 
 # CALLBACKS--------------------------------------------------------------------
 def _download_render_results_callback(success: bool):
-    bpy.data.window_managers['WinMan'].tresorio_report_props.downloading_render_results = False
-    bpy.data.window_managers['WinMan'].tresorio_report_props.success_render_download = success
+    bpy.context.scene.tresorio_report_props.downloading_render_results = False
+    bpy.context.scene.tresorio_report_props.success_render_download = success
 
 
 def _list_renderings_details_callback(res: List[Dict[str, Any]]):
     for render in res:
         update_renders_details_prop(render)
-    bpy.data.window_managers['WinMan'].tresorio_report_props.are_renders_refreshing = False
+    bpy.context.scene.tresorio_report_props.are_renders_refreshing = False
 
 
 def _get_renderpacks_callback(res: ClientResponse) -> None:
     bpy.context.window_manager.property_unset('tresorio_render_packs')
+    last_selected = bpy.context.scene.tresorio_render_form.last_renderpack_selected
     for i, pack in enumerate(res):
         new_pack = bpy.context.window_manager.tresorio_render_packs.add()
-        new_pack.bl_rna.description.__format__('1')
+        if i == 0:
+            new_pack.is_selected = True
+            bpy.context.scene.tresorio_render_form.render_pack = pack['name']
+        elif last_selected == pack['name']:
+            new_pack.is_selected = True
+            bpy.context.scene.tresorio_render_form.render_pack = pack['name']
         new_pack.name = pack['name']
         new_pack.cost = pack['cost']
         new_pack.gpu = pack['gpu']
@@ -339,8 +336,6 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
         new_pack.ram = pack['ram']
         new_pack.description = TRADUCTOR['desc']['pack_full_description_popup'][CONFIG_LANG].format(
             new_pack.cost, new_pack.gpu, new_pack.cpu, new_pack.ram)
-        if i == 0:
-            new_pack.is_selected = True
 
 
 def _get_user_info_callback(res: ClientResponse) -> None:
@@ -348,25 +343,25 @@ def _get_user_info_callback(res: ClientResponse) -> None:
 
 
 def _connect_to_tresorio_callback(res: ClientResponse) -> None:
-    bpy.data.window_managers['WinMan'].tresorio_report_props.login_in = False
+    bpy.context.scene.tresorio_report_props.login_in = False
     bpy.data.window_managers['WinMan'].tresorio_user_props.token = res['token']
     bpy.context.window_manager.tresorio_user_props.is_logged = True
 
 
 def _upload_blend_file_callback(res: ClientResponse) -> None:
-    bpy.data.window_managers['WinMan'].tresorio_report_props.uploading_blend_file = False
+    bpy.context.scene.tresorio_report_props.uploading_blend_file = False
 
 
 # ERROR HANDLERS---------------------------------------------------------------
 
 def _list_renderings_details_error(err: Exception) -> None:
-    bpy.data.window_managers['WinMan'].tresorio_report_props.are_renders_refreshing = False
+    bpy.context.scene.tresorio_report_props.are_renders_refreshing = False
     if isinstance(err, ClientResponseError) is False:
         popup(TRADUCTOR['notif']['err_renders'][CONFIG_LANG], icon='ERROR')
 
 
 def _get_renderpacks_error(err: Exception) -> None:
-    bpy.data.window_managers['WinMan'].tresorio_render_form.render_pack = ''
+    bpy.context.scene.tresorio_render_form.render_pack = ''
 
 
 def _get_user_info_error(err: Exception) -> None:
@@ -375,12 +370,11 @@ def _get_user_info_error(err: Exception) -> None:
 
 
 def _upload_blend_file_error(err: Exception) -> None:
-    bpy.data.window_managers['WinMan'].tresorio_report_props.uploading_blend_file = False
-    bpy.data.window_managers['WinMan'].tresorio_report_props.upload_failed = True
+    bpy.context.scene.tresorio_report_props.uploading_blend_file = False
 
 
 def _connect_to_tresorio_error(err: Exception) -> None:
-    bpy.data.window_managers['WinMan'].tresorio_report_props.login_in = False
+    bpy.context.scene.tresorio_report_props.login_in = False
     if isinstance(err, ClientResponseError) is False:
         return
     if err.status == HTTPStatus.UNAUTHORIZED:

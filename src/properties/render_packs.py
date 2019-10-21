@@ -16,8 +16,9 @@ def set_render_pack(pack, context):
         return
     if pack.is_selected is False:
         return
-    context.window_manager.tresorio_render_form.render_pack = pack.name
-    context.window_manager.tresorio_render_form.price_per_hour = pack.cost
+    context.scene.tresorio_render_form.render_pack = pack.name
+    context.scene.tresorio_render_form.price_per_hour = pack.cost
+    context.scene.tresorio_render_form.last_renderpack_selected = pack.name
     update_max_cost(None, context)
     for any_pack in packs:
         if any_pack != pack:

@@ -5,10 +5,7 @@ from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
 def logout():
-    print('LOGIN OUT')
     shutdown_loop()
-    bpy.context.window_manager.property_unset('tresorio_report_props')
-    bpy.context.window_manager.property_unset('tresorio_render_form')
     bpy.context.window_manager.property_unset('tresorio_render_packs')
     bpy.context.window_manager.property_unset('tresorio_renders_details')
     bpy.context.window_manager.property_unset('tresorio_user_props')

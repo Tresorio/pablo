@@ -8,15 +8,14 @@ from . import (
     langs,
 )
 
-if 'src.config' in locals():
-    modules = (
-        api,
-        debug,
-        paths,
-        enums,
-        langs,
-        user_json,
-    )
+modules = (
+    api,
+    debug,
+    paths,
+    enums,
+    langs,
+    user_json,
+)
 
-    for module in modules:
-        reload(module)
+for module in modules:
+    reload(module)

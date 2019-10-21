@@ -1,18 +1,19 @@
 from importlib import reload
 from . import (
+    force_sync,
     json_rw,
     lockfile,
     password,
     percent_reader,
 )
 
-if 'src.utils' in locals():
-    modules = (
-        json_rw,
-        lockfile,
-        password,
-        percent_reader,
-    )
+modules = (
+    force_sync,
+    json_rw,
+    lockfile,
+    password,
+    percent_reader,
+)
 
-    for module in modules:
-        reload(module)
+for module in modules:
+    reload(module)

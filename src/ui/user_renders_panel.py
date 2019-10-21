@@ -65,7 +65,7 @@ class TresorioRendersPanel(bpy.types.Panel):
         return context.window_manager.tresorio_user_props.is_logged
 
     def draw(self, context: bpy.types.Context):
-        report_props = context.window_manager.tresorio_report_props
+        report_props = context.scene.tresorio_report_props
         data = context.window_manager
         layout = self.layout
 

@@ -20,7 +20,7 @@ def set_animation_type(prop, value):
 
 
 def get_render_type():
-    render_form = bpy.context.window_manager.tresorio_render_form
+    render_form = bpy.context.scene.tresorio_render_form
     if render_form.is_frame_selected is True:
         return 'FRAME'
     else:
@@ -29,7 +29,7 @@ def get_render_type():
 
 def update_max_cost(prop, context):
     del prop
-    render_form = context.window_manager.tresorio_render_form
+    render_form = context.scene.tresorio_render_form
     user_credits = context.window_manager.tresorio_user_props.total_credits
     if render_form.timeout == 0 and render_form.price_per_hour > 0.0:
         render_form.max_timeout = math.floor(
@@ -91,6 +91,12 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
             # ('JP2', 'JP2', ''),
         ),
         default='PNG',
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    last_renderpack_selected: bpy.props.StringProperty(
+        description='',
+        name='',
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
@@ -166,6 +172,14 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         update=lambda a, b: None,
     )
 
+    desc = TRADUCTOR['desc']['auto_tile_size'][CONFIG_LANG]
+    auto_tile_size: bpy.props.BoolProperty(
+        description=desc,
+        default=True,
+        name='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
     max_cost: bpy.props.FloatProperty(options={'HIDDEN', 'SKIP_SAVE'},)
     max_timeout: bpy.props.IntProperty(options={'HIDDEN', 'SKIP_SAVE'},)
     current_pack_index: bpy.props.IntProperty(options={'HIDDEN', 'SKIP_SAVE'},)
@@ -173,8 +187,8 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
 
     @classmethod
     def register(cls):
-        """Link to window manager so these settings are reset at launch"""
-        bpy.types.WindowManager.tresorio_render_form = bpy.props.PointerProperty(
+        """Link to Scene so these settings are kept in Scene"""
+        bpy.types.Scene.tresorio_render_form = bpy.props.PointerProperty(
             type=cls,
             name='tresorio_render_form',
             options={'HIDDEN', 'SKIP_SAVE'}
@@ -182,4 +196,4 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
 
     @classmethod
     def unregister(cls):
-        del bpy.types.WindowManager.tresorio_render_form
+        del bpy.types.Scene.tresorio_render_form

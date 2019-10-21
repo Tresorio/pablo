@@ -14,8 +14,8 @@ def update_renders_details_prop(res: Dict[str, Any]) -> None:
     render.farm = res['farm']
     render.output_format = res['outputFormat']
     render.status = res['status']
-    render.total_frames = res['totalFragments']
-    render.rendered_frames = res['finishedFragments']
+    render.total_frames = res['numberOfFrames']
+    render.rendered_frames = len(res['fragments'])
     render.number_farmers = res['numberFarmers']
     render.progression = res['progression']
     render.uptime = res['uptime']
