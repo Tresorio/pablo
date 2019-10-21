@@ -13,7 +13,7 @@ class TresorioRenderFrameOperator(bpy.types.Operator):
 
     @classmethod
     def set_doc(cls):
-        cls.__doc__ = TRADUCTOR['desc']['tresorio_render_frame'][CONFIG_LANG]
+        cls.__doc__ = TRADUCTOR['desc']['tresorio_render'][CONFIG_LANG]
 
     def execute(self, context):
         user_props = context.window_manager.tresorio_user_props

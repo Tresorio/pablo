@@ -7,8 +7,8 @@
         "en": "Logout of Tresorio",
         "fr": "Déconnexion de Tresorio"
     },
-    "tresorio_render_frame": {
-        "en": "Renders the current frame on Tresorio's servers",
+    "tresorio_render": {
+        "en": "Starts the render on Tresorio's servers",
         "fr": "Réalise le rendu sur les serveurs de Tresorio"
     },
     "mail": {
@@ -130,5 +130,13 @@
     "auto_tile_size": {
         "en": "Sets the tile size automatically",
         "fr": "Configure automatiquement les dimensions des tiles"
+    },
+    "show_pack": {
+        "en": "Show / hide the render pack",
+        "fr": "Montre / cache le pack de rendu"
+    },
+    "show_settings": {
+        "en": "Show / hide the render settings",
+        "fr": "Montre / cache les paramètres du rendu"
     }
 }

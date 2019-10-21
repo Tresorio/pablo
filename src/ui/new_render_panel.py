@@ -39,81 +39,89 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                          icon='PLAY')
 
         # SETTINGS
-        box.label(text=TRADUCTOR['field']['settings']
-                  [CONFIG_LANG], icon_value=til.icon('TRESORIO_SETTINGS'))
-        row = box.row().split(factor=0.4)
-        row.label(
-            text=TRADUCTOR['field']['new_rendering_name'][CONFIG_LANG]+':')
-        row.prop(render_form, 'rendering_name')
+        row = box.row(align=True)
+        row.prop(render_form, 'show_settings', text='',
+                 emboss=False, icon='PREFERENCES')
+        row.label(text=TRADUCTOR['field']['settings'][CONFIG_LANG]+':')
 
-        row = box.row().split(factor=0.4)
-        row.label(text=TRADUCTOR['field']['render_type'][CONFIG_LANG]+':')
-        split = row.split(factor=0.5)
-        split.prop(render_form, 'is_frame_selected', toggle=1,
-                   text=TRADUCTOR['field']['frame'][CONFIG_LANG], icon='RESTRICT_RENDER_OFF')
-        split.prop(render_form, 'is_animation_selected', toggle=1,
-                   text=TRADUCTOR['field']['animation'][CONFIG_LANG], icon='RENDER_ANIMATION')
+        if render_form.show_settings is True:
+            row = box.row().split(factor=0.4)
+            row.label(
+                text=TRADUCTOR['field']['new_rendering_name'][CONFIG_LANG]+':')
+            row.prop(render_form, 'rendering_name')
 
-        row = box.row().split(factor=0.4)
-        row.label(text=TRADUCTOR['field']['engine'][CONFIG_LANG]+':')
-        row.prop_menu_enum(render_form, 'render_engines_list', icon='EMPTY_AXIS',
-                           text=render_form.render_engines_list.capitalize())
+            row = box.row().split(factor=0.4)
+            row.label(text=TRADUCTOR['field']['render_type'][CONFIG_LANG]+':')
+            split = row.split(factor=0.5)
+            split.prop(render_form, 'is_frame_selected', toggle=1,
+                       text=TRADUCTOR['field']['frame'][CONFIG_LANG], icon='RESTRICT_RENDER_OFF')
+            split.prop(render_form, 'is_animation_selected', toggle=1,
+                       text=TRADUCTOR['field']['animation'][CONFIG_LANG], icon='RENDER_ANIMATION')
 
-        row = box.row().split(factor=0.4)
-        row.label(text=TRADUCTOR['field']['format'][CONFIG_LANG]+':')
-        row.prop_menu_enum(render_form, 'output_formats_list', icon='FILE_IMAGE',
-                           text=render_form.output_formats_list)
+            row = box.row().split(factor=0.4)
+            row.label(text=TRADUCTOR['field']['engine'][CONFIG_LANG]+':')
+            row.prop_menu_enum(render_form, 'render_engines_list', icon='EMPTY_AXIS',
+                               text=render_form.render_engines_list.capitalize())
 
-        split = box.split(factor=0.4)
-        split.label(text=TRADUCTOR['field']['options'][CONFIG_LANG]+':')
-        grid_flow = split.grid_flow(even_rows=False, even_columns=True, align=True)
+            row = box.row().split(factor=0.4)
+            row.label(text=TRADUCTOR['field']['format'][CONFIG_LANG]+':')
+            row.prop_menu_enum(render_form, 'output_formats_list', icon='FILE_IMAGE',
+                               text=render_form.output_formats_list)
 
-        grid_flow.prop(render_form, 'pack_textures',
-                   text=TRADUCTOR['field']['pack_textures'][CONFIG_LANG])
-        grid_flow.prop(render_form, 'auto_tile_size',
-                   text=TRADUCTOR['field']['auto_tile_size'][CONFIG_LANG])
+            split = box.split(factor=0.4)
+            split.label(text=TRADUCTOR['field']['options'][CONFIG_LANG]+':')
+            grid_flow = split.grid_flow(
+                even_rows=False, even_columns=True, align=True)
 
-        box.separator(factor=0.5)
+            grid_flow.prop(render_form, 'pack_textures',
+                           text=TRADUCTOR['field']['pack_textures'][CONFIG_LANG])
+            grid_flow.prop(render_form, 'auto_tile_size',
+                           text=TRADUCTOR['field']['auto_tile_size'][CONFIG_LANG])
+
+            box.separator(factor=0.5)
 
         # RENDER PACKS
-        box.row().label(text=TRADUCTOR['field']
-                        ['render_pack'][CONFIG_LANG]+':',
-                        icon_value=til.icon('TRESORIO_PACK'))
-        description = ''
+        row = box.row(align=True)
+        row.prop(render_form, 'show_packs', text='',
+                 emboss=False, icon='PACKAGE')
+        row.label(text=TRADUCTOR['field']
+                  ['render_pack'][CONFIG_LANG]+':')
 
-        packs_cols = box.column_flow(columns=len(render_packs), align=True)
-        for pack in render_packs:
-            case = packs_cols.box().split(factor=0.95)
-            case.prop(pack, 'is_selected',
-                      text=pack.name.capitalize(), toggle=1)
-            case.operator('tresorio.pack_desc_popup', text='',
-                          icon_value=til.icon('TRESORIO_QUESTION'),
-                          emboss=False).msg = pack.description
-            if pack.is_selected is True:
-                description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
-                    pack.cost * render_form.nb_farmers,
-                    pack.gpu * render_form.nb_farmers,
-                    pack.cpu * render_form.nb_farmers
-                )
+        if render_form.show_packs is True:
+            description = ''
+            packs_cols = box.column_flow(columns=len(render_packs), align=True)
+            for pack in render_packs:
+                case = packs_cols.box().split(factor=0.90)
+                case.prop(pack, 'is_selected',
+                          text=pack.name.capitalize(), toggle=1)
+                case.operator('tresorio.pack_desc_popup', text='',
+                              icon_value=til.icon('TRESORIO_QUESTION'),
+                              emboss=False).msg = pack.description
+                if pack.is_selected is True:
+                    description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
+                        pack.cost * render_form.nb_farmers,
+                        pack.gpu * render_form.nb_farmers,
+                        pack.cpu * render_form.nb_farmers
+                    )
 
-        row = box.row().split(factor=0.4)
-        row.label(text=TRADUCTOR['field']['nb_farmers'][CONFIG_LANG]+':')
-        row.prop(render_form, 'nb_farmers')
+            row = box.row().split(factor=0.4)
+            row.label(text=TRADUCTOR['field']['nb_farmers'][CONFIG_LANG]+':')
+            row.prop(render_form, 'nb_farmers')
 
-        row = box.row().split(factor=0.4)
-        row.label(text=TRADUCTOR['field']['timeout'][CONFIG_LANG]+':')
-        row.prop(render_form, 'timeout',
-                 text=TRADUCTOR['field']['hours'][CONFIG_LANG],
-                 expand=True)
+            row = box.row().split(factor=0.4)
+            row.label(text=TRADUCTOR['field']['timeout'][CONFIG_LANG]+':')
+            row.prop(render_form, 'timeout',
+                     text=TRADUCTOR['field']['hours'][CONFIG_LANG],
+                     expand=True)
 
-        box.label(text=description)
+            box.label(text=description)
 
-        row = box.row().split(factor=0.3)
-        row.label(text=TRADUCTOR['field']['max_cost'][CONFIG_LANG]+':')
-        max_cost = round(render_form.max_cost * 100) / 100
-        row.label(text=f'{max_cost:.2f} ' +
-                  TRADUCTOR['field']['credits'][CONFIG_LANG] +
-                  f' ({render_form.max_timeout} h)')
+            row = box.row().split(factor=0.3)
+            row.label(text=TRADUCTOR['field']['max_cost'][CONFIG_LANG]+':')
+            max_cost = round(render_form.max_cost * 100) / 100
+            row.label(text=f'{max_cost:.2f} ' +
+                      TRADUCTOR['field']['credits'][CONFIG_LANG] +
+                      f' ({render_form.max_timeout} h)')
 
         # LAUNCH
         if report_props.uploading_blend_file is True:

@@ -43,6 +43,22 @@ def update_max_cost(prop, context):
 
 class TresorioRenderFormProps(bpy.types.PropertyGroup):
 
+    desc = TRADUCTOR['desc']['show_settings'][CONFIG_LANG]
+    show_settings: bpy.props.BoolProperty(
+        name='',
+        default=True,
+        description=desc,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    desc = TRADUCTOR['desc']['show_pack'][CONFIG_LANG]
+    show_packs: bpy.props.BoolProperty(
+        name='',
+        default=True,
+        description=desc,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
     default = TRADUCTOR['field']['default_render_name'][CONFIG_LANG]
     desc = TRADUCTOR['desc']['rendering_name'][CONFIG_LANG]
     rendering_name: bpy.props.StringProperty(
