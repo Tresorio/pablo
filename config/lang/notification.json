@@ -118,5 +118,9 @@
     "finished_render": {
         "en": "Finished",
         "fr": "Fini"
+    },
+    "not_enough_servers": {
+        "en": "We can't handle your request as not enough resources are available on our servers",
+        "fr": "Nous ne pouvous pas traiter votre requête car nos serveurs ne disposent plus d'assez de ressources"
     }
 }

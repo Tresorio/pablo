@@ -238,6 +238,10 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
             popup(TRADUCTOR['notif']['not_enough_credits']
                   [CONFIG_LANG], icon='ERROR')
             return
+        elif isinstance(err, ClientResponseError) and err.status == HTTPStatus.SERVICE_UNAVAILABLE:
+            popup(TRADUCTOR['notif']['not_enough_servers']
+                  [CONFIG_LANG], icon='ERROR')
+            return
         elif logout_if_unauthorized(err) is False:
             popup(TRADUCTOR['desc']['upload_failed']
                   [CONFIG_LANG], icon='ERROR')
@@ -265,7 +269,11 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
             res = await plt.req_launch_render(token, render_info['id'], launch_render, jsonify=True)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
-        if logout_if_unauthorized(err) is False:
+        if isinstance(err, ClientResponseError) and err.status == HTTPStatus.SERVICE_UNAVAILABLE:
+            popup(TRADUCTOR['notif']['not_enough_servers']
+                  [CONFIG_LANG], icon='ERROR')
+            return
+        elif logout_if_unauthorized(err) is False:
             popup(TRADUCTOR['notif']
                   ['err_launch_render'][CONFIG_LANG], icon='ERROR')
         return
