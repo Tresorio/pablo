@@ -28,7 +28,6 @@ def get_render_type():
 
 
 def update_max_cost(prop, context):
-    del prop
     render_form = context.scene.tresorio_render_form
     user_credits = context.window_manager.tresorio_user_props.total_credits
     if render_form.timeout == 0 and render_form.price_per_hour > 0.0:
@@ -104,6 +103,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         description='',
         name='',
         options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
     )
 
     is_switching_render_type: bpy.props.BoolProperty(

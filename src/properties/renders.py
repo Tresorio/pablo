@@ -4,7 +4,7 @@ from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
 def update_renders_details_prop(res: Dict[str, Any]) -> None:
-    # print(res)
+    print(res)
     render = bpy.context.window_manager.tresorio_renders_details.add()
     render.id = res['id']
     render.name = res['name']

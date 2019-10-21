@@ -55,7 +55,6 @@ def new_render():
         'endingFrame': bpy.context.scene.frame_end,
         'autoTileSize': props.auto_tile_size,
     }
-    print(create_render)
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
 
     future = _new_render(token, create_render, launch_render)
@@ -323,12 +322,6 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
     last_selected = bpy.context.scene.tresorio_render_form.last_renderpack_selected
     for i, pack in enumerate(res):
         new_pack = bpy.context.window_manager.tresorio_render_packs.add()
-        if i == 0:
-            new_pack.is_selected = True
-            bpy.context.scene.tresorio_render_form.render_pack = pack['name']
-        elif last_selected == pack['name']:
-            new_pack.is_selected = True
-            bpy.context.scene.tresorio_render_form.render_pack = pack['name']
         new_pack.name = pack['name']
         new_pack.cost = pack['cost']
         new_pack.gpu = pack['gpu']
@@ -336,7 +329,13 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
         new_pack.ram = pack['ram']
         new_pack.description = TRADUCTOR['desc']['pack_full_description_popup'][CONFIG_LANG].format(
             new_pack.cost, new_pack.gpu, new_pack.cpu, new_pack.ram)
-
+        if i == 0:
+            new_pack.is_selected = True
+            bpy.context.scene.tresorio_render_form.render_pack = pack['name']
+        elif last_selected == pack['name']:
+            new_pack.is_selected = True
+            print(pack['name'])
+            bpy.context.scene.tresorio_render_form.render_pack = pack['name']
 
 def _get_user_info_callback(res: ClientResponse) -> None:
     bpy.data.window_managers['WinMan'].tresorio_user_props.total_credits = res['credits']
