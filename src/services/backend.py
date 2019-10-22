@@ -225,7 +225,7 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
         with Lockfile(blendfile, 'a'):
             async with Platform(debug=PLATFORM_DEBUG) as plt:
                 render_info = await plt.req_create_render(token, create_render, jsonify=True)
-
+            update_list_renderings()
             loop = asyncio.get_running_loop()
             upload = functools.partial(
                 force_sync(_upload_blend_file), blendfile, render_info)
@@ -344,6 +344,7 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
             new_pack.is_selected = True
             print(pack['name'])
             bpy.context.scene.tresorio_render_form.render_pack = pack['name']
+
 
 def _get_user_info_callback(res: ClientResponse) -> None:
     bpy.data.window_managers['WinMan'].tresorio_user_props.total_credits = res['credits']

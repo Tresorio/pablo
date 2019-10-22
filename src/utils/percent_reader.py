@@ -42,8 +42,8 @@ class PercentReader(io.BufferedReader):
         chunk = super().read(*args)
         self.percent += len(chunk) / self.total * 100
         self.time = time.time()
-        if self.time - self.old_time > 0.5:
+        if self.time - self.old_time > 0.25:
             self.old_time = self.time
             self.time = 0.0
-            bpy.data.window_managers['WinMan'].tresorio_render_form.upload_percent = self.percent
+            bpy.context.scene.tresorio_render_form.upload_percent = self.percent
         return chunk
