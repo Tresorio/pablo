@@ -1,10 +1,9 @@
 **TODO's:**
 
     On Pablo:
-        - Check if blender loads the first scene or the last opened
         - Add a way to reuse a .blend for another render, just tweaking the settings
         - Fix crash when big number of frames -> DO NOT DO ONE REQUEST PER FRAME
-        - Fix tile size problem on gpus (sometimes it gives tiles to cpus and it slows down the render)
+        - Fix tile size problem on gpus (sometimes it gives tiles to cpus and it slows down the render when partial tiles) -> algorithm to determine the best tile size
         - Refresh only the task targeted and not all
         - Get gpu and cpu models in the json so the user has more information
         - Button to updgrade the addon to the newest version

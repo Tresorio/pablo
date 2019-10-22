@@ -13,13 +13,11 @@ from src.services.loggers import PLATFORM_LOGGER
 
 class Platform:
 
-    def __init__(self, mocked=False, debug=False):
+    def __init__(self, mocked=False):
         self.url = API_CONFIG['backend']
         self.mocked = mocked
         self._session = None
-        self.debug = debug
-        if debug is True:
-            self._logger = PLATFORM_LOGGER
+        self._logger = PLATFORM_LOGGER
 
     async def __aenter__(self):
         """Entrypoint of `async with`"""
@@ -62,8 +60,7 @@ class Platform:
                 jsonify (overides `read`): If `False`, will proceed the `read` arg.
                     Else, will return the body as a dict.
             """
-            if self.debug is True:
-                self._logger.debug(f'Entering {func.__name__}')
+            self._logger.debug(f'Entering {func.__name__}')
             if self.mocked is True:
                 return await func(*args, **kwargs)
             if self._session is None:

@@ -35,13 +35,11 @@ class Nas:
         - Stream upload ?
     """
 
-    def __init__(self, base_url: str, mocked: bool = False, debug: bool = False):
+    def __init__(self, base_url: str, mocked: bool = False):
         self.url = base_url
         self.mocked = mocked
         self._session = None
-        self.debug = debug
-        if debug is True:
-            self._logger = NAS_LOGGER
+        self._logger = NAS_LOGGER
 
     async def __aenter__(self):
         """Entrypoint of `async with`"""
@@ -82,8 +80,7 @@ class Nas:
                 read: If `False`, the wrapped function will return the whole
                     response. If `True`, will read the response and return bytes
             """
-            if self.debug is True:
-                self._logger.debug(f'Entering {func.__name__}')
+            self._logger.debug(f'Entering {func.__name__}')
             if self.mocked is True:
                 return await func(*args, **kwargs)
             if self._session is None:
