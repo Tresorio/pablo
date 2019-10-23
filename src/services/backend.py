@@ -6,12 +6,11 @@ import asyncio
 import functools
 from http import HTTPStatus
 from src.ui.popup import popup
-from src.services.nas import Nas
 from typing import Dict, Any, List
 from src.operators.logout import logout
 from src.utils.lockfile import Lockfile
 from src.services.platform import Platform
-from src.utils.force_sync import force_sync
+from src.services.nas import AsyncNas, SyncNas
 from src.services.loggers import BACKEND_LOGGER
 from src.utils.percent_reader import PercentReader
 from src.config.langs import TRADUCTOR, CONFIG_LANG
@@ -111,23 +110,31 @@ def update_rendering(render):
 # ASYNC CORE-------------------------------------------------------------------
 
 
+def _download_frames(fragments: List[Dict[str, Any]], render_result_path: str, render: Dict[str, Any]):
+    with SyncNas('') as nas:
+        for frag in fragments:
+            nas.url = frag['ip']
+            filename = '%04.d' % frag['frameNumber']
+            nas_filename = os.path.join('artifacts', filename)
+            frame = nas.download(frag['id'], nas_filename, read=True)
+            user_filepath = os.path.join(
+                render_result_path, render['name']+'_'+filename+'.'+render['outputFormat'].lower())
+            with open(user_filepath, 'wb') as file:
+                file.write(frame)
+                BACKEND_LOGGER.debug(f'Wrote file {user_filepath}')
+
+
 async def _download_render_results(token: str, render_id: str, render_result_path: str):
     try:
         async with Platform() as plt:
             BACKEND_LOGGER.debug(f'Downloading render {render_id} results')
             render = await plt.req_get_rendering_details(token, render_id, jsonify=True)
         fragments = render['fragments']
-        async with Nas('', ) as nas:
-            for frag in fragments:
-                nas.url = frag['ip']
-                filename = '%04.d' % frag['frameNumber']
-                nas_filename = os.path.join('artifacts', filename)
-                frame = await nas.download(frag['id'], nas_filename, read=True)
-                user_filepath = os.path.join(
-                    render_result_path, render['name']+'_'+filename+'.'+render['outputFormat'].lower())
-                with open(user_filepath, 'wb') as file:
-                    file.write(frame)
-                    BACKEND_LOGGER.debug(f'Wrote file {user_filepath}')
+        loop = asyncio.get_running_loop()
+        download = functools.partial(
+            _download_frames, fragments, render_result_path, render
+        )
+        await loop.run_in_executor(None, download)
         _download_render_results_callback(success=True)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
@@ -249,7 +256,7 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
             update_list_renderings()
             loop = asyncio.get_running_loop()
             upload = functools.partial(
-                force_sync(_upload_blend_file), blendfile, render_info)
+                _upload_blend_file_sync, blendfile, render_info)
             res = await loop.run_in_executor(None, upload)
             _upload_blend_file_callback(res)
 
@@ -319,8 +326,9 @@ async def _stop_render(token: str, render):
 async def _delete_render(token: str, render: str, index: int):
     try:
         async with Platform() as plt:
-            BACKEND_LOGGER.debug(f'Deleting render {render.id}')
-            await plt.req_delete_render(token, render.id)
+            render_id = render.id
+            BACKEND_LOGGER.debug(f'Deleting render {render_id}')
+            await plt.req_delete_render(token, render_id)
             bpy.context.window_manager.tresorio_renders_details.remove(index)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
@@ -330,15 +338,24 @@ async def _delete_render(token: str, render: str, index: int):
         return
 
 
-async def _upload_blend_file(blendfile: str, render_info: Dict[str, Any]):
+async def _upload_blend_file_async(blendfile: str, render_info: Dict[str, Any]):
     bpy.context.scene.tresorio_report_props.uploading_blend_file = True
-    async with Nas(render_info['ip']) as nas:
+    async with AsyncNas(render_info['ip']) as nas:
         BACKEND_LOGGER.debug(f'Uploading for render ' + render_info['id'])
         with PercentReader(blendfile) as file:
             return await nas.upload_content(render_info['id'], file, 'scene.blend', render_info['jwt'])
 
 
+def _upload_blend_file_sync(blendfile: str, render_info: Dict[str, Any]):
+    bpy.context.scene.tresorio_report_props.uploading_blend_file = True
+    with SyncNas(render_info['ip']) as nas:
+        BACKEND_LOGGER.debug(f'Uploading for render ' + render_info['id'])
+        with PercentReader(blendfile) as file:
+            return nas.upload_content(render_info['id'], file, 'scene.blend', render_info['jwt'])
+
 # CALLBACKS--------------------------------------------------------------------
+
+
 def _download_render_results_callback(success: bool):
     bpy.context.scene.tresorio_report_props.downloading_render_results = False
     bpy.context.scene.tresorio_report_props.success_render_download = success

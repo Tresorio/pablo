@@ -78,8 +78,6 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             grid_flow.prop(render_form, 'auto_tile_size',
                            text=TRADUCTOR['field']['auto_tile_size'][CONFIG_LANG])
 
-            box.separator(factor=0.5)
-
         # RENDER PACKS
         row = box.row(align=True)
         row.prop(render_form, 'show_packs', text='',

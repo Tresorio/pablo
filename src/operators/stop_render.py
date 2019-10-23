@@ -1,4 +1,5 @@
 import bpy
+from src.config.enums import RenderStatus
 from src.services.backend import stop_render
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
@@ -15,5 +16,7 @@ class TresorioStopRenderOperator(bpy.types.Operator):
 
     def execute(self, context):
         render = context.window_manager.tresorio_renders_details[self.index]
+        if render.status != RenderStatus.FINISHED:
+            render.status = RenderStatus.STOPPING
         stop_render(render)
         return {'FINISHED'}

@@ -1,10 +1,10 @@
 **TODO's:**
 
     On Pablo:
-        - Add a way to reuse a .blend for another render, just tweaking the settings
-        - Fix crash when big number of frames -> DO NOT DO ONE REQUEST PER FRAME
-        - Fix tile size problem on gpus (sometimes it gives tiles to cpus and it slows down the render when partial tiles) -> algorithm to determine the best tile size
-        - Refresh only the task targeted and not all
+        - Nas JWT handling
+        - Download results in a thread
+        - Find a way to test the plugin (implement MOCK)
+        - Stop using force sync for file upload -> sync request
         - Get gpu and cpu models in the json so the user has more information
         - Button to updgrade the addon to the newest version
         - Let user specify default output directory -> `Download when over` option
@@ -19,10 +19,13 @@
         - On hover description of render pack -> (ops with future dynamic description)
 
     On Gandalf:
-        - Email on render end
+        - When deleting a stopped render, we recredit
         - Fix crash when big number of frames
         - Packs: GPU only - CPU only - CPU+GPU
+        - Pass param auto_tile_size to Paulette (given by pablo)
+        - Pass param [HYBRID | GPU | CPU] to paulette
         - Fix credit debit (recredits more than expected sometimes)
+        - Email on render end
         - Add a way to loadBalance using single frame separation
 
     On Paulette:
@@ -30,5 +33,5 @@
         - Check if the use of -s -e -a instead of many -f is faster
         - Maybe blender's stdout slows down the render as there are MANY lines output
         - Store the render results as HDR (for example) so we can convert to any other file format later
-        - Add a way to upload renders as they appear
+        - Add a way to upload renders as they appear / Count the number of artifacts
         - Add a way to merge multiple frame fragments into one
