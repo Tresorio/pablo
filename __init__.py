@@ -118,6 +118,5 @@ def register():
             cls.set_doc()
         bpy.utils.register_class(cls)
 
-
 if __name__ == '__main__':
     register()

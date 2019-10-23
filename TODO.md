@@ -1,15 +1,13 @@
 **TODO's:**
 
     On Pablo:
+        - Test the plugin
         - Nas JWT handling
-        - Find a way to test the plugin (implement MOCK)
-        - Button to updgrade the addon to the newest version
         - Let user specify default output directory -> `Download when over` option
         - Count uptime on front
         - Create a tutorial on first launch
         - Feedback panel of the user to get his advice
-        - Bind key `Enter` to `login` in the Connection panel
-        - Send the last line of logs to blender (so the user can see what happens) ?
+        - Button to updgrade the addon to the newest version
         - Figure out what happens if multiple addons use the asyncio module (and async_loop code)
 
     On Pablo with next blender:
