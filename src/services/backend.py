@@ -111,7 +111,7 @@ def update_rendering(render):
 
 
 def _download_frames(fragments: List[Dict[str, Any]], render_result_path: str, render: Dict[str, Any]):
-    with SyncNas('') as nas:
+    with SyncNas() as nas:
         for frag in fragments:
             nas.url = frag['ip']
             filename = '%04.d' % frag['frameNumber']
@@ -180,7 +180,7 @@ async def _refresh_loop(token: str):
     while bpy.data.window_managers['WinMan'].tresorio_user_props.is_logged is True:
         await _update_user_info(token)
         await _update_list_renderings(token)
-        await asyncio.sleep(5)
+        await asyncio.sleep(2)
 
 
 async def _connect_to_tresorio(data: Dict[str, str]):
@@ -399,7 +399,7 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
         new_pack.cpu = pack['vcpu']
         new_pack.ram = pack['ram']
         new_pack.description = TRADUCTOR['desc']['pack_full_description_popup'][CONFIG_LANG].format(
-            new_pack.cost, new_pack.gpu, new_pack.cpu, new_pack.ram)
+            new_pack.cost, new_pack.gpu, pack['gpuModel'], new_pack.cpu, pack['cpuModel'], new_pack.ram)
         if i == 0:
             new_pack.is_selected = True
             bpy.context.scene.tresorio_render_form.render_pack = pack['name']

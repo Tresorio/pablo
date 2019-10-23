@@ -36,7 +36,7 @@ class AsyncNas:
         - Stream upload ?
     """
 
-    def __init__(self, base_url: str, mocked: bool = False):
+    def __init__(self, base_url: str = '', mocked: bool = False):
         self.url = base_url
         self.mocked = mocked
         self._session = None
@@ -191,7 +191,7 @@ class SyncNas:
 
     """
 
-    def __init__(self, base_url: str, mocked: bool = False):
+    def __init__(self, base_url: str = '', mocked: bool = False):
         self.url = base_url
         self.mocked = mocked
         self._session = None

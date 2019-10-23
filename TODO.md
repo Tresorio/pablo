@@ -2,10 +2,7 @@
 
     On Pablo:
         - Nas JWT handling
-        - Download results in a thread
         - Find a way to test the plugin (implement MOCK)
-        - Stop using force sync for file upload -> sync request
-        - Get gpu and cpu models in the json so the user has more information
         - Button to updgrade the addon to the newest version
         - Let user specify default output directory -> `Download when over` option
         - Count uptime on front
