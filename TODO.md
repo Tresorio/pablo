@@ -17,16 +17,14 @@
         - On hover description of render pack -> (ops with future dynamic description)
 
     On Gandalf:
-        - When deleting a stopped render, we recredit
-        - Fix crash when big number of frames
         - Packs: GPU only - CPU only - CPU+GPU
         - Pass param auto_tile_size to Paulette (given by pablo)
         - Pass param [HYBRID | GPU | CPU] to paulette
-        - Fix credit debit (recredits more than expected sometimes)
-        - Email on render end
         - Add a way to loadBalance using single frame separation
+        - Email on render end
 
     On Paulette:
+        - Why some cpus are slower than others
         - Versionning for big file changes instead of reuploading every time
         - Check if the use of -s -e -a instead of many -f is faster
         - Maybe blender's stdout slows down the render as there are MANY lines output

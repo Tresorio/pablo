@@ -1,9 +1,11 @@
 """Tresorio's only interace with operators"""
 
+import io
 import os
 import bpy
 import asyncio
 import functools
+from zipfile import ZipFile
 from http import HTTPStatus
 from src.ui.popup import popup
 from urllib.parse import urljoin
@@ -112,24 +114,23 @@ def update_rendering(render):
 
 
 def _download_frames(fragments: List[Dict[str, Any]], render_result_path: str, render: Dict[str, Any]):
-    # TODO new system
+    ext = render['outputFormat'].lower()
     with SyncNas() as nas:
         for frag in fragments:
             nas.url = frag['ip']
-            zipfile = nas.download_project(frag['id'], read=True)
-            user_filepath = os.path.join(
-                render_result_path, render['name']+'.zip')
-            with open(user_filepath, 'wb') as file:
-                file.write(zipfile)
-                BACKEND_LOGGER.debug(f'Wrote file {user_filepath}')
-        # for frag in fragments:
-            # nas.url = frag['ip']
-            # filename = '%04.d' % frag['frameNumber']
-            # nas_filename = os.path.join('artifacts', filename)
-            # frame = nas.download(frag['id'], nas_filename, read=True)
-            # with open(user_filepath, 'wb') as file:
-            #     file.write(frame)
-            #     BACKEND_LOGGER.debug(f'Wrote file {user_filepath}')
+            zip_bytes = io.BytesIO(nas.download_project(frag['id'], read=True))
+            with ZipFile(zip_bytes) as zf:
+                frames = list(filter(
+                    lambda x: x.startswith('artifacts/') and x != 'artifacts/',
+                    zf.namelist()
+                ))
+                for frame in frames:
+                    zip_bytes = zf.read(frame)
+                    filename = f'%s_{os.path.basename(frame)}.{ext}' % render['name']
+                    filepath = os.path.join(render_result_path, filename)
+                    with open(filepath, 'wb') as fw:
+                        BACKEND_LOGGER.debug(f'Wrote file {filepath}')
+                        fw.write(zip_bytes)
 
 
 async def _download_render_results(token: str, render_id: str, render_result_path: str):
@@ -137,7 +138,6 @@ async def _download_render_results(token: str, render_id: str, render_result_pat
         async with Platform() as plt:
             BACKEND_LOGGER.debug(f'Downloading render {render_id} results')
             render = await plt.req_get_rendering_details(token, render_id, jsonify=True)
-            print(render)
         fragments = render['fragments']
         loop = asyncio.get_running_loop()
         download = functools.partial(
