@@ -1,7 +1,8 @@
 {
     "lang": "en",
     "email": "",
-    "renders": {},
     "passed_tutorial": false,
-    "sent_advice": false
+    "sent_advice": false,
+    "download_when_over": false,
+    "download_when_over_path": ""
 }

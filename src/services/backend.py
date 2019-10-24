@@ -6,6 +6,7 @@ import asyncio
 import functools
 from http import HTTPStatus
 from src.ui.popup import popup
+from urllib.parse import urljoin
 from typing import Dict, Any, List
 from src.operators.logout import logout
 from src.utils.lockfile import Lockfile
@@ -111,17 +112,24 @@ def update_rendering(render):
 
 
 def _download_frames(fragments: List[Dict[str, Any]], render_result_path: str, render: Dict[str, Any]):
+    # TODO new system
     with SyncNas() as nas:
         for frag in fragments:
             nas.url = frag['ip']
-            filename = '%04.d' % frag['frameNumber']
-            nas_filename = os.path.join('artifacts', filename)
-            frame = nas.download(frag['id'], nas_filename, read=True)
+            zipfile = nas.download_project(frag['id'], read=True)
             user_filepath = os.path.join(
-                render_result_path, render['name']+'_'+filename+'.'+render['outputFormat'].lower())
+                render_result_path, render['name']+'.zip')
             with open(user_filepath, 'wb') as file:
-                file.write(frame)
+                file.write(zipfile)
                 BACKEND_LOGGER.debug(f'Wrote file {user_filepath}')
+        # for frag in fragments:
+            # nas.url = frag['ip']
+            # filename = '%04.d' % frag['frameNumber']
+            # nas_filename = os.path.join('artifacts', filename)
+            # frame = nas.download(frag['id'], nas_filename, read=True)
+            # with open(user_filepath, 'wb') as file:
+            #     file.write(frame)
+            #     BACKEND_LOGGER.debug(f'Wrote file {user_filepath}')
 
 
 async def _download_render_results(token: str, render_id: str, render_result_path: str):
@@ -129,6 +137,7 @@ async def _download_render_results(token: str, render_id: str, render_result_pat
         async with Platform() as plt:
             BACKEND_LOGGER.debug(f'Downloading render {render_id} results')
             render = await plt.req_get_rendering_details(token, render_id, jsonify=True)
+            print(render)
         fragments = render['fragments']
         loop = asyncio.get_running_loop()
         download = functools.partial(
@@ -371,7 +380,7 @@ def _fill_render_details(render, res: Dict[str, Any]):
     render.output_format = res['outputFormat']
     render.status = res['status']
     render.total_frames = res['numberOfFrames']
-    render.rendered_frames = len(res['fragments'])
+    render.rendered_frames = res['finishedFrames']
     render.number_farmers = res['numberFarmers']
     render.progression = res['progression']
     render.uptime = res['uptime']
@@ -405,7 +414,6 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
             bpy.context.scene.tresorio_render_form.render_pack = pack['name']
         elif last_selected == pack['name']:
             new_pack.is_selected = True
-            print(pack['name'])
             bpy.context.scene.tresorio_render_form.render_pack = pack['name']
 
 

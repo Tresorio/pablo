@@ -8,13 +8,13 @@ class TresorioUserProps(bpy.types.PropertyGroup):
 
     is_logged: bpy.props.BoolProperty(
         name='',
-        options={'SKIP_SAVE'},
+        options={'HIDDEN', 'SKIP_SAVE'},
         default=False,
     )
 
     token: bpy.props.StringProperty(
         name='',
-        options={'SKIP_SAVE'},
+        options={'HIDDEN', 'SKIP_SAVE'},
         default='',
     )
 
@@ -23,6 +23,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         items=(ALL_LANGS['en'], ALL_LANGS['fr']),
         update=set_new_lang,
         default=ALL_LANGS[CONFIG_LANG][0],
+        options={'HIDDEN', 'SKIP_SAVE'},
     )
 
     conf_email = USER_CONFIG['email']
@@ -31,7 +32,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         name='',
         description=desc,
         maxlen=128,
-        options={'SKIP_SAVE'},
+        options={'HIDDEN', 'SKIP_SAVE'},
         default=conf_email,
     )
 
@@ -41,8 +42,8 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         description=desc,
         maxlen=128,
         default='tresorio',
-        options={'SKIP_SAVE'},
         subtype='PASSWORD',
+        options={'HIDDEN', 'SKIP_SAVE'},
     )
 
     desc = TRADUCTOR['desc']['password'][CONFIG_LANG]
@@ -51,8 +52,8 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         description=desc,
         maxlen=128,
         default='',
-        options={'SKIP_SAVE'},
         subtype='NONE',
+        options={'HIDDEN', 'SKIP_SAVE'},
     )
 
     desc = TRADUCTOR['desc']['toggle_password'][CONFIG_LANG]
@@ -61,7 +62,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         description=desc,
         default=False,
         update=switch_password_visibility,
-        options={'SKIP_SAVE'}
+        options={'HIDDEN', 'SKIP_SAVE'},
     )
 
     desc = TRADUCTOR['desc']['remember_email'][CONFIG_LANG]
@@ -69,28 +70,29 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         name='',
         description=desc,
         default=conf_email != '',
+        options={'HIDDEN', 'SKIP_SAVE'},
     )
 
     total_credits: bpy.props.FloatProperty(
         name='',
-        options={'HIDDEN', 'SKIP_SAVE'},
         update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
     )
 
     firstname: bpy.props.StringProperty(
         default='',
         name='',
         description='',
-        options={'HIDDEN', 'SKIP_SAVE'},
         update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
     )
 
     lastname: bpy.props.StringProperty(
         default='',
         name='',
         description='',
-        options={'HIDDEN', 'SKIP_SAVE'},
         update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
     )
 
     @classmethod
@@ -99,7 +101,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         bpy.types.WindowManager.tresorio_user_props = bpy.props.PointerProperty(
             type=cls,
             name='tresorio_user_props',
-            options={'HIDDEN', 'SKIP_SAVE'}
+            options={'HIDDEN', 'SKIP_SAVE'},
         )
 
     @classmethod

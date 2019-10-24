@@ -35,14 +35,19 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             box.label(text='Unpacking ...')
         else:
             box.operator('tresorio.render_frame',
-                         text=TRADUCTOR['field']['launch'][CONFIG_LANG],
-                         icon='PLAY')
+                         text=TRADUCTOR['field']['launch'][CONFIG_LANG])
 
         # SETTINGS
-        row = box.row(align=True)
-        row.prop(render_form, 'show_settings', text='',
-                 emboss=False, icon='PREFERENCES')
-        row.label(text=TRADUCTOR['field']['settings'][CONFIG_LANG]+':')
+        row = box.row()
+        row_1 = row.row()
+        row_1.alignment = 'LEFT'
+        row_1.prop(render_form, 'show_settings', emboss=False,
+                   text=TRADUCTOR['field']['settings'][CONFIG_LANG]+':')
+        row_2 = row.row()
+        row_2.alignment = 'RIGHT'
+        icon = 'DISCLOSURE_TRI_DOWN' if render_form.show_settings else 'DISCLOSURE_TRI_RIGHT'
+        row_2.prop(render_form, 'show_settings', text='', emboss=False,
+                   icon=icon)
 
         if render_form.show_settings is True:
             row = box.row().split(factor=0.4)
@@ -79,11 +84,16 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                            text=TRADUCTOR['field']['auto_tile_size'][CONFIG_LANG])
 
         # RENDER PACKS
-        row = box.row(align=True)
-        row.prop(render_form, 'show_packs', text='',
-                 emboss=False, icon='PACKAGE')
-        row.label(text=TRADUCTOR['field']
-                  ['render_pack'][CONFIG_LANG]+':')
+        row = box.row()
+        row_1 = row.row()
+        row_1.alignment = 'LEFT'
+        row_1.prop(render_form, 'show_packs', emboss=False,
+                   text=TRADUCTOR['field']['render_pack'][CONFIG_LANG]+':')
+        row_2 = row.row()
+        row_2.alignment = 'RIGHT'
+        icon = 'DISCLOSURE_TRI_DOWN' if render_form.show_packs else 'DISCLOSURE_TRI_RIGHT'
+        row_2.prop(render_form, 'show_packs', text='', emboss=False,
+                   icon=icon)
 
         if render_form.show_packs is True:
             description = ''
@@ -132,5 +142,4 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             box.label(text='Unpacking ...')
         else:
             box.operator('tresorio.render_frame',
-                         text=TRADUCTOR['field']['launch'][CONFIG_LANG],
-                         icon='PLAY')
+                         text=TRADUCTOR['field']['launch'][CONFIG_LANG])

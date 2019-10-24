@@ -1,8 +1,11 @@
 **TODO's:**
 
     On Pablo:
+        - `Download all` operator
+        - Better UI for expand of settings and render pack
         - Test the plugin
         - Nas JWT handling
+        - Add some keybinds for a better UX
         - Let user specify default output directory -> `Download when over` option
         - Count uptime on front
         - Create a tutorial on first launch

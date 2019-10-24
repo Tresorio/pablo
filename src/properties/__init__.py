@@ -5,6 +5,7 @@ from . import (
     renders,
     report_props,
     user_props,
+    user_settings,
 )
 
 modules = (
@@ -13,6 +14,7 @@ modules = (
     renders,
     report_props,
     user_props,
+    user_settings,
 )
 
 for module in modules:
