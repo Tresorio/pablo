@@ -7,6 +7,7 @@ class TresorioSelectedRenderPanel(bpy.types.Panel):
     bl_label = TRADUCTOR['field']['selected_render_details'][CONFIG_LANG]
     bl_idname = 'OBJECT_PT_TRESORIO_SELECTED_RENDER_PANEL'
     bl_parent_id = 'OBJECT_PT_TRESORIO_RENDERS_PANEL'
+    bl_options = {'DEFAULT_CLOSED'}
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = 'output'

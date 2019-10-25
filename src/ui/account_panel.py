@@ -7,6 +7,7 @@ class TresorioAccountPanel(bpy.types.Panel):
     bl_idname = 'OBJECT_PT_TRESORIO_ACCOUNT_PANEL'
     bl_parent_id = 'OBJECT_PT_TRESORIO_PANEL'
     bl_label = TRADUCTOR['field']['account_panel'][CONFIG_LANG]
+    bl_options = {'DEFAULT_CLOSED'}
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = 'output'

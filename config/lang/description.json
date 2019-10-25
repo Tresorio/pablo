@@ -138,5 +138,9 @@
     "show_settings": {
         "en": "Show / hide the render settings",
         "fr": "Montre / cache les paramètres du rendu"
+    },
+    "farm_type": {
+        "en": "Type of the render farm",
+        "fr": "Type de la ferme de rendu"
     }
 }

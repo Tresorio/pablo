@@ -1,6 +1,7 @@
 **TODO's:**
 
     On Pablo:
+        - Validate render delete
         - `Download all` operator
         - Test the plugin
         - Nas JWT handling

@@ -69,6 +69,19 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         default=default,
     )
 
+    desc = TRADUCTOR['desc']['farm_type'][CONFIG_LANG]
+    render_engines_list: bpy.props.EnumProperty(
+        description=desc,
+        name='',
+        items=(
+            ('CPU', 'Cpu', '',),
+            ('GPU', 'Gpu', '',),
+            ('HYBRID', 'Hybrid', '',),
+        ),
+        default='HYDBRID',
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
     # TODO dynamic way of getting these infos (on gandalf)
     desc = TRADUCTOR['desc']['render_engines_list'][CONFIG_LANG]
     render_engines_list: bpy.props.EnumProperty(

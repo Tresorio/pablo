@@ -48,12 +48,13 @@ def new_render():
         'size': os.path.getsize(bpy.data.filepath),
         'numberFarmers': props.nb_farmers,
         'numberOfFrames': number_of_frames,
+        'autoTileSize': props.auto_tile_size,
+        'farmType': props.farmType,
     }
     launch_render = {
         'currentFrame': bpy.context.scene.frame_current,
         'startingFrame': bpy.context.scene.frame_start,
         'endingFrame': bpy.context.scene.frame_end,
-        'autoTileSize': props.auto_tile_size,
     }
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
 
@@ -189,7 +190,7 @@ async def _refresh_loop(token: str):
     while bpy.data.window_managers['WinMan'].tresorio_user_props.is_logged is True:
         await _update_user_info(token)
         await _update_list_renderings(token)
-        await asyncio.sleep(2)
+        await asyncio.sleep(5)
 
 
 async def _connect_to_tresorio(data: Dict[str, str]):
@@ -214,6 +215,7 @@ async def _update_list_renderings(token: str):
     try:
         async with Platform() as plt:
             res_renders = await plt.req_list_renderings_details(token, jsonify=True)
+            print(res_renders)
             bpy.context.window_manager.property_unset(
                 'tresorio_renders_details')
             _list_renderings_details_callback(res_renders)
