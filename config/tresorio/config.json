@@ -1,5 +1,5 @@
 {
-    "backend": "http://192.168.15.20:8001",
+    "backend": "http://192.168.15.20:5000",
     "frontend": "http://192.168.15.20:3000",
     "homepage": "https://www.tresorio.com",
     "routes": {

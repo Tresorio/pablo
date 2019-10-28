@@ -49,7 +49,7 @@ def new_render():
         'numberFarmers': props.nb_farmers,
         'numberOfFrames': number_of_frames,
         'autoTileSize': props.auto_tile_size,
-        'farmType': props.farmType,
+        'farmType': props.farm_type,
     }
     launch_render = {
         'currentFrame': bpy.context.scene.frame_current,
@@ -215,7 +215,6 @@ async def _update_list_renderings(token: str):
     try:
         async with Platform() as plt:
             res_renders = await plt.req_list_renderings_details(token, jsonify=True)
-            print(res_renders)
             bpy.context.window_manager.property_unset(
                 'tresorio_renders_details')
             _list_renderings_details_callback(res_renders)

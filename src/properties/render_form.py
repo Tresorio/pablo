@@ -70,7 +70,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
     )
 
     desc = TRADUCTOR['desc']['farm_type'][CONFIG_LANG]
-    render_engines_list: bpy.props.EnumProperty(
+    farm_type: bpy.props.EnumProperty(
         description=desc,
         name='',
         items=(
@@ -78,7 +78,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
             ('GPU', 'Gpu', '',),
             ('HYBRID', 'Hybrid', '',),
         ),
-        default='HYDBRID',
+        default='HYBRID',
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 

@@ -1,13 +1,14 @@
 **TODO's:**
 
     On Pablo:
+        - Add a way to download logs of a render
+        - Count uptime on front
         - Validate render delete
         - `Download all` operator
         - Test the plugin
         - Nas JWT handling
         - Add some keybinds for a better UX
         - Let user specify default output directory -> `Download when over` option
-        - Count uptime on front
         - Create a tutorial on first launch
         - Feedback panel of the user to get his advice
         - Button to updgrade the addon to the newest version
