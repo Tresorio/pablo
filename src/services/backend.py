@@ -82,7 +82,7 @@ def connect_to_tresorio(email: str, password: str):
 
 
 def get_uptime(created_at: int):
-    return datetime.utcnow().second - created_at
+    return datetime.utcnow().timestamp() - created_at
 
 
 def delete_render(render_id: str, index: int):
@@ -195,8 +195,9 @@ async def _update_renderpacks_info(token: str):
 
 def update_renderings_uptime():
     renders = bpy.context.window_manager.tresorio_renders_details
-    for r in list(filter(lambda x: x.status == RenderStatus.RUNNING, renders)):
-        r.uptime = get_uptime(r.created_at)
+    for r in renders:
+        if r.status == RenderStatus.RUNNING:
+            r.uptime = get_uptime(r.created_at)
 
 
 async def _refresh_loop(token: str):
@@ -386,7 +387,7 @@ def _download_render_results_callback(success: bool):
     bpy.context.scene.tresorio_report_props.success_render_download = success
 
 
-def _fill_render_details(render, res: Dict[str, Any]):
+def _fill_render_details(render, res: Dict[str, Any], is_new: bool = False):
     render.id = res['id']
     render.name = res['name']
     render.timeout = res['timeout']
@@ -399,14 +400,17 @@ def _fill_render_details(render, res: Dict[str, Any]):
     render.rendered_frames = res['finishedFrames']
     render.number_farmers = res['numberFarmers']
     render.progression = res['progression']
-    render.created_at = datetime.strptime(
-        res['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ').second
-    render.uptime = get_uptime(render.created_at)
+    if is_new is True:
+        render.created_at = datetime.strptime(
+            res['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ').timestamp()
+        render.uptime = get_uptime(render.created_at)
+    if res['status'] == RenderStatus.FINISHED:
+        render.uptime = res['uptime']
 
 
 def _add_renders_details_prop(res: Dict[str, Any]) -> None:
     render = bpy.context.window_manager.tresorio_renders_details.add()
-    _fill_render_details(render, res)
+    _fill_render_details(render, res, is_new=True)
 
 
 def _list_renderings_details_callback(res: List[Dict[str, Any]]):
