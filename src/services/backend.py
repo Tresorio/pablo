@@ -3,15 +3,18 @@
 import io
 import os
 import bpy
+import time
 import asyncio
 import functools
 from zipfile import ZipFile
 from http import HTTPStatus
+from datetime import datetime
 from src.ui.popup import popup
 from urllib.parse import urljoin
 from typing import Dict, Any, List
 from src.operators.logout import logout
 from src.utils.lockfile import Lockfile
+from src.config.enums import RenderStatus
 from src.services.platform import Platform
 from src.services.nas import AsyncNas, SyncNas
 from src.services.loggers import BACKEND_LOGGER
@@ -76,6 +79,10 @@ def connect_to_tresorio(email: str, password: str):
     future = _connect_to_tresorio(credentials)
     asyncio.ensure_future(future)
     ensure_async_loop()
+
+
+def get_uptime(created_at: int):
+    return datetime.utcnow().second - created_at
 
 
 def delete_render(render_id: str, index: int):
@@ -186,11 +193,19 @@ async def _update_renderpacks_info(token: str):
             return
 
 
+def update_renderings_uptime():
+    renders = bpy.context.window_manager.tresorio_renders_details
+    for r in list(filter(lambda x: x.status == RenderStatus.RUNNING, renders)):
+        r.uptime = get_uptime(r.created_at)
+
+
 async def _refresh_loop(token: str):
     while bpy.data.window_managers['WinMan'].tresorio_user_props.is_logged is True:
         await _update_user_info(token)
         await _update_list_renderings(token)
-        await asyncio.sleep(5)
+        for _ in range(5):
+            await asyncio.sleep(1)
+            update_renderings_uptime()
 
 
 async def _connect_to_tresorio(data: Dict[str, str]):
@@ -384,7 +399,9 @@ def _fill_render_details(render, res: Dict[str, Any]):
     render.rendered_frames = res['finishedFrames']
     render.number_farmers = res['numberFarmers']
     render.progression = res['progression']
-    render.uptime = res['uptime']
+    render.created_at = datetime.strptime(
+        res['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ').second
+    render.uptime = get_uptime(render.created_at)
 
 
 def _add_renders_details_prop(res: Dict[str, Any]) -> None:

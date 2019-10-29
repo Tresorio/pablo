@@ -20,6 +20,7 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
     # Advancement
     total_frames: bpy.props.IntProperty(update=lambda a, b: None)
     rendered_frames: bpy.props.IntProperty(update=lambda a, b: None)
+    created_at: bpy.props.IntProperty(update=lambda a, b: None)
     uptime: bpy.props.IntProperty(update=lambda a, b: None)
     status: bpy.props.StringProperty(update=lambda a, b: None)
 
