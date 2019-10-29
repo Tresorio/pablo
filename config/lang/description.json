@@ -1,26 +1,150 @@
 {
-    "login": {
-        "eng": "Login to Tresorio"
+    "tresorio_login": {
+        "en": "Login to Tresorio",
+        "fr": "Connexion à Tresorio"
     },
-    "logout": {
-        "eng": "Logout of Tresorio"
+    "tresorio_logout": {
+        "en": "Logout of Tresorio",
+        "fr": "Déconnexion de Tresorio"
+    },
+    "tresorio_render": {
+        "en": "Starts the render on Tresorio's servers",
+        "fr": "Réalise le rendu sur les serveurs de Tresorio"
     },
     "mail": {
-        "eng": "Mail address of the tresorio's account"
+        "en": "Email address of the Tresorio account",
+        "fr": "Adresse mail de votre compte Tresorio"
     },
     "password": {
-        "eng": "Password of your Tresorio account"
+        "en": "Password of your Tresorio account",
+        "fr": "Mot de passe de votre compte Tresorio"
     },
-    "stay_connected": {
-        "eng": "Connect automatically at the next login"
+    "remember_email": {
+        "en": "Remembers the email used for the connection",
+        "fr": "Se souvient du mail utilisé pour la connexion"
     },
     "toggle_password": {
-        "eng": "Reveal or hide the password"
+        "en": "Reveal or hide the password",
+        "fr": "Révèle ou cache le mot de passe"
     },
     "forgot_password": {
-        "eng": "Redirects to the Tresorio page for forgotten passwords"
+        "en": "Redirects to the Tresorio page for forgotten passwords",
+        "fr": "Redirige vers la page Tresorio gérant l'oubli de mot de passe"
     },
     "create_account": {
-        "eng": "Redirects to the Tresorio page to register a new account"
+        "en": "Redirects to the Tresorio page to register a new account",
+        "fr": "Redirige vers la page Tresorio gérant la création de compte"
+    },
+    "redirect_tresorio": {
+        "en": "Redirects to the Tresorio main page",
+        "fr": "Redirige vers la page principale de Tresorio"
+    },
+    "rendering_name": {
+        "en": "Name to identify your new rendering. It doesn't need to be unique",
+        "fr": "Nom de votre nouveau rendu. Il ne nécessite pas d'être unique"
+    },
+    "render_engines_list": {
+        "en": "The render engine that will be used for this rendering",
+        "fr": "Le moteur de rendu qui sera utilisé pour ce rendu"
+    },
+    "output_formats_list": {
+        "en": "Format of the output files of the render",
+        "fr": "Format des fichiers de sortie du rendu"
+    },
+    "render_packs": {
+        "en": "The render pack that will be used for your render",
+        "fr": "Le pack de rendu qui sera utilisé pour votre rendu"
+    },
+    "timeout": {
+        "en": "Timeout before the rendering will be stopped. 0 will cosumme all your credits while the rendering is running. You will be refunded at the end of the render",
+        "fr": "Délai avant lequel le rendu sera stoppé. 0 consommera tout vos crédits le temps du rendu. Vous serez remboursé du temps restant à la fin du rendu"
+    },
+    "uploading": {
+        "en": "Uploading file ...",
+        "fr": "Envoi du fichier ..."
+    },
+    "upload_failed": {
+        "en": "The upload failed, please retry",
+        "fr": "L'envoi du fichier a échoué, veuillez réessayer"
+    },
+    "render_types": {
+        "en": "Type of the render",
+        "fr": "Type du rendu"
+    },
+    "render_type_frame": {
+        "en": "Render the current frame on Tresorio's servers",
+        "fr": "Effectuer le rendu de la frame actuelle sur les serveurs de Tresorio"
+    },
+    "render_type_animation": {
+        "en": "Render the whole animation on Tresorio's servers",
+        "fr": "Effectuer le rendu de toutes les frames sur les serveurs de Tresorio"
+    },
+    "render_details": {
+        "en": "Details of the renderings",
+        "fr": "Détails des rendus"
+    },
+    "download_render_results": {
+        "en": "Open a file selector to download the results of the render",
+        "fr": "Ouvre un explorateur de fichiers pour télécharger les résultats du rendu"
+    },
+    "delete_render": {
+        "en": "Permanently delete the render and its results",
+        "fr": "Supprime de manière permanente le rendu et ses résultats"
+    },
+    "stop_render": {
+        "en": "Stop the render and keep its results",
+        "fr": "Stop le rendu et garde ses résultats"
+    },
+    "render_advancement_percent": {
+        "en": "Advancement of the render",
+        "fr": "Avancée du rendu"
+    },
+    "refresh_renders": {
+        "en": "Refresh the status of the renders",
+        "fr": "Rafraichis le statut des rendus"
+    },
+    "get_credits": {
+        "en": "Redirects to the Tresorio website page handling credits purchase",
+        "fr": "Redirige vers la page de Tresorio gérant l'achat de crédits"
+    },
+    "pack_description": {
+        "en": "{0:.2f} credits per hour {1} Gpu and {2} Cpu",
+        "fr": "{:.2f} crédits par heure {1} Gpu et {2} Cpu"
+    },
+    "pack_textures": {
+        "en": "Pack the textures into the scene so they will be uploaded with the file. They will be unpacked once the upload is over",
+        "fr": "Charge les textures dans la scène pour qu'elles soient envoyées avec le fichier. Elles seront déchargées une fois l'envoi du fichier terminé"
+    },
+    "nb_farmers": {
+        "en": "Number of farmers to deploy",
+        "fr": "Nombre de farmers à déployer"
+    },
+    "pack_description_popup": {
+        "en": "Description of the pack content",
+        "fr": "Description du contenu du pack"
+    },
+    "pack_full_description_popup": {
+        "en": "{:.2f} credits per hour, {} Gpu ({}), {} Cpu ({}), {} Mib of Ram",
+        "fr": "{:.2f} crédits par heure, {} Gpu ({}), {} Cpu ({}), {} Mib de Ram"
+    },
+    "auto_tile_size": {
+        "en": "Sets the tile size automatically",
+        "fr": "Configure automatiquement les dimensions des tiles"
+    },
+    "show_pack": {
+        "en": "Show / hide the render pack",
+        "fr": "Montre / cache le pack de rendu"
+    },
+    "show_settings": {
+        "en": "Show / hide the render settings",
+        "fr": "Montre / cache les paramètres du rendu"
+    },
+    "farm_type": {
+        "en": "Type of the render farm",
+        "fr": "Type de la ferme de rendu"
+    },
+    "download_render_logs": {
+        "en": "Downloads the logs of this render",
+        "fr": "Télécharge les logs de ce rendu"
     }
 }

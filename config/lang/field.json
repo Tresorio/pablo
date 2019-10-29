@@ -1,29 +1,188 @@
 {
+    "connection": {
+        "en": "Connection",
+        "fr": "Connexion"
+    },
     "login": {
-        "eng": "Login"
+        "en": "Login",
+        "fr": "Se connecter"
     },
     "logout": {
-        "eng": "Logout"
+        "en": "Logout",
+        "fr": "Se déconnecter"
     },
     "mail": {
-        "eng": "Mail"
+        "en": "Email",
+        "fr": "Mail"
     },
     "password": {
-        "eng": "Password"
+        "en": "Password",
+        "fr": "Mot de passe"
     },
-    "stay_connected": {
-        "eng": "Stay connected"
+    "remember_email": {
+        "en": "Remember email",
+        "fr": "Se souvenir du mail"
     },
     "forgot_password": {
-        "eng": "Forgot your password ?"
+        "en": "Forgot your password ?",
+        "fr": "Mot de passe oublié ?"
     },
     "create_account": {
-        "eng": "Create your account now"
+        "en": "Create an account",
+        "fr": "Créer un compte"
     },
     "render_frame": {
-        "eng": "Render frame"
+        "en": "Render frame",
+        "fr": "Rendu image"
     },
     "render_animation": {
-        "eng": "Render animation"
+        "en": "Render animation",
+        "fr": "Rendu animation"
+    },
+    "rendering": {
+        "en": "Rendering",
+        "fr": "Rendu"
+    },
+    "account_panel": {
+        "en": "Account",
+        "fr": "Compte"
+    },
+    "new_render_panel": {
+        "en": "New render",
+        "fr": "Nouveau rendu"
+    },
+    "new_rendering_name": {
+        "en": "Name",
+        "fr": "Nom"
+    },
+    "engine": {
+        "en": "Engine",
+        "fr": "Moteur"
+    },
+    "format": {
+        "en": "Format",
+        "fr": "Format"
+    },
+    "timeout": {
+        "en": "Timeout",
+        "fr": "Expiration"
+    },
+    "hours": {
+        "en": "Hours",
+        "fr": "Heures"
+    },
+    "render_pack": {
+        "en": "Render pack",
+        "fr": "Pack de rendu"
+    },
+    "default_render_name": {
+        "en": "My_new_render",
+        "fr": "Mon_nouveau_rendu"
+    },
+    "configuration": {
+        "en": "Configuration",
+        "fr": "Configuration"
+    },
+    "launch": {
+        "en": "Launch",
+        "fr": "Lancer"
+    },
+    "render_type": {
+        "en": "Render type",
+        "fr": "Type de rendu"
+    },
+    "credits": {
+        "en": "credits",
+        "fr": "crédits"
+    },
+    "max_cost": {
+        "en": "Max cost",
+        "fr": "Coût max"
+    },
+    "your_renders": {
+        "en": "Your renders",
+        "fr": "Vos rendus"
+    },
+    "selected_render_details": {
+        "en": "Selected render details",
+        "fr": "Détails du rendu sélectionné"
+    },
+    "name": {
+        "en": "Name",
+        "fr": "Nom"
+    },
+    "max_timeout": {
+        "en": "Max credits",
+        "fr": "Crédits max"
+    },
+    "download_results": {
+        "en": "Download results",
+        "fr": "Télécharger les résultats"
+    },
+    "uptime": {
+        "en": "Uptime",
+        "fr": "Temps"
+    },
+    "get_credits": {
+        "en": "Get credits",
+        "fr": "Créditer"
+    },
+    "its_all_empty": {
+        "en": "It's all empty, start a render !",
+        "fr": "C'est vide, lancez un rendu !"
+    },
+    "advancement": {
+        "en": "Advancement",
+        "fr": "Anvancée"
+    },
+    "frame_singular": {
+        "en": "frame",
+        "fr": "frame"
+    },
+    "frame_plural": {
+        "en": "frames",
+        "fr": "frames"
+    },
+    "pack_textures": {
+        "en": "Load textures",
+        "fr": "Charger les textures"
+    },
+    "options": {
+        "en": "Options",
+        "fr": "Options"
+    },
+    "nb_farmers": {
+        "en": "Farmers",
+        "fr": "Farmers"
+    },
+    "settings": {
+        "en": "Settings",
+        "fr": "Paramètres"
+    },
+    "farmer": {
+        "singular": {
+            "en": "Farmer",
+            "fr": "Farmer"
+        },
+        "plural": {
+            "en": "Farmers",
+            "fr": "Farmers"
+        }
+    },
+    "frame": {
+        "en": "Frame",
+        "fr": "Frame"
+    },
+    "animation": {
+        "en": "Animation",
+        "fr": "Animation"
+    },
+    "auto_tile_size": {
+        "en": "Auto tile size",
+        "fr": "Tile size automatique"
+    },
+    "download_logs": {
+        "en": "Download logs",
+        "fr": "Télécharger les logs"
     }
 }

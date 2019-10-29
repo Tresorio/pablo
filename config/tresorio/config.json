@@ -1,8 +1,19 @@
 {
-    "gandalf": "0.0.0.0:5000",
+    "backend": "http://192.168.15.20:5000",
+    "frontend": "http://192.168.15.20:3000",
+    "homepage": "https://www.tresorio.com",
     "routes": {
-        "auth": "/auth/signin",
-        "user_infos": "/user/informations",
-        "packs": "/user/products/render/renderpacks"
+        "forgot_password": "/password",
+        "register": "/register",
+        "signin": "/auth/signin",
+        "user_info": "/user/informations",
+        "get_credits": "/profile/credits/get",
+        "renderpacks": "/user/products/render/renderpacks",
+        "create_render": "/user/products/render",
+        "launch_render": "/user/products/render/{0}",
+        "list_renderings_details": "/user/products/render",
+        "rendering_details": "/user/products/render/{0}",
+        "stop_render": "/user/products/render/{0}/stop",
+        "delete_render": "/user/products/render/{0}"
     }
 }
