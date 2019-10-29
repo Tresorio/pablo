@@ -45,7 +45,7 @@
     },
     "render_engines_list": {
         "en": "The render engine that will be used for this rendering",
-        "fr": "Le moter de rendu qui sera utilisé pour ce rendu"
+        "fr": "Le moteur de rendu qui sera utilisé pour ce rendu"
     },
     "output_formats_list": {
         "en": "Format of the output files of the render",
