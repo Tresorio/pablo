@@ -88,7 +88,7 @@
         "fr": "Ouvre un explorateur de fichiers pour télécharger les résultats du rendu"
     },
     "delete_render": {
-        "en": "Permantly delete the render and its results",
+        "en": "Permanently delete the render and its results",
         "fr": "Supprime de manière permanente le rendu et ses résultats"
     },
     "stop_render": {
