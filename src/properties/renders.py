@@ -23,6 +23,7 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
     created_at: bpy.props.IntProperty(update=lambda a, b: None)
     uptime: bpy.props.IntProperty(update=lambda a, b: None)
     status: bpy.props.StringProperty(update=lambda a, b: None)
+    downloading: bpy.props.BoolProperty(update=lambda a, b: None, default=False)
 
     desc = TRADUCTOR['desc']['render_advancement_percent'][CONFIG_LANG]
     progression: bpy.props.FloatProperty(

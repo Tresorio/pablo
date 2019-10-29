@@ -2,7 +2,6 @@
 
     On Pablo:
         - Add a way to download logs of a render
-        - Count uptime on front
         - Validate render delete
         - `Download all` operator
         - Test the plugin
@@ -18,13 +17,12 @@
         - On hover description of render pack -> (ops with future dynamic description)
 
     On Gandalf:
-        - Packs: GPU only - CPU only - CPU+GPU
-        - Pass param auto_tile_size to Paulette (given by pablo)
-        - Pass param [HYBRID | GPU | CPU] to paulette
         - Add a way to loadBalance using single frame separation
         - Email on render end
 
     On Paulette:
+        - Add a final task to regroup logs (atm each task erases 'logs.txt' on nassim), frame fragments
+        - Add a task for file conversion
         - Why some cpus are slower than others
         - Versionning for big file changes instead of reuploading every time
         - Check if the use of -s -e -a instead of many -f is faster

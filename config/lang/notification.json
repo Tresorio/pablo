@@ -122,5 +122,9 @@
     "not_enough_servers": {
         "en": "We can't handle your request as not enough resources are available on our servers. Please retry later",
         "fr": "Nous ne pouvous pas traiter votre requête car nos serveurs ne disposent plus d'assez de ressources. Veuillez réessayer plus tard"
+    },
+    "err_download_logs": {
+        "en": "Error while downloading the logs",
+        "fr": "Erreur pendant le téléchargement des logs"
     }
 }

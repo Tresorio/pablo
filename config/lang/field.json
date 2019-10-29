@@ -180,5 +180,9 @@
     "auto_tile_size": {
         "en": "Auto tile size",
         "fr": "Tile size automatique"
+    },
+    "download_logs": {
+        "en": "Download logs",
+        "fr": "Télécharger les logs"
     }
 }

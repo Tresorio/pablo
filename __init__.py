@@ -1,8 +1,8 @@
 bl_info = {
-    'name': 'WIP Tresorio cloud rendering',
+    'name': 'Tresorio cloud rendering',
     'version': (0, 0, 1),
     'blender': (2, 80, 0),
-    'category': 'Render',
+    'category': 'Output',
     'file': '/$HOME/.config/blender/2.80/scripts/addons/tresorio',
     'location': 'Properties: Output > Tresorio',
     'description': 'Cloud distributed rendering for Blender, by Tresorio',
@@ -48,6 +48,7 @@ from src.operators.redirect import TresorioRedirectRegisterOperator
 from src.operators.delete_render import TresorioDeleteRenderOperator
 from src.operators.redirect import TresorioRedirectGetCreditsOperator
 from src.operators.redirect import TresorioRedirectForgotPasswordOperator
+from src.operators.download_render_logs import TresorioDownloadRenderLogsOperator
 from src.operators.download_render_results import TresorioDownloadRenderResultsOperator
 from src.services.async_loop import AsyncLoopModalOperator
 
@@ -73,8 +74,9 @@ to_register_classes = (
                        TresorioStopRenderOperator,
                        TresorioDeleteRenderOperator,
                        TresorioRedirectGetCreditsOperator,
-                       AsyncLoopModalOperator,
+                       TresorioDownloadRenderLogsOperator,
                        TresorioPackDescriptionPopup,
+                       AsyncLoopModalOperator,
 
                        # UI
                        TresorioMainPanel,

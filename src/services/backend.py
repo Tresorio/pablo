@@ -104,6 +104,12 @@ def download_render_results(render_id: str, render_result_path: str):
     asyncio.ensure_future(future)
 
 
+def download_render_logs(render_id: str, render_result_path: str):
+    token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    future = _download_render_logs(token, render_id, render_result_path)
+    asyncio.ensure_future(future)
+
+
 def update_list_renderings():
     bpy.context.scene.tresorio_report_props.are_renders_refreshing = True
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
@@ -137,8 +143,40 @@ def _download_frames(fragments: List[Dict[str, Any]], render_result_path: str, r
                     filename = f'%s_{os.path.basename(frame)}.{ext}' % render['name']
                     filepath = os.path.join(render_result_path, filename)
                     with open(filepath, 'wb') as fw:
-                        BACKEND_LOGGER.debug(f'Wrote file {filepath}')
                         fw.write(zip_bytes)
+                        BACKEND_LOGGER.debug(f'Wrote file {filepath}')
+
+
+def _download_logs(fragments: List[Dict[str, Any]], filepath: str):
+    open(filepath, 'wb').close()
+    with SyncNas() as nas:
+        with open(filepath, 'ab') as file:
+            for frag in fragments:
+                nas.url = frag['ip']
+                logs = nas.download(frag['id'], 'logs.txt', read=True)
+                file.write(logs)
+                BACKEND_LOGGER.debug(f'Wrote logs on file {filepath}')
+
+
+async def _download_render_logs(token: str, render_id: str, render_result_path: str):
+    try:
+        async with Platform() as plt:
+            BACKEND_LOGGER.debug(f'Downloading logs of render {render_id}')
+            render = await plt.req_get_rendering_details(token, render_id, jsonify=True)
+        fragments = render['fragments']
+        loop = asyncio.get_running_loop()
+        download = functools.partial(
+            _download_logs, fragments, render_result_path
+        )
+        await loop.run_in_executor(None, download)
+    except (ClientResponseError, Exception) as err:
+        BACKEND_LOGGER.error(err)
+        if logout_if_unauthorized(err) is False:
+            _download_render_results_callback(success=False)
+        elif isinstance(err, ClientResponseError) is False:
+            popup(TRADUCTOR['notif']['err_download_logs']
+                  [CONFIG_LANG], icon='ERROR')
+        return
 
 
 async def _download_render_results(token: str, render_id: str, render_result_path: str):
@@ -205,8 +243,8 @@ async def _refresh_loop(token: str):
         await _update_user_info(token)
         await _update_list_renderings(token)
         for _ in range(5):
-            await asyncio.sleep(1)
             update_renderings_uptime()
+            await asyncio.sleep(1)
 
 
 async def _connect_to_tresorio(data: Dict[str, str]):

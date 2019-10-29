@@ -1,4 +1,5 @@
 import bpy
+from src.config.enums import RenderStatus
 from src.ui.icons import TresorioIconsLoader as til
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
@@ -14,9 +15,10 @@ class TresorioSelectedRenderPanel(bpy.types.Panel):
 
     def draw(self, context: bpy.types.Context):
         nb_renders = len(context.window_manager.tresorio_renders_details)
-        layout = self.layout.split(factor=0.03)
-        layout.row()
-        box = layout.box()
+        layout = self.layout
+        box_layout = self.layout.split(factor=0.03)
+        box_layout.row()
+        box = box_layout.box()
 
         if nb_renders == 0:
             box.label(text=TRADUCTOR['field']['its_all_empty'][CONFIG_LANG],
@@ -59,3 +61,5 @@ class TresorioSelectedRenderPanel(bpy.types.Panel):
             suffix = TRADUCTOR['field']['frame_singular'][CONFIG_LANG] if render.total_frames == 1 else TRADUCTOR['field']['frame_plural'][CONFIG_LANG]
             right.label(
                 text=f'{render.rendered_frames} / {render.total_frames} {suffix}')
+            if render.status == RenderStatus.FINISHED:
+                layout.operator('tresorio.download_render_logs', text=TRADUCTOR['field']['download_logs'][CONFIG_LANG], icon='FILE_TEXT')

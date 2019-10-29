@@ -142,5 +142,9 @@
     "farm_type": {
         "en": "Type of the render farm",
         "fr": "Type de la ferme de rendu"
+    },
+    "download_render_logs": {
+        "en": "Downloads the logs of this render",
+        "fr": "Télécharge les logs de ce rendu"
     }
 }

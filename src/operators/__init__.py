@@ -1,6 +1,7 @@
 from importlib import reload
 from . import (
     download_render_results,
+    download_render_logs,
     login,
     logout,
     redirect,
@@ -12,6 +13,7 @@ from . import (
 
 modules = (
     download_render_results,
+    download_render_logs,
     login,
     logout,
     redirect,
