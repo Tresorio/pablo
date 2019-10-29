@@ -65,7 +65,7 @@
     },
     "timeout": {
         "en": "Timeout",
-        "fr": "Délai"
+        "fr": "Expiration"
     },
     "hours": {
         "en": "Hours",
