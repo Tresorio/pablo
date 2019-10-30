@@ -127,26 +127,6 @@ def update_rendering(render):
 # ASYNC CORE-------------------------------------------------------------------
 
 
-def _download_frames(fragments: List[Dict[str, Any]], render_result_path: str, render: Dict[str, Any]):
-    ext = render['outputFormat'].lower()
-    with SyncNas() as nas:
-        for frag in fragments:
-            nas.url = frag['ip']
-            zip_bytes = io.BytesIO(nas.download_project(frag['id'], read=True))
-            with ZipFile(zip_bytes) as zf:
-                frames = list(filter(
-                    lambda x: x.startswith('artifacts/') and x != 'artifacts/',
-                    zf.namelist()
-                ))
-                for frame in frames:
-                    zip_bytes = zf.read(frame)
-                    filename = f'%s_{os.path.basename(frame)}.{ext}' % render['name']
-                    filepath = os.path.join(render_result_path, filename)
-                    with open(filepath, 'wb') as fw:
-                        fw.write(zip_bytes)
-                        BACKEND_LOGGER.debug(f'Wrote file {filepath}')
-
-
 def _download_logs(fragments: List[Dict[str, Any]], filepath: str):
     open(filepath, 'wb').close()
     with SyncNas() as nas:
@@ -179,16 +159,37 @@ async def _download_render_logs(token: str, render_id: str, render_result_path: 
         return
 
 
-async def _download_render_results(token: str, render_id: str, render_result_path: str):
+def _download_frames(fragments: List[Dict[str, Any]], render_result_path: str, render_details: Dict[str, Any], render):
+    ext = render_details['outputFormat'].lower()
+    with SyncNas() as nas:
+        for frag in fragments:
+            nas.url = frag['ip']
+            zip_bytes = io.BytesIO(nas.download_project(frag['id'], read=True))
+            with ZipFile(zip_bytes) as zf:
+                frames = list(filter(
+                    lambda x: x.startswith('artifacts/') and x != 'artifacts/',
+                    zf.namelist()
+                ))
+                for frame in frames:
+                    zip_bytes = zf.read(frame)
+                    filename = f'%s_{os.path.basename(frame)}.{ext}' % render['name']
+                    filepath = os.path.join(render_result_path, filename)
+                    with open(filepath, 'wb') as fw:
+                        fw.write(zip_bytes)
+                        BACKEND_LOGGER.debug(f'Wrote file {filepath}')
+
+
+async def _download_render_results(token: str, render, render_result_path: str):
     try:
         async with Platform() as plt:
-            BACKEND_LOGGER.debug(f'Downloading render {render_id} results')
-            render = await plt.req_get_rendering_details(token, render_id, jsonify=True)
-        fragments = render['fragments']
+            BACKEND_LOGGER.debug(f'Downloading render {render.id} results')
+            render_details = await plt.req_get_rendering_details(token, render.id, jsonify=True)
+        fragments = render_details['fragments']
         loop = asyncio.get_running_loop()
         download = functools.partial(
-            _download_frames, fragments, render_result_path, render
+            _download_frames, fragments, render_result_path, render_details, render
         )
+        render.downloading = True
         await loop.run_in_executor(None, download)
         _download_render_results_callback(success=True)
     except (ClientResponseError, Exception) as err:
@@ -198,7 +199,8 @@ async def _download_render_results(token: str, render_id: str, render_result_pat
         elif isinstance(err, ClientResponseError) is False:
             popup(TRADUCTOR['notif']['err_download_results']
                   [CONFIG_LANG], icon='ERROR')
-        return
+    finally:
+        render.downloading = False
 
 
 async def _update_user_info(token: str):
