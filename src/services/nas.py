@@ -4,6 +4,7 @@ import requests
 from bundle_modules import aiohttp
 from urllib.parse import urljoin
 from typing import Callable, Any
+from src.config.api import SSL_CONTEXT
 from src.services.loggers import NAS_LOGGER
 
 
@@ -104,7 +105,7 @@ class AsyncNas:
             ...     file = asyncio.run(task)
         """
         url = urljoin(self.url, uuid+'/'+src_filename)
-        return await self._session.get(url, raise_for_status=True)
+        return await self._session.get(url, raise_for_status=True, ssl_context=SSL_CONTEXT)
 
     @_nasrequest.__func__
     async def download_project(self, uuid: str) -> aiohttp.ClientResponse:
@@ -119,7 +120,7 @@ class AsyncNas:
             ...     project = asyncio.run(task)
         """
         url = urljoin(self.url, uuid+"?download=1&format=zip")
-        return await self._session.get(url, raise_for_status=True)
+        return await self._session.get(url, raise_for_status=True, ssl_context=SSL_CONTEXT)
 
     @_nasrequest.__func__
     async def list_files(self, uuid: str) -> aiohttp.ClientResponse:
@@ -134,7 +135,7 @@ class AsyncNas:
             ...     files = asyncio.run(task)
         """
         url = urljoin(self.url, uuid)
-        return await self._session.get(url, raise_for_status=True)
+        return await self._session.get(url, raise_for_status=True, ssl_context=SSL_CONTEXT)
 
     @_nasrequest.__func__
     async def upload_content(self, uuid: str, content, filename: str, jwt: str) -> aiohttp.ClientResponse:
@@ -158,7 +159,7 @@ class AsyncNas:
                 'Content-Disposition': f'form-data; name="{filename}"; filename="{filename}"'
             }
             mpw.append(content, headers=header)
-            return await self._session.put(url, data=mpw, raise_for_status=True)
+            return await self._session.put(url, data=mpw, raise_for_status=True, ssl_context=SSL_CONTEXT)
 
     async def close(self):
         """Closes the aiohttp session. To use if Nas is not instanciated with `async with`."""

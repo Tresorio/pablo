@@ -6,9 +6,9 @@ from typing import Dict, Any
 from typing import Callable, Any
 from urllib.parse import urljoin
 from bundle_modules import aiohttp
-from src.config.api import API_CONFIG
 import src.services.async_loop as async_loop
 from src.services.loggers import PLATFORM_LOGGER
+from src.config.api import API_CONFIG, SSL_CONTEXT
 
 
 class Platform:
@@ -76,7 +76,7 @@ class Platform:
     @_platformrequest.__func__
     async def req_connect_to_tresorio(self, credentials: Dict[str, Any]) -> aiohttp.ClientResponse:
         url = urljoin(self.url, API_CONFIG['routes']['signin'])
-        return await self._session.post(url, json=credentials, raise_for_status=True)
+        return await self._session.post(url, json=credentials, raise_for_status=True, ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_launch_render(self, jwt: str, render_id: str, launch_render: Dict[str, Any]) -> aiohttp.ClientResponse:
@@ -86,7 +86,7 @@ class Platform:
         }
         url = urljoin(
             self.url, API_CONFIG['routes']['launch_render'].format(render_id))
-        return await self._session.post(url, json=launch_render, headers=headers, raise_for_status=True)
+        return await self._session.post(url, json=launch_render, headers=headers, raise_for_status=True, ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_stop_render(self, jwt: str, render_id: str):
@@ -96,7 +96,7 @@ class Platform:
         }
         url = urljoin(
             self.url, API_CONFIG['routes']['stop_render'].format(render_id))
-        return await self._session.put(url, headers=headers, raise_for_status=True)
+        return await self._session.put(url, headers=headers, raise_for_status=True, ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_delete_render(self, jwt: str, render_id: str):
@@ -106,7 +106,7 @@ class Platform:
         }
         url = urljoin(
             self.url, API_CONFIG['routes']['delete_render'].format(render_id))
-        return await self._session.delete(url, headers=headers, raise_for_status=True)
+        return await self._session.delete(url, headers=headers, raise_for_status=True, ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_get_user_info(self, jwt: str) -> aiohttp.ClientResponse:
@@ -115,7 +115,7 @@ class Platform:
             'Content-Type': 'application/json'
         }
         url = urljoin(self.url, API_CONFIG['routes']['user_info'])
-        return await self._session.get(url, raise_for_status=True, headers=headers)
+        return await self._session.get(url, raise_for_status=True, headers=headers, ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_get_renderpacks(self, jwt: str) -> aiohttp.ClientResponse:
@@ -124,7 +124,7 @@ class Platform:
             'Content-Type': 'application/json'
         }
         url = urljoin(self.url, API_CONFIG['routes']['renderpacks'])
-        return await self._session.get(url, raise_for_status=True, headers=headers)
+        return await self._session.get(url, raise_for_status=True, headers=headers, ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_create_render(self, jwt: str, render: Dict[str, Any]):
@@ -133,7 +133,7 @@ class Platform:
             'Content-Type': 'application/json'
         }
         url = urljoin(self.url, API_CONFIG['routes']['create_render'])
-        return await self._session.post(url, json=render, raise_for_status=True, headers=headers)
+        return await self._session.post(url, json=render, raise_for_status=True, headers=headers, ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_list_renderings_details(self, jwt: str):
@@ -147,7 +147,7 @@ class Platform:
         }
         url = urljoin(
             self.url, API_CONFIG['routes']['list_renderings_details'])
-        return await self._session.get(url, params=params, raise_for_status=True, headers=headers)
+        return await self._session.get(url, params=params, raise_for_status=True, headers=headers, ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_get_rendering_details(self, jwt: str, render_id: str):
@@ -157,7 +157,7 @@ class Platform:
         }
         url = urljoin(
             self.url, API_CONFIG['routes']['rendering_details'].format(render_id))
-        return await self._session.get(url, headers=headers)
+        return await self._session.get(url, headers=headers, ssl_context=SSL_CONTEXT)
 
     async def close(self):
         """Closes the aiohttp session."""
