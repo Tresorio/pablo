@@ -1,6 +1,7 @@
 **TODO's:**
 
     On Pablo:
+        - Progress bar on artifacts downloading + download as a stream
         - Add a way to download logs of a render
         - Validate render delete
         - `Download all` operator

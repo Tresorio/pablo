@@ -35,9 +35,12 @@ class TresorioRendersList(bpy.types.UIList):
             if render.rendered_frames == 0:
                 row.label(
                     text=TRADUCTOR['notif']['no_result_render'][CONFIG_LANG])
+            elif render.downloading is True:
+                row.label(text=TRADUCTOR['notif']['downloading'][CONFIG_LANG])
             else:
                 row.label(text=TRADUCTOR['notif']
                           ['finished_render'][CONFIG_LANG])
+
 
         # OPS_CASE
         if render.status == RenderStatus.RUNNING:
