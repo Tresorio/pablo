@@ -38,20 +38,6 @@ class TresorioReportProps(bpy.types.PropertyGroup):
         update=lambda a, b: None,
     )
 
-    downloading_render_results: bpy.props.BoolProperty(
-        name='',
-        description='',
-        options={'HIDDEN', 'SKIP_SAVE'},
-        update=lambda a, b: None,
-    )
-
-    success_render_download: bpy.props.BoolProperty(
-        name='',
-        description='',
-        options={'HIDDEN', 'SKIP_SAVE'},
-        update=lambda a, b: None,
-    )
-
     packing_textures: bpy.props.BoolProperty(
         name='',
         description='',

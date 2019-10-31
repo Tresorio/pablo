@@ -41,7 +41,6 @@ class TresorioRendersList(bpy.types.UIList):
                 row.label(text=TRADUCTOR['notif']
                           ['finished_render'][CONFIG_LANG])
 
-
         # OPS_CASE
         if render.status == RenderStatus.RUNNING:
             row.operator('tresorio.stop_render', icon='X').index = index
@@ -68,7 +67,6 @@ class TresorioRendersPanel(bpy.types.Panel):
         return context.window_manager.tresorio_user_props.is_logged
 
     def draw(self, context: bpy.types.Context):
-        report_props = context.scene.tresorio_report_props
         data = context.window_manager
         layout = self.layout
 
@@ -81,5 +79,3 @@ class TresorioRendersPanel(bpy.types.Panel):
 
         row = layout.row()
         row.alignment = 'CENTER'
-        if report_props.downloading_render_results is True:
-            row.label(text=TRADUCTOR['notif']['downloading'][CONFIG_LANG])

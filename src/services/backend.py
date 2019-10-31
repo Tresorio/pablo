@@ -16,6 +16,7 @@ from src.operators.logout import logout
 from src.utils.lockfile import Lockfile
 from src.config.enums import RenderStatus
 from src.services.platform import Platform
+from src.utils.force_sync import force_sync
 from src.services.nas import AsyncNas, SyncNas
 from src.services.loggers import BACKEND_LOGGER
 from src.utils.percent_reader import PercentReader
@@ -99,7 +100,6 @@ def stop_render(render_id: str):
 
 def download_render_results(render_id: str, render_result_path: str):
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
-    bpy.context.scene.tresorio_report_props.downloading_render_results = True
     future = _download_render_results(token, render_id, render_result_path)
     asyncio.ensure_future(future)
 
@@ -151,8 +151,8 @@ async def _download_render_logs(token: str, render_id: str, render_result_path: 
         await loop.run_in_executor(None, download)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
-        if logout_if_unauthorized(err) is False:
-            _download_render_results_callback(success=False)
+        if logout_if_unauthorized(err):
+            return
         elif isinstance(err, ClientResponseError) is False:
             popup(TRADUCTOR['notif']['err_download_logs']
                   [CONFIG_LANG], icon='ERROR')
@@ -191,11 +191,10 @@ async def _download_render_results(token: str, render, render_result_path: str):
         )
         render.downloading = True
         await loop.run_in_executor(None, download)
-        _download_render_results_callback(success=True)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
-        if logout_if_unauthorized(err) is False:
-            _download_render_results_callback(success=False)
+        if logout_if_unauthorized(err):
+            return
         elif isinstance(err, ClientResponseError) is False:
             popup(TRADUCTOR['notif']['err_download_results']
                   [CONFIG_LANG], icon='ERROR')
@@ -322,7 +321,7 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
             update_list_renderings()
             loop = asyncio.get_running_loop()
             upload = functools.partial(
-                _upload_blend_file_sync, blendfile, render_info)
+                force_sync(_upload_blend_file_async), blendfile, render_info)
             res = await loop.run_in_executor(None, upload)
             _upload_blend_file_callback(res)
 
@@ -420,11 +419,6 @@ def _upload_blend_file_sync(blendfile: str, render_info: Dict[str, Any]):
             return nas.upload_content(render_info['id'], file, 'scene.blend', render_info['jwt'])
 
 # CALLBACKS--------------------------------------------------------------------
-
-
-def _download_render_results_callback(success: bool):
-    bpy.context.scene.tresorio_report_props.downloading_render_results = False
-    bpy.context.scene.tresorio_report_props.success_render_download = success
 
 
 def _fill_render_details(render, res: Dict[str, Any], is_new: bool = False):
