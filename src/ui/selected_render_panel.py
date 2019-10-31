@@ -61,5 +61,3 @@ class TresorioSelectedRenderPanel(bpy.types.Panel):
             suffix = TRADUCTOR['field']['frame_singular'][CONFIG_LANG] if render.total_frames == 1 else TRADUCTOR['field']['frame_plural'][CONFIG_LANG]
             right.label(
                 text=f'{render.rendered_frames} / {render.total_frames} {suffix}')
-            # if render.status == RenderStatus.FINISHED:
-                # layout.operator('tresorio.download_render_logs', text=TRADUCTOR['field']['download_logs'][CONFIG_LANG], icon='FILE_TEXT')
