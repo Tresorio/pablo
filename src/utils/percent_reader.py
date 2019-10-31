@@ -5,6 +5,10 @@ import bpy
 import time
 
 
+from types import FunctionType
+from functools import wraps
+
+
 class PercentReader(io.BufferedReader):
     """Computes the percent read of a file.
 

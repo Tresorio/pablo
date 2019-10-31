@@ -1,5 +1,6 @@
 from importlib import reload
 from . import (
+    force_sync,
     json_rw,
     lockfile,
     password,
@@ -7,6 +8,7 @@ from . import (
 )
 
 modules = (
+    force_sync,
     json_rw,
     lockfile,
     password,

@@ -261,7 +261,7 @@ class SyncNas:
             ...     res = nas.download('55fe2bc6', 'my_file.txt', read=True)
         """
         url = urljoin(self.url, uuid+'/'+src_filename)
-        return self._session.get(url)
+        return self._session.get(url, verify=True)
 
     @_nasrequest.__func__
     def download_project(self, uuid: str) -> requests.Response:
@@ -275,7 +275,7 @@ class SyncNas:
             ...     res = nas.list_files('55fe2bc6', read=True)
         """
         url = urljoin(self.url, uuid+"?download=1&format=zip")
-        return self._session.get(url)
+        return self._session.get(url, verify=True)
 
     @_nasrequest.__func__
     def list_files(self, uuid: str) -> requests.Response:
@@ -289,7 +289,7 @@ class SyncNas:
             ...     res = nas.list_files('55fe2bc6', read=True)
         """
         url = urljoin(self.url, uuid)
-        return self._session.get(url)
+        return self._session.get(url, verify=True)
 
     @_nasrequest.__func__
     def upload_content(self, uuid: str, fd, filename: str, jwt: str) -> requests.Response:
@@ -307,7 +307,7 @@ class SyncNas:
         """
         url = urljoin(self.url, uuid)
         content = {filename: fd}
-        return self._session.put(url, files=content)
+        return self._session.put(url, data=content, stream=True, verify=True)
 
     def close(self):
         """Closes the aiohttp session. To use if Nas is not instanciated with `with`."""
