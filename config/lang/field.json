@@ -76,8 +76,8 @@
         "fr": "Pack de rendu"
     },
     "default_render_name": {
-        "en": "My_new_render",
-        "fr": "Mon_nouveau_rendu"
+        "en": "untitled",
+        "fr": "untitled"
     },
     "configuration": {
         "en": "Configuration",
