@@ -1,3 +1,4 @@
+import os
 import bpy
 import math
 from src.config.langs import TRADUCTOR, CONFIG_LANG
@@ -59,14 +60,13 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    default = TRADUCTOR['field']['default_render_name'][CONFIG_LANG]
     desc = TRADUCTOR['desc']['rendering_name'][CONFIG_LANG]
     rendering_name: bpy.props.StringProperty(
         description=desc,
         name='',
         maxlen=255,
         options={'HIDDEN', 'SKIP_SAVE'},
-        default=default,
+        update=lambda a, b: None,
     )
 
     desc = TRADUCTOR['desc']['farm_type'][CONFIG_LANG]

@@ -1,3 +1,4 @@
+import os
 import bpy
 import asyncio
 import requests
@@ -20,6 +21,8 @@ class TresorioLoginOperator(bpy.types.Operator):
         cls.__doc__ = TRADUCTOR['desc']['tresorio_login'][CONFIG_LANG]
 
     def execute(self, context):
+        bpy.context.scene.tresorio_render_form.rendering_name = os.path.basename(
+            os.path.splitext(bpy.data.filepath)[0])
         user_props = context.window_manager.tresorio_user_props
         email, password = user_props.email, get_password(user_props)
         context.window_manager.tresorio_user_props.hidden_password = reset_password(
@@ -28,10 +31,12 @@ class TresorioLoginOperator(bpy.types.Operator):
             len(password))
 
         if user_props.is_logged == True:
-            popup(TRADUCTOR['notif']['already_logged_in'][CONFIG_LANG], icon='ERROR')
+            popup(TRADUCTOR['notif']['already_logged_in']
+                  [CONFIG_LANG], icon='ERROR')
             return {'CANCELLED'}
         if email == '' and password == '':
-            popup(TRADUCTOR['notif']['no_mail_password'][CONFIG_LANG], icon='ERROR')
+            popup(TRADUCTOR['notif']['no_mail_password']
+                  [CONFIG_LANG], icon='ERROR')
             return {'CANCELLED'}
         if email == '':
             popup(TRADUCTOR['notif']['no_mail'][CONFIG_LANG], icon='ERROR')
