@@ -126,5 +126,9 @@
     "err_download_logs": {
         "en": "Error while downloading the logs",
         "fr": "Erreur pendant le téléchargement des logs"
+    },
+    "render_name_already_taken": {
+        "en": "You already have a render named {0} !",
+        "fr": "Vous avez déjà un rendu nommé {0} !"
     }
 }

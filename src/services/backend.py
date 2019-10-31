@@ -324,7 +324,6 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
                 force_sync(_upload_blend_file_async), blendfile, render_info)
             res = await loop.run_in_executor(None, upload)
             _upload_blend_file_callback(res)
-
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError) and err.status == HTTPStatus.FORBIDDEN:
@@ -334,6 +333,10 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
         elif isinstance(err, ClientResponseError) and err.status == HTTPStatus.SERVICE_UNAVAILABLE:
             popup(TRADUCTOR['notif']['not_enough_servers']
                   [CONFIG_LANG], icon='ERROR')
+            return
+        elif isinstance(err, ClientResponseError) and err.status == HTTPStatus.CONFLICT:
+            popup(TRADUCTOR['notif']['render_name_already_taken']
+                  [CONFIG_LANG].format(render_form.rendering_name), icon='ERROR')
             return
         elif logout_if_unauthorized(err) is False:
             popup(TRADUCTOR['desc']['upload_failed']
