@@ -4,7 +4,7 @@ import os
 import bpy
 
 # TODO split the end only
-DIRNAME = os.path.dirname(__file__).split('src/config')[0]
+DIRNAME = os.path.dirname(__file__).split(os.path.join('src', 'config'))[0]
 CONFIG_JSONS_DIRNAME = 'config'
 ASSETS_DIRNAME = 'assets'
 
