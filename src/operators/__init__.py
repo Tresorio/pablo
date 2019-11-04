@@ -1,5 +1,7 @@
 from importlib import reload
 from . import (
+    delete_targets,
+    download_targets,
     download_render_results,
     login,
     logout,
@@ -11,6 +13,8 @@ from . import (
 )
 
 modules = (
+    delete_targets,
+    download_targets,
     download_render_results,
     login,
     logout,
