@@ -60,7 +60,7 @@ def new_render():
         'startingFrame': bpy.context.scene.frame_start,
         'endingFrame': bpy.context.scene.frame_end,
     }
-    token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    token = bpy.context.window_manager.tresorio_user_props.token
 
     future = _new_render(token, create_render, launch_render)
     asyncio.ensure_future(future)
@@ -69,7 +69,7 @@ def new_render():
 def connect_to_tresorio(email: str, password: str):
     """Connects the user to Tresorio and fetch required data"""
     bpy.context.scene.tresorio_report_props.error = False
-    bpy.data.window_managers['WinMan'].tresorio_user_props.token = ''
+    bpy.context.window_manager.tresorio_user_props.token = ''
     bpy.context.scene.tresorio_report_props.login_in = 1
 
     credentials = {
@@ -87,33 +87,33 @@ def get_uptime(created_at: int):
 
 
 def delete_render(render_id: str, index: int):
-    token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    token = bpy.context.window_manager.tresorio_user_props.token
     future = _delete_render(token, render_id, index)
     asyncio.ensure_future(future)
 
 
 def stop_render(render_id: str):
-    token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    token = bpy.context.window_manager.tresorio_user_props.token
     future = _stop_render(token, render_id)
     asyncio.ensure_future(future)
 
 
 def download_render_results(render_id: str, render_result_path: str):
-    token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    token = bpy.context.window_manager.tresorio_user_props.token
     future = _download_render_results(token, render_id, render_result_path)
     asyncio.ensure_future(future)
 
 
 def update_list_renderings():
     bpy.context.scene.tresorio_report_props.are_renders_refreshing = True
-    token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    token = bpy.context.window_manager.tresorio_user_props.token
     future = _update_list_renderings(token)
     asyncio.ensure_future(future)
 
 
 def update_rendering(render):
     bpy.context.scene.tresorio_report_props.are_renders_refreshing = True
-    token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    token = bpy.context.window_manager.tresorio_user_props.token
     future = _update_rendering(render, token)
     asyncio.ensure_future(future)
 
@@ -213,7 +213,7 @@ def update_renderings_uptime():
 
 
 async def _refresh_loop(token: str):
-    while bpy.data.window_managers['WinMan'].tresorio_user_props.is_logged is True:
+    while bpy.context.window_manager.tresorio_user_props.is_logged is True:
         await _update_user_info(token)
         await _update_list_renderings(token)
         for _ in range(5):
@@ -450,12 +450,12 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
 
 
 def _get_user_info_callback(res: ClientResponse) -> None:
-    bpy.data.window_managers['WinMan'].tresorio_user_props.total_credits = res['credits']
+    bpy.context.window_manager.tresorio_user_props.total_credits = res['credits']
 
 
 def _connect_to_tresorio_callback(res: ClientResponse) -> None:
     bpy.context.scene.tresorio_report_props.login_in = False
-    bpy.data.window_managers['WinMan'].tresorio_user_props.token = res['token']
+    bpy.context.window_manager.tresorio_user_props.token = res['token']
     bpy.context.window_manager.tresorio_user_props.is_logged = True
 
 
@@ -476,8 +476,8 @@ def _get_renderpacks_error(err: Exception) -> None:
 
 
 def _get_user_info_error(err: Exception) -> None:
-    bpy.data.window_managers['WinMan'].tresorio_user_props.is_logged = False
-    bpy.data.window_managers['WinMan'].tresorio_user_props.token = ''
+    bpy.context.window_manager.tresorio_user_props.is_logged = False
+    bpy.context.window_manager.tresorio_user_props.token = ''
 
 
 def _upload_blend_file_error(err: Exception) -> None:
