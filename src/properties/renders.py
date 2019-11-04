@@ -5,25 +5,40 @@ from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
     # Internal
-    id: bpy.props.StringProperty(update=lambda a, b: None)
+    id: bpy.props.StringProperty(update=lambda a, b: None, options={
+                                 'HIDDEN', 'SKIP_SAVE'})
 
     # Render specifics
-    name: bpy.props.StringProperty(update=lambda a, b: None)
-    number_farmers: bpy.props.IntProperty(update=lambda a, b: None)
-    engine: bpy.props.StringProperty(update=lambda a, b: None)
-    farm: bpy.props.StringProperty(update=lambda a, b: None)
-    timeout: bpy.props.IntProperty(update=lambda a, b: None)
-    type: bpy.props.StringProperty(update=lambda a, b: None)
-    output_format: bpy.props.StringProperty(update=lambda a, b: None)
-    launched: bpy.props.BoolProperty(update=lambda a, b: None)
+    name: bpy.props.StringProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    number_farmers: bpy.props.IntProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    engine: bpy.props.StringProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    farm: bpy.props.StringProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    timeout: bpy.props.IntProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    type: bpy.props.StringProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    output_format: bpy.props.StringProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    launched: bpy.props.BoolProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
 
     # Advancement
-    total_frames: bpy.props.IntProperty(update=lambda a, b: None)
-    rendered_frames: bpy.props.IntProperty(update=lambda a, b: None)
-    created_at: bpy.props.IntProperty(update=lambda a, b: None)
-    uptime: bpy.props.IntProperty(update=lambda a, b: None)
-    status: bpy.props.StringProperty(update=lambda a, b: None)
-    downloading: bpy.props.BoolProperty(update=lambda a, b: None, default=False)
+    total_frames: bpy.props.IntProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    rendered_frames: bpy.props.IntProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    created_at: bpy.props.IntProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    uptime: bpy.props.IntProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    status: bpy.props.StringProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    downloading: bpy.props.BoolProperty(
+        update=lambda a, b: None, default=False, options={'HIDDEN', 'SKIP_SAVE'})
 
     desc = TRADUCTOR['desc']['render_advancement_percent'][CONFIG_LANG]
     progression: bpy.props.FloatProperty(
@@ -35,6 +50,14 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
         subtype='PERCENTAGE',
         options={'HIDDEN', 'SKIP_SAVE'},
         update=lambda a, b: None,
+    )
+
+    is_target: bpy.props.BoolProperty(
+        name='',
+        description='',
+        default=False,
+        update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
     )
 
     @classmethod

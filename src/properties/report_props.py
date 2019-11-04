@@ -52,8 +52,6 @@ class TresorioReportProps(bpy.types.PropertyGroup):
         update=lambda a, b: None,
     )
 
-    # TODO not enough credit on 403 on req_create_render
-
     @classmethod
     def register(cls):
         """Link to window manager so these settings are reset at launch"""

@@ -2,10 +2,45 @@ import bpy
 from src.config.enums import RenderStatus
 from src.ui.icons import TresorioIconsLoader as til
 from src.config.langs import TRADUCTOR, CONFIG_LANG
+from src.ui.draw_selected_render import draw_selected_render
 
 
 class TresorioRendersList(bpy.types.UIList):
     bl_idname = 'OBJECT_UL_TRESORIO_RENDERS_LIST'
+
+    desc = TRADUCTOR['desc']['show_selected_render'][CONFIG_LANG]
+    show_selected_render: bpy.props.BoolProperty(
+        name='',
+        description=desc,
+        default=False,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    def draw_filter(self, context, layout):
+        layout.separator()
+        row = layout.row()
+        row.operator('tresorio.download_targeted_render_results',
+                     text=TRADUCTOR['field']['download_targeted_results'][CONFIG_LANG],
+                     icon='IMPORT')
+        row.operator('tresorio.delete_targeted_renders',
+                     text=TRADUCTOR['field']['delete_targeted_results'][CONFIG_LANG],
+                     icon='TRASH')
+
+        row = layout.row()
+        row_1 = row.row()
+        row_1.alignment = 'LEFT'
+        row_1.prop(self, 'show_selected_render', emboss=False,
+                   text=TRADUCTOR['field']['selected_render_details'][CONFIG_LANG]+':',
+                   icon='VIEWZOOM')
+        row_2 = row.row()
+        row_2.alignment = 'RIGHT'
+        icon = 'DISCLOSURE_TRI_DOWN' if self.show_selected_render else 'DISCLOSURE_TRI_RIGHT'
+        row_2.prop(self, 'show_selected_render', text='', emboss=False,
+                   icon=icon)
+
+        layout.separator()
+        if self.show_selected_render:
+            draw_selected_render(layout, context)
 
     def draw_item(self, context, layout, data, render, icon, active_data, active_propname, index):
         split = layout.split(factor=0.05)
@@ -37,9 +72,6 @@ class TresorioRendersList(bpy.types.UIList):
                     text=TRADUCTOR['notif']['no_result_render'][CONFIG_LANG])
             elif render.downloading is True:
                 row.label(text=TRADUCTOR['notif']['downloading'][CONFIG_LANG])
-            else:
-                row.label(text=TRADUCTOR['notif']
-                          ['finished_render'][CONFIG_LANG])
 
         # OPS_CASE
         if render.status == RenderStatus.RUNNING:
@@ -52,6 +84,7 @@ class TresorioRendersList(bpy.types.UIList):
             row.operator('tresorio.delete_render',
                          text='',
                          icon='TRASH').index = index
+            row.prop(render, 'is_target')
 
 
 class TresorioRendersPanel(bpy.types.Panel):
@@ -76,6 +109,3 @@ class TresorioRendersPanel(bpy.types.Panel):
                              data, 'tresorio_renders_details',
                              data, 'tresorio_renders_list_index',
                              rows=rows, maxrows=nb_renders)
-
-        row = layout.row()
-        row.alignment = 'CENTER'

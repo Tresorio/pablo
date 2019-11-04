@@ -104,6 +104,18 @@ def download_render_results(render_id: str, render_result_path: str):
     asyncio.ensure_future(future)
 
 
+def download_targeted_render_results(renders_result_path: str):
+    token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    future = _download_targeted_render_results(token, renders_result_path)
+    asyncio.ensure_future(future)
+
+
+def delete_targeted_render_results():
+    token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
+    future = _delete_targeted_renders(token)
+    asyncio.ensure_future(future)
+
+
 def update_list_renderings():
     bpy.context.scene.tresorio_report_props.are_renders_refreshing = True
     token = bpy.data.window_managers['WinMan'].tresorio_user_props.token
@@ -175,6 +187,22 @@ async def _download_render_results(token: str, render, render_result_path: str):
         render.downloading = False
 
 
+async def _download_targeted_render_results(token: str, renders_result_path: str):
+    for render in bpy.context.window_manager.tresorio_renders_details:
+        if render.status == RenderStatus.FINISHED and render.is_target:
+            await _download_render_results(token, render, renders_result_path)
+
+
+async def _delete_targeted_renders(token: str):
+    delta = 0
+    renders = bpy.context.window_manager.tresorio_renders_details
+    for i in range(len(renders)):
+        if renders[i - delta].is_target:
+            await _delete_render(token, renders[i - delta], i - delta)
+            delta += 1
+
+
+
 async def _update_user_info(token: str):
     async with Platform() as plt:
         try:
@@ -240,12 +268,16 @@ async def _connect_to_tresorio(data: Dict[str, str]):
 
 
 async def _update_list_renderings(token: str):
+    renders = bpy.context.window_manager.tresorio_renders_details
     try:
         async with Platform() as plt:
             res_renders = await plt.req_list_renderings_details(token, jsonify=True)
-            bpy.context.window_manager.property_unset(
-                'tresorio_renders_details')
-            _list_renderings_details_callback(res_renders)
+            nb_new_renders = len(res_renders) - len(renders)
+            for _ in range(nb_new_renders):
+                _add_renders_details_prop(res_renders[0])
+                del res_renders[0]
+            for res, render in zip(res_renders, renders):
+                _fill_render_details(render, res)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
@@ -421,12 +453,6 @@ def _fill_render_details(render, res: Dict[str, Any], is_new: bool = False):
 def _add_renders_details_prop(res: Dict[str, Any]) -> None:
     render = bpy.context.window_manager.tresorio_renders_details.add()
     _fill_render_details(render, res, is_new=True)
-
-
-def _list_renderings_details_callback(res: List[Dict[str, Any]]):
-    for render in res:
-        _add_renders_details_prop(render)
-    bpy.context.scene.tresorio_report_props.are_renders_refreshing = False
 
 
 def _get_renderpacks_callback(res: ClientResponse) -> None:
