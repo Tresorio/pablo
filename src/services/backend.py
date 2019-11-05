@@ -148,7 +148,7 @@ def _download_logs(fragments: List[Dict[str, Any]], filepath: str):
                 BACKEND_LOGGER.debug(f'Wrote logs on file {filepath}')
 
 
-def _download_frames(fragments: List[Dict[str, Any]], render_result_path: str, render_details: Dict[str, Any], render):
+def _download_frames(fragments: List[Dict[str, Any]], render_result_path: str, render_details: Dict[str, Any], render, open_result: bool = True):
     ext = render_details['outputFormat'].lower()
     with SyncNas() as nas:
         for frag in fragments:
@@ -163,14 +163,14 @@ def _download_frames(fragments: List[Dict[str, Any]], render_result_path: str, r
                     zip_bytes = zf.read(frame)
                     filename = f'%s_{os.path.basename(frame)}.{ext}' % render['name']
                     filepath = os.path.join(render_result_path, filename)
-                    if i == 0 and WM.tresorio_user_settings_props.open_image_on_download:
+                    if i == 0 and WM.tresorio_user_settings_props.open_image_on_download and open_result:
                         open_image(filepath)
                     with open(filepath, 'wb') as fw:
                         fw.write(zip_bytes)
                         BACKEND_LOGGER.debug(f'Wrote file {filepath}')
 
 
-async def _download_render_results(token: str, render, render_result_path: str):
+async def _download_render_results(token: str, render, render_result_path: str, open_result: bool = True):
     try:
         async with Platform() as plt:
             BACKEND_LOGGER.debug(f'Downloading render {render.id} results')
@@ -181,7 +181,7 @@ async def _download_render_results(token: str, render, render_result_path: str):
             _download_frames, fragments, render_result_path, render_details, render
         )
         render.downloading = True
-        await loop.run_in_executor(None, download)
+        await loop.run_in_executor(None, download, open_result)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err):
@@ -194,9 +194,9 @@ async def _download_render_results(token: str, render, render_result_path: str):
 
 
 async def _download_targeted_render_results(token: str, renders_result_path: str):
-    for render in WM.tresorio_renders_details:
+    for i, render in enumerate(WM.tresorio_renders_details):
         if render.status == RenderStatus.FINISHED and render.is_target:
-            await _download_render_results(token, render, renders_result_path)
+            await _download_render_results(token, render, renders_result_path, open_result=(i == 0))
 
 
 async def _delete_targeted_renders(token: str):
