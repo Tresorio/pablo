@@ -8,7 +8,7 @@ class TresorioDeleteRenderOperator(bpy.types.Operator):
     bl_idname = 'tresorio.delete_render'
     bl_label = ''
 
-    index: bpy.props.IntProperty()
+    index: bpy.props.IntProperty(options={'HIDDEN', 'SKIP_SAVE'})
 
     @classmethod
     def set_doc(cls):

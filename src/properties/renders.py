@@ -73,6 +73,7 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
         bpy.types.WindowManager.tresorio_renders_list_index = bpy.props.IntProperty(
             name='',
             description='',
+            options={'HIDDEN', 'SKIP_SAVE'},
         )
 
     @classmethod

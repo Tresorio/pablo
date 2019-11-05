@@ -103,6 +103,7 @@ def erase_async_loop():
 class AsyncLoopModalOperator(bpy.types.Operator):
     bl_idname = 'asyncio.loop'
     bl_label = 'Runs the asyncio main loop'
+    bl_options = {'INTERNAL'}
     timer = None
 
     def __del__(self):
