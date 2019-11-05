@@ -9,12 +9,15 @@ def draw_selected_render(layout, context: bpy.types.Context):
     box_layout = layout.split(factor=0.03)
     box_layout.row()
     box = box_layout.box()
+    render_index = context.window_manager.tresorio_renders_list_index
 
     if nb_renders == 0:
         box.label(text=TRADUCTOR['field']['its_all_empty'][CONFIG_LANG],
                   icon_value=til.icon('TRESORIO_SADFACE'))
+    elif render_index < nb_renders - 1 or render_index > nb_renders - 1:
+        box.label(text=TRADUCTOR['field']['no_selected_render'][CONFIG_LANG],
+                  icon_value=til.icon('TRESORIO_SADFACE'))
     else:
-        render_index = context.window_manager.tresorio_renders_list_index
         render = context.window_manager.tresorio_renders_details[render_index]
 
         box = box.split(factor=0.4)

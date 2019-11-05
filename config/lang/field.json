@@ -196,5 +196,9 @@
     "open_image_on_download": {
         "en": "Open once downloaded",
         "fr": "Ouvrir une fois téléchargé"
+    },
+    "no_selected_render": {
+        "en": "No render selected.",
+        "fr": "Pas de rendu sélectionné."
     }
 }
