@@ -447,6 +447,7 @@ def _fill_render_details(render, res: Dict[str, Any], is_new: bool = False):
     render.rendered_frames = res['finishedFrames']
     render.number_farmers = res['numberFarmers']
     render.progression = res['progression']
+    render.is_target = WM.tresorio_user_settings_props.select_all_renders
     if is_new is True:
         render.created_at = datetime.strptime(
             res['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ').timestamp()
