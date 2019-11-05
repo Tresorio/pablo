@@ -5,8 +5,23 @@ from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.ui.draw_selected_render import draw_selected_render
 
 
+def select_all(list, context):
+    renders = bpy.context.window_manager.tresorio_renders_details
+    for render in renders:
+        render.is_target = list.select_all
+
+
 class TresorioRendersList(bpy.types.UIList):
     bl_idname = 'OBJECT_UL_TRESORIO_RENDERS_LIST'
+
+    desc=TRADUCTOR['desc']['select_all_renders'][CONFIG_LANG]
+    select_all: bpy.props.BoolProperty(
+        name='',
+        default=False,
+        description=desc,
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=select_all,
+    )
 
     def draw_filter(self, context, layout):
         layout.separator()
@@ -17,6 +32,7 @@ class TresorioRendersList(bpy.types.UIList):
         row.operator('tresorio.delete_targeted_renders',
                      text=TRADUCTOR['field']['delete_targeted_results'][CONFIG_LANG],
                      icon='TRASH')
+        row.prop(self, 'select_all')
         layout.prop(context.window_manager.tresorio_user_settings_props,
                     'open_image_on_download',
                     text=TRADUCTOR['field']['open_image_on_download'][CONFIG_LANG])

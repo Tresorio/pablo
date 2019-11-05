@@ -7,7 +7,7 @@ class TresorioDownloadTargetedRenderResultsOperator(bpy.types.Operator):
     bl_idname = 'tresorio.download_targeted_render_results'
     bl_label = TRADUCTOR['field']['download_targeted_results'][CONFIG_LANG]
 
-    index: bpy.props.IntProperty()
+    index: bpy.props.IntProperty(options={'HIDDEN', 'SKIP_SAVE'})
     filter_glob: bpy.props.StringProperty(
         default='',
         name='',

@@ -66,7 +66,6 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         name='',
         maxlen=255,
         options={'HIDDEN', 'SKIP_SAVE'},
-        update=lambda a, b: None,
     )
 
     desc = TRADUCTOR['desc']['farm_type'][CONFIG_LANG]
