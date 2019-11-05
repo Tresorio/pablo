@@ -809,9 +809,9 @@ static const char *__pyx_filename;
 static const char *__pyx_f[] = {
   "aiohttp/_http_parser.pyx",
   "stringsource",
-  "type.pxd",
-  "bool.pxd",
-  "complex.pxd",
+  ".build-venv/lib/python3.7/site-packages/Cython/Includes/cpython/type.pxd",
+  ".build-venv/lib/python3.7/site-packages/Cython/Includes/cpython/bool.pxd",
+  ".build-venv/lib/python3.7/site-packages/Cython/Includes/cpython/complex.pxd",
   "aiohttp/_headers.pxi",
 };
 

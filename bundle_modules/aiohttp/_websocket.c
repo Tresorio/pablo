@@ -806,9 +806,9 @@ static const char *__pyx_filename;
 
 static const char *__pyx_f[] = {
   "aiohttp/_websocket.pyx",
-  "type.pxd",
-  "bool.pxd",
-  "complex.pxd",
+  ".build-venv/lib/python3.7/site-packages/Cython/Includes/cpython/type.pxd",
+  ".build-venv/lib/python3.7/site-packages/Cython/Includes/cpython/bool.pxd",
+  ".build-venv/lib/python3.7/site-packages/Cython/Includes/cpython/complex.pxd",
 };
 
 /*--- Type declarations ---*/
