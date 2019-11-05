@@ -163,11 +163,11 @@ def _download_frames(fragments: List[Dict[str, Any]], render_result_path: str, r
                     zip_bytes = zf.read(frame)
                     filename = f'%s_{os.path.basename(frame)}.{ext}' % render['name']
                     filepath = os.path.join(render_result_path, filename)
-                    if i == 0 and WM.tresorio_user_settings_props.open_image_on_download and open_result:
-                        open_image(filepath)
                     with open(filepath, 'wb') as fw:
                         fw.write(zip_bytes)
                         BACKEND_LOGGER.debug(f'Wrote file {filepath}')
+                    if i == 0 and WM.tresorio_user_settings_props.open_image_on_download and open_result:
+                        open_image(filepath)
 
 
 async def _download_render_results(token: str, render, render_result_path: str, open_result: bool = True):
