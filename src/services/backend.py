@@ -328,7 +328,6 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
             async with Platform() as plt:
                 BACKEND_LOGGER.debug(f'Creating new render')
                 render_info = await plt.req_create_render(token, create_render, jsonify=True)
-            update_list_renderings()
             loop = asyncio.get_running_loop()
             upload = functools.partial(
                 force_sync(_upload_blend_file_async), blendfile, render_info)
@@ -374,6 +373,7 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
         async with Platform() as plt:
             BACKEND_LOGGER.debug('Launching render ' + render_info['id'])
             res = await plt.req_launch_render(token, render_info['id'], launch_render, jsonify=True)
+            update_list_renderings()
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError) and err.status == HTTPStatus.SERVICE_UNAVAILABLE:
