@@ -805,7 +805,7 @@ static const char *__pyx_filename;
 
 static const char *__pyx_f[] = {
   "aiohttp/_http_writer.pyx",
-  "type.pxd",
+  ".build-venv/lib/python3.7/site-packages/Cython/Includes/cpython/type.pxd",
 };
 
 /*--- Type declarations ---*/
