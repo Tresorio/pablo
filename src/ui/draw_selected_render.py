@@ -14,7 +14,7 @@ def draw_selected_render(layout, context: bpy.types.Context):
     if nb_renders == 0:
         box.label(text=TRADUCTOR['field']['its_all_empty'][CONFIG_LANG],
                   icon_value=til.icon('TRESORIO_SADFACE'))
-    elif render_index < nb_renders - 1 or render_index > nb_renders - 1:
+    elif render_index < 0 or render_index >= nb_renders:
         box.label(text=TRADUCTOR['field']['no_selected_render'][CONFIG_LANG],
                   icon_value=til.icon('TRESORIO_SADFACE'))
     else:
