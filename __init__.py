@@ -29,6 +29,7 @@ from src.properties.report_props import TresorioReportProps
 from src.properties.render_form import TresorioRenderFormProps
 from src.properties.renders import TresorioRendersDetailsProps
 from src.properties.render_packs import TresorioRenderPacksProps
+from src.properties.user_settings import TresorioUserSettingsProps
 
 # UI
 from src.ui.main_panel import TresorioMainPanel
@@ -59,6 +60,7 @@ to_register_classes = (
                        # Properties 
                        TresorioUserProps,
                        TresorioReportProps,
+                       TresorioUserSettingsProps,
                        TresorioRenderPacksProps,
                        TresorioRenderFormProps,
                        TresorioRendersDetailsProps,

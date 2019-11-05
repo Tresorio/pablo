@@ -3,7 +3,11 @@ from src.config.user_json import USER_CONFIG
 from src.config.langs import set_new_lang, TRADUCTOR, CONFIG_LANG, ALL_LANGS
 
 
-class TresorioUserProps(bpy.types.PropertyGroup):
+def update_open_image_on_download(ptr, ctx):
+    USER_CONFIG['open_image_on_download'] = ptr.open_image_on_download
+
+
+class TresorioUserSettingsProps(bpy.types.PropertyGroup):
 
     download_when_over: bpy.props.BoolProperty(
         name='',
@@ -17,7 +21,24 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         description='',
         default='',
         options={'HIDDEN', 'SKIP_SAVE'},
-    )    
+    )
+
+    desc = TRADUCTOR['desc']['open_image_on_download'][CONFIG_LANG]
+    open_image_on_download: bpy.props.BoolProperty(
+        name='',
+        default=USER_CONFIG['open_image_on_download'],
+        description=desc,
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=update_open_image_on_download,
+    )
+
+    desc = TRADUCTOR['desc']['show_selected_render'][CONFIG_LANG]
+    show_selected_render: bpy.props.BoolProperty(
+        name='',
+        description=desc,
+        default=False,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
 
     @classmethod
     def register(cls):

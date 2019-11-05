@@ -8,14 +8,6 @@ from src.ui.draw_selected_render import draw_selected_render
 class TresorioRendersList(bpy.types.UIList):
     bl_idname = 'OBJECT_UL_TRESORIO_RENDERS_LIST'
 
-    desc = TRADUCTOR['desc']['show_selected_render'][CONFIG_LANG]
-    show_selected_render: bpy.props.BoolProperty(
-        name='',
-        description=desc,
-        default=False,
-        options={'HIDDEN', 'SKIP_SAVE'},
-    )
-
     def draw_filter(self, context, layout):
         layout.separator()
         row = layout.row()
@@ -25,22 +17,9 @@ class TresorioRendersList(bpy.types.UIList):
         row.operator('tresorio.delete_targeted_renders',
                      text=TRADUCTOR['field']['delete_targeted_results'][CONFIG_LANG],
                      icon='TRASH')
-
-        row = layout.row()
-        row_1 = row.row()
-        row_1.alignment = 'LEFT'
-        row_1.prop(self, 'show_selected_render', emboss=False,
-                   text=TRADUCTOR['field']['selected_render_details'][CONFIG_LANG]+':',
-                   icon='VIEWZOOM')
-        row_2 = row.row()
-        row_2.alignment = 'RIGHT'
-        icon = 'DISCLOSURE_TRI_DOWN' if self.show_selected_render else 'DISCLOSURE_TRI_RIGHT'
-        row_2.prop(self, 'show_selected_render', text='', emboss=False,
-                   icon=icon)
-
-        layout.separator()
-        if self.show_selected_render:
-            draw_selected_render(layout, context)
+        layout.prop(context.window_manager.tresorio_user_settings_props,
+                    'open_image_on_download',
+                    text=TRADUCTOR['field']['open_image_on_download'][CONFIG_LANG])
 
     def draw_item(self, context, layout, data, render, icon, active_data, active_propname, index):
         split = layout.split(factor=0.05)
@@ -104,8 +83,23 @@ class TresorioRendersPanel(bpy.types.Panel):
         layout = self.layout
 
         nb_renders = len(data.tresorio_renders_details)
-        rows = 1
         layout.template_list('OBJECT_UL_TRESORIO_RENDERS_LIST', 'The_List',
                              data, 'tresorio_renders_details',
                              data, 'tresorio_renders_list_index',
-                             rows=rows, maxrows=nb_renders)
+                             rows=1, maxrows=nb_renders)
+
+        user_settings = bpy.context.window_manager.tresorio_user_settings_props
+        row = layout.row()
+        row_1 = row.row()
+        row_1.alignment = 'LEFT'
+        row_1.prop(user_settings, 'show_selected_render', emboss=False,
+                   text=TRADUCTOR['field']['selected_render_details'][CONFIG_LANG]+':',
+                   icon='VIEWZOOM')
+        row_2 = row.row()
+        row_2.alignment = 'RIGHT'
+        icon = 'DISCLOSURE_TRI_DOWN' if user_settings.show_selected_render else 'DISCLOSURE_TRI_RIGHT'
+        row_2.prop(user_settings, 'show_selected_render', text='', emboss=False,
+                   icon=icon)
+
+        if bpy.context.window_manager.tresorio_user_settings_props.show_selected_render:
+            draw_selected_render(layout, context)

@@ -4,5 +4,6 @@
     "passed_tutorial": false,
     "sent_advice": false,
     "download_when_over": false,
-    "download_when_over_path": ""
+    "download_when_over_path": "",
+    "open_image_on_download": true
 }
