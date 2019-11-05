@@ -191,6 +191,10 @@
     },
     "delete_targeted_results": {
         "en": "Delete targets",
-        "fr": "Supprime les cibles"
+        "fr": "Supprimer les cibles"
+    },
+    "open_image_on_download": {
+        "en": "Open once downloaded",
+        "fr": "Ouvrir une fois téléchargé"
     }
 }
