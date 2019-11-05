@@ -7,6 +7,12 @@ def update_open_image_on_download(ptr, ctx):
     USER_CONFIG['open_image_on_download'] = ptr.open_image_on_download
 
 
+def select_all(ptr, context):
+    renders = bpy.context.window_manager.tresorio_renders_details
+    for render in renders:
+        render.is_target = ptr.select_all_renders
+
+
 class TresorioUserSettingsProps(bpy.types.PropertyGroup):
 
     download_when_over: bpy.props.BoolProperty(
@@ -38,6 +44,15 @@ class TresorioUserSettingsProps(bpy.types.PropertyGroup):
         description=desc,
         default=False,
         options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    desc = TRADUCTOR['desc']['select_all_renders'][CONFIG_LANG]
+    select_all_renders: bpy.props.BoolProperty(
+        name='',
+        default=False,
+        description=desc,
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=select_all,
     )
 
     @classmethod
