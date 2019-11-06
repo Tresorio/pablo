@@ -13,7 +13,6 @@ from src.ui.popup import popup
 from urllib.parse import urljoin
 from typing import Dict, Any, List
 from src.operators.logout import logout
-from src.utils.lockfile import Lockfile
 from src.config.enums import RenderStatus
 from src.services.platform import Platform
 from src.utils.open_image import open_image
@@ -324,15 +323,14 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
         bpy.context.scene.tresorio_report_props.packing_textures = False
 
     try:
-        with Lockfile(blendfile, 'a'):
-            async with Platform() as plt:
-                BACKEND_LOGGER.debug(f'Creating new render')
-                render_info = await plt.req_create_render(token, create_render, jsonify=True)
-            loop = asyncio.get_running_loop()
-            upload = functools.partial(
-                force_sync(_upload_blend_file_async), blendfile, render_info)
-            res = await loop.run_in_executor(None, upload)
-            _upload_blend_file_callback(res)
+        async with Platform() as plt:
+            BACKEND_LOGGER.debug(f'Creating new render')
+            render_info = await plt.req_create_render(token, create_render, jsonify=True)
+        loop = asyncio.get_running_loop()
+        upload = functools.partial(
+            force_sync(_upload_blend_file_async), blendfile, render_info)
+        res = await loop.run_in_executor(None, upload)
+        _upload_blend_file_callback(res)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError) and err.status == HTTPStatus.FORBIDDEN:
@@ -354,8 +352,8 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
         elif not isinstance(err, ClientResponseError):
             popup(TRADUCTOR['notif']
                   ['err_upl_blendfile'][CONFIG_LANG], icon='ERROR')
+        delete_render(render_info['id'], -1)
         return
-
     finally:
         try:
             if render_form.pack_textures is True:
@@ -366,6 +364,7 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
             BACKEND_LOGGER.error(err)
             popup(TRADUCTOR['notif']
                   ['cant_unpack_textures'][CONFIG_LANG], icon='ERROR')
+            return
         finally:
             bpy.context.scene.tresorio_report_props.unpacking_textures = False
 
@@ -383,7 +382,6 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
         elif logout_if_unauthorized(err) is False:
             popup(TRADUCTOR['notif']
                   ['err_launch_render'][CONFIG_LANG], icon='ERROR')
-        return
     await _update_list_renderings(token)
 
 
@@ -401,13 +399,15 @@ async def _stop_render(token: str, render):
     await _update_rendering(render, token)
 
 
-async def _delete_render(token: str, render: str, index: int):
+async def _delete_render(token: str, render, index: int):
     try:
         async with Platform() as plt:
-            render_id = render.id
-            BACKEND_LOGGER.debug(f'Deleting render {render_id}')
-            await plt.req_delete_render(token, render_id)
-            WM.tresorio_renders_details.remove(index)
+            if type(render) is not str:
+                render = render.id
+            BACKEND_LOGGER.debug(f'Deleting render {render}')
+            await plt.req_delete_render(token, render)
+            if index >= 0:
+                WM.tresorio_renders_details.remove(index)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
@@ -447,7 +447,6 @@ def _fill_render_details(render, res: Dict[str, Any], is_new: bool = False):
     render.rendered_frames = res['finishedFrames']
     render.number_farmers = res['numberFarmers']
     render.progression = res['progression']
-    render.is_target = WM.tresorio_user_settings_props.select_all_renders
     if is_new is True:
         render.created_at = datetime.strptime(
             res['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ').timestamp()
