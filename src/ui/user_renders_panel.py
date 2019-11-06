@@ -61,11 +61,10 @@ class TresorioRendersList(bpy.types.UIList):
             row.operator('tresorio.download_render_results',
                          text='',
                          icon='IMPORT').index = index
-        if render.status != RenderStatus.STOPPING:
-            row.operator('tresorio.delete_render',
-                         text='',
-                         icon='TRASH').index = index
-            row.prop(render, 'is_target')
+        row.operator('tresorio.delete_render',
+                     text='',
+                     icon='TRASH').index = index
+        row.prop(render, 'is_target')
 
 
 class TresorioRendersPanel(bpy.types.Panel):
