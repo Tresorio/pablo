@@ -1,0 +1,42 @@
+stages:
+    - bundle
+    - bundle_release
+
+job_bundle:
+    stage: bundle
+    image: alpine
+    tags:
+        - unit-docker
+    script:
+        - mkdir tresorio
+        - cp -r bundle_modules ./tresorio/bundle_modules
+        - cp -r config ./tresorio/config
+        - cp -r src ./tresorio/src
+        - cp -r __init__.py ./tresorio/__init__.py
+        - cp -r assets ./tresorio/assets
+    artifacts:
+        name: "tresorio"
+        paths:
+            - tresorio
+        expire_in: 1 week
+    except:
+        - tags
+
+job_bundle_release:
+    stage: bundle_release
+    image: alpine
+    tags:
+        - unit-docker
+    script:
+        - mkdir tresorio
+        - cp -r bundle_modules ./tresorio/bundle_modules
+        - cp -r config ./tresorio/config
+        - cp -r src ./tresorio/src
+        - cp -r __init__.py ./tresorio/__init__.py
+        - cp -r assets ./tresorio/assets
+    artifacts:
+        name: "tresorio-$CI_COMMIT_TAG"
+        paths:
+            - tresorio
+    only:
+        - tags
