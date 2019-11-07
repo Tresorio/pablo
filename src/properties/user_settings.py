@@ -8,9 +8,7 @@ def update_open_image_on_download(ptr, ctx):
 
 
 def select_all(ptr, context):
-    renders = bpy.context.window_manager.tresorio_renders_details
-    for render in renders:
-        render.is_target = ptr.select_all_renders
+    pass
 
 
 class TresorioUserSettingsProps(bpy.types.PropertyGroup):

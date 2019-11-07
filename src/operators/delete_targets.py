@@ -13,9 +13,6 @@ class TresorioDeleteTargetedRendersOperator(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context: bpy.types.Context):
-        for render in context.window_manager.tresorio_renders_details:
-            if render.is_target:
-                return True
         return False
 
     def execute(self, context):

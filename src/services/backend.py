@@ -193,18 +193,20 @@ async def _download_render_results(token: str, render, render_result_path: str, 
 
 
 async def _download_targeted_render_results(token: str, renders_result_path: str):
-    for i, render in enumerate(WM.tresorio_renders_details):
-        if render.status == RenderStatus.FINISHED and render.is_target:
-            await _download_render_results(token, render, renders_result_path, open_result=(i == 0))
+    pass
+    # for i, render in enumerate(WM.tresorio_renders_details):
+        # if render.status == RenderStatus.FINISHED and render.is_target:
+            # await _download_render_results(token, render, renders_result_path, open_result=(i == 0))
 
 
 async def _delete_targeted_renders(token: str):
-    delta = 0
-    renders = WM.tresorio_renders_details
-    for i in range(len(renders)):
-        if renders[i - delta].is_target:
-            await _delete_render(token, renders[i - delta], i - delta)
-            delta += 1
+    pass
+    # delta = 0
+    # renders = WM.tresorio_renders_details
+    # for i in range(len(renders)):
+    #     if renders[i - delta].is_target:
+    #         await _delete_render(token, renders[i - delta], i - delta)
+    #         delta += 1
 
 
 async def _update_user_info(token: str):
@@ -272,16 +274,13 @@ async def _connect_to_tresorio(data: Dict[str, str]):
 
 
 async def _update_list_renderings(token: str):
-    renders = WM.tresorio_renders_details
     try:
         async with Platform() as plt:
             res_renders = await plt.req_list_renderings_details(token, jsonify=True)
-            nb_new_renders = len(res_renders) - len(renders)
-            for _ in range(nb_new_renders):
-                _add_renders_details_prop(res_renders[0])
-                del res_renders[0]
-            for res, render in zip(res_renders, renders):
-                _fill_render_details(render, res)
+            bpy.context.window_manager.property_unset('tresorio_renders_details')
+            for res in res_renders:
+                r = WM.tresorio_renders_details.add()
+                _fill_render_details(r, res, is_new=True)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if logout_if_unauthorized(err) is False:
@@ -372,7 +371,7 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
         async with Platform() as plt:
             BACKEND_LOGGER.debug('Launching render ' + render_info['id'])
             res = await plt.req_launch_render(token, render_info['id'], launch_render, jsonify=True)
-            update_list_renderings()
+            await _update_list_renderings(token)
     except (ClientResponseError, Exception) as err:
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError) and err.status == HTTPStatus.SERVICE_UNAVAILABLE:
@@ -382,7 +381,6 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
         elif logout_if_unauthorized(err) is False:
             popup(TRADUCTOR['notif']
                   ['err_launch_render'][CONFIG_LANG], icon='ERROR')
-    await _update_list_renderings(token)
 
 
 async def _stop_render(token: str, render):
@@ -447,7 +445,7 @@ def _fill_render_details(render, res: Dict[str, Any], is_new: bool = False):
     render.rendered_frames = res['finishedFrames']
     render.number_farmers = res['numberFarmers']
     render.progression = res['progression']
-    if is_new is True:
+    if is_new is True and render.status != RenderStatus.FINISHED:
         render.created_at = datetime.strptime(
             res['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ').timestamp()
         render.uptime = get_uptime(render.created_at)

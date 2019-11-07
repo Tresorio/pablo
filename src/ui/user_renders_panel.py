@@ -11,14 +11,14 @@ class TresorioRendersList(bpy.types.UIList):
     def draw_filter(self, context, layout):
         user_settings = context.window_manager.tresorio_user_settings_props
         layout.separator()
-        row = layout.row()
-        row.operator('tresorio.download_targeted_render_results',
-                     text=TRADUCTOR['field']['download_targeted_results'][CONFIG_LANG],
-                     icon='IMPORT')
-        row.operator('tresorio.delete_targeted_renders',
-                     text=TRADUCTOR['field']['delete_targeted_results'][CONFIG_LANG],
-                     icon='TRASH')
-        row.prop(user_settings, 'select_all_renders')
+        # row = layout.row()
+        # row.operator('tresorio.download_targeted_render_results',
+        #              text=TRADUCTOR['field']['download_targeted_results'][CONFIG_LANG],
+        #              icon='IMPORT')
+        # row.operator('tresorio.delete_targeted_renders',
+        #              text=TRADUCTOR['field']['delete_targeted_results'][CONFIG_LANG],
+        #              icon='TRASH')
+        # row.prop(user_settings, 'select_all_renders')
         layout.prop(user_settings,
                     'open_image_on_download',
                     text=TRADUCTOR['field']['open_image_on_download'][CONFIG_LANG])
@@ -64,7 +64,6 @@ class TresorioRendersList(bpy.types.UIList):
         row.operator('tresorio.delete_render',
                      text='',
                      icon='TRASH').index = index
-        row.prop(render, 'is_target')
 
 
 class TresorioRendersPanel(bpy.types.Panel):
