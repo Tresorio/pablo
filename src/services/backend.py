@@ -53,7 +53,7 @@ def new_render():
         'farm': props.render_pack,
         'renderType': render_type,
         'size': os.path.getsize(bpy.data.filepath),
-        'numberFarmers': props.nb_farmers,
+        'numberOfFarmers': props.nb_farmers,
         'numberOfFrames': number_of_frames,
         'autoTileSize': props.auto_tile_size,
         'farmType': props.farm_type,
