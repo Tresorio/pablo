@@ -30,9 +30,11 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                      text=TRADUCTOR['desc']['uploading'][CONFIG_LANG],
                      slider=True)
         elif report_props.packing_textures is True:
-            box.label(text='Packing ...')
+            box.label(text=TRADUCTOR['notif']['packing'][CONFIG_LANG])
         elif report_props.unpacking_textures is True:
-            box.label(text='Unpacking ...')
+            box.label(text=TRADUCTOR['notif']['unpacking'][CONFIG_LANG])
+        elif report_props.creating_render is True:
+            box.label(text=TRADUCTOR['notif']['creating_render'][CONFIG_LANG])
         else:
             box.operator('tresorio.render_frame',
                          text=TRADUCTOR['field']['launch'][CONFIG_LANG])

@@ -3,7 +3,7 @@
 from urllib.parse import urljoin
 import logging
 import bpy
-from src.config.api import API_CONFIG
+from src.config.api import API_CONFIG, MODE
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
@@ -35,7 +35,7 @@ class TresorioRedirectForgotPasswordOperator(RedirectorOperator):
 
     def __init__(self):
         super().__init__()
-        self.url = urljoin(API_CONFIG['frontend'],
+        self.url = urljoin(API_CONFIG[MODE]['frontend'],
                            API_CONFIG['routes']['forgot_password'])
 
     @classmethod
@@ -52,7 +52,7 @@ class TresorioRedirectGetCreditsOperator(RedirectorOperator):
 
     def __init__(self):
         super().__init__()
-        self.url = urljoin(API_CONFIG['frontend'],
+        self.url = urljoin(API_CONFIG[MODE]['frontend'],
                            API_CONFIG['routes']['get_credits'])
 
     @classmethod
@@ -69,7 +69,7 @@ class TresorioRedirectRegisterOperator(RedirectorOperator):
 
     def __init__(self):
         super().__init__()
-        self.url = urljoin(API_CONFIG['frontend'],
+        self.url = urljoin(API_CONFIG[MODE]['frontend'],
                            API_CONFIG['routes']['register'])
 
     @classmethod
@@ -86,7 +86,7 @@ class TresorioRedirectHomeOperator(RedirectorOperator):
 
     def __init__(self):
         super().__init__()
-        self.url = API_CONFIG['homepage']
+        self.url = API_CONFIG[MODE]['homepage']
 
     @classmethod
     def set_doc(cls):

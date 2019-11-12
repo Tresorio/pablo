@@ -84,7 +84,7 @@ class AsyncNas:
             if self.mocked is True:
                 return await func(*args, **kwargs)
             if self._session is None:
-                self._session = aiohttp.ClientSession(conn_timeout=5)
+                self._session = aiohttp.ClientSession(conn_timeout=15)
             res = await func(self, *args, **kwargs)
             if read is True:
                 return await res.read()

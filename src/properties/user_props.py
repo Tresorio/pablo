@@ -41,7 +41,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         name='',
         description=desc,
         maxlen=128,
-        default='tresorio',
+        default='',
         subtype='PASSWORD',
         options={'HIDDEN', 'SKIP_SAVE'},
     )

@@ -23,9 +23,10 @@ class PercentReader(io.BufferedReader):
         ...         res = await session.post('http://0.0.0.0:3000', data = data)
     """
 
-    def __init__(self, filepath: str):
+    def __init__(self, filepath: str, update: FunctionType):
         bpy.context.scene.tresorio_render_form.upload_percent = 0.0
         super().__init__(open(filepath, "rb"))
+        self.update = update
         self.filepath = filepath
         self.percent = 0.0
         self.old_time = time.time()
@@ -49,5 +50,5 @@ class PercentReader(io.BufferedReader):
         if self.time - self.old_time > 0.25:
             self.old_time = self.time
             self.time = 0.0
-            bpy.context.scene.tresorio_render_form.upload_percent = self.percent
+            self.update(self.percent)
         return chunk
