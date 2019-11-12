@@ -142,5 +142,9 @@
     "creating_render": {
         "en": "Creating render ...",
         "fr": "Création du rendu ..."
+    },
+    "deleting_all_renders": {
+        "en": "Deleting renders ...",
+        "fr": "Suppression des rendus ..."
     }
 }

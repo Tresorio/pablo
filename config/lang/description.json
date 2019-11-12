@@ -91,6 +91,10 @@
         "en": "Permanently delete the render and its results",
         "fr": "Supprime de manière permanente le rendu et ses résultats"
     },
+    "delete_all_renders": {
+        "en": "Permantly deletes all the renders and their results",
+        "fr": "Supprime de manière permanente tous les rendus et leur résultats"
+    },
     "stop_render": {
         "en": "Stop the render and keep its results",
         "fr": "Stop le rendu et garde ses résultats"

@@ -121,6 +121,11 @@ def update_rendering(render):
     asyncio.ensure_future(future)
 
 
+def delete_all_renders():
+    token = WM.tresorio_user_props.token
+    future = _delete_all_renders(token)
+    asyncio.ensure_future(future)
+
 # ASYNC CORE-------------------------------------------------------------------
 
 
@@ -391,6 +396,21 @@ async def _delete_render(token: str, render, index: int):
                   ['err_delete_render'][CONFIG_LANG], icon='ERROR')
         return
 
+
+async def _delete_all_renders(token: str):
+    try:
+        bpy.context.scene.tresorio_report_props.deleting_all_renders = True
+        async with Platform() as plt:
+            renders = await plt.req_list_renderings_details(token, jsonify=True)
+            for render in renders:
+                await _delete_render(token, render['id'], 0)
+        await _update_list_renderings(token)
+    except (ClientResponseError, Exception) as err:
+        BACKEND_LOGGER.error(err)
+        if logout_if_unauthorized(err) is False:
+            _list_renderings_details_error(err)
+    finally:
+        bpy.context.scene.tresorio_report_props.deleting_all_renders = False
 
 def update_upload_percent(percent: float):
     bpy.context.scene.tresorio_render_form.upload_percent = percent
