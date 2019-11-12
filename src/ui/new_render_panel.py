@@ -12,8 +12,8 @@ class TresorioNewRenderPanel(bpy.types.Panel):
     bl_context = 'output'
 
     @classmethod
-    def poll(cls, context):
-        return context.window_manager.tresorio_user_props.is_logged
+    def poll(cls, context) -> bool:
+        return bpy.context.window_manager.tresorio_user_props.is_logged
 
     def draw(self, context: bpy.types.Context):
         """Draws the form required for a rendering"""
@@ -25,7 +25,10 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         box = layout.box()
 
         # LAUNCH
-        if report_props.uploading_blend_file is True:
+        if bpy.context.scene.tresorio_report_props.deleting_all_renders is True:
+            layout.label(text=TRADUCTOR['notif']
+                         ['deleting_all_renders'][CONFIG_LANG])
+        elif report_props.uploading_blend_file is True:
             box.prop(render_form, 'upload_percent',
                      text=TRADUCTOR['desc']['uploading'][CONFIG_LANG],
                      slider=True)
@@ -113,7 +116,6 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                         pack.gpu * render_form.nb_farmers,
                         pack.cpu * render_form.nb_farmers
                     )
-
 
             # row = box.row().split(factor=0.4)
             # row.label(text=TRADUCTOR['field']['nb_farmers'][CONFIG_LANG]+':')

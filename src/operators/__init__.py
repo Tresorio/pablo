@@ -1,5 +1,6 @@
 from importlib import reload
 from . import (
+    delete_all_renders,
     download_render_results,
     login,
     logout,
@@ -11,6 +12,7 @@ from . import (
 )
 
 modules = (
+    delete_all_renders,
     download_render_results,
     login,
     logout,

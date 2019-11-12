@@ -14,10 +14,16 @@ class TresorioRendersList(bpy.types.UIList):
         layout.prop(user_settings,
                     'open_image_on_download',
                     text=TRADUCTOR['field']['open_image_on_download'][CONFIG_LANG])
+        if bpy.context.scene.tresorio_report_props.deleting_all_renders is True:
+            layout.label(text=TRADUCTOR['notif']
+                         ['deleting_all_renders'][CONFIG_LANG])
+        else:
+            layout.operator('tresorio.delete_all_renders',
+                            text=TRADUCTOR['field']['delete_all_renders'][CONFIG_LANG],
+                            icon='TRASH')
 
     def draw_item(self, context, layout, data, render, icon, active_data, active_propname, index):
         split = layout.split(factor=0.05)
-
         # STATUS_ICON
         if render.status == RenderStatus.FINISHED:
             split.label(text='', icon='KEYTYPE_JITTER_VEC')
