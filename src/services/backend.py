@@ -195,8 +195,8 @@ async def _download_render_results(token: str, render, render_result_path: str, 
 async def _download_targeted_render_results(token: str, renders_result_path: str):
     pass
     # for i, render in enumerate(WM.tresorio_renders_details):
-        # if render.status == RenderStatus.FINISHED and render.is_target:
-            # await _download_render_results(token, render, renders_result_path, open_result=(i == 0))
+    # if render.status == RenderStatus.FINISHED and render.is_target:
+    # await _download_render_results(token, render, renders_result_path, open_result=(i == 0))
 
 
 async def _delete_targeted_renders(token: str):
@@ -242,7 +242,7 @@ async def _update_renderpacks_info(token: str):
 def update_renderings_uptime():
     renders = WM.tresorio_renders_details
     for r in renders:
-        if r.status == RenderStatus.RUNNING:
+        if r.status != RenderStatus.FINISHED:
             r.uptime = get_uptime(r.created_at)
 
 
@@ -277,7 +277,8 @@ async def _update_list_renderings(token: str):
     try:
         async with Platform() as plt:
             res_renders = await plt.req_list_renderings_details(token, jsonify=True)
-            bpy.context.window_manager.property_unset('tresorio_renders_details')
+            bpy.context.window_manager.property_unset(
+                'tresorio_renders_details')
             for res in res_renders:
                 r = WM.tresorio_renders_details.add()
                 _fill_render_details(r, res, is_new=True)
@@ -307,6 +308,7 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
 
     blendfile = bpy.data.filepath
     render_form = bpy.context.scene.tresorio_render_form
+    render_info = None
 
     try:
         if render_form.pack_textures is True:
@@ -323,8 +325,10 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
 
     try:
         async with Platform() as plt:
+            bpy.context.scene.tresorio_report_props.creating_render = True
             BACKEND_LOGGER.debug(f'Creating new render')
             render_info = await plt.req_create_render(token, create_render, jsonify=True)
+        await _update_list_renderings(token)
         loop = asyncio.get_running_loop()
         upload = functools.partial(
             force_sync(_upload_blend_file_async), blendfile, render_info)
@@ -347,13 +351,15 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
         elif logout_if_unauthorized(err) is False:
             popup(TRADUCTOR['desc']['upload_failed']
                   [CONFIG_LANG], icon='ERROR')
-            _upload_blend_file_error(err)
         elif not isinstance(err, ClientResponseError):
             popup(TRADUCTOR['notif']
                   ['err_upl_blendfile'][CONFIG_LANG], icon='ERROR')
-        delete_render(render_info['id'], -1)
+        if render_info is not None:
+            delete_render(render_info['id'], 0)
         return
     finally:
+        bpy.context.scene.tresorio_report_props.creating_render = False
+        bpy.context.scene.tresorio_report_props.uploading_blend_file = False
         try:
             if render_form.pack_textures is True:
                 bpy.context.scene.tresorio_report_props.unpacking_textures = True
@@ -414,11 +420,15 @@ async def _delete_render(token: str, render, index: int):
         return
 
 
+def update_upload_percent(percent: float):
+    bpy.context.scene.tresorio_render_form.upload_percent = percent
+
+
 async def _upload_blend_file_async(blendfile: str, render_info: Dict[str, Any]):
     bpy.context.scene.tresorio_report_props.uploading_blend_file = True
     async with AsyncNas(render_info['ip']) as nas:
         BACKEND_LOGGER.debug(f'Uploading for render ' + render_info['id'])
-        with PercentReader(blendfile) as file:
+        with PercentReader(blendfile, update_upload_percent) as file:
             return await nas.upload_content(render_info['id'], file, 'scene.blend', render_info['jwt'])
 
 
@@ -426,7 +436,7 @@ def _upload_blend_file_sync(blendfile: str, render_info: Dict[str, Any]):
     bpy.context.scene.tresorio_report_props.uploading_blend_file = True
     with SyncNas(render_info['ip']) as nas:
         BACKEND_LOGGER.debug(f'Uploading for render ' + render_info['id'])
-        with PercentReader(blendfile) as file:
+        with PercentReader(blendfile, update_upload_percent) as file:
             return nas.upload_content(render_info['id'], file, 'scene.blend', render_info['jwt'])
 
 # CALLBACKS--------------------------------------------------------------------
@@ -443,7 +453,7 @@ def _fill_render_details(render, res: Dict[str, Any], is_new: bool = False):
     render.status = res['status']
     render.total_frames = res['numberOfFrames']
     render.rendered_frames = res['finishedFrames']
-    render.number_farmers = res['numberFarmers']
+    render.number_farmers = res['numberOfFarmers']
     render.progression = res['progression']
     if is_new is True and render.status != RenderStatus.FINISHED:
         render.created_at = datetime.strptime(
@@ -507,10 +517,6 @@ def _get_renderpacks_error(err: Exception) -> None:
 def _get_user_info_error(err: Exception) -> None:
     WM.tresorio_user_props.is_logged = False
     WM.tresorio_user_props.token = ''
-
-
-def _upload_blend_file_error(err: Exception) -> None:
-    bpy.context.scene.tresorio_report_props.uploading_blend_file = False
 
 
 def _connect_to_tresorio_error(err: Exception) -> None:

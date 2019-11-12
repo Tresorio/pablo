@@ -130,5 +130,17 @@
     "render_name_already_taken": {
         "en": "You already have a render named {0} !",
         "fr": "Vous avez déjà un rendu nommé {0} !"
+    },
+    "packing": {
+        "en": "Packing textures ...",
+        "fr": "Chargement des textures ..."
+    },
+    "unpacking": {
+        "en": "Unpacking textures ...",
+        "fr": "Déchargement des textures ..."
+    },
+    "creating_render": {
+        "en": "Creating render ...",
+        "fr": "Création du rendu ..."
     }
 }

@@ -8,13 +8,13 @@ from urllib.parse import urljoin
 from bundle_modules import aiohttp
 import src.services.async_loop as async_loop
 from src.services.loggers import PLATFORM_LOGGER
-from src.config.api import API_CONFIG, SSL_CONTEXT
+from src.config.api import API_CONFIG, SSL_CONTEXT, MODE
 
 
 class Platform:
 
     def __init__(self, mocked=False):
-        self.url = API_CONFIG['backend']
+        self.url = API_CONFIG[MODE]['backend']
         self.mocked = mocked
         self._session = None
         self._logger = PLATFORM_LOGGER

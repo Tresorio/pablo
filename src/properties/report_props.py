@@ -54,6 +54,14 @@ class TresorioReportProps(bpy.types.PropertyGroup):
         update=lambda a, b: None,
     )
 
+    creating_render: bpy.props.BoolProperty(
+        name='',
+        default=False,
+        description='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
+    )
+
     @classmethod
     def register(cls):
         """Link to window manager so these settings are reset at launch"""
