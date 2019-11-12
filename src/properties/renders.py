@@ -66,6 +66,7 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
             name='',
             description='',
             options={'HIDDEN', 'SKIP_SAVE'},
+            update=lambda a, b: None,
         )
 
     @classmethod

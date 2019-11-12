@@ -147,14 +147,6 @@
         "en": "Type of the render farm",
         "fr": "Type de la ferme de rendu"
     },
-    "download_targets_render_results": {
-        "en": "Open a file selector to download the results of all the targeted renders",
-        "fr": "Ouvre un explorateur de fichiers pour télécharger les résultats de tous les rendus ciblés"
-    },
-    "delete_targeted_renders": {
-        "en": "Deletes the targeted renders",
-        "fr": "Supprime les rendus ciblés"
-    },
     "open_image_on_download": {
         "en": "Enable / disable the opening of the default image viewer to view the render once it is downloaded",
         "fr": "Active / désactive l'ouverture du lecteur d'image par défaut pour voir le rendu une fois téléchargé"

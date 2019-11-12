@@ -185,14 +185,6 @@
         "en": "Download logs",
         "fr": "Télécharger les logs"
     },
-    "download_targeted_results": {
-        "en": "Download targets",
-        "fr": "Télécharger les cibles"
-    },
-    "delete_targeted_results": {
-        "en": "Delete targets",
-        "fr": "Supprimer les cibles"
-    },
     "open_image_on_download": {
         "en": "Open once downloaded",
         "fr": "Ouvrir une fois téléchargé"

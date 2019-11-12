@@ -107,18 +107,6 @@ def download_render_results(render_id: str, render_result_path: str):
     asyncio.ensure_future(future)
 
 
-def download_targeted_render_results(renders_result_path: str):
-    token = WM.tresorio_user_props.token
-    future = _download_targeted_render_results(token, renders_result_path)
-    asyncio.ensure_future(future)
-
-
-def delete_targeted_render_results():
-    token = WM.tresorio_user_props.token
-    future = _delete_targeted_renders(token)
-    asyncio.ensure_future(future)
-
-
 def update_list_renderings():
     bpy.context.scene.tresorio_report_props.are_renders_refreshing = True
     token = WM.tresorio_user_props.token
@@ -190,23 +178,6 @@ async def _download_render_results(token: str, render, render_result_path: str, 
                   [CONFIG_LANG], icon='ERROR')
     finally:
         render.downloading = False
-
-
-async def _download_targeted_render_results(token: str, renders_result_path: str):
-    pass
-    # for i, render in enumerate(WM.tresorio_renders_details):
-    # if render.status == RenderStatus.FINISHED and render.is_target:
-    # await _download_render_results(token, render, renders_result_path, open_result=(i == 0))
-
-
-async def _delete_targeted_renders(token: str):
-    pass
-    # delta = 0
-    # renders = WM.tresorio_renders_details
-    # for i in range(len(renders)):
-    #     if renders[i - delta].is_target:
-    #         await _delete_render(token, renders[i - delta], i - delta)
-    #         delta += 1
 
 
 async def _update_user_info(token: str):
@@ -329,6 +300,7 @@ async def _new_render(token: str, create_render: Dict[str, Any], launch_render: 
             BACKEND_LOGGER.debug(f'Creating new render')
             render_info = await plt.req_create_render(token, create_render, jsonify=True)
         await _update_list_renderings(token)
+        WM.tresorio_renders_list_index = 0
         loop = asyncio.get_running_loop()
         upload = functools.partial(
             force_sync(_upload_blend_file_async), blendfile, render_info)
