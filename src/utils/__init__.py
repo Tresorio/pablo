@@ -1,17 +1,21 @@
+"""Entrypoint of the `utils` module"""
+
 from importlib import reload
 from . import (
     force_sync,
     json_rw,
     password,
     percent_reader,
+    open_image,
 )
 
-modules = (
+MODULES = (
     force_sync,
     json_rw,
     password,
     percent_reader,
+    open_image,
 )
 
-for module in modules:
+for module in MODULES:
     reload(module)

@@ -1,3 +1,5 @@
+"""Entrypoint of the `ui` module"""
+
 from importlib import reload
 from . import (
     icons,
@@ -10,7 +12,7 @@ from . import (
     popup,
 )
 
-modules = (
+MODULES = (
     icons,
     draw_connection_panel,
     main_panel,
@@ -21,5 +23,5 @@ modules = (
     popup,
 )
 
-for module in modules:
+for module in MODULES:
     reload(module)

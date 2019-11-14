@@ -1,9 +1,12 @@
-import bpy
+"""Render creation panel"""
+
 from src.ui.icons import TresorioIconsLoader as til
 from src.config.langs import TRADUCTOR, CONFIG_LANG
+import bpy
 
 
 class TresorioNewRenderPanel(bpy.types.Panel):
+    """Render creation panel"""
     bl_idname = 'OBJECT_PT_TRESORIO_NEW_RENDER_PANEL'
     bl_parent_id = 'OBJECT_PT_TRESORIO_PANEL'
     bl_label = TRADUCTOR['field']['new_render_panel'][CONFIG_LANG]
@@ -12,31 +15,34 @@ class TresorioNewRenderPanel(bpy.types.Panel):
     bl_context = 'output'
 
     @classmethod
-    def poll(cls, context) -> bool:
-        return bpy.context.window_manager.tresorio_user_props.is_logged
+    def poll(cls, context: bpy.types.Context) -> bool:
+        """Chose wether to render the new render panel or not"""
+        return context.window_manager.tresorio_user_props.is_logged
 
-    def draw(self, context: bpy.types.Context):
-        """Draws the form required for a rendering"""
-        render_form = bpy.context.scene.tresorio_render_form
-        render_packs = bpy.context.window_manager.tresorio_render_packs
-        report_props = bpy.context.scene.tresorio_report_props
+    def draw(self,
+             context: bpy.types.Context
+             ) -> None:
+        """Draw the form required for a rendering"""
+        render_form = context.scene.tresorio_render_form
+        render_packs = context.window_manager.tresorio_render_packs
+        report_props = context.scene.tresorio_report_props
 
         layout = self.layout
         box = layout.box()
 
         # LAUNCH
-        if bpy.context.scene.tresorio_report_props.deleting_all_renders is True:
+        if context.scene.tresorio_report_props.deleting_all_renders:
             layout.label(text=TRADUCTOR['notif']
                          ['deleting_all_renders'][CONFIG_LANG])
-        elif report_props.uploading_blend_file is True:
+        elif report_props.uploading_blend_file:
             box.prop(render_form, 'upload_percent',
                      text=TRADUCTOR['desc']['uploading'][CONFIG_LANG],
                      slider=True)
-        elif report_props.packing_textures is True:
+        elif report_props.packing_textures:
             box.label(text=TRADUCTOR['notif']['packing'][CONFIG_LANG])
-        elif report_props.unpacking_textures is True:
+        elif report_props.unpacking_textures:
             box.label(text=TRADUCTOR['notif']['unpacking'][CONFIG_LANG])
-        elif report_props.creating_render is True:
+        elif report_props.creating_render:
             box.label(text=TRADUCTOR['notif']['creating_render'][CONFIG_LANG])
         else:
             box.operator('tresorio.render_frame',
@@ -54,7 +60,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row_2.prop(render_form, 'show_settings', text='', emboss=False,
                    icon=icon)
 
-        if render_form.show_settings is True:
+        if render_form.show_settings:
             row = box.row().split(factor=0.4)
             row.label(
                 text=TRADUCTOR['field']['new_rendering_name'][CONFIG_LANG]+':')
@@ -100,7 +106,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row_2.prop(render_form, 'show_packs', text='', emboss=False,
                    icon=icon)
 
-        if render_form.show_packs is True:
+        if render_form.show_packs:
             description = ''
             packs_cols = box.column_flow(columns=len(render_packs), align=True)
             for pack in render_packs:
@@ -110,7 +116,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                 case.operator('tresorio.pack_desc_popup', text='',
                               icon_value=til.icon('TRESORIO_QUESTION'),
                               emboss=False).msg = pack.description
-                if pack.is_selected is True:
+                if pack.is_selected:
                     description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
                         pack.cost * render_form.nb_farmers,
                         pack.gpu * render_form.nb_farmers,
@@ -141,13 +147,13 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                       f' ({render_form.max_timeout} h)')
 
         # LAUNCH
-        if report_props.uploading_blend_file is True:
+        if report_props.uploading_blend_file:
             box.prop(render_form, 'upload_percent',
                      text=TRADUCTOR['desc']['uploading'][CONFIG_LANG],
                      slider=True)
-        elif report_props.packing_textures is True:
+        elif report_props.packing_textures:
             box.label(text='Packing ...')
-        elif report_props.unpacking_textures is True:
+        elif report_props.unpacking_textures:
             box.label(text='Unpacking ...')
         else:
             box.operator('tresorio.render_frame',

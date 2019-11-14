@@ -1,20 +1,30 @@
-import bpy
+"""Draw the renders details of the user"""
+
 from src.config.enums import RenderStatus
 from src.ui.icons import TresorioIconsLoader as til
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.ui.draw_selected_render import draw_selected_render
+from src.properties.renders import TresorioRendersDetailsProps
+import bpy
 
 
 class TresorioRendersList(bpy.types.UIList):
+    """The ui list of renders"""
     bl_idname = 'OBJECT_UL_TRESORIO_RENDERS_LIST'
 
-    def draw_filter(self, context, layout):
+    @staticmethod
+    def draw_filter(unused_self,
+                    context: bpy.types.Context,
+                    layout: bpy.types.UILayout
+                    ) -> None:
+        """Draw the filter part of the ui list"""
+        del unused_self
         user_settings = context.window_manager.tresorio_user_settings_props
         layout.separator()
         layout.prop(user_settings,
                     'open_image_on_download',
                     text=TRADUCTOR['field']['open_image_on_download'][CONFIG_LANG])
-        if bpy.context.scene.tresorio_report_props.deleting_all_renders is True:
+        if bpy.context.scene.tresorio_report_props.deleting_all_renders:
             layout.label(text=TRADUCTOR['notif']
                          ['deleting_all_renders'][CONFIG_LANG])
         else:
@@ -22,7 +32,21 @@ class TresorioRendersList(bpy.types.UIList):
                             text=TRADUCTOR['field']['delete_all_renders'][CONFIG_LANG],
                             icon='TRASH')
 
-    def draw_item(self, context, layout, data, render, icon, active_data, active_propname, index):
+    # pylint: disable=too-many-arguments
+    @staticmethod
+    def draw_item(unused_self,
+                  context: bpy.types.Context,
+                  layout: bpy.types.UILayout,
+                  data: bpy.types.WindowManager,
+                  render: TresorioRendersDetailsProps,
+                  icon: int,
+                  active_data: bpy.types.WindowManager,
+                  active_propname: str,
+                  index: int
+                  ) -> None:
+        """Draw one element in the ui list"""
+        del unused_self, context, data, active_data, active_propname
+
         split = layout.split(factor=0.05)
         # STATUS_ICON
         if render.status == RenderStatus.FINISHED:
@@ -49,7 +73,7 @@ class TresorioRendersList(bpy.types.UIList):
             if render.rendered_frames == 0:
                 row.label(
                     text=TRADUCTOR['notif']['no_result_render'][CONFIG_LANG])
-            elif render.downloading is True:
+            elif render.downloading:
                 row.label(text=TRADUCTOR['notif']['downloading'][CONFIG_LANG])
 
         # OPS_CASE
@@ -65,6 +89,7 @@ class TresorioRendersList(bpy.types.UIList):
 
 
 class TresorioRendersPanel(bpy.types.Panel):
+    """Renders details panel"""
     bl_label = TRADUCTOR['field']['your_renders'][CONFIG_LANG]
     bl_idname = 'OBJECT_PT_TRESORIO_RENDERS_PANEL'
     bl_parent_id = 'OBJECT_PT_TRESORIO_PANEL'
@@ -73,31 +98,45 @@ class TresorioRendersPanel(bpy.types.Panel):
     bl_context = 'output'
 
     @classmethod
-    def poll(cls, context: bpy.types.Context):
+    def poll(cls,
+             context: bpy.types.Context
+             ) -> bool:
+        """Chose wether to render the renders panel or not"""
         return context.window_manager.tresorio_user_props.is_logged
 
-    def draw(self, context: bpy.types.Context):
+    def draw(self,
+             context: bpy.types.Context
+             ) -> None:
+        """Draw the form required for a rendering"""
         data = context.window_manager
         layout = self.layout
 
         nb_renders = len(data.tresorio_renders_details)
-        layout.template_list('OBJECT_UL_TRESORIO_RENDERS_LIST', 'The_List',
-                             data, 'tresorio_renders_details',
-                             data, 'tresorio_renders_list_index',
-                             rows=1, maxrows=nb_renders)
+        layout.template_list('OBJECT_UL_TRESORIO_RENDERS_LIST',
+                             'The_List',
+                             data,
+                             'tresorio_renders_details',
+                             data,
+                             'tresorio_renders_list_index',
+                             rows=1,
+                             maxrows=nb_renders)
 
-        user_settings = bpy.context.window_manager.tresorio_user_settings_props
+        user_settings = context.window_manager.tresorio_user_settings_props
         row = layout.row()
         row_1 = row.row()
         row_1.alignment = 'LEFT'
-        row_1.prop(user_settings, 'show_selected_render', emboss=False,
+
+        icon = None
+        if user_settings.show_selected_render:
+            icon = 'DISCLOSURE_TRI_DOWN'
+        else:
+            icon = 'DISCLOSURE_TRI_RIGHT'
+
+        row_1.prop(user_settings,
+                   'show_selected_render',
+                   emboss=False,
                    text=TRADUCTOR['field']['selected_render_details'][CONFIG_LANG]+':',
-                   icon='VIEWZOOM')
-        row_2 = row.row()
-        row_2.alignment = 'RIGHT'
-        icon = 'DISCLOSURE_TRI_DOWN' if user_settings.show_selected_render else 'DISCLOSURE_TRI_RIGHT'
-        row_2.prop(user_settings, 'show_selected_render', text='', emboss=False,
                    icon=icon)
 
-        if bpy.context.window_manager.tresorio_user_settings_props.show_selected_render:
+        if data.tresorio_user_settings_props.show_selected_render:
             draw_selected_render(layout, context)

@@ -1,20 +1,24 @@
-import bpy
-from src.ui.popup import popup
+"""This module defines the render packs properties"""
+
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.properties.render_form import update_max_cost
+import bpy
 
 
-def set_render_pack(pack, context):
+def set_render_pack(pack: 'TresorioRenderPacksProps',
+                    context: bpy.types.Context
+                    ) -> None:
+    """Set the render pack to the selected one"""
     packs = context.window_manager.tresorio_render_packs
     is_there_any_pack = False
-    for p in packs:
-        if p.is_selected is True:
+    for curr_pack in packs:
+        if curr_pack.is_selected:
             is_there_any_pack = True
             break
-    if is_there_any_pack is False:
+    if not is_there_any_pack:
         pack.is_selected = True
         return
-    if pack.is_selected is False:
+    if not pack.is_selected:
         return
     context.scene.tresorio_render_form.render_pack = pack.name
     context.scene.tresorio_render_form.price_per_hour = pack.cost
@@ -26,7 +30,7 @@ def set_render_pack(pack, context):
 
 
 class TresorioRenderPacksProps(bpy.types.PropertyGroup):
-
+    """Render pack properties"""
     desc = TRADUCTOR['desc']['render_packs'][CONFIG_LANG]
     is_selected: bpy.props.BoolProperty(
         update=set_render_pack,
@@ -79,4 +83,5 @@ class TresorioRenderPacksProps(bpy.types.PropertyGroup):
 
     @classmethod
     def unregister(cls):
+        """Unregister the class from blender"""
         del bpy.types.WindowManager.tresorio_render_packs

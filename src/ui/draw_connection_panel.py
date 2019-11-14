@@ -1,9 +1,13 @@
-import bpy
+"""Defines the drawer for the connection panel"""
+
 from src.ui.icons import TresorioIconsLoader as til
 from src.config.langs import TRADUCTOR, CONFIG_LANG
+import bpy
 
 
-def draw_connection_panel(layout: bpy.types.UILayout, context: bpy.types.Context):
+def draw_connection_panel(layout: bpy.types.UILayout,
+                          context: bpy.types.Context
+                          ) -> None:
     """Draws the panel to connect to Tresorio"""
     user_props = context.window_manager.tresorio_user_props
     report_props = bpy.context.scene.tresorio_report_props
@@ -30,7 +34,7 @@ def draw_connection_panel(layout: bpy.types.UILayout, context: bpy.types.Context
     row.column().prop(user_props, 'remember_email',
                       text=TRADUCTOR['field']['remember_email'][CONFIG_LANG])
     col = row.column()
-    if report_props.login_in is False:
+    if not report_props.login_in:
         col.operator('tresorio.login', icon_value=til.icon('TRESORIO_LOGIN'),
                      text=TRADUCTOR['field']['login'][CONFIG_LANG])
     else:

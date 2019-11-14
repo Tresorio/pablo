@@ -1,3 +1,5 @@
+"""Entrypoint of the `src` module"""
+
 from importlib import reload
 from . import (
     utils,
@@ -8,14 +10,14 @@ from . import (
     ui,
 )
 
-modules = (
-    config,
-    operators,
-    ui,
+MODULES = (
     utils,
-    services,
+    config,
     properties,
+    operators,
+    services,
+    ui,
 )
 
-for module in modules:
+for module in MODULES:
     reload(module)

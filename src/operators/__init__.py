@@ -1,3 +1,5 @@
+"""Entrypoint of the `operators` module"""
+
 from importlib import reload
 from . import (
     delete_all_renders,
@@ -11,7 +13,7 @@ from . import (
     delete_render,
 )
 
-modules = (
+MODULES = (
     delete_all_renders,
     download_render_results,
     login,
@@ -23,5 +25,5 @@ modules = (
     delete_render,
 )
 
-for module in modules:
+for module in MODULES:
     reload(module)

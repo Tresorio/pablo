@@ -7,6 +7,8 @@ from src.config.api import API_CONFIG, MODE
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
+# pylint: disable=too-few-public-methods
+
 class RedirectorOperator(bpy.types.Operator):
     """Base class for redirection operators. DON'T REGISTER."""
 
@@ -29,6 +31,7 @@ class RedirectorOperator(bpy.types.Operator):
 
 class TresorioRedirectForgotPasswordOperator(RedirectorOperator):
     """This operator redirects to the password recovery page on Tresorio's website."""
+    __doc__ = TRADUCTOR['desc']['forgot_password'][CONFIG_LANG]
 
     bl_idname = 'tresorio.redirect_forgot_password'
     bl_label = 'Forgot password'
@@ -38,14 +41,10 @@ class TresorioRedirectForgotPasswordOperator(RedirectorOperator):
         self.url = urljoin(API_CONFIG[MODE]['frontend'],
                            API_CONFIG['routes']['forgot_password'])
 
-    @classmethod
-    def set_doc(cls):
-        """Customizes the docstring for Blender language management."""
-        cls.__doc__ = TRADUCTOR['desc']['forgot_password'][CONFIG_LANG]
-
 
 class TresorioRedirectGetCreditsOperator(RedirectorOperator):
     """This operator redirects to the get credits page on Tresorio's website."""
+    __doc__ = TRADUCTOR['desc']['get_credits'][CONFIG_LANG]
 
     bl_idname = 'tresorio.redirect_get_credits'
     bl_label = 'Get credits'
@@ -55,14 +54,10 @@ class TresorioRedirectGetCreditsOperator(RedirectorOperator):
         self.url = urljoin(API_CONFIG[MODE]['frontend'],
                            API_CONFIG['routes']['get_credits'])
 
-    @classmethod
-    def set_doc(cls):
-        """Customizes the docstring for Blender language management."""
-        cls.__doc__ = TRADUCTOR['desc']['get_credits'][CONFIG_LANG]
-
 
 class TresorioRedirectRegisterOperator(RedirectorOperator):
     """This operator redirects to the registration page on the Tresorio's website."""
+    __doc__ = TRADUCTOR['desc']['create_account'][CONFIG_LANG]
 
     bl_idname = 'tresorio.redirect_register'
     bl_label = 'Register'
@@ -72,14 +67,10 @@ class TresorioRedirectRegisterOperator(RedirectorOperator):
         self.url = urljoin(API_CONFIG[MODE]['frontend'],
                            API_CONFIG['routes']['register'])
 
-    @classmethod
-    def set_doc(cls):
-        """Customizes the docstring for Blender language management."""
-        cls.__doc__ = TRADUCTOR['desc']['create_account'][CONFIG_LANG]
-
 
 class TresorioRedirectHomeOperator(RedirectorOperator):
     """This operator redirects to the main page on the Tresorio's website."""
+    __doc__ = TRADUCTOR['desc']['redirect_tresorio'][CONFIG_LANG]
 
     bl_idname = 'tresorio.redirect_home'
     bl_label = 'Tresorio Home'
@@ -87,8 +78,3 @@ class TresorioRedirectHomeOperator(RedirectorOperator):
     def __init__(self):
         super().__init__()
         self.url = API_CONFIG[MODE]['homepage']
-
-    @classmethod
-    def set_doc(cls):
-        """Customizes the docstring for Blender language management."""
-        cls.__doc__ = TRADUCTOR['desc']['redirect_tresorio'][CONFIG_LANG]

@@ -1,10 +1,17 @@
-import bpy
+"""This module defines the popup for render packs description"""
+
+from typing import Set
+
 from src.ui.popup import popup
 from src.config.langs import TRADUCTOR, CONFIG_LANG
+import bpy
+
+# pylint: disable=too-few-public-methods
 
 
 class TresorioPackDescriptionPopup(bpy.types.Operator):
-    """This operator pops up a message describing the content of a render pack"""
+    """Pack descriptor operator"""
+    __doc__ = TRADUCTOR['desc']['pack_description_popup'][CONFIG_LANG]
 
     bl_idname = 'tresorio.pack_desc_popup'
     bl_label = ''
@@ -26,11 +33,11 @@ class TresorioPackDescriptionPopup(bpy.types.Operator):
         options={'HIDDEN', 'SKIP_SAVE'}
     )
 
-    @classmethod
-    def set_doc(cls):
-        cls.__doc__ = TRADUCTOR['desc']['pack_description_popup'][CONFIG_LANG]
-
-    def execute(self, context):
+    def execute(self,
+                context: bpy.types.Context
+                ) -> Set[str]:
+        """Called when operator is called"""
+        del context
         popup(msg=self.msg, title=self.title,
               icon=self.icon, icon_value=self.icon_value)
         return {'FINISHED'}

@@ -1,3 +1,5 @@
+"""Entrypoint of the `properties` module"""
+
 from importlib import reload
 from . import (
     render_form,
@@ -8,7 +10,7 @@ from . import (
     user_settings,
 )
 
-modules = (
+MODULES = (
     render_form,
     render_packs,
     renders,
@@ -17,5 +19,5 @@ modules = (
     user_settings,
 )
 
-for module in modules:
+for module in MODULES:
     reload(module)

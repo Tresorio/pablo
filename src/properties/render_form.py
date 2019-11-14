@@ -1,34 +1,49 @@
-import os
-import bpy
+"""This module defines the properties for the render form"""
+
 import math
+
+from src.config.enums import RenderTypes
 from src.config.langs import TRADUCTOR, CONFIG_LANG
+import bpy
 
 
-def set_frame_type(prop, value):
-    if prop.is_switching_render_type is False:
+def set_frame_type(prop: 'TresorioRenderFormProps',
+                   value: bool
+                   ) -> None:
+    """Set the frame type to the right value"""
+    del value
+    if not prop.is_switching_render_type:
         prop.is_switching_render_type = True
         prop.is_animation_selected = False
         prop.is_frame_selected = True
         prop.is_switching_render_type = False
 
 
-def set_animation_type(prop, value):
-    if prop.is_switching_render_type is False:
+def set_animation_type(prop: 'TresorioRenderFormProps',
+                       value: bool
+                       ) -> None:
+    """Set the animation type to the right value"""
+    del value
+    if not prop.is_switching_render_type:
         prop.is_switching_render_type = True
         prop.is_frame_selected = False
         prop.is_animation_selected = True
         prop.is_switching_render_type = False
 
 
-def get_render_type():
+def get_render_type() -> str:
+    """Return the type of the render"""
     render_form = bpy.context.scene.tresorio_render_form
-    if render_form.is_frame_selected is True:
-        return 'FRAME'
-    else:
-        return 'ANIMATION'
+    if render_form.is_frame_selected:
+        return RenderTypes.FRAME
+    return RenderTypes.ANIMATION
 
 
-def update_max_cost(prop, context):
+def update_max_cost(prop: 'TresorioRenderFormProps',
+                    context: bpy.types.Context
+                    ) -> None:
+    """Update max cost in the render form"""
+    del prop
     render_form = context.scene.tresorio_render_form
     user_credits = context.window_manager.tresorio_user_props.total_credits
     if render_form.timeout == 0 and render_form.price_per_hour > 0.0:
@@ -43,7 +58,7 @@ def update_max_cost(prop, context):
 
 
 class TresorioRenderFormProps(bpy.types.PropertyGroup):
-
+    """Render form panel"""
     desc = TRADUCTOR['desc']['show_settings'][CONFIG_LANG]
     show_settings: bpy.props.BoolProperty(
         name='',
@@ -81,20 +96,17 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    # TODO dynamic way of getting these infos (on gandalf)
     desc = TRADUCTOR['desc']['render_engines_list'][CONFIG_LANG]
     render_engines_list: bpy.props.EnumProperty(
         description=desc,
         name='',
         items=(
             ('CYCLES', 'Cycles', '', 'EMPTY_AXIS', 1),
-            # ('EEVEE', 'Eevee', ''), # TODO fix hardware specific problem (X11, OpenGL) ...
         ),
         default='CYCLES',
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    # TODO dynamic way of getting these infos (on gandalf)
     desc = TRADUCTOR['desc']['output_formats_list'][CONFIG_LANG]
     output_formats_list: bpy.props.EnumProperty(
         description=desc,
@@ -214,7 +226,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
     price_per_hour: bpy.props.FloatProperty(options={'HIDDEN', 'SKIP_SAVE'},)
 
     @classmethod
-    def register(cls):
+    def register(cls) -> None:
         """Link to Scene so these settings are kept in Scene"""
         bpy.types.Scene.tresorio_render_form = bpy.props.PointerProperty(
             type=cls,
@@ -223,5 +235,6 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         )
 
     @classmethod
-    def unregister(cls):
+    def unregister(cls) -> None:
+        """Unregister the class from blender"""
         del bpy.types.Scene.tresorio_render_form

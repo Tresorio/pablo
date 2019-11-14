@@ -1,3 +1,5 @@
+"""Entrypoint of the `config` module"""
+
 from importlib import reload
 from . import (
     api,
@@ -8,7 +10,7 @@ from . import (
     langs,
 )
 
-modules = (
+MODULES = (
     api,
     debug,
     paths,
@@ -17,5 +19,5 @@ modules = (
     user_json,
 )
 
-for module in modules:
+for module in MODULES:
     reload(module)
