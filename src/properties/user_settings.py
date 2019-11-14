@@ -1,18 +1,20 @@
+"""This module defines the user settings properties"""
+
 import bpy
 from src.config.user_json import USER_CONFIG
-from src.config.langs import set_new_lang, TRADUCTOR, CONFIG_LANG, ALL_LANGS
+from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
-def update_open_image_on_download(ptr, ctx):
+def update_open_image_on_download(ptr: 'TresorioUserSettingsProps',
+                                  context: bpy.types.Context
+                                  ) -> None:
+    """Update the user config for the open_image_on_download option"""
+    del context
     USER_CONFIG['open_image_on_download'] = ptr.open_image_on_download
 
 
-def select_all(ptr, context):
-    pass
-
-
 class TresorioUserSettingsProps(bpy.types.PropertyGroup):
-
+    """User settings properties"""
     download_when_over: bpy.props.BoolProperty(
         name='',
         description='',
@@ -44,15 +46,6 @@ class TresorioUserSettingsProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['select_all_renders'][CONFIG_LANG]
-    select_all_renders: bpy.props.BoolProperty(
-        name='',
-        default=False,
-        description=desc,
-        options={'HIDDEN', 'SKIP_SAVE'},
-        update=select_all,
-    )
-
     @classmethod
     def register(cls):
         """Link to window manager so these settings are reset at launch"""
@@ -64,4 +57,5 @@ class TresorioUserSettingsProps(bpy.types.PropertyGroup):
 
     @classmethod
     def unregister(cls):
+        """Unregister the class from blender"""
         del bpy.types.WindowManager.tresorio_user_settings_props

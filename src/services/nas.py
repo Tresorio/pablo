@@ -1,20 +1,22 @@
-"""This module provides the sdk for Tresorio's Nas."""
+"""This module provides the sdks for Tresorio's Nas."""
 
-import requests
-from bundle_modules import aiohttp
+from io import TextIOWrapper
 from urllib.parse import urljoin
-from typing import Callable, Any
+from typing import Callable, Any, Union
+import requests
+
+from bundle_modules import aiohttp
 from src.config.api import SSL_CONTEXT
 from src.services.loggers import NAS_LOGGER
 
 
 class AsyncNas:
-    """Nas's asynchronous sdk.
+    """Tresorio's Nas asynchronous sdk
 
     Args:
         base_url (str): The url of the Nas with which to interact.
         mocked (bool): Activates or no the mock. A mock is not interacting
-            with the servors, it just mimicks its behavior. Default is False.
+            with the servors, it just mimicks the behavior. Default is False.
 
     Examples:
         This example shows the way to setup a Nas instance that will
@@ -32,37 +34,41 @@ class AsyncNas:
         ...     nas.download('uuid', 'file.txt')
 
     TODO's:
-        - Upload a whole folder (in case there are assets for the rendering)
+        - Upload a whole folder (in case there are assets for the rendering / simulation)
         - Write the mocked part of the @_nasrequests methods
-        - Stream upload ?
     """
 
-    def __init__(self, base_url: str = '', mocked: bool = False):
+    def __init__(self,
+                 base_url: str = '',
+                 mocked: bool = False):
         self.url = base_url
         self.mocked = mocked
-        self._session = None
-        self._logger = NAS_LOGGER
+        self.session = None
+        self.logger = NAS_LOGGER
 
     async def __aenter__(self):
-        """Entrypoint of `async with`"""
+        """Entrypoint of `async with` to init the nas sdk"""
+        self.logger.debug('Init of the nas\'s sdk')
         return self
 
-    async def __aexit__(self, *args):
-        """Callback once out of the `async with` block"""
-        if self._session is not None:
-            return await self._session.close()
+    async def __aexit__(self,
+                        *args: Any):
+        """Exitpoint of the `async with` block to close the nas sdk"""
+        self.logger.debug('Exit of the nas\'s sdk')
+        if self.session is not None:
+            return await self.session.close()
 
     @staticmethod
-    def _nasrequest(func: Callable[[str, Any], aiohttp.ClientResponse]):
-        """Wrapper used to skip code duplication over the Nas's methods.
+    def _nasrequest(func: Callable[[Any], aiohttp.ClientResponse]):
+        """Wrapper used to skip code duplication over the Nas's methods
 
         It will create a new aiohttp client session if there wasn't any before
         (happens when Nas is instanciated outside of an `async with`).
 
-        Args:
+        Arg:
             func: Nas's method to decorate.args
 
-        Returns:
+        Return:
             The newly decorated function.
 
         Example:
@@ -73,30 +79,37 @@ class AsyncNas:
             ... async def Nas_method(self, uuid):
             ...     pass
         """
-        async def wrapper(self, *args, read: bool = False, **kwargs):
+        async def _wrapper(self,
+                           *args: Any,
+                           read: bool = False,
+                           **kwargs: Any
+                           ) -> Union[aiohttp.ClientResponse, bytes]:
             """This wrapper handles common cases of nas requests
 
             Args:
                 read: If `False`, the wrapped function will return the whole
                     response. If `True`, will read the response and return bytes
             """
-            self._logger.debug(f'[ASYNC] Entering {func.__name__}')
+            self.logger.debug(f'[ASYNC] Entering {func.__name__}')
             if self.mocked is True:
                 return await func(*args, **kwargs)
-            if self._session is None:
-                self._session = aiohttp.ClientSession(conn_timeout=15)
+            if self.session is None:
+                self.session = aiohttp.ClientSession(conn_timeout=15)
             res = await func(self, *args, **kwargs)
             if read is True:
                 return await res.read()
             return res
-        return wrapper
+        return _wrapper
 
     @_nasrequest.__func__
-    async def download(self, uuid: str, src_filename: str) -> aiohttp.ClientResponse:
-        """Downloads a specific file on the Nas.
+    async def download(self,
+                       jwt: str,
+                       src_filename: str
+                       ) -> aiohttp.ClientResponse:
+        """Download a specific file on the Nas
 
-        Arg:
-            uuid: The uuid of the project we want to target.
+        Args:
+            jwt: JWT giving authorization to download the file.
             src_filename: file to download.
 
         Example:
@@ -104,76 +117,110 @@ class AsyncNas:
             ...     task = await nas.download('55fe2bc6', 'my_file.txt')
             ...     file = asyncio.run(task)
         """
-        url = urljoin(self.url, uuid+'/'+src_filename)
-        return await self._session.get(url, raise_for_status=True, ssl_context=SSL_CONTEXT)
+        headers = {
+            'Authorization': f'JWT {jwt}'
+        }
+        url = urljoin(self.url, f'project/{src_filename}')
+        return await self.session.get(url,
+                                      headers=headers,
+                                      raise_for_status=True,
+                                      ssl_context=SSL_CONTEXT)
 
     @_nasrequest.__func__
-    async def download_project(self, uuid: str) -> aiohttp.ClientResponse:
-        """Downloads a whole project as a zip
+    async def download_project(self,
+                               uuid: str,
+                               jwt: str
+                               ) -> aiohttp.ClientResponse:
+        """Download a whole project as a zip
 
         Arg:
-            uuid: The uuid of the project we want to download
+            jwt: The JWT generated for the project we want to download
 
         Example:
             >>> async with Nas('http://0.0.0.0:3000') as nas:
             ...     task = await nas.list_files('55fe2bc6')
             ...     project = asyncio.run(task)
         """
-        url = urljoin(self.url, uuid+"?download=1&format=zip")
-        return await self._session.get(url, raise_for_status=True, ssl_context=SSL_CONTEXT)
+        headers = {
+            'Authorization': f'JWT {jwt}'
+        }
+        url = urljoin(self.url, f'/{uuid}?download=1&format=zip')
+        return await self.session.get(url,
+                                      headers=headers,
+                                      raise_for_status=True,
+                                      ssl_context=SSL_CONTEXT)
 
     @_nasrequest.__func__
-    async def list_files(self, uuid: str) -> aiohttp.ClientResponse:
-        """Lists the files contained in the Nas specific uuid folder.
+    async def list_files(self,
+                         jwt: str
+                         ) -> aiohttp.ClientResponse:
+        """List the files contained in the Nas specific uuid folder
 
         Arg:
-            uuid: The uuid of the project we want to list
+            jwt: The JWT containing the uuid of the project we want to list
 
         Example:
             >>> async with Nas('http://0.0.0.0:3000') as nas:
             ...     task = await nas.list_files('55fe2bc6')
             ...     files = asyncio.run(task)
         """
-        url = urljoin(self.url, uuid)
-        return await self._session.get(url, raise_for_status=True, ssl_context=SSL_CONTEXT)
+        headers = {
+            'Authorization': f'JWT {jwt}'
+        }
+        url = urljoin(self.url, 'project')
+        return await self.session.get(url,
+                                      headers=headers,
+                                      raise_for_status=True,
+                                      ssl_context=SSL_CONTEXT)
 
     @_nasrequest.__func__
-    async def upload_content(self, uuid: str, content, filename: str, jwt: str) -> aiohttp.ClientResponse:
-        """Uploads any type of content to the Nas targeted by self.url.
+    async def upload_content(self,
+                             uuid: str,
+                             jwt: str,
+                             filename: str,
+                             content: Union[str, bytes, TextIOWrapper]
+                             ) -> aiohttp.ClientResponse:
+        """Upload any type of content to the Nas targeted by self.url
 
         Args:
-            uuid: main directory where the content will be stored
+            uuid: The id of the project on which the content will be uploaded
+            jwt: JWT containing the authorizations to upload the content
             content (str, bytes, fd): content to upload on the Nas
             filename: name of the uploaded file on the Nas
-            jwt: write authorization token on Nas
 
         Example:
             >>> async with Nas('http://0.0.0.0:3000') as nas:
-            ...     task = nas.upload_content('55fe2bc6', 'Hello world', 'file.txt')
+            ...     task = nas.upload_content('55fe2bc6', 'file.txt', 'Hello world')
             ...     asyncio.run(task)
         """
-        url = urljoin(self.url, uuid)
+        headers = {
+            'Authorization': f'JWT {jwt}'
+        }
+        url = urljoin(self.url, f'/{uuid}')
         with aiohttp.MultipartWriter('form-data') as mpw:
             header = {
-                'Authorization': f'JWT {jwt}',
                 'Content-Disposition': f'form-data; name="{filename}"; filename="{filename}"'
             }
             mpw.append(content, headers=header)
-            return await self._session.put(url, data=mpw, raise_for_status=True, ssl_context=SSL_CONTEXT)
+            return await self.session.put(url,
+                                          headers=headers,
+                                          data=mpw,
+                                          raise_for_status=True,
+                                          ssl_context=SSL_CONTEXT)
 
     async def close(self):
-        """Closes the aiohttp session. To use if Nas is not instanciated with `async with`."""
-        if self._session is not None:
-            return await self._session.close()
+        """Close the aiohttp session. To use if Nas is not instanciated with `async with`."""
+        if self.session is not None:
+            return await self.session.close()
 
 
 class SyncNas:
-    """Nas's synchronous sdk.
+    """Tresorio's Nas synchronous sdk.
 
     Args:
         base_url (str): The url of the Nas with which to interact.
         mocked (bool): Activates or no the mock. A mock is not interacting
-            with the servors, it just mimicks its behavior. Default is False.
+            with the servors, it just mimicks the behavior. Default is False.
 
     Examples:
         This example shows the way to setup a Nas instance that will
@@ -192,23 +239,26 @@ class SyncNas:
 
     """
 
-    def __init__(self, base_url: str = '', mocked: bool = False):
+    def __init__(self,
+                 base_url: str = '',
+                 mocked: bool = False):
         self.url = base_url
         self.mocked = mocked
-        self._session = None
-        self._logger = NAS_LOGGER
+        self.session = None
+        self.logger = NAS_LOGGER
 
     def __enter__(self):
         """Entrypoint of `with`"""
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self,
+                 *args: Any):
         """Callback once out of the `with` block"""
-        if self._session is not None:
-            return self._session.close()
+        if self.session is not None:
+            self.session.close()
 
     @staticmethod
-    def _nasrequest(func: Callable[[str, Any], requests.Response]):
+    def _nasrequest(func: Callable[[Any], requests.Response]):
         """Wrapper used to skip code duplication over the Nas's methods.
 
         It will create a new requests client session if there wasn't any before
@@ -229,18 +279,22 @@ class SyncNas:
             ...     pass
         """
 
-        def wrapper(self, *args, read: bool = False, **kwargs):
+        def wrapper(self,
+                    *args: Any,
+                    read: bool = False,
+                    **kwargs: Any
+                    ) -> Union[requests.Response, bytes]:
             """This wrapper handles common cases of nas requests
 
-            Args:
+            Arg:
                 read: If `False`, the wrapped function will return the whole
                     response. If `True`, will read the response and return bytes
             """
-            self._logger.debug(f'[SYNC] Entering {func.__name__}')
+            self.logger.debug(f'[SYNC] Entering {func.__name__}')
             if self.mocked is True:
                 return func(*args, **kwargs)
-            if self._session is None:
-                self._session = requests.sessions.Session()
+            if self.session is None:
+                self.session = requests.sessions.Session()
             res = func(self, *args, **kwargs)
             res.raise_for_status()
             if read is True:
@@ -249,67 +303,102 @@ class SyncNas:
         return wrapper
 
     @_nasrequest.__func__
-    def download(self, uuid: str, src_filename: str) -> requests.Response:
-        """Downloads a specific file on the Nas.
+    def download(self,
+                 jwt: str,
+                 src_filename: str
+                 ) -> requests.Response:
+        """Download a specific file on the Nas.
 
-        Arg:
-            uuid: The uuid of the project we want to target.
+        Args:
+            jwt: JWT giving authorization to download the file.
             src_filename: file to download.
 
         Example:
             >>> with Nas('http://0.0.0.0:3000') as nas:
             ...     res = nas.download('55fe2bc6', 'my_file.txt', read=True)
         """
-        url = urljoin(self.url, uuid+'/'+src_filename)
-        return self._session.get(url, verify=True)
+        headers = {
+            'Authorization': f'JWT {jwt}'
+        }
+        url = urljoin(self.url, f'project/{src_filename}')
+        return self.session.get(url,
+                                headers=headers,
+                                verify=True)
 
     @_nasrequest.__func__
-    def download_project(self, uuid: str) -> requests.Response:
-        """Downloads a whole project as a zip
+    def download_project(self,
+                         uuid: str,
+                         jwt: str
+                         ) -> requests.Response:
+        """Download a whole project as a zip
 
         Arg:
-            uuid: The uuid of the project we want to download
+            jwt: jwt: The JWT generated for the project we want to download
 
         Example:
             >>> with Nas('http://0.0.0.0:3000') as nas:
             ...     res = nas.list_files('55fe2bc6', read=True)
         """
-        url = urljoin(self.url, uuid+"?download=1&format=zip")
-        return self._session.get(url, verify=True)
+        headers = {
+            'Authorization': f'JWT {jwt}'
+        }
+        url = urljoin(self.url, f'/{uuid}?download=1&format=zip')
+        return self.session.get(url,
+                                headers=headers,
+                                verify=True)
 
     @_nasrequest.__func__
-    def list_files(self, uuid: str) -> requests.Response:
-        """Lists the files contained in the Nas specific uuid folder.
+    def list_files(self,
+                   jwt: str
+                   ) -> requests.Response:
+        """List the files contained in the Nas specific uuid folder.
 
         Arg:
-            uuid: The uuid of the project we want to list
+            jwt: The JWT containing the uuid of the project we want to list
 
         Example:
             >>> with Nas('http://0.0.0.0:3000') as nas:
             ...     res = nas.list_files('55fe2bc6', read=True)
         """
-        url = urljoin(self.url, uuid)
-        return self._session.get(url, verify=True)
+        headers = {
+            'Authorization': f'JWT {jwt}'
+        }
+        url = urljoin(self.url, 'project/')
+        return self.session.get(url,
+                                headers=headers,
+                                verify=True)
 
     @_nasrequest.__func__
-    def upload_content(self, uuid: str, fd, filename: str, jwt: str) -> requests.Response:
-        """Uploads any type of content to the Nas targeted by self.url.
+    def upload_content(self,
+                       uuid: str,
+                       jwt: str,
+                       filename: str,
+                       content: TextIOWrapper
+                       ) -> requests.Response:
+        """Upload any type of content to the Nas targeted by self.url.
 
         Args:
-            uuid: main directory where the content will be stored
-            fd: file descriptor of the file to upload on the Nas
+            uuid: The id of the project on which we will upload the content
+            jwt: JWT containing the authorizations to upload the content
+            content: file descriptor of the file to upload on the Nas
             filename: name of the uploaded file on the Nas
-            jwt: write authorization token on Nas
 
         Example:
             >>> with Nas('http://0.0.0.0:3000') as nas:
             ...     res = nas.upload_content('55fe2bc6', 'Hello world', 'file.txt')
         """
-        url = urljoin(self.url, uuid)
-        content = {filename: fd}
-        return self._session.put(url, data=content, stream=True, verify=True)
+        headers = {
+            'Authorization': f'JWT {jwt}'
+        }
+        url = urljoin(self.url, f'/{uuid}')
+        data = {filename: content}
+        return self.session.put(url,
+                                headers=headers,
+                                data=data,
+                                stream=True,
+                                verify=True)
 
     def close(self):
-        """Closes the aiohttp session. To use if Nas is not instanciated with `with`."""
-        if self._session is not None:
-            return self._session.close()
+        """Close the aiohttp session. To use if Nas is not instanciated with `with`."""
+        if self.session is not None:
+            self.session.close()

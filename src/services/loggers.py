@@ -1,10 +1,21 @@
+"""This module configures the loggers for the plugin"""
+
 import logging
 from src.config.paths import LOGS_PATH
 from src.config.debug import BACKEND_DEBUG, NAS_DEBUG, PLATFORM_DEBUG
 
 
-def set_logger(logger: logging.Logger, level: int):
-    """Configurates the given logger"""
+def set_logger(logger: logging.Logger) -> None:
+    """Configure the given logger
+
+    Args:
+        logger: the logger to configure.
+
+    Example:
+
+        >>> logger = logging.getLogger('MyLogger')
+        ... set_logger(logger)
+    """
     for hdlr in logger.handlers:
         logger.removeHandler(hdlr)
         del hdlr
@@ -23,16 +34,16 @@ def set_logger(logger: logging.Logger, level: int):
 
 
 PLATFORM_LOGGER = logging.getLogger('Platform')
-set_logger(PLATFORM_LOGGER, logging.DEBUG)
+set_logger(PLATFORM_LOGGER)
 if PLATFORM_DEBUG is True:
     PLATFORM_LOGGER.setLevel(logging.DEBUG)
 
 NAS_LOGGER = logging.getLogger('Nas')
-set_logger(NAS_LOGGER, logging.DEBUG)
+set_logger(NAS_LOGGER)
 if NAS_DEBUG is True:
     NAS_LOGGER.setLevel(logging.DEBUG)
 
 BACKEND_LOGGER = logging.getLogger('Backend')
-set_logger(BACKEND_LOGGER, logging.DEBUG)
+set_logger(BACKEND_LOGGER)
 if BACKEND_DEBUG is True:
     BACKEND_LOGGER.setLevel(logging.DEBUG)

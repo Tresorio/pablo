@@ -1,19 +1,19 @@
+"""Entrypoint of the `services` module"""
+
 from importlib import reload
 from . import (
-    async_loop,
     backend,
     loggers,
     nas,
     platform,
 )
 
-modules = (
-    async_loop,
+MODULES = (
     backend,
     loggers,
     nas,
     platform,
 )
 
-for module in modules:
+for module in MODULES:
     reload(module)

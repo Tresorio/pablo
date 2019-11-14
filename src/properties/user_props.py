@@ -1,11 +1,13 @@
-import bpy
+"""This module defines the properties of a user"""
+
 from src.config.user_json import USER_CONFIG
 from src.utils.password import switch_password_visibility
 from src.config.langs import set_new_lang, TRADUCTOR, CONFIG_LANG, ALL_LANGS
+import bpy
 
 
 class TresorioUserProps(bpy.types.PropertyGroup):
-
+    """User properties"""
     is_logged: bpy.props.BoolProperty(
         name='',
         options={'HIDDEN', 'SKIP_SAVE'},
@@ -106,4 +108,5 @@ class TresorioUserProps(bpy.types.PropertyGroup):
 
     @classmethod
     def unregister(cls):
+        """Unregister the class from blender"""
         del bpy.types.WindowManager.tresorio_user_props

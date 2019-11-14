@@ -67,6 +67,10 @@
         "en": "Couldn't get your renderings",
         "fr": "Erreur pendant la récupération de vos rendus"
     },
+    "err_render": {
+        "en": "Couldn't get your rendering",
+        "fr": "Erreur pendant la récupération de votre rendu"
+    },
     "err_download_results": {
         "en": "Couldn't download your results",
         "fr": "Erreur pendant le téléchargement des résultats"

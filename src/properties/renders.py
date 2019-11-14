@@ -1,12 +1,13 @@
-import bpy
-from typing import Dict, Any
+"""This module defines the properties of a render"""
+
 from src.config.langs import TRADUCTOR, CONFIG_LANG
+import bpy
 
 
 class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
-    # Internal
-    id: bpy.props.StringProperty(update=lambda a, b: None, options={
-                                 'HIDDEN', 'SKIP_SAVE'})
+    """Details properties of a render"""
+    id: bpy.props.StringProperty(update=lambda a, b: None,
+                                 options={'HIDDEN', 'SKIP_SAVE'})
 
     # Render specifics
     name: bpy.props.StringProperty(
@@ -71,4 +72,5 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
 
     @classmethod
     def unregister(cls):
+        """Unregister the class from blender"""
         del bpy.types.WindowManager.tresorio_renders_details

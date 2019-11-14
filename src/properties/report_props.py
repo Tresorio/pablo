@@ -1,3 +1,5 @@
+"""This module defines the properties reporting the status of the addon"""
+
 import bpy
 
 
@@ -81,4 +83,5 @@ class TresorioReportProps(bpy.types.PropertyGroup):
 
     @classmethod
     def unregister(cls):
+        """Unregister the class from blender"""
         del bpy.types.Scene.tresorio_report_props

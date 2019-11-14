@@ -1,29 +1,32 @@
 """This module provides helpers for the password manipulation in blender."""
 
-import string
 from random import SystemRandom
+import string
+
+import bpy
 
 
 def reset_password(len_password: int) -> str:
     """Completely overides the old password."""
     lock = ''.join(SystemRandom().choices(
-        string.ascii_uppercase + string.digits, k=10))
+        string.ascii_uppercase + string.digits, k=len_password))
     lock = ''
     return lock
 
 
-def switch_password_visibility(settings, context):
+def switch_password_visibility(user_props: 'TresorioUserProps',
+                               context: bpy.types.Context
+                               ) -> None:
     """Sets the password in the state that wasn't updated."""
     del context
-
-    if settings.show_password:
-        settings.clear_password = settings.hidden_password
+    if user_props.show_password:
+        user_props.clear_password = user_props.hidden_password
     else:
-        settings.hidden_password = settings.clear_password
+        user_props.hidden_password = user_props.clear_password
 
 
-def get_password(settings):
+def get_password(user_props: 'TresorioUserProps') -> str:
     """Returns the right password value according to its state."""
-    if settings.show_password:
-        return settings.clear_password
-    return settings.hidden_password
+    if user_props.show_password:
+        return user_props.clear_password
+    return user_props.hidden_password

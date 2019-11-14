@@ -18,27 +18,24 @@
 
 """Manages the asyncio loop."""
 
+from typing import Set
 import asyncio
 import traceback
 import concurrent.futures
 import logging
 import gc
-import typing
-
 import bpy
 
-# logging.basicConfig(level=logging.DEBUG)
-log = logging.getLogger(__name__)
-_loop_kicking_operator_running = False
+LOG = logging.getLogger(__name__)
 
 
 def setup_asyncio_executor():
-    """Sets up AsyncIO to run properly on each platform."""
+    """Set up AsyncIO to run properly on each platform."""
     import sys
 
     if sys.platform == 'win32':
         loop = asyncio.get_event_loop()
-        if loop.is_closed is False:
+        if not loop.is_closed:
             asyncio.get_event_loop().close()
         loop = asyncio.ProactorEventLoop()
         asyncio.set_event_loop(loop)
@@ -50,8 +47,8 @@ def setup_asyncio_executor():
     loop.set_debug(False)
 
 
-def kick_async_loop(*args) -> bool:
-    """Performs a single iteration of the asyncio event loop.
+def kick_async_loop() -> bool:
+    """Perform a single iteration of the asyncio event loop.
 
     :return: whether the asyncio loop should stop after this kick.
     """
@@ -63,11 +60,11 @@ def kick_async_loop(*args) -> bool:
         return True
 
     all_tasks = asyncio.Task.all_tasks()
-    if not len(all_tasks):
+    if not all_tasks:
         stop_after_this_kick = True
 
     elif all(task.done() for task in all_tasks):
-        log.debug('all %i tasks are done, fetching results and stopping after this kick.',
+        LOG.debug('all %i tasks are done, fetching results and stopping after this kick.',
                   len(all_tasks))
         stop_after_this_kick = True
 
@@ -79,11 +76,11 @@ def kick_async_loop(*args) -> bool:
                 continue
             try:
                 res = task.result()
-                log.debug('   task #%i: result=%r', task_idx, res)
+                LOG.debug('task #%i: result=%r', task_idx, res)
             except asyncio.CancelledError:
-                log.debug('   task #%i: cancelled', task_idx)
+                LOG.debug('task #%i: cancelled', task_idx)
             except Exception:
-                print('{}: resulted in exception'.format(task))
+                print(f'{task}: resulted in exception')
                 traceback.print_exc()
     loop.stop()
     loop.run_forever()
@@ -91,46 +88,57 @@ def kick_async_loop(*args) -> bool:
 
 
 def ensure_async_loop():
-    bpy.ops.asyncio.loop()
+    """Ensure the async loop"""
+    bpy.ops.tresorio.loop()
 
 
 def erase_async_loop():
-    global _loop_kicking_operator_running
+    """Stop the async loop"""
     loop = asyncio.get_event_loop()
     loop.stop()
 
 
-class AsyncLoopModalOperator(bpy.types.Operator):
-    bl_idname = 'asyncio.loop'
+class TresorioAsyncLoopModalOperator(bpy.types.Operator):
+    """Model operator running the asyncio loop"""
+    bl_idname = 'tresorio.loop'
     bl_label = 'Runs the asyncio main loop'
     bl_options = {'INTERNAL'}
     timer = None
+    loop_kicking_operator_running = False
 
     def __del__(self):
-        global _loop_kicking_operator_running
-        _loop_kicking_operator_running = False
+        self.loop_kicking_operator_running = False
 
-    def execute(self, context):
+    def execute(self,
+                context: bpy.types.Context
+                ) -> Set[str]:
+        """When calling bpy.ops.tresorio.loop"""
         return self.invoke(context, None)
 
-    def invoke(self, context, event):
-        global _loop_kicking_operator_running
+    def invoke(self,
+               context: bpy.types.Context,
+               event
+               ) -> Set[str]:
+        """Called when invoking the operator"""
+        del event
 
-        if _loop_kicking_operator_running:
+        if self.loop_kicking_operator_running:
             return {'PASS_THROUGH'}
 
         context.window_manager.modal_handler_add(self)
-        _loop_kicking_operator_running = True
+        self.loop_kicking_operator_running = True
 
-        wm = context.window_manager
-        self.timer = wm.event_timer_add(0.000001, window=context.window)
+        winman = context.window_manager
+        self.timer = winman.event_timer_add(0.000001, window=context.window)
 
         return {'RUNNING_MODAL'}
 
-    def modal(self, context, event):
-        global _loop_kicking_operator_running
-
-        if not _loop_kicking_operator_running:
+    def modal(self,
+              context: bpy.types.Context,
+              event
+              ) -> Set[str]:
+        """Modal running of the operator"""
+        if not self.loop_kicking_operator_running:
             return {'FINISHED'}
 
         if event.type != 'TIMER':
@@ -139,15 +147,16 @@ class AsyncLoopModalOperator(bpy.types.Operator):
         stop_after_this_kick = kick_async_loop()
         if stop_after_this_kick:
             context.window_manager.event_timer_remove(self.timer)
-            _loop_kicking_operator_running = False
+            self.loop_kicking_operator_running = False
             return {'FINISHED'}
 
         return {'RUNNING_MODAL'}
 
 
-def shutdown_loop():
+def shutdown_loop() -> None:
+    """Stop the event loop"""
     tasks = asyncio.Task.all_tasks()
     for task in tasks:
         task.cancel()
-    kick_async_loop() # kick the loop so the cancel takes effect
+    kick_async_loop()  # kick the loop so the cancel takes effect
     erase_async_loop()

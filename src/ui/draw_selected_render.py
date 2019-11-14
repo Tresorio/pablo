@@ -1,10 +1,14 @@
-import bpy
-from src.config.enums import RenderStatus
+"""Draw the information of a selected render"""
+
 from src.ui.icons import TresorioIconsLoader as til
 from src.config.langs import TRADUCTOR, CONFIG_LANG
+import bpy
 
 
-def draw_selected_render(layout, context: bpy.types.Context):
+def draw_selected_render(layout: bpy.types.UILayout,
+                         context: bpy.types.Context
+                         ) -> None:
+    """Draw the information of a selected render"""
     nb_renders = len(context.window_manager.tresorio_renders_details)
     box_layout = layout.split(factor=0.03)
     box_layout.row()
@@ -51,6 +55,11 @@ def draw_selected_render(layout, context: bpy.types.Context):
         right.label(text=str(render.uptime))
 
         left.label(text=TRADUCTOR['field']['advancement'][CONFIG_LANG]+':')
-        suffix = TRADUCTOR['field']['frame_singular'][CONFIG_LANG] if render.total_frames == 1 else TRADUCTOR['field']['frame_plural'][CONFIG_LANG]
-        right.label(
-            text=f'{render.rendered_frames} / {render.total_frames} {suffix}')
+        if render.total_frames == 1:
+            suffix = TRADUCTOR['field']['frame_singular'][CONFIG_LANG]
+            text = text = f'{render.rendered_frames} / {render.total_frames} {suffix}'
+            right.label(text=text)
+        else:
+            suffix = TRADUCTOR['field']['frame_plural'][CONFIG_LANG]
+            text = f'{render.rendered_frames} / {render.total_frames} {suffix}'
+            right.label(text=text)

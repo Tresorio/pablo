@@ -1,8 +1,11 @@
 """This module provides the tools for the language configurations."""
 
-import src.utils.json_rw as json
-import src.config.paths as paths
+from typing import Dict, Any
+
 from src.config.user_json import USER_CONFIG
+import src.utils.json_rw as json
+from src.config import paths
+import bpy
 
 CONFIG_LANG = USER_CONFIG['lang']
 
@@ -24,7 +27,9 @@ ALL_LANGS = {
 }
 
 
-def set_new_lang(settings, context):
+def set_new_lang(settings: Dict[str, Any],
+                 context: bpy.types.Context
+                 ) -> None:
     """Helper for blender to set the default language in the config file."""
     del context
     USER_CONFIG['lang'] = settings.langs

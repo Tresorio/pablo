@@ -1,26 +1,28 @@
+"""This module defines the login operator"""
+
+from typing import Set
 import os
+
 import bpy
-import asyncio
-import requests
-import urllib.parse as url
 from src.ui.popup import popup
-from src.services import async_loop
-from src.config.api import API_CONFIG
 from src.config.user_json import USER_CONFIG
 from src.services.backend import connect_to_tresorio
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.utils.password import reset_password, get_password
 
+# pylint: disable=too-few-public-methods,no-self-use
+
 
 class TresorioLoginOperator(bpy.types.Operator):
+    """Login operator"""
+    __doc__ = TRADUCTOR['desc']['tresorio_login'][CONFIG_LANG]
     bl_idname = 'tresorio.login'
     bl_label = 'Login'
 
-    @classmethod
-    def set_doc(cls):
-        cls.__doc__ = TRADUCTOR['desc']['tresorio_login'][CONFIG_LANG]
-
-    def execute(self, context):
+    def execute(self,
+                context: bpy.types.Context
+                ) -> Set[str]:
+        """Called when operator is called"""
         if bpy.context.scene.tresorio_render_form.rendering_name != '':
             bpy.context.scene.tresorio_render_form.rendering_name = os.path.basename(
                 os.path.splitext(bpy.data.filepath)[0])
@@ -34,7 +36,7 @@ class TresorioLoginOperator(bpy.types.Operator):
         context.window_manager.tresorio_user_props.clear_password = reset_password(
             len(password))
 
-        if user_props.is_logged == True:
+        if user_props.is_logged:
             popup(TRADUCTOR['notif']['already_logged_in']
                   [CONFIG_LANG], icon='ERROR')
             return {'CANCELLED'}
@@ -49,7 +51,7 @@ class TresorioLoginOperator(bpy.types.Operator):
             popup(TRADUCTOR['notif']['no_password'][CONFIG_LANG], icon='ERROR')
             return {'CANCELLED'}
 
-        if user_props.remember_email is True:
+        if user_props.remember_email:
             USER_CONFIG['email'] = email
         else:
             USER_CONFIG['email'] = ''
