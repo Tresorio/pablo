@@ -69,7 +69,7 @@ def new_render() -> None:
         'startingFrame': bpy.context.scene.frame_start,
         'endingFrame': bpy.context.scene.frame_end,
     }
-    token = WM.tresorio_user_props.token
+    token = bpy.context.window_manager.tresorio_user_props.token
 
     future = _new_render(token, create_render, launch_render)
     asyncio.ensure_future(future)
@@ -113,7 +113,7 @@ def delete_render(render_id: str,
         render_id: The unique id of the render to delete
         index: the index in the blender renders list of the render to delete
     """
-    token = WM.tresorio_user_props.token
+    token = bpy.context.window_manager.tresorio_user_props.token
     future = _delete_render(token, render_id, index)
     asyncio.ensure_future(future)
 
@@ -124,7 +124,7 @@ def stop_render(render: TresorioRendersDetailsProps) -> None:
     Arg:
         render: The render to stop
     """
-    token = WM.tresorio_user_props.token
+    token = bpy.context.window_manager.tresorio_user_props.token
     future = _stop_render(token, render)
     asyncio.ensure_future(future)
 
@@ -138,14 +138,14 @@ def download_render_results(render_id: str,
         render_id: The unique id of the render to target
         render_result_path: the filepath where to write the downloaded results
     """
-    token = WM.tresorio_user_props.token
+    token = bpy.context.window_manager.tresorio_user_props.token
     future = _download_render_results(token, render_id, render_result_path)
     asyncio.ensure_future(future)
 
 
 def update_list_renderings():
     """Update all the renderings"""
-    token = WM.tresorio_user_props.token
+    token = bpy.context.window_manager.tresorio_user_props.token
     future = _update_list_renderings(token)
     asyncio.ensure_future(future)
 
@@ -156,14 +156,14 @@ def update_rendering(render: TresorioRendersDetailsProps):
     Arg:
         render: The render to update
     """
-    token = WM.tresorio_user_props.token
+    token = bpy.context.window_manager.tresorio_user_props.token
     future = _update_rendering(render, token)
     asyncio.ensure_future(future)
 
 
 def delete_all_renders():
     """Delete all the renders"""
-    token = WM.tresorio_user_props.token
+    token = bpy.context.window_manager.tresorio_user_props.token
     future = _delete_all_renders(token)
     asyncio.ensure_future(future)
 
@@ -198,7 +198,7 @@ def _download_frames(fragments: List[Dict[str, Any]],
 
 def update_renderings_uptime() -> None:
     """Update the uptime of all non finished renders"""
-    renders = WM.tresorio_renders_details
+    renders = bpy.context.window_manager.tresorio_renders_details
     for render in renders:
         if render.status != RenderStatus.FINISHED:
             render.uptime = get_uptime(render.created_at)
@@ -215,13 +215,13 @@ async def _download_render_results(token: str,
             render_details = await plt.req_get_rendering_details(token, render.id, jsonify=True)
         fragments = render_details['fragments']
         loop = asyncio.get_running_loop()
-        open_on_download = WM.tresorio_user_settings_props.open_image_on_download
+        open_on_dl = bpy.context.window_manager.tresorio_user_settings_props.open_image_on_download
         download = functools.partial(
             _download_frames,
             fragments,
             render_result_path,
             render_details,
-            open_on_download
+            open_on_dl
         )
         render.downloading = True
         await loop.run_in_executor(None, download)
@@ -264,7 +264,7 @@ async def _update_renderpacks_info(token: str) -> Coroutine:
 
 
 async def _refresh_loop(token: str) -> Coroutine:
-    while WM.tresorio_user_props.is_logged:
+    while bpy.context.window_manager.tresorio_user_props.is_logged:
         await _update_user_info(token)
         await _update_list_renderings(token)
         for _ in range(5):
@@ -277,8 +277,10 @@ async def _connect_to_tresorio(data: Dict[str, str]) -> Coroutine:
         try:
             bpy.context.scene.tresorio_report_props.login_in = True
             res_connect = await plt.req_connect_to_tresorio(data, jsonify=True)
-            _connect_to_tresorio_callback(res_connect)
+            bpy.context.window_manager.tresorio_user_props.token = res_connect['token']
+            bpy.context.window_manager.tresorio_user_props.is_logged = True
         except Exception as err:
+            bpy.context.scene.tresorio_report_props.login_in = False
             BACKEND_LOGGER.error(err)
             if isinstance(err, ClientResponseError):
                 if err.status == HTTPStatus.UNAUTHORIZED:
@@ -288,19 +290,19 @@ async def _connect_to_tresorio(data: Dict[str, str]) -> Coroutine:
                 popup(TRADUCTOR['notif']
                       ['err_connection'][CONFIG_LANG], icon='ERROR')
         else:
+            bpy.context.scene.tresorio_report_props.login_in = False
             await _update_renderpacks_info(res_connect['token'])
             await _refresh_loop(res_connect['token'])
-        finally:
-            bpy.context.scene.tresorio_report_props.login_in = False
 
 
 async def _update_list_renderings(token: str) -> Coroutine:
     try:
         async with Platform() as plt:
             res_renders = await plt.req_list_renderings_details(token, jsonify=True)
-            WM.property_unset('tresorio_renders_details')
+            bpy.context.window_manager.property_unset(
+                'tresorio_renders_details')
             for res in res_renders:
-                render = WM.tresorio_renders_details.add()
+                render = bpy.context.window_manager.tresorio_renders_details.add()
                 _fill_render_details(render, res, is_new=True)
     except Exception as err:
         BACKEND_LOGGER.error(err)
@@ -354,7 +356,7 @@ async def _new_render(token: str,
             bpy.context.scene.tresorio_report_props.creating_render = True
             render_info = await plt.req_create_render(token, create_render, jsonify=True)
         await _update_list_renderings(token)
-        WM.tresorio_renders_list_index = 0
+        bpy.context.window_manager.tresorio_renders_list_index = 0
         loop = asyncio.get_running_loop()
         upload = functools.partial(
             force_sync(_upload_blend_file_async), blendfile, render_info)
@@ -376,6 +378,7 @@ async def _new_render(token: str,
         popup(msg=popup_msg, icon='ERROR')
         return
     finally:
+        bpy.context.scene.tresorio_render_form.upload_percent = 0.0
         bpy.context.scene.tresorio_report_props.creating_render = False
         bpy.context.scene.tresorio_report_props.uploading_blend_file = False
         try:
@@ -428,7 +431,8 @@ async def _delete_render(token: str,
         async with Platform() as plt:
             await plt.req_delete_render(token, render_id)
             if index >= 0:
-                WM.tresorio_renders_details.remove(index)
+                bpy.context.window_manager.tresorio_renders_details.remove(
+                    index)
     except Exception as err:
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError):
@@ -453,15 +457,6 @@ async def _delete_all_renders(token: str) -> Coroutine:
         bpy.context.scene.tresorio_report_props.deleting_all_renders = False
 
 
-def update_upload_percent(percent: float) -> None:
-    """Update the upload percent of the file
-
-    Arg:
-        percent: Advancement (0-100) of the file upload
-    """
-    bpy.context.scene.tresorio_render_form.upload_percent = percent
-
-
 async def _upload_blend_file_async(blendfile: str,
                                    render_info: Dict[str, Any]
                                    ) -> Coroutine:
@@ -474,7 +469,7 @@ async def _upload_blend_file_async(blendfile: str,
     bpy.context.scene.tresorio_report_props.uploading_blend_file = True
     async with AsyncNas(render_info['ip']) as nas:
         BACKEND_LOGGER.debug(f'Uploading for render ' + render_info['id'])
-        with PercentReader(blendfile, update_upload_percent) as file:
+        with PercentReader(blendfile) as file:
             return await nas.upload_content(render_info['id'],
                                             render_info['jwt'],
                                             'scene.blend',
@@ -509,15 +504,15 @@ def _fill_render_details(render: TresorioRendersDetailsProps,
 
 
 def _add_renders_details_prop(res: Dict[str, Any]) -> None:
-    render = WM.tresorio_renders_details.add()
+    render = bpy.context.window_manager.tresorio_renders_details.add()
     _fill_render_details(render, res, is_new=True)
 
 
 def _get_renderpacks_callback(res: ClientResponse) -> None:
-    WM.property_unset('tresorio_render_packs')
+    bpy.context.window_manager.property_unset('tresorio_render_packs')
     last_selected = bpy.context.scene.tresorio_render_form.last_renderpack_selected
     for i, pack in enumerate(res):
-        new_pack = WM.tresorio_render_packs.add()
+        new_pack = bpy.context.window_manager.tresorio_render_packs.add()
         new_pack.name = pack['name']
         new_pack.cost = pack['cost']
         new_pack.gpu = pack['gpu']
@@ -538,9 +533,4 @@ def _get_renderpacks_callback(res: ClientResponse) -> None:
 
 
 def _get_user_info_callback(res: ClientResponse) -> None:
-    WM.tresorio_user_props.total_credits = res['credits']
-
-
-def _connect_to_tresorio_callback(res: ClientResponse) -> None:
-    WM.tresorio_user_props.token = res['token']
-    WM.tresorio_user_props.is_logged = True
+    bpy.context.window_manager.tresorio_user_props.total_credits = res['credits']

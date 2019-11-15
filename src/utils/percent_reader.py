@@ -1,9 +1,8 @@
 """Defines a file reader that updates the percentage read."""
-from typing import Callable, Any
+from typing import Any
 import io
 import os
 import time
-
 import bpy
 
 
@@ -23,11 +22,8 @@ class PercentReader(io.BufferedReader):
 
     def __init__(self,
                  filepath: str,
-                 update: Callable[[float], None]
                  ):
-        bpy.context.scene.tresorio_render_form.upload_percent = 0.0
         super().__init__(open(filepath, "rb"))
-        self.update = update
         self.filepath = filepath
         self.percent = 0.0
         self.old_time = time.time()
@@ -43,6 +39,7 @@ class PercentReader(io.BufferedReader):
         """Exit point of `with`."""
         del args
         self.close()
+        bpy.context.scene.tresorio_render_form.upload_percent = 100
 
     def read(self,
              *args: Any,
@@ -56,4 +53,5 @@ class PercentReader(io.BufferedReader):
         if self.time - self.old_time > 0.25:
             self.old_time = self.time
             self.time = 0.0
+            bpy.context.scene.tresorio_render_form.upload_percent = self.percent
         return chunk
