@@ -4,8 +4,7 @@ import os
 import bpy.utils.previews
 from src.config.paths import ICONS_PATH
 
-if 'ICONS_DICT' not in globals():
-    ICONS_DICT = bpy.utils.previews.new()
+ICONS_DICT = None
 
 
 # pylint: disable=global-statement
@@ -31,6 +30,8 @@ class TresorioIconsLoader:
     @classmethod
     def register(cls):
         """Load the icons in the icons dict"""
+        global ICONS_DICT
+        ICONS_DICT = bpy.utils.previews.new()
         for icon_filename in os.listdir(ICONS_PATH):
             cls.load(icon_filename)
 
