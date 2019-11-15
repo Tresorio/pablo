@@ -56,5 +56,4 @@ class PercentReader(io.BufferedReader):
         if self.time - self.old_time > 0.25:
             self.old_time = self.time
             self.time = 0.0
-            self.update(self.percent)
         return chunk
