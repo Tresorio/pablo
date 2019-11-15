@@ -171,10 +171,9 @@ def delete_all_renders():
 def _download_frames(fragments: List[Dict[str, Any]],
                      render_result_path: str,
                      render_details: Dict[str, Any],
-                     render: TresorioRendersDetailsProps
+                     open_on_download: bool
                      ) -> None:
     filepath = None
-    user_settings = WM.tresorio_user_settings_props
     ext = render_details['outputFormat'].lower()
     with SyncNas() as nas:
         for frag in fragments:
@@ -188,12 +187,12 @@ def _download_frames(fragments: List[Dict[str, Any]],
                 ))
                 for frame in frames:
                     zip_bytes = zipf.read(frame)
-                    filename = f'%s_{os.path.basename(frame)}.{ext}' % render['name']
+                    filename = f'%s_{os.path.basename(frame)}.{ext}' % render_details['name']
                     filepath = os.path.join(render_result_path, filename)
                     with open(filepath, 'wb') as file:
                         file.write(zip_bytes)
                         BACKEND_LOGGER.debug(f'Wrote file {filepath}')
-    if filepath is not None and user_settings.open_image_on_download:
+    if filepath is not None and open_on_download:
         open_image(filepath)
 
 
@@ -216,8 +215,13 @@ async def _download_render_results(token: str,
             render_details = await plt.req_get_rendering_details(token, render.id, jsonify=True)
         fragments = render_details['fragments']
         loop = asyncio.get_running_loop()
+        open_on_download = WM.tresorio_user_settings_props.open_image_on_download
         download = functools.partial(
-            _download_frames, fragments, render_result_path, render_details, render
+            _download_frames,
+            fragments,
+            render_result_path,
+            render_details,
+            open_on_download
         )
         render.downloading = True
         await loop.run_in_executor(None, download)
@@ -238,10 +242,11 @@ async def _update_user_info(token: str) -> Coroutine:
             _get_user_info_callback(res_user_info)
         except Exception as err:
             BACKEND_LOGGER.error(err)
-            popup(TRADUCTOR['notif']['err_acc_info']
-                  [CONFIG_LANG], icon='ERROR')
             if isinstance(err, ClientResponseError):
                 logout_if_unauthorized(err)
+            else:
+                popup(TRADUCTOR['notif']['err_acc_info']
+                      [CONFIG_LANG], icon='ERROR')
 
 
 async def _update_renderpacks_info(token: str) -> Coroutine:
@@ -250,12 +255,12 @@ async def _update_renderpacks_info(token: str) -> Coroutine:
             res_renderpacks = await plt.req_get_renderpacks(token, jsonify=True)
             _get_renderpacks_callback(res_renderpacks)
         except Exception as err:
+            bpy.context.scene.tresorio_render_form.render_pack = ''
             BACKEND_LOGGER.error(err)
             popup(TRADUCTOR['notif']
                   ['err_renderpacks'][CONFIG_LANG], icon='ERROR')
             if isinstance(err, ClientResponseError):
                 logout_if_unauthorized(err)
-            bpy.context.scene.tresorio_render_form.render_pack = ''
 
 
 async def _refresh_loop(token: str) -> Coroutine:
