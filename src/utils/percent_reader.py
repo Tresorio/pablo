@@ -3,7 +3,6 @@ from typing import Any
 import io
 import os
 import time
-import bpy
 
 
 class PercentReader(io.BufferedReader):
@@ -21,10 +20,9 @@ class PercentReader(io.BufferedReader):
     """
 
     def __init__(self,
-                 filepath: str,
+                 filepath: str
                  ):
-        super().__init__(open(filepath, "rb"))
-        self.filepath = filepath
+        super().__init__(open(filepath, 'rb'))
         self.percent = 0.0
         self.old_time = time.time()
         self.time = 0.0
@@ -39,7 +37,6 @@ class PercentReader(io.BufferedReader):
         """Exit point of `with`."""
         del args
         self.close()
-        bpy.context.scene.tresorio_render_form.upload_percent = 100
 
     def read(self,
              *args: Any,
@@ -53,5 +50,5 @@ class PercentReader(io.BufferedReader):
         if self.time - self.old_time > 0.25:
             self.old_time = self.time
             self.time = 0.0
-            bpy.context.scene.tresorio_render_form.upload_percent = self.percent
+            print(self.percent)
         return chunk

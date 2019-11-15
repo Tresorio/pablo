@@ -355,11 +355,15 @@ async def _new_render(token: str,
         async with Platform() as plt:
             bpy.context.scene.tresorio_report_props.creating_render = True
             render_info = await plt.req_create_render(token, create_render, jsonify=True)
-        await _update_list_renderings(token)
+        try:
+            await _update_list_renderings(token)
+        except Exception:
+            pass
         bpy.context.window_manager.tresorio_renders_list_index = 0
         loop = asyncio.get_running_loop()
         upload = functools.partial(
             force_sync(_upload_blend_file_async), blendfile, render_info)
+        bpy.context.scene.tresorio_report_props.uploading_blend_file = True
         await loop.run_in_executor(None, upload)
     except Exception as err:
         BACKEND_LOGGER.error(err)
@@ -466,9 +470,7 @@ async def _upload_blend_file_async(blendfile: str,
         blendfile: Filepath of the blender file
         render_info: information about the render linked to the blend file
     """
-    bpy.context.scene.tresorio_report_props.uploading_blend_file = True
     async with AsyncNas(render_info['ip']) as nas:
-        BACKEND_LOGGER.debug(f'Uploading for render ' + render_info['id'])
         with PercentReader(blendfile) as file:
             return await nas.upload_content(render_info['id'],
                                             render_info['jwt'],
