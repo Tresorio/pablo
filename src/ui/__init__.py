@@ -2,7 +2,6 @@
 
 from importlib import reload
 from . import (
-    icons,
     draw_connection_panel,
     main_panel,
     new_render_panel,
@@ -13,7 +12,7 @@ from . import (
 )
 
 MODULES = (
-    icons,
+    # icons,
     draw_connection_panel,
     main_panel,
     new_render_panel,

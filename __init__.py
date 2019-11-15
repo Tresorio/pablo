@@ -97,12 +97,12 @@ def unregister():
     atexit.unregister(set_user_config)
     atexit.unregister(TresorioIconsLoader.unregister)
 
-    TresorioIconsLoader.unregister()
     for cls in reversed(TO_REGISTER_CLASSES):
         try:
             bpy.utils.unregister_class(cls)
         except RuntimeError as exc:
             print(exc)
+    TresorioIconsLoader.unregister()
 
 
 def register():
