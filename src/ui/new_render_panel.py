@@ -25,13 +25,13 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         """Draw the form required for a rendering"""
         render_form = context.scene.tresorio_render_form
         render_packs = context.window_manager.tresorio_render_packs
-        report_props = context.scene.tresorio_report_props
+        report_props = context.window_manager.tresorio_report_props
 
         layout = self.layout
         box = layout.box()
 
         # LAUNCH
-        if context.scene.tresorio_report_props.deleting_all_renders:
+        if context.window_manager.tresorio_report_props.deleting_all_renders:
             layout.label(text=TRADUCTOR['notif']
                          ['deleting_all_renders'][CONFIG_LANG])
         elif report_props.uploading_blend_file:

@@ -275,12 +275,12 @@ async def _refresh_loop(token: str) -> Coroutine:
 async def _connect_to_tresorio(data: Dict[str, str]) -> Coroutine:
     async with Platform() as plt:
         try:
-            bpy.context.scene.tresorio_report_props.login_in = True
+            bpy.context.window_manager.tresorio_report_props.login_in = True
             res_connect = await plt.req_connect_to_tresorio(data, jsonify=True)
             bpy.context.window_manager.tresorio_user_props.token = res_connect['token']
             bpy.context.window_manager.tresorio_user_props.is_logged = True
         except Exception as err:
-            bpy.context.scene.tresorio_report_props.login_in = False
+            bpy.context.window_manager.tresorio_report_props.login_in = False
             BACKEND_LOGGER.error(err)
             if isinstance(err, ClientResponseError):
                 if err.status == HTTPStatus.UNAUTHORIZED:
@@ -290,7 +290,7 @@ async def _connect_to_tresorio(data: Dict[str, str]) -> Coroutine:
                 popup(TRADUCTOR['notif']
                       ['err_connection'][CONFIG_LANG], icon='ERROR')
         else:
-            bpy.context.scene.tresorio_report_props.login_in = False
+            bpy.context.window_manager.tresorio_report_props.login_in = False
             await _update_renderpacks_info(res_connect['token'])
             await _refresh_loop(res_connect['token'])
 
@@ -340,7 +340,7 @@ async def _new_render(token: str,
 
     try:
         if render_form.pack_textures:
-            bpy.context.scene.tresorio_report_props.packing_textures = True
+            bpy.context.window_manager.tresorio_report_props.packing_textures = True
             bpy.ops.file.pack_all()
             bpy.ops.wm.save_as_mainfile(filepath=blendfile)
     except RuntimeError as err:
@@ -349,11 +349,11 @@ async def _new_render(token: str,
               [CONFIG_LANG], icon='ERROR')
         return
     finally:
-        bpy.context.scene.tresorio_report_props.packing_textures = False
+        bpy.context.window_manager.tresorio_report_props.packing_textures = False
 
     try:
         async with Platform() as plt:
-            bpy.context.scene.tresorio_report_props.creating_render = True
+            bpy.context.window_manager.tresorio_report_props.creating_render = True
             render_info = await plt.req_create_render(token, create_render, jsonify=True)
         try:
             await _update_list_renderings(token)
@@ -363,7 +363,7 @@ async def _new_render(token: str,
         loop = asyncio.get_running_loop()
         upload = functools.partial(
             force_sync(_upload_blend_file_async), blendfile, render_info)
-        bpy.context.scene.tresorio_report_props.uploading_blend_file = True
+        bpy.context.window_manager.tresorio_report_props.uploading_blend_file = True
         await loop.run_in_executor(None, upload)
     except Exception as err:
         BACKEND_LOGGER.error(err)
@@ -383,11 +383,11 @@ async def _new_render(token: str,
         return
     finally:
         bpy.context.scene.tresorio_render_form.upload_percent = 0.0
-        bpy.context.scene.tresorio_report_props.creating_render = False
-        bpy.context.scene.tresorio_report_props.uploading_blend_file = False
+        bpy.context.window_manager.tresorio_report_props.creating_render = False
+        bpy.context.window_manager.tresorio_report_props.uploading_blend_file = False
         try:
             if render_form.pack_textures:
-                bpy.context.scene.tresorio_report_props.unpacking_textures = True
+                bpy.context.window_manager.tresorio_report_props.unpacking_textures = True
                 bpy.ops.file.unpack_all()
                 bpy.ops.wm.save_as_mainfile(filepath=blendfile)
         except RuntimeError as err:
@@ -395,7 +395,7 @@ async def _new_render(token: str,
             popup(TRADUCTOR['notif']['cant_unpack_textures']
                   [CONFIG_LANG], icon='ERROR')
         finally:
-            bpy.context.scene.tresorio_report_props.unpacking_textures = False
+            bpy.context.window_manager.tresorio_report_props.unpacking_textures = False
 
     try:
         async with Platform() as plt:
@@ -447,7 +447,7 @@ async def _delete_render(token: str,
 
 async def _delete_all_renders(token: str) -> Coroutine:
     try:
-        bpy.context.scene.tresorio_report_props.deleting_all_renders = True
+        bpy.context.window_manager.tresorio_report_props.deleting_all_renders = True
         async with Platform() as plt:
             renders = await plt.req_list_renderings_details(token, jsonify=True)
             for render in renders:
@@ -458,7 +458,7 @@ async def _delete_all_renders(token: str) -> Coroutine:
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
     finally:
-        bpy.context.scene.tresorio_report_props.deleting_all_renders = False
+        bpy.context.window_manager.tresorio_report_props.deleting_all_renders = False
 
 
 async def _upload_blend_file_async(blendfile: str,

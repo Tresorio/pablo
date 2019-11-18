@@ -24,7 +24,7 @@ class TresorioRendersList(bpy.types.UIList):
         layout.prop(user_settings,
                     'open_image_on_download',
                     text=TRADUCTOR['field']['open_image_on_download'][CONFIG_LANG])
-        if bpy.context.scene.tresorio_report_props.deleting_all_renders:
+        if bpy.context.window_manager.tresorio_report_props.deleting_all_renders:
             layout.label(text=TRADUCTOR['notif']
                          ['deleting_all_renders'][CONFIG_LANG])
         else:

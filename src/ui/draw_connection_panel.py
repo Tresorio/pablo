@@ -10,7 +10,7 @@ def draw_connection_panel(layout: bpy.types.UILayout,
                           ) -> None:
     """Draws the panel to connect to Tresorio"""
     user_props = context.window_manager.tresorio_user_props
-    report_props = bpy.context.scene.tresorio_report_props
+    report_props = bpy.context.window_manager.tresorio_report_props
 
     case = layout.row().grid_flow(columns=10)
     case.label(text=TRADUCTOR['field']['connection'][CONFIG_LANG])
