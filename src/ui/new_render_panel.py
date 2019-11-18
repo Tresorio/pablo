@@ -123,10 +123,6 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                         pack.cpu * render_form.nb_farmers
                     )
 
-            # row = box.row().split(factor=0.4)
-            # row.label(text=TRADUCTOR['field']['nb_farmers'][CONFIG_LANG]+':')
-            # row.prop(render_form, 'farm_type')
-
             row = box.row().split(factor=0.4)
             row.label(text=TRADUCTOR['field']['nb_farmers'][CONFIG_LANG]+':')
             row.prop(render_form, 'nb_farmers')

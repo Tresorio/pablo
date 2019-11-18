@@ -25,7 +25,7 @@ def set_logger(logger: logging.Logger) -> None:
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(log_formatter)
 
-    file_handler = logging.FileHandler(f'{LOGS_PATH}', mode='w')
+    file_handler = logging.FileHandler(f'{LOGS_PATH}', mode='a')
     file_handler.setFormatter(log_formatter)
 
     logger.addHandler(file_handler)

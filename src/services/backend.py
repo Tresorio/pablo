@@ -62,7 +62,7 @@ def new_render() -> None:
         'numberFarmers': props.nb_farmers,
         'numberOfFrames': number_of_frames,
         'autoTileSize': props.auto_tile_size,
-        'farmType': props.farm_type,
+        'farmType': 'HYBRID',  # TODO remove on gandalf and Paulette
     }
     launch_render = {
         'currentFrame': bpy.context.scene.frame_current,

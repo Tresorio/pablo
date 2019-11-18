@@ -147,10 +147,6 @@
         "en": "Show / hide the details of the selected render",
         "fr": "Montre / cache les détails du rendu sélectionné"
     },
-    "farm_type": {
-        "en": "Type of the render farm",
-        "fr": "Type de la ferme de rendu"
-    },
     "open_image_on_download": {
         "en": "Enable / disable the opening of the default image viewer to view the render once it is downloaded",
         "fr": "Active / désactive l'ouverture du lecteur d'image par défaut pour voir le rendu une fois téléchargé"
