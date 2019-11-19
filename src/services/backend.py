@@ -59,7 +59,7 @@ def new_render() -> None:
         'farm': props.render_pack,
         'renderType': render_type,
         'size': os.path.getsize(bpy.data.filepath),
-        'numberFarmers': props.nb_farmers,
+        'numberOfFarmers': props.nb_farmers,
         'numberOfFrames': number_of_frames,
         'autoTileSize': props.auto_tile_size,
         'farmType': 'HYBRID',  # TODO remove on gandalf and Paulette
@@ -231,8 +231,6 @@ async def _download_render_results(token: str,
               [CONFIG_LANG], icon='ERROR')
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
-    finally:
-        render.downloading = False
 
 
 async def _update_user_info(token: str) -> Coroutine:
@@ -495,7 +493,7 @@ def _fill_render_details(render: TresorioRendersDetailsProps,
     render.status = res['status']
     render.total_frames = res['numberOfFrames']
     render.rendered_frames = res['finishedFrames']
-    render.number_farmers = res['numberFarmers']
+    render.number_farmers = res['numberOfFarmers']
     render.progression = res['progression']
     if is_new and render.status != RenderStatus.FINISHED:
         render.created_at = datetime.strptime(
