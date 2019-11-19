@@ -13,6 +13,7 @@ def set_frame_type(prop: 'TresorioRenderFormProps',
     """Set the frame type to the right value"""
     del value
     if not prop.is_switching_render_type:
+        prop['nb_farmers'] = 1
         prop.is_switching_render_type = True
         prop.is_animation_selected = False
         prop.is_frame_selected = True

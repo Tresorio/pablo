@@ -10,7 +10,7 @@ import bpy
 def logout(context: bpy.types.Context) -> None:
     """Logouts the user properly"""
     shutdown_loop()
-    context.scene.property_unset('tresorio_report_props')
+    context.window_manager.property_unset('tresorio_report_props')
     context.window_manager.property_unset('tresorio_render_packs')
     context.window_manager.property_unset('tresorio_renders_details')
     context.window_manager.property_unset('tresorio_user_props')
