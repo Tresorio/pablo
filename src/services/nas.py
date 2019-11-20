@@ -144,7 +144,7 @@ class AsyncNas:
         headers = {
             'Authorization': f'JWT {jwt}'
         }
-        url = urljoin(self.url, f'/{uuid}?download=1&format=zip')
+        url = urljoin(self.url, '/project?download=1&format=zip')
         return await self.session.get(url,
                                       headers=headers,
                                       raise_for_status=True,
@@ -196,7 +196,7 @@ class AsyncNas:
         headers = {
             'Authorization': f'JWT {jwt}'
         }
-        url = urljoin(self.url, f'/{uuid}')
+        url = urljoin(self.url, '/project')
         with aiohttp.MultipartWriter('form-data') as mpw:
             header = {
                 'Content-Disposition': f'form-data; name="{filename}"; filename="{filename}"'
@@ -342,7 +342,7 @@ class SyncNas:
         headers = {
             'Authorization': f'JWT {jwt}'
         }
-        url = urljoin(self.url, f'/{uuid}?download=1&format=zip')
+        url = urljoin(self.url, '/project?download=1&format=zip')
         return self.session.get(url,
                                 headers=headers,
                                 verify=True)
@@ -390,7 +390,7 @@ class SyncNas:
         headers = {
             'Authorization': f'JWT {jwt}'
         }
-        url = urljoin(self.url, f'/{uuid}')
+        url = urljoin(self.url, '/prject')
         data = {filename: content}
         return self.session.put(url,
                                 headers=headers,
