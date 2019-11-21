@@ -28,8 +28,6 @@ from bundle_modules.aiohttp import ClientResponseError, ClientResponse
 
 # pylint: disable=assignment-from-no-return,assignment-from-none,unexpected-keyword-arg
 
-WM = bpy.context.window_manager
-
 
 def logout_if_unauthorized(err: ClientResponseError) -> None:
     """Log the user out if its token became invalid
@@ -62,7 +60,7 @@ def new_render() -> None:
         'numberOfFarmers': props.nb_farmers,
         'numberOfFrames': number_of_frames,
         'autoTileSize': props.auto_tile_size,
-        'farmType': 'HYBRID',  # TODO remove on gandalf and Paulette
+        'farmType': 'HYBRID',
     }
     launch_render = {
         'currentFrame': bpy.context.scene.frame_current,
