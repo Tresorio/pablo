@@ -2,4 +2,4 @@
 
 PLATFORM_DEBUG = False
 NAS_DEBUG = False
-BACKEND_DEBUG = True
+BACKEND_DEBUG = False

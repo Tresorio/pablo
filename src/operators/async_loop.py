@@ -129,7 +129,7 @@ class TresorioAsyncLoopModalOperator(bpy.types.Operator):
         self.loop_kicking_operator_running = True
 
         winman = context.window_manager
-        self.timer = winman.event_timer_add(0.000001, window=context.window)
+        self.timer = winman.event_timer_add(0.001, window=context.window)
 
         return {'RUNNING_MODAL'}
 
@@ -155,8 +155,8 @@ class TresorioAsyncLoopModalOperator(bpy.types.Operator):
 
 def shutdown_loop() -> None:
     """Stop the event loop"""
-    tasks = asyncio.Task.all_tasks()
-    for task in tasks:
-        task.cancel()
-    kick_async_loop()  # kick the loop so the cancel takes effect
+    # tasks = asyncio.Task.all_tasks()
+    # for task in tasks:
+        # task.cancel()
+    # kick_async_loop()  # kick the loop so the cancel takes effect
     erase_async_loop()
