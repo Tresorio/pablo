@@ -227,8 +227,6 @@ async def _download_render_results(token: str,
         BACKEND_LOGGER.error(err)
         popup(TRADUCTOR['notif']['err_download_results']
               [CONFIG_LANG], icon='ERROR')
-        if isinstance(err, ClientResponseError):
-            logout_if_unauthorized(err)
 
 
 async def _update_user_info(token: str) -> Coroutine:
@@ -261,6 +259,7 @@ async def _update_renderpacks_info(token: str) -> Coroutine:
 
 async def _refresh_loop(token: str) -> Coroutine:
     while bpy.context.window_manager.tresorio_user_props.is_logged:
+        token = ''
         await _update_user_info(token)
         await _update_list_renderings(token)
         for _ in range(5):
@@ -295,8 +294,7 @@ async def _update_list_renderings(token: str) -> Coroutine:
     try:
         async with Platform() as plt:
             res_renders = await plt.req_list_renderings_details(token, jsonify=True)
-            bpy.context.window_manager.property_unset(
-                'tresorio_renders_details')
+            bpy.context.window_manager.property_unset('tresorio_renders_details')
             for res in res_renders:
                 render = bpy.context.window_manager.tresorio_renders_details.add()
                 _fill_render_details(render, res, is_new=True)
