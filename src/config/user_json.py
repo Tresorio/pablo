@@ -22,12 +22,14 @@ def _get_user_config() -> Dict[str, Any]:
     return user_json
 
 
-USER_CONFIG = _get_user_config()
+if 'USER_CONFIG' not in globals():
+    USER_CONFIG = _get_user_config()
 
 
 def set_user_config() -> None:
     """Write the user config json file"""
     try:
+        print('WRITING USER CONFIG')
         json.write(USER_CONFIG, paths.USER_CONFIG_PATH)
     except OSError as err:
         print(err)

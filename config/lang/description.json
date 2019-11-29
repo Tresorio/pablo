@@ -113,7 +113,7 @@
     },
     "pack_description": {
         "en": "{0:.2f} credits per hour {1} Gpu and {2} Cpu",
-        "fr": "{:.2f} crédits par heure {1} Gpu et {2} Cpu"
+        "fr": "{0:.2f} crédits par heure {1} Gpu et {2} Cpu"
     },
     "pack_textures": {
         "en": "Pack the textures into the scene so they will be uploaded with the file. They will be unpacked once the upload is over",
@@ -132,8 +132,8 @@
         "fr": "{:.2f} crédits par heure, {} Gpu ({}), {} Cpu ({}), {} Mib de Ram"
     },
     "auto_tile_size": {
-        "en": "Sets the tile size automatically",
-        "fr": "Configure automatiquement les dimensions des tiles"
+        "en": "Sets the tile size automatically on our servers",
+        "fr": "Configure automatiquement les dimensions des tiles sur nos serveurs"
     },
     "show_pack": {
         "en": "Show / hide the render pack",
