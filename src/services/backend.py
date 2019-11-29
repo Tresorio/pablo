@@ -259,7 +259,6 @@ async def _update_renderpacks_info(token: str) -> Coroutine:
 
 async def _refresh_loop(token: str) -> Coroutine:
     while bpy.context.window_manager.tresorio_user_props.is_logged:
-        token = ''
         await _update_user_info(token)
         await _update_list_renderings(token)
         for _ in range(5):
