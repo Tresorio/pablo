@@ -16,11 +16,11 @@ TRADUCTOR = {
 }
 
 ALL_LANGS = {
-    'en': ('en-US',
+    'en': ('en',
            'English (US)',
            'Set the language to English (US). '
            'You must restart Blender for the new language to be applied'),
-    'fr':  ('fr-FR',
+    'fr':  ('fr',
             'Français (FR)',
             'Définir le language à Français (FR). '
             'Vous devrez redémarrer Blender pour appliquer le nouveau language'),
