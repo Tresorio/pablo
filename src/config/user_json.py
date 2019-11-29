@@ -29,7 +29,6 @@ if 'USER_CONFIG' not in globals():
 def set_user_config() -> None:
     """Write the user config json file"""
     try:
-        print('WRITING USER CONFIG')
         json.write(USER_CONFIG, paths.USER_CONFIG_PATH)
     except OSError as err:
         print(err)
