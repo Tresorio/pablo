@@ -23,12 +23,6 @@ class TresorioLoginOperator(bpy.types.Operator):
                 context: bpy.types.Context
                 ) -> Set[str]:
         """Called when operator is called"""
-        if bpy.context.scene.tresorio_render_form.rendering_name != '':
-            bpy.context.scene.tresorio_render_form.rendering_name = os.path.basename(
-                os.path.splitext(bpy.data.filepath)[0])
-        else:
-            bpy.context.scene.tresorio_render_form.rendering_name = TRADUCTOR[
-                'field']['default_render_name'][CONFIG_LANG]
         user_props = context.window_manager.tresorio_user_props
         email, password = user_props.email, get_password(user_props)
         context.window_manager.tresorio_user_props.hidden_password = reset_password(
