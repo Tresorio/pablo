@@ -11,6 +11,7 @@ import asyncio
 import functools
 
 import bpy
+from queue import Queue
 from src.ui.popup import popup
 from src.operators.logout import logout
 from src.services.platform import Platform
@@ -27,6 +28,7 @@ from src.properties.renders import TresorioRendersDetailsProps
 from bundle_modules.aiohttp import ClientResponseError, ClientResponse
 
 # pylint: disable=assignment-from-no-return,assignment-from-none,unexpected-keyword-arg
+UPDATE_QUEUE = Queue()
 
 
 def logout_if_unauthorized(err: ClientResponseError) -> None:
@@ -96,8 +98,8 @@ def get_uptime(created_at: int) -> int:
     Example:
 
         >>> start = utc.now()
-        ... time.sleep(5)
-        ... uptime = get_uptime(start) # 5
+        ... time.sleep(2)
+        ... uptime = get_uptime(start) # 2
     """
     return datetime.utcnow().timestamp() - created_at
 
@@ -257,13 +259,34 @@ async def _update_renderpacks_info(token: str) -> Coroutine:
                 logout_if_unauthorized(err)
 
 
+def update_upload_percent(value: float):
+    render_form = bpy.context.scene.tresorio_render_form
+    render_form.upload_percent = value
+
+
+def update_finished_upload(dummy):
+    report_props = bpy.context.window_manager.tresorio_report_props
+    render_form = bpy.context.scene.tresorio_render_form
+    report_props.uploading_blend_file = False
+    render_form.upload_percent = 0.0
+
+
 async def _refresh_loop(token: str) -> Coroutine:
-    while bpy.context.window_manager.tresorio_user_props.is_logged:
+    comms = {
+        'upload_percent': update_upload_percent,
+        'finished_upload': update_finished_upload,
+    }
+    is_logged = bpy.context.window_manager.tresorio_user_props.is_logged
+    while is_logged:
         await _update_user_info(token)
         await _update_list_renderings(token)
         for _ in range(5):
+            while not UPDATE_QUEUE.empty():
+                instruction, obj = UPDATE_QUEUE.get(block=False)
+                comms[instruction](obj)
             update_renderings_uptime()
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.25)
+        is_logged = bpy.context.window_manager.tresorio_user_props.is_logged
 
 
 async def _connect_to_tresorio(data: Dict[str, str]) -> Coroutine:
@@ -377,7 +400,6 @@ async def _new_render(token: str,
     finally:
         bpy.context.scene.tresorio_render_form.upload_percent = 0.0
         bpy.context.window_manager.tresorio_report_props.creating_render = False
-        bpy.context.window_manager.tresorio_report_props.uploading_blend_file = False
         try:
             if render_form.pack_textures:
                 bpy.context.window_manager.tresorio_report_props.unpacking_textures = True
@@ -464,7 +486,7 @@ async def _upload_blend_file_async(blendfile: str,
         render_info: information about the render linked to the blend file
     """
     async with AsyncNas(render_info['ip']) as nas:
-        with PercentReader(blendfile) as file:
+        with PercentReader(blendfile, update_queue=UPDATE_QUEUE) as file:
             return await nas.upload_content(render_info['id'],
                                             render_info['jwt'],
                                             'scene.blend',
