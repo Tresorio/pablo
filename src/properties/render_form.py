@@ -80,6 +80,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
     rendering_name: bpy.props.StringProperty(
         description=desc,
         name='',
+        default='untitled',
         maxlen=255,
         options={'HIDDEN', 'SKIP_SAVE'},
     )
