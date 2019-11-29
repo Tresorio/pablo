@@ -192,6 +192,7 @@ def _download_frames(fragments: List[Dict[str, Any]],
                     with open(filepath, 'wb') as file:
                         file.write(zip_bytes)
                         BACKEND_LOGGER.debug(f'Wrote file {filepath}')
+    UPDATE_QUEUE.put(('finished_download', render_details['id']))
     if filepath is not None and open_on_download:
         open_image(filepath)
 
@@ -270,17 +271,24 @@ def update_finished_upload(dummy):
     report_props.uploading_blend_file = False
     render_form.upload_percent = 0.0
 
+def update_finished_download(render_id: str):
+    renders = bpy.context.window_manager.tresorio_renders_details
+    for render in renders:
+        if render.id == render_id:
+            render.downloading = False
+            return
 
 async def _refresh_loop(token: str) -> Coroutine:
     comms = {
         'upload_percent': update_upload_percent,
         'finished_upload': update_finished_upload,
+        'finished_download': update_finished_download,
     }
     is_logged = bpy.context.window_manager.tresorio_user_props.is_logged
     while is_logged:
         await _update_user_info(token)
         await _update_list_renderings(token)
-        for _ in range(5):
+        for _ in range(20):
             while not UPDATE_QUEUE.empty():
                 instruction, obj = UPDATE_QUEUE.get(block=False)
                 comms[instruction](obj)
@@ -316,10 +324,14 @@ async def _update_list_renderings(token: str) -> Coroutine:
     try:
         async with Platform() as plt:
             res_renders = await plt.req_list_renderings_details(token, jsonify=True)
+            renders = bpy.context.window_manager.tresorio_renders_details
+            downloading = [render.id for render in renders if render.downloading]
             bpy.context.window_manager.property_unset('tresorio_renders_details')
             for res in res_renders:
                 render = bpy.context.window_manager.tresorio_renders_details.add()
                 _fill_render_details(render, res, is_new=True)
+                if render.id in downloading:
+                    render.downloading = True
     except Exception as err:
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError):
