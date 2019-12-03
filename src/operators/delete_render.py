@@ -24,5 +24,5 @@ class TresorioDeleteRenderOperator(bpy.types.Operator):
         """Called when operator is called"""
         render = context.window_manager.tresorio_renders_details[self.index]
         render.status = RenderStatus.STOPPING
-        delete_render(render.id, self.index)
+        delete_render(render.id)
         return {'FINISHED'}

@@ -45,7 +45,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         elif report_props.creating_render:
             box.label(text=TRADUCTOR['notif']['creating_render'][CONFIG_LANG])
         else:
-            box.operator('tresorio.render_frame',
+            box.operator('tresorio.render',
                          text=TRADUCTOR['field']['launch'][CONFIG_LANG])
 
         # SETTINGS
@@ -94,7 +94,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             grid_flow.prop(render_form, 'auto_tile_size',
                            text=TRADUCTOR['field']['auto_tile_size'][CONFIG_LANG])
 
-        # RENDER PACKS
+        # RENDERPACKS
         row = box.row()
         row_1 = row.row()
         row_1.alignment = 'LEFT'
@@ -110,12 +110,8 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             description = ''
             packs_cols = box.column_flow(columns=len(render_packs), align=True)
             for pack in render_packs:
-                case = packs_cols.box().split(factor=0.90)
-                case.prop(pack, 'is_selected',
-                          text=pack.name.capitalize(), toggle=1)
-                case.operator('tresorio.pack_desc_popup', text='',
-                              icon_value=til.icon('TRESORIO_QUESTION'),
-                              emboss=False).msg = pack.description
+                packs_cols.prop(pack, 'is_selected',
+                                text=pack.name.capitalize(), toggle=1)
                 if pack.is_selected:
                     description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
                         pack.cost * render_form.nb_farmers,
@@ -133,7 +129,9 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                      text=TRADUCTOR['field']['hours'][CONFIG_LANG],
                      expand=True)
 
-            box.label(text=description)
+            row = box.row(align=True)
+            row.alignment = 'CENTER'
+            row.label(text=description)
 
             row = box.row().split(factor=0.3)
             row.label(text=TRADUCTOR['field']['max_cost'][CONFIG_LANG]+':')
@@ -152,5 +150,5 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         elif report_props.unpacking_textures:
             box.label(text='Unpacking ...')
         else:
-            box.operator('tresorio.render_frame',
+            box.operator('tresorio.render',
                          text=TRADUCTOR['field']['launch'][CONFIG_LANG])

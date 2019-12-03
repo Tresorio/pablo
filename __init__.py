@@ -1,6 +1,5 @@
 """Entrypoint of the addon"""
 
-from importlib import reload
 import os
 import sys
 import atexit
@@ -30,7 +29,6 @@ from src.ui.user_renders_panel import TresorioRendersPanel, TresorioRendersList
 from src.operators.login import TresorioLoginOperator
 from src.operators.logout import TresorioLogoutOperator
 from src.operators.render import TresorioRenderFrameOperator
-from src.operators.popup import TresorioPackDescriptionPopup
 from src.operators.redirect import TresorioRedirectHomeOperator
 from src.operators.stop_render import TresorioStopRenderOperator
 from src.operators.redirect import TresorioRedirectRegisterOperator
@@ -43,9 +41,6 @@ from src.operators.async_loop import TresorioAsyncLoopModalOperator
 from src.operators.logout import logout
 from src.operators.async_loop import setup_asyncio_executor
 from src.config.user_json import set_user_config
-
-# pylint: disable=invalid-name
-src = reload(src)
 
 bl_info = {
     'name': 'Tresorio cloud rendering',
@@ -77,7 +72,6 @@ TO_REGISTER_CLASSES = (
     TresorioStopRenderOperator,
     TresorioDeleteRenderOperator,
     TresorioRedirectGetCreditsOperator,
-    TresorioPackDescriptionPopup,
     TresorioDeleteAllRendersOperator,
     TresorioAsyncLoopModalOperator,
     # UI

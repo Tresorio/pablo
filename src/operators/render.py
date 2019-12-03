@@ -11,9 +11,9 @@ import bpy
 
 
 class TresorioRenderFrameOperator(bpy.types.Operator):
-    """Render frame operator"""
+    """Render operator"""
     __doc__ = TRADUCTOR['desc']['tresorio_render'][CONFIG_LANG]
-    bl_idname = 'tresorio.render_frame'
+    bl_idname = 'tresorio.render'
     bl_label = 'Render frame'
 
     @classmethod
