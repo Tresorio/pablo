@@ -104,9 +104,7 @@ def get_uptime(created_at: int) -> int:
     return datetime.utcnow().timestamp() - created_at
 
 
-def delete_render(render_id: str,
-                  index: int
-                  ) -> None:
+def delete_render(render_id: str) -> None:
     """Delete a render
 
     Args:
@@ -114,7 +112,7 @@ def delete_render(render_id: str,
         index: the index in the blender renders list of the render to delete
     """
     token = bpy.context.window_manager.tresorio_user_props.token
-    future = _delete_render(token, render_id, index)
+    future = _delete_render(token, render_id)
     asyncio.ensure_future(future)
 
 
@@ -271,12 +269,14 @@ def update_finished_upload(dummy):
     report_props.uploading_blend_file = False
     render_form.upload_percent = 0.0
 
+
 def update_finished_download(render_id: str):
     renders = bpy.context.window_manager.tresorio_renders_details
     for render in renders:
         if render.id == render_id:
             render.downloading = False
             return
+
 
 async def _refresh_loop(token: str) -> Coroutine:
     comms = {
@@ -406,7 +406,7 @@ async def _new_render(token: str,
                 popup_msg = TRADUCTOR['notif']['render_name_already_taken'][CONFIG_LANG].format(
                     render_form.rendering_name)
         if render_info is not None:
-            await _delete_render(token, render_info['id'], 0)
+            await _delete_render(token, render_info['id'])
         popup(msg=popup_msg, icon='ERROR')
         return
     finally:
@@ -456,14 +456,11 @@ async def _stop_render(token: str,
 
 async def _delete_render(token: str,
                          render_id: str,
-                         index: int
                          ) -> Coroutine:
     try:
         async with Platform() as plt:
             await plt.req_delete_render(token, render_id)
-            if index >= 0:
-                bpy.context.window_manager.tresorio_renders_details.remove(
-                    index)
+            await _update_list_renderings(token)
     except Exception as err:
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError):
@@ -478,7 +475,7 @@ async def _delete_all_renders(token: str) -> Coroutine:
         async with Platform() as plt:
             renders = await plt.req_list_renderings_details(token, jsonify=True)
             for render in renders:
-                await _delete_render(token, render['id'], 0)
+                await _delete_render(token, render['id'])
         await _update_list_renderings(token)
     except Exception as err:
         BACKEND_LOGGER.error(err)
