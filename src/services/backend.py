@@ -360,7 +360,7 @@ async def _new_render(token: str,
                       launch_render: Dict[str, Any]
                       ) -> Coroutine:
     """This function creates a new render, packs the textures, uploads the blend
-       file, unpacks the textures, and finally launches the rendering."""
+       file, and finally launches the rendering."""
 
     blendfile = bpy.data.filepath
     render_form = bpy.context.scene.tresorio_render_form
@@ -412,17 +412,6 @@ async def _new_render(token: str,
     finally:
         bpy.context.scene.tresorio_render_form.upload_percent = 0.0
         bpy.context.window_manager.tresorio_report_props.creating_render = False
-        try:
-            if render_form.pack_textures:
-                bpy.context.window_manager.tresorio_report_props.unpacking_textures = True
-                bpy.ops.file.unpack_all()
-                bpy.ops.wm.save_as_mainfile(filepath=blendfile)
-        except RuntimeError as err:
-            BACKEND_LOGGER.error(err)
-            popup(TRADUCTOR['notif']['cant_unpack_textures']
-                  [CONFIG_LANG], icon='ERROR')
-        finally:
-            bpy.context.window_manager.tresorio_report_props.unpacking_textures = False
 
     try:
         async with Platform() as plt:
@@ -476,7 +465,6 @@ async def _delete_all_renders(token: str) -> Coroutine:
             renders = await plt.req_list_renderings_details(token, jsonify=True)
             for render in renders:
                 await _delete_render(token, render['id'])
-        await _update_list_renderings(token)
     except Exception as err:
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError):

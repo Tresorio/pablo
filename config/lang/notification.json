@@ -111,10 +111,6 @@
         "en": "Can't pack the textures into the file",
         "fr": "Impossible de charger les textures dans le fichier"
     },
-    "cant_unpack_textures": {
-        "en": "Can't unpack the textures out of the file",
-        "fr": "Impossible de décharger les textures du fichier"
-    },
     "no_result_render": {
         "en": "No frames rendered",
         "fr": "Pas des frames rendues"
@@ -138,10 +134,6 @@
     "packing": {
         "en": "Packing textures ...",
         "fr": "Chargement des textures ..."
-    },
-    "unpacking": {
-        "en": "Unpacking textures ...",
-        "fr": "Déchargement des textures ..."
     },
     "creating_render": {
         "en": "Creating render ...",

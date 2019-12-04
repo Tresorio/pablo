@@ -116,8 +116,8 @@
         "fr": "{0:.2f} crédits par heure {1} Gpu et {2} Cpu"
     },
     "pack_textures": {
-        "en": "Pack the textures into the scene so they will be uploaded with the file. They will be unpacked once the upload is over",
-        "fr": "Charge les textures dans la scène pour qu'elles soient envoyées avec le fichier. Elles seront déchargées une fois l'envoi du fichier terminé"
+        "en": "Pack the textures into the scene so they will be uploaded with the file.",
+        "fr": "Charge les textures dans la scène pour qu'elles soient envoyées avec le fichier."
     },
     "nb_farmers": {
         "en": "Number of farmers to deploy",

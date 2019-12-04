@@ -40,8 +40,6 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                      slider=True)
         elif report_props.packing_textures:
             box.label(text=TRADUCTOR['notif']['packing'][CONFIG_LANG])
-        elif report_props.unpacking_textures:
-            box.label(text=TRADUCTOR['notif']['unpacking'][CONFIG_LANG])
         elif report_props.creating_render:
             box.label(text=TRADUCTOR['notif']['creating_render'][CONFIG_LANG])
         else:
@@ -147,8 +145,6 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                      slider=True)
         elif report_props.packing_textures:
             box.label(text='Packing ...')
-        elif report_props.unpacking_textures:
-            box.label(text='Unpacking ...')
         else:
             box.operator('tresorio.render',
                          text=TRADUCTOR['field']['launch'][CONFIG_LANG])
