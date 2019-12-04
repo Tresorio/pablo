@@ -48,14 +48,6 @@ class TresorioReportProps(bpy.types.PropertyGroup):
         update=lambda a, b: None,
     )
 
-    unpacking_textures: bpy.props.BoolProperty(
-        name='',
-        default=False,
-        description='',
-        options={'HIDDEN', 'SKIP_SAVE'},
-        update=lambda a, b: None,
-    )
-
     creating_render: bpy.props.BoolProperty(
         name='',
         default=False,
