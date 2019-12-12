@@ -104,33 +104,8 @@ class AsyncNas:
     @_nasrequest.__func__
     async def download(self,
                        jwt: str,
-                       src_filename: str
+                       folder: str = '',
                        ) -> aiohttp.ClientResponse:
-        """Download a specific file on the Nas
-
-        Args:
-            jwt: JWT giving authorization to download the file.
-            src_filename: file to download.
-
-        Example:
-            >>> async with Nas('http://0.0.0.0:3000') as nas:
-            ...     task = await nas.download('55fe2bc6', 'my_file.txt')
-            ...     file = asyncio.run(task)
-        """
-        headers = {
-            'Authorization': f'JWT {jwt}'
-        }
-        url = urljoin(self.url, f'project/{src_filename}')
-        return await self.session.get(url,
-                                      headers=headers,
-                                      raise_for_status=True,
-                                      ssl_context=SSL_CONTEXT)
-
-    @_nasrequest.__func__
-    async def download_project(self,
-                               jwt: str,
-                               folder: str = '',
-                               ) -> aiohttp.ClientResponse:
         """Download a whole project as a zip
 
         Arg:
@@ -304,31 +279,8 @@ class SyncNas:
     @_nasrequest.__func__
     def download(self,
                  jwt: str,
-                 src_filename: str
+                 folder: str = '',
                  ) -> requests.Response:
-        """Download a specific file on the Nas.
-
-        Args:
-            jwt: JWT giving authorization to download the file.
-            src_filename: file to download.
-
-        Example:
-            >>> with Nas('http://0.0.0.0:3000') as nas:
-            ...     res = nas.download('55fe2bc6', 'my_file.txt', read=True)
-        """
-        headers = {
-            'Authorization': f'JWT {jwt}'
-        }
-        url = urljoin(self.url, f'project/{src_filename}')
-        return self.session.get(url,
-                                headers=headers,
-                                verify=True)
-
-    @_nasrequest.__func__
-    def download_project(self,
-                         jwt: str,
-                         folder: str = '',
-                         ) -> requests.Response:
         """Download a whole project as a zip
 
         Arg:

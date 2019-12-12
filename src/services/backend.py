@@ -5,13 +5,13 @@ from http import HTTPStatus
 from datetime import datetime
 from typing import Dict, Any, List
 from collections.abc import Coroutine
+from queue import Queue
 import io
 import os
 import asyncio
 import functools
 
 import bpy
-from queue import Queue
 from src.ui.popup import popup
 from src.operators.logout import logout
 from src.services.platform import Platform
@@ -160,15 +160,13 @@ def _download_frames(fragments: List[Dict[str, Any]],
                      render_details: Dict[str, Any],
                      open_on_download: bool
                      ) -> None:
-    # TODO This downloads all the results then write the files, which may not
-    # fit in RAM. We need a system like in html to write file as we download
     filepath = None
     ext = render_details['outputFormat'].lower()
     with SyncNas() as nas:
         for frag in fragments:
             nas.url = frag['ip']
             zip_bytes = io.BytesIO(
-                nas.download_project(frag['jwt'], folder='artifacts', read=True))
+                nas.download(frag['jwt'], folder='artifacts', read=True))
             with ZipFile(zip_bytes) as zipf:
                 frames = zipf.namelist()
                 for frame in frames:
