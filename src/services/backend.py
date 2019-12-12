@@ -162,23 +162,27 @@ def _download_frames(fragments: List[Dict[str, Any]],
                      ) -> None:
     filepath = None
     ext = render_details['outputFormat'].lower()
-    with SyncNas() as nas:
-        for frag in fragments:
-            nas.url = frag['ip']
-            zip_bytes = io.BytesIO(
-                nas.download(frag['jwt'], folder='artifacts', read=True))
-            with ZipFile(zip_bytes) as zipf:
-                frames = zipf.namelist()
-                for frame in frames:
-                    zip_bytes = zipf.read(frame)
-                    filename = f'%s_{os.path.basename(frame)}.{ext}' % render_details['name']
-                    filepath = os.path.join(render_result_path, filename)
-                    with open(filepath, 'wb') as file:
-                        file.write(zip_bytes)
-                        BACKEND_LOGGER.debug(f'Wrote file {filepath}')
-    UPDATE_QUEUE.put(('finished_download', render_details['id']))
-    if filepath is not None and open_on_download:
-        open_image(filepath)
+    try:
+        with SyncNas() as nas:
+            for frag in fragments:
+                nas.url = frag['ip']
+                zip_bytes = io.BytesIO(
+                    nas.download(frag['jwt'], folder='artifacts', read=True))
+                with ZipFile(zip_bytes) as zipf:
+                    frames = zipf.namelist()
+                    for frame in frames:
+                        zip_bytes = zipf.read(frame)
+                        filename = f'%s_{os.path.basename(frame)}.{ext}' % render_details['name']
+                        filepath = os.path.join(render_result_path, filename)
+                        with open(filepath, 'wb') as file:
+                            file.write(zip_bytes)
+                            BACKEND_LOGGER.debug(f'Wrote file {filepath}')
+        UPDATE_QUEUE.put(('finished_download', render_details['id']))
+        if filepath is not None and open_on_download:
+            open_image(filepath)
+    except Exception as err:
+        BACKEND_LOGGER.error(err)
+        UPDATE_QUEUE.put(('finished_download', render_details['id']))
 
 
 def update_renderings_uptime() -> None:
