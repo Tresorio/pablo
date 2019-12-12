@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 from typing import Callable, Any, Union
 import requests
 
-from bundle_modules import aiohttp
+from bundle_modules import aiohttp, certifi
 from src.config.api import SSL_CONTEXT
 from src.services.loggers import NAS_LOGGER
 
@@ -128,8 +128,8 @@ class AsyncNas:
 
     @_nasrequest.__func__
     async def download_project(self,
-                               uuid: str,
-                               jwt: str
+                               jwt: str,
+                               folder: str = '',
                                ) -> aiohttp.ClientResponse:
         """Download a whole project as a zip
 
@@ -144,7 +144,7 @@ class AsyncNas:
         headers = {
             'Authorization': f'JWT {jwt}'
         }
-        url = urljoin(self.url, '/project?download=1&format=zip')
+        url = urljoin(self.url, f'/project/{folder}?download=1&format=zip')
         return await self.session.get(url,
                                       headers=headers,
                                       raise_for_status=True,
@@ -175,7 +175,6 @@ class AsyncNas:
 
     @_nasrequest.__func__
     async def upload_content(self,
-                             uuid: str,
                              jwt: str,
                              filename: str,
                              content: Union[str, bytes, TextIOWrapper]
@@ -327,8 +326,8 @@ class SyncNas:
 
     @_nasrequest.__func__
     def download_project(self,
-                         uuid: str,
-                         jwt: str
+                         jwt: str,
+                         folder: str = '',
                          ) -> requests.Response:
         """Download a whole project as a zip
 
@@ -342,9 +341,10 @@ class SyncNas:
         headers = {
             'Authorization': f'JWT {jwt}'
         }
-        url = urljoin(self.url, '/project?download=1&format=zip')
+        url = urljoin(self.url, f'/project/{folder}?download=1&format=zip')
         return self.session.get(url,
                                 headers=headers,
+                                stream=True,
                                 verify=True)
 
     @_nasrequest.__func__
@@ -370,7 +370,6 @@ class SyncNas:
 
     @_nasrequest.__func__
     def upload_content(self,
-                       uuid: str,
                        jwt: str,
                        filename: str,
                        content: TextIOWrapper
@@ -390,7 +389,7 @@ class SyncNas:
         headers = {
             'Authorization': f'JWT {jwt}'
         }
-        url = urljoin(self.url, '/prject')
+        url = urljoin(self.url, '/project')
         data = {filename: content}
         return self.session.put(url,
                                 headers=headers,
