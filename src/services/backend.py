@@ -168,7 +168,7 @@ def _download_frames(fragments: List[Dict[str, Any]],
         for frag in fragments:
             nas.url = frag['ip']
             zip_bytes = io.BytesIO(
-                nas.download_project(frag['jwt'], folder='artifacts', read=True))
+                nas.download_project(frag['jwt'], folder='artifacts/', read=True))
             with ZipFile(zip_bytes) as zipf:
                 frames = zipf.namelist()
                 for frame in frames:
@@ -214,6 +214,7 @@ async def _download_render_results(token: str,
         await loop.run_in_executor(None, download)
     except Exception as err:
         BACKEND_LOGGER.error(err)
+        UPDATE_QUEUE.put(('finished_download', render_details['id']))
         popup(TRADUCTOR['notif']['err_download_results']
               [CONFIG_LANG], icon='ERROR')
 
