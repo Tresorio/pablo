@@ -148,17 +148,6 @@ def update_list_renderings():
     asyncio.ensure_future(future)
 
 
-def update_rendering(render: TresorioRendersDetailsProps):
-    """Update a specific rendering
-
-    Arg:
-        render: The render to update
-    """
-    token = bpy.context.window_manager.tresorio_user_props.token
-    future = _update_rendering(render, token)
-    asyncio.ensure_future(future)
-
-
 def delete_all_renders():
     """Delete all the renders"""
     token = bpy.context.window_manager.tresorio_user_props.token
@@ -171,18 +160,17 @@ def _download_frames(fragments: List[Dict[str, Any]],
                      render_details: Dict[str, Any],
                      open_on_download: bool
                      ) -> None:
+    # TODO This downloads all the results then write the files, which may not
+    # fit in RAM. We need a system like in html to write file as we download
     filepath = None
     ext = render_details['outputFormat'].lower()
     with SyncNas() as nas:
         for frag in fragments:
             nas.url = frag['ip']
             zip_bytes = io.BytesIO(
-                nas.download_project(frag['id'], frag['jwt'], read=True))
+                nas.download_project(frag['jwt'], folder='artifacts', read=True))
             with ZipFile(zip_bytes) as zipf:
-                frames = list(filter(
-                    lambda x: x.startswith('artifacts/') and x != 'artifacts/',
-                    zipf.namelist()
-                ))
+                frames = zipf.namelist()
                 for frame in frames:
                     zip_bytes = zipf.read(frame)
                     filename = f'%s_{os.path.basename(frame)}.{ext}' % render_details['name']
@@ -230,7 +218,9 @@ async def _download_render_results(token: str,
               [CONFIG_LANG], icon='ERROR')
 
 
-async def _update_user_info(token: str) -> Coroutine:
+async def _update_user_info(token: str,
+                            silence_errors: bool = False
+                            ) -> Coroutine:
     async with Platform() as plt:
         try:
             res_user_info = await plt.req_get_user_info(token, jsonify=True)
@@ -239,7 +229,7 @@ async def _update_user_info(token: str) -> Coroutine:
             BACKEND_LOGGER.error(err)
             if isinstance(err, ClientResponseError):
                 logout_if_unauthorized(err)
-            else:
+            elif silence_errors is False:
                 popup(TRADUCTOR['notif']['err_acc_info']
                       [CONFIG_LANG], icon='ERROR')
 
@@ -286,8 +276,8 @@ async def _refresh_loop(token: str) -> Coroutine:
     }
     is_logged = bpy.context.window_manager.tresorio_user_props.is_logged
     while is_logged:
-        await _update_user_info(token)
-        await _update_list_renderings(token)
+        await _update_user_info(token, silence_errors=True)
+        await _update_list_renderings(token, silence_errors=True)
         for _ in range(20):
             while not UPDATE_QUEUE.empty():
                 instruction, obj = UPDATE_QUEUE.get(block=False)
@@ -320,24 +310,32 @@ async def _connect_to_tresorio(data: Dict[str, str]) -> Coroutine:
             await _refresh_loop(res_connect['token'])
 
 
-async def _update_list_renderings(token: str) -> Coroutine:
+async def _update_list_renderings(token: str,
+                                  silence_errors: bool = False
+                                  ) -> Coroutine:
     try:
         async with Platform() as plt:
             res_renders = await plt.req_list_renderings_details(token, jsonify=True)
-            renders = bpy.context.window_manager.tresorio_renders_details
-            downloading = [render.id for render in renders if render.downloading]
-            bpy.context.window_manager.property_unset('tresorio_renders_details')
-            for res in res_renders:
-                render = bpy.context.window_manager.tresorio_renders_details.add()
-                _fill_render_details(render, res, is_new=True)
-                if render.id in downloading:
-                    render.downloading = True
+            update_ui_renderings(res_renders, is_new=True)
     except Exception as err:
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
-        else:
+        elif silence_errors is False:
             popup(TRADUCTOR['notif']['err_renders'][CONFIG_LANG], icon='ERROR')
+
+
+def update_ui_renderings(res_renders,
+                         is_new: bool
+                         ) -> None:
+    renders = bpy.context.window_manager.tresorio_renders_details
+    downloading = [render.id for render in renders if render.downloading]
+    bpy.context.window_manager.property_unset('tresorio_renders_details')
+    for res in res_renders:
+        render = bpy.context.window_manager.tresorio_renders_details.add()
+        _fill_render_details(render, res, is_new=is_new)
+        if render.id in downloading:
+            render.downloading = True
 
 
 async def _update_rendering(render: TresorioRendersDetailsProps,
@@ -448,8 +446,8 @@ async def _delete_render(token: str,
                          ) -> Coroutine:
     try:
         async with Platform() as plt:
-            await plt.req_delete_render(token, render_id)
-            await _update_list_renderings(token)
+            renders = await plt.req_delete_render(token, render_id, jsonify=True)
+            update_ui_renderings(renders, is_new=True)
     except Exception as err:
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError):
@@ -484,8 +482,7 @@ async def _upload_blend_file_async(blendfile: str,
     """
     async with AsyncNas(render_info['ip']) as nas:
         with PercentReader(blendfile, update_queue=UPDATE_QUEUE) as file:
-            return await nas.upload_content(render_info['id'],
-                                            render_info['jwt'],
+            return await nas.upload_content(render_info['jwt'],
                                             'scene.blend',
                                             file)
 
