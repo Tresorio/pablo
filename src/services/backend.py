@@ -5,13 +5,14 @@ from http import HTTPStatus
 from datetime import datetime
 from typing import Dict, Any, List
 from collections.abc import Coroutine
+from queue import Queue
 import io
 import os
+import shutil
 import asyncio
 import functools
 
 import bpy
-from queue import Queue
 from src.ui.popup import popup
 from src.operators.logout import logout
 from src.services.platform import Platform
@@ -158,29 +159,20 @@ def delete_all_renders():
 def _download_frames(fragments: List[Dict[str, Any]],
                      render_result_path: str,
                      render_details: Dict[str, Any],
-                     open_on_download: bool
+                    #  open_on_download: bool = False,
                      ) -> None:
-    # TODO This downloads all the results then write the files, which may not
-    # fit in RAM. We need a system like in html to write file as we download
-    filepath = None
-    ext = render_details['outputFormat'].lower()
-    with SyncNas() as nas:
-        for frag in fragments:
-            nas.url = frag['ip']
-            zip_bytes = io.BytesIO(
-                nas.download_project(frag['jwt'], folder='artifacts/', read=True))
-            with ZipFile(zip_bytes) as zipf:
-                frames = zipf.namelist()
-                for frame in frames:
-                    zip_bytes = zipf.read(frame)
-                    filename = f'%s_{os.path.basename(frame)}.{ext}' % render_details['name']
-                    filepath = os.path.join(render_result_path, filename)
-                    with open(filepath, 'wb') as file:
-                        file.write(zip_bytes)
-                        BACKEND_LOGGER.debug(f'Wrote file {filepath}')
-    UPDATE_QUEUE.put(('finished_download', render_details['id']))
-    if filepath is not None and open_on_download:
-        open_image(filepath)
+    try:
+        with SyncNas() as nas:
+            for frag in fragments:
+                nas.url = frag['ip']
+                res = nas.download(frag['jwt'], folder='artifacts')
+                zfilepath = render_result_path+render_details['name']+'_tresorio.zip'
+                with open(zfilepath, 'wb') as file:
+                    shutil.copyfileobj(res.raw, file)
+        UPDATE_QUEUE.put(('finished_download', render_details['id']))
+    except Exception as err:
+        BACKEND_LOGGER.error(err)
+        UPDATE_QUEUE.put(('finished_download', render_details['id']))
 
 
 def update_renderings_uptime() -> None:
@@ -202,13 +194,13 @@ async def _download_render_results(token: str,
             render_details = await plt.req_get_rendering_details(token, render.id, jsonify=True)
         fragments = render_details['fragments']
         loop = asyncio.get_running_loop()
-        open_on_dl = bpy.context.window_manager.tresorio_user_settings_props.open_image_on_download
+        # open_on_dl = bpy.context.window_manager.tresorio_user_settings_props.open_
         download = functools.partial(
             _download_frames,
             fragments,
             render_result_path,
             render_details,
-            open_on_dl
+            # open_on_dl
         )
         render.downloading = True
         await loop.run_in_executor(None, download)
