@@ -5,13 +5,23 @@ from src.config.user_json import USER_CONFIG
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
-# def update_open_image_on_download(ptr: 'TresorioUserSettingsProps',
-#                                   context: bpy.types.Context
-#                                   ) -> None:
-#     """Update the user config for the open_image_on_download option"""
-#     del context
-#     USER_CONFIG['open_image_on_download'] = ptr.open_image_on_download
+def update_open_image_on_download(ptr: 'TresorioUserSettingsProps',
+                                  context: bpy.types.Context
+                                  ) -> None:
+    """Update the user config for the open_image_on_download option"""
+    del context
+    USER_CONFIG['open_image_on_download'] = ptr.open_image_on_download
+    if ptr.decompress_results is False:
+        ptr['open_image_on_download'] = False
 
+def update_decompress_results(ptr: 'TresorioUserSettingsProps',
+                              context: bpy.types.Context
+                              ) -> None:
+    """Update the user config for the decompress_results option"""
+    del context
+    USER_CONFIG['decompress_results'] = ptr.decompress_results
+    if ptr.decompress_results is False:
+        ptr['open_image_on_download'] = False
 
 class TresorioUserSettingsProps(bpy.types.PropertyGroup):
     """User settings properties"""
@@ -29,14 +39,23 @@ class TresorioUserSettingsProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    # desc = TRADUCTOR['desc']['open_image_on_download'][CONFIG_LANG]
-    # open_image_on_download: bpy.props.BoolProperty(
-        # name='',
-        # default=USER_CONFIG['open_image_on_download'],
-        # description=desc,
-        # options={'HIDDEN', 'SKIP_SAVE'},
-        # update=update_open_image_on_download,
-    # )
+    desc = TRADUCTOR['desc']['open_image_on_download'][CONFIG_LANG]
+    open_image_on_download: bpy.props.BoolProperty(
+        name='',
+        default=USER_CONFIG['open_image_on_download'],
+        description=desc,
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=update_open_image_on_download,
+    )
+
+    desc = TRADUCTOR['desc']['decompress_results'][CONFIG_LANG]
+    decompress_results: bpy.props.BoolProperty(
+        name='',
+        default=USER_CONFIG['decompress_results'],
+        description=desc,
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=update_decompress_results,
+    )
 
     desc = TRADUCTOR['desc']['show_selected_render'][CONFIG_LANG]
     show_selected_render: bpy.props.BoolProperty(

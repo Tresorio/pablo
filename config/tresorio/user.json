@@ -1,8 +1,6 @@
 {
     "lang": "en",
     "email": "",
-    "passed_tutorial": false,
-    "sent_advice": false,
-    "download_when_over": false,
-    "download_when_over_path": ""
+    "open_image_on_download": false,
+    "decompress_results": false
 }

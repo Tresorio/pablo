@@ -196,5 +196,9 @@
     "delete_all_renders": {
         "en": "Delete all renders",
         "fr": "Supprimer tous les rendus"
+    },
+    "decompress_results": {
+        "en": "Decompress the results",
+        "fr": "Décompresser les résultats"
     }
 }
