@@ -159,14 +159,14 @@ def delete_all_renders():
 def _download_frames(fragments: List[Dict[str, Any]],
                      render_result_path: str,
                      render_details: Dict[str, Any],
-                    #  open_on_download: bool = False,
+                     #  open_on_download: bool = False,
                      ) -> None:
     try:
         with SyncNas() as nas:
             for frag in fragments:
                 nas.url = frag['ip']
                 res = nas.download(frag['jwt'], folder='artifacts')
-                zfilepath = render_result_path+render_details['name']+'_tresorio.zip'
+                zfilepath = render_result_path
                 with open(zfilepath, 'wb') as file:
                     shutil.copyfileobj(res.raw, file)
         UPDATE_QUEUE.put(('finished_download', render_details['id']))

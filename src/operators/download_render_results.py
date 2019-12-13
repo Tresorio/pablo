@@ -15,13 +15,20 @@ class TresorioDownloadRenderResultsOperator(bpy.types.Operator):
 
     index: bpy.props.IntProperty(options={'HIDDEN', 'SKIP_SAVE'})
     filter_glob: bpy.props.StringProperty(
-        default='',
+        default='*.zip',
         name='',
         options={'HIDDEN', 'SKIP_SAVE'},
+    )
+    filepath: bpy.props.StringProperty(
+        name='',
+        description='',
+        subtype='FILE_PATH',
+        options={'HIDDEN', 'SKIP_SAVE'}
     )
     directory: bpy.props.StringProperty(
         name='',
         description='',
+        subtype='FILE_PATH',
         options={'HIDDEN', 'SKIP_SAVE'}
     )
 
@@ -30,14 +37,15 @@ class TresorioDownloadRenderResultsOperator(bpy.types.Operator):
                 ) -> Set[str]:
         """Called when operator is called"""
         render = context.window_manager.tresorio_renders_details[self.index]
-        download_render_results(render, self.directory)
+        download_render_results(render, self.filepath)
         return {'FINISHED'}
 
     def invoke(self,
                context: bpy.types.Context,
                event: bpy.types.Event
                ) -> Set[str]:
-        """Called when operator is called with INVOKE_DEFAULT set"""
+        """Called when operator is called with 'INVOKE_DEFAULT'"""
         del event
+        self.filepath = context.window_manager.tresorio_renders_details[self.index].name + '.zip'
         context.window_manager.fileselect_add(self)
         return {'RUNNING_MODAL'}
