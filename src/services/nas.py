@@ -3,6 +3,7 @@
 from io import TextIOWrapper
 from urllib.parse import urljoin
 from typing import Callable, Any, Union
+import shutil
 import requests
 
 from bundle_modules import aiohttp, certifi
@@ -257,7 +258,7 @@ class SyncNas:
                     *args: Any,
                     read: bool = False,
                     **kwargs: Any
-                    ) -> Union[requests.Response, bytes]:
+                    ) -> Union[requests.Response, bytes, None]:
             """This wrapper handles common cases of nas requests
 
             Arg:
@@ -280,7 +281,7 @@ class SyncNas:
     def download(self,
                  jwt: str,
                  folder: str = '',
-                 ) -> requests.Response:
+                 ) -> Union[requests.Response, None]:
         """Download a whole project as a zip
 
         Arg:
@@ -296,8 +297,8 @@ class SyncNas:
         url = urljoin(self.url, f'/project/{folder}?download=1&format=zip')
         return self.session.get(url,
                                 headers=headers,
-                                stream=True,
-                                verify=True)
+                                verify=True,
+                                stream=True)
 
     @_nasrequest.__func__
     def list_files(self,

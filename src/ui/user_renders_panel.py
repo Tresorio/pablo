@@ -19,11 +19,11 @@ class TresorioRendersList(bpy.types.UIList):
                     ) -> None:
         """Draw the filter part of the ui list"""
         del unused_self
-        user_settings = context.window_manager.tresorio_user_settings_props
+        # user_settings = context.window_manager.tresorio_user_settings_props
         layout.separator()
-        layout.prop(user_settings,
-                    'open_image_on_download',
-                    text=TRADUCTOR['field']['open_image_on_download'][CONFIG_LANG])
+        # layout.prop(user_settings,
+                    # 'open_image_on_download',
+                    # text=TRADUCTOR['field']['open_image_on_download'][CONFIG_LANG])
         if bpy.context.window_manager.tresorio_report_props.deleting_all_renders:
             layout.label(text=TRADUCTOR['notif']
                          ['deleting_all_renders'][CONFIG_LANG])
