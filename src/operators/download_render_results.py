@@ -37,6 +37,8 @@ class TresorioDownloadRenderResultsOperator(bpy.types.Operator):
                 ) -> Set[str]:
         """Called when operator is called"""
         render = context.window_manager.tresorio_renders_details[self.index]
+        if self.filepath == '':
+            self.filepath = render.name + '.zip'
         download_render_results(render, self.filepath)
         return {'FINISHED'}
 

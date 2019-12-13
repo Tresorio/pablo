@@ -159,7 +159,8 @@ def delete_all_renders():
 def _download_frames(fragments: List[Dict[str, Any]],
                      render_result_path: str,
                      render_details: Dict[str, Any],
-                     #  open_on_download: bool = False,
+                     decompress_results: bool = False,
+                     open_on_download: bool = False,
                      ) -> None:
     try:
         with SyncNas() as nas:
@@ -169,6 +170,15 @@ def _download_frames(fragments: List[Dict[str, Any]],
                 zfilepath = render_result_path
                 with open(zfilepath, 'wb') as file:
                     shutil.copyfileobj(res.raw, file)
+                if decompress_results:
+                    with ZipFile(zfilepath) as zfile:
+                        extract_path = os.path.dirname(render_result_path)
+                        zfile.extractall(path=extract_path)
+                        os.remove(zfilepath)
+                        if open_on_download:
+                            image = zfile.namelist()[0]
+                            image_path = os.path.join(extract_path, image)
+                            open_image(image_path)
         UPDATE_QUEUE.put(('finished_download', render_details['id']))
     except Exception as err:
         BACKEND_LOGGER.error(err)
@@ -192,15 +202,18 @@ async def _download_render_results(token: str,
     try:
         async with Platform() as plt:
             render_details = await plt.req_get_rendering_details(token, render.id, jsonify=True)
+        user_settings = bpy.context.window_manager.tresorio_user_settings_props
         fragments = render_details['fragments']
         loop = asyncio.get_running_loop()
-        # open_on_dl = bpy.context.window_manager.tresorio_user_settings_props.open_
+        open_on_dl = user_settings.open_image_on_download
+        decompress_results = user_settings.decompress_results
         download = functools.partial(
             _download_frames,
             fragments,
             render_result_path,
             render_details,
-            # open_on_dl
+            decompress_results,
+            open_on_dl
         )
         render.downloading = True
         await loop.run_in_executor(None, download)

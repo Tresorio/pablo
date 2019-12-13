@@ -151,6 +151,10 @@
         "en": "Enable / disable the opening of the default image viewer to view the render once it is downloaded",
         "fr": "Active / désactive l'ouverture du lecteur d'image par défaut pour voir le rendu une fois téléchargé"
     },
+    "decompress_results": {
+        "en": "If activated, decompress the results in the chosen directory",
+        "fr": "Si activé, décompresse les résultats dans le dossier choisi"
+    },
     "select_all_renders": {
         "en": "Select / unselect all the renders",
         "fr": "Selectionne / déselectionne tous les rendus"
