@@ -209,6 +209,14 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
+    desc = TRADUCTOR['desc']['use_optix'][CONFIG_LANG]
+    use_optix: bpy.props.BoolProperty(
+        description=desc,
+        default=True,
+        name='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
     max_cost: bpy.props.FloatProperty(options={'HIDDEN', 'SKIP_SAVE'},)
     max_timeout: bpy.props.IntProperty(options={'HIDDEN', 'SKIP_SAVE'},)
     current_pack_index: bpy.props.IntProperty(options={'HIDDEN', 'SKIP_SAVE'},)

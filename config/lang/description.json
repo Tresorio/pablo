@@ -158,5 +158,9 @@
     "select_all_renders": {
         "en": "Select / unselect all the renders",
         "fr": "Selectionne / déselectionne tous les rendus"
+    },
+    "use_optix": {
+        "en": "Wether to use Optix instead of Cuda (GPU / Cycles only)",
+        "fr": "Utiliser Optix à la place de Cuda (GPU / Cyles seulement)"
     }
 }

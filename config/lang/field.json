@@ -200,5 +200,9 @@
     "decompress_results": {
         "en": "Decompress the results",
         "fr": "Décompresser les résultats"
+    },
+    "use_optix": {
+        "en": "Use Optix",
+        "fr": "Utiliser Optix"
     }
 }

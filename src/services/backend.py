@@ -25,6 +25,7 @@ from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.operators.async_loop import ensure_async_loop
 from src.config.enums import RenderStatus, RenderTypes
 from src.properties.render_form import get_render_type
+from src.properties.render_packs import get_selected_pack
 from src.properties.renders import TresorioRendersDetailsProps
 from bundle_modules.aiohttp import ClientResponseError, ClientResponse
 
@@ -52,6 +53,11 @@ def new_render() -> None:
     if render_type == RenderTypes.ANIMATION:
         number_of_frames = 1 + bpy.context.scene.frame_end - bpy.context.scene.frame_start
 
+    use_optix = props.use_optix
+    curr_pack = get_selected_pack()
+    if props.render_engines_list != 'CYCLES' or curr_pack is not None and curr_pack.gpu <= 0:
+        use_optix = False
+
     create_render = {
         'name': props.rendering_name,
         'engine': props.render_engines_list,
@@ -63,7 +69,7 @@ def new_render() -> None:
         'numberOfFarmers': props.nb_farmers,
         'numberOfFrames': number_of_frames,
         'autoTileSize': props.auto_tile_size,
-        'farmType': 'HYBRID',
+        'useOptix': use_optix,
     }
     launch_render = {
         'currentFrame': bpy.context.scene.frame_current,
