@@ -50,7 +50,7 @@ bl_info = {
     'file': '/$HOME/.config/blender/2.80/scripts/addons/tresorio',
     'location': 'Properties: Output > Tresorio',
     'description': 'Cloud distributed rendering for Blender, by Tresorio',
-    'wiki_url': 'http://192.168.15.20:3000',
+    'wiki_url': 'https://tresorio.com/tuto-cloud-rendering/',
 }
 
 TO_REGISTER_CLASSES = (
