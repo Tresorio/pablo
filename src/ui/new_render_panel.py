@@ -114,7 +114,8 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                     description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
                         pack.cost * render_form.nb_farmers,
                         pack.gpu * render_form.nb_farmers,
-                        pack.cpu * render_form.nb_farmers
+                        pack.cpu * render_form.nb_farmers,
+                        pack.ram // 1024 * render_form.nb_farmers  # converting RAM in Go
                     )
 
             row = box.row().split(factor=0.4)

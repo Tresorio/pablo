@@ -112,8 +112,8 @@
         "fr": "Redirige vers la page de Tresorio gérant l'achat de crédits"
     },
     "pack_description": {
-        "en": "{0:.2f} credits per hour {1} Gpu and {2} Cpu",
-        "fr": "{0:.2f} crédits par heure {1} Gpu et {2} Cpu"
+        "en": "{0:.2f} credits per hour {1} Gpu, {2} Cpu and {3}Go RAM",
+        "fr": "{0:.2f} crédits par heure {1} Gpu, {2} Cpu et {3}Go RAM"
     },
     "pack_textures": {
         "en": "Pack the textures into the scene so they will be uploaded with the file.",
