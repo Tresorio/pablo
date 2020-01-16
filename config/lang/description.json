@@ -56,8 +56,8 @@
         "fr": "Le pack de rendu qui sera utilisé pour votre rendu"
     },
     "timeout": {
-        "en": "Timeout before the rendering will be stopped. 0 will cosumme all your credits while the rendering is running. You will be refunded at the end of the render",
-        "fr": "Délai avant lequel le rendu sera stoppé. 0 consommera tout vos crédits le temps du rendu. Vous serez remboursé du temps restant à la fin du rendu"
+        "en": "Timeout before the rendering will be stopped. 0 will consume all your credits while the rendering is running. You will be refunded at the end of the render",
+        "fr": "Délai avant lequel le rendu sera stoppé. 0 consommera tous vos crédits le temps du rendu. Vous serez remboursé du temps restant à la fin du rendu"
     },
     "uploading": {
         "en": "Uploading file ...",
@@ -92,12 +92,12 @@
         "fr": "Supprime de manière permanente le rendu et ses résultats"
     },
     "delete_all_renders": {
-        "en": "Permantly deletes all the renders and their results",
-        "fr": "Supprime de manière permanente tous les rendus et leur résultats"
+        "en": "Permantly delete all the renders and their results",
+        "fr": "Supprime de manière permanente tous les rendus et leurs résultats"
     },
     "stop_render": {
         "en": "Stop the render and keep its results",
-        "fr": "Stop le rendu et garde ses résultats"
+        "fr": "Arrête le rendu et garde ses résultats"
     },
     "render_advancement_percent": {
         "en": "Advancement of the render",
@@ -112,8 +112,8 @@
         "fr": "Redirige vers la page de Tresorio gérant l'achat de crédits"
     },
     "pack_description": {
-        "en": "{0:.2f} credits per hour {1} Gpu and {2} Cpu",
-        "fr": "{0:.2f} crédits par heure {1} Gpu et {2} Cpu"
+        "en": "{0:.2f} credits per hour {1} Gpu, {2} Cpu and {3}Go RAM",
+        "fr": "{0:.2f} crédits par heure {1} Gpu, {2} Cpu et {3}Go RAM"
     },
     "pack_textures": {
         "en": "Pack the textures into the scene so they will be uploaded with the file.",
@@ -157,7 +157,7 @@
     },
     "select_all_renders": {
         "en": "Select / unselect all the renders",
-        "fr": "Selectionne / déselectionne tous les rendus"
+        "fr": "Sélectionne / déselectionne tous les rendus"
     },
     "use_optix": {
         "en": "Wether to use Optix instead of Cuda (GPU / Cycles only)",

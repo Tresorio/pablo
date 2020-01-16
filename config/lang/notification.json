@@ -89,7 +89,7 @@
     },
     "err_stop_render": {
         "en": "Error while stopping render",
-        "fr": "Erreur pendant le stop du rendu"
+        "fr": "Erreur pendant l'arrêt du rendu"
     },
     "err_launch_render": {
         "en": "Error while creating the new render",
@@ -113,7 +113,7 @@
     },
     "no_result_render": {
         "en": "No frames rendered",
-        "fr": "Pas des frames rendues"
+        "fr": "Pas de frames rendues"
     },
     "finished_render": {
         "en": "Finished",

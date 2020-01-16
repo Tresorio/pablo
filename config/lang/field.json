@@ -133,7 +133,7 @@
     },
     "advancement": {
         "en": "Advancement",
-        "fr": "Anvancée"
+        "fr": "Avancée"
     },
     "frame_singular": {
         "en": "frame",
@@ -205,4 +205,5 @@
         "en": "Use Optix",
         "fr": "Utiliser Optix"
     }
+
 }
