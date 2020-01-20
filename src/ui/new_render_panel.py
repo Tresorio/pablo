@@ -1,6 +1,6 @@
 """Render creation panel"""
 
-from src.ui.icons import TresorioIconsLoader as til
+from src.properties.render_packs import get_selected_pack
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 import bpy
 
@@ -91,6 +91,12 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                            text=TRADUCTOR['field']['pack_textures'][CONFIG_LANG])
             grid_flow.prop(render_form, 'auto_tile_size',
                            text=TRADUCTOR['field']['auto_tile_size'][CONFIG_LANG])
+            row = grid_flow.row()
+            curr_pack = get_selected_pack()
+            if render_form.render_engines_list != 'CYCLES' or curr_pack is not None and curr_pack.gpu <= 0:
+                row.enabled = False
+            row.prop(render_form, 'use_optix',
+                     text=TRADUCTOR['field']['use_optix'][CONFIG_LANG])
 
         # RENDERPACKS
         row = box.row()

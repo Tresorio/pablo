@@ -5,6 +5,17 @@ from src.properties.render_form import update_max_cost
 import bpy
 
 
+def get_selected_pack():
+    """
+        Returns the currently selected pack, None if there is no pack
+    """
+    packs = bpy.context.window_manager.tresorio_render_packs
+    for pack in packs:
+        if pack.is_selected:
+            return pack
+    return None
+
+
 def set_render_pack(pack: 'TresorioRenderPacksProps',
                     context: bpy.types.Context
                     ) -> None:
