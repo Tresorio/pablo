@@ -53,10 +53,12 @@ def new_render() -> None:
     if render_type == RenderTypes.ANIMATION:
         number_of_frames = 1 + bpy.context.scene.frame_end - bpy.context.scene.frame_start
 
-    use_optix = props.use_optix
-    curr_pack = get_selected_pack()
-    if props.render_engines_list != 'CYCLES' or curr_pack is not None and curr_pack.gpu <= 0:
-        use_optix = False
+    # Deactivating Optix for now, systematically send False to Gandalf
+    use_optix = False
+    # use_optix = props.use_optix
+    # curr_pack = get_selected_pack()
+    # if props.render_engines_list != 'CYCLES' or curr_pack is not None and curr_pack.gpu <= 0:
+        # use_optix = False
 
     create_render = {
         'name': props.rendering_name,
