@@ -30,22 +30,6 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         layout = self.layout
         box = layout.box()
 
-        # LAUNCH
-        if context.window_manager.tresorio_report_props.deleting_all_renders:
-            layout.label(text=TRADUCTOR['notif']
-                         ['deleting_all_renders'][CONFIG_LANG])
-        elif report_props.uploading_blend_file:
-            box.prop(render_form, 'upload_percent',
-                     text=TRADUCTOR['desc']['uploading'][CONFIG_LANG],
-                     slider=True)
-        elif report_props.packing_textures:
-            box.label(text=TRADUCTOR['notif']['packing'][CONFIG_LANG])
-        elif report_props.creating_render:
-            box.label(text=TRADUCTOR['notif']['creating_render'][CONFIG_LANG])
-        else:
-            box.operator('tresorio.render',
-                         text=TRADUCTOR['field']['launch'][CONFIG_LANG])
-
         # SETTINGS
         row = box.row()
         row_1 = row.row()
@@ -146,12 +130,17 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                       f' ({render_form.max_timeout} h)')
 
         # LAUNCH
-        if report_props.uploading_blend_file:
+        if context.window_manager.tresorio_report_props.deleting_all_renders:
+            layout.label(text=TRADUCTOR['notif']
+                         ['deleting_all_renders'][CONFIG_LANG])
+        elif report_props.uploading_blend_file:
             box.prop(render_form, 'upload_percent',
                      text=TRADUCTOR['desc']['uploading'][CONFIG_LANG],
                      slider=True)
         elif report_props.packing_textures:
-            box.label(text='Packing ...')
+            box.label(text=TRADUCTOR['notif']['packing'][CONFIG_LANG])
+        elif report_props.creating_render:
+            box.label(text=TRADUCTOR['notif']['creating_render'][CONFIG_LANG])
         else:
             box.operator('tresorio.render',
                          text=TRADUCTOR['field']['launch'][CONFIG_LANG])
