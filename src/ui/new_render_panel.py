@@ -79,8 +79,10 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             curr_pack = get_selected_pack()
             if render_form.render_engines_list != 'CYCLES' or curr_pack is not None and curr_pack.gpu <= 0:
                 row.enabled = False
-            row.prop(render_form, 'use_optix',
-                     text=TRADUCTOR['field']['use_optix'][CONFIG_LANG])
+
+            # Deactivating optix box for now
+            # row.prop(render_form, 'use_optix',
+                     # text=TRADUCTOR['field']['use_optix'][CONFIG_LANG])
 
         # RENDERPACKS
         row = box.row()
