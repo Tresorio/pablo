@@ -11,6 +11,10 @@
         "en": "Starts the render on Tresorio's servers",
         "fr": "Réalise le rendu sur les serveurs de Tresorio"
     },
+    "tresorio_upload": {
+        "en": "Starts uploading .blend file on Tresorio's servers",
+        "fr": "Réalise l'upload du fichier .blend sur les serveurs de Tresorio"
+    },
     "mail": {
         "en": "Email address of the Tresorio account",
         "fr": "Adresse mail de votre compte Tresorio"

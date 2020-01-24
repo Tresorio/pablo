@@ -144,5 +144,8 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         elif report_props.creating_render:
             box.label(text=TRADUCTOR['notif']['creating_render'][CONFIG_LANG])
         else:
-            box.operator('tresorio.render',
-                         text=TRADUCTOR['field']['launch'][CONFIG_LANG])
+            split = box.row().split(factor=0.5)
+            split.operator('tresorio.upload',
+                            text=TRADUCTOR['field']['upload'][CONFIG_LANG])
+            split.operator('tresorio.render',
+                            text=TRADUCTOR['field']['launch'][CONFIG_LANG])
