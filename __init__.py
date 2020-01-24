@@ -28,6 +28,7 @@ from src.ui.new_render_panel import TresorioNewRenderPanel
 from src.ui.user_renders_panel import TresorioRendersPanel, TresorioRendersList
 from src.operators.login import TresorioLoginOperator
 from src.operators.logout import TresorioLogoutOperator
+from src.operators.upload import TresorioUploadOperator
 from src.operators.render import TresorioRenderFrameOperator
 from src.operators.redirect import TresorioRedirectHomeOperator
 from src.operators.stop_render import TresorioStopRenderOperator
@@ -67,6 +68,7 @@ TO_REGISTER_CLASSES = (
     TresorioRedirectForgotPasswordOperator,
     TresorioRedirectRegisterOperator,
     TresorioRedirectHomeOperator,
+    TresorioUploadOperator,
     TresorioRenderFrameOperator,
     TresorioDownloadRenderResultsOperator,
     TresorioStopRenderOperator,

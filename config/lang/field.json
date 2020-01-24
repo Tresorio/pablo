@@ -83,6 +83,10 @@
         "en": "Configuration",
         "fr": "Configuration"
     },
+    "upload": {
+        "en": "Upload scene",
+        "fr": "Uploader la scene"
+    },
     "launch": {
         "en": "Launch",
         "fr": "Lancer"

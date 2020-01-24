@@ -136,8 +136,8 @@
         "fr": "Chargement des textures ..."
     },
     "creating_render": {
-        "en": "Creating render ...",
-        "fr": "Création du rendu ..."
+        "en": "Uploading file ...",
+        "fr": "Upload du fichier ..."
     },
     "deleting_all_renders": {
         "en": "Deleting renders ...",

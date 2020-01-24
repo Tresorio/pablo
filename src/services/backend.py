@@ -44,6 +44,15 @@ def logout_if_unauthorized(err: ClientResponseError) -> None:
         popup(TRADUCTOR['notif']['expired_session'][CONFIG_LANG], icon='ERROR')
 
 
+def new_upload() -> None:
+    """Upload a new blend file"""
+
+    token = bpy.context.window_manager.tresorio_user_props.token
+
+    future = _new_upload(token)
+    asyncio.ensure_future(future)
+
+
 def new_render() -> None:
     """Create and launch a new render"""
     props = bpy.context.scene.tresorio_render_form
@@ -60,27 +69,24 @@ def new_render() -> None:
     # if props.render_engines_list != 'CYCLES' or curr_pack is not None and curr_pack.gpu <= 0:
         # use_optix = False
 
-    create_render = {
+    launch_render = {
         'name': props.rendering_name,
         'engine': props.render_engines_list,
         'outputFormat': props.output_formats_list,
         'timeout': props.timeout,
         'farm': props.render_pack,
         'renderType': render_type,
-        'size': os.path.getsize(bpy.data.filepath),
         'numberOfFarmers': props.nb_farmers,
         'numberOfFrames': number_of_frames,
         'autoTileSize': props.auto_tile_size,
         'useOptix': use_optix,
-    }
-    launch_render = {
         'currentFrame': bpy.context.scene.frame_current,
         'startingFrame': bpy.context.scene.frame_start,
         'endingFrame': bpy.context.scene.frame_end,
     }
     token = bpy.context.window_manager.tresorio_user_props.token
 
-    future = _new_render(token, create_render, launch_render)
+    future = _new_render(token, launch_render)
     asyncio.ensure_future(future)
 
 
@@ -366,13 +372,8 @@ async def _update_rendering(render: TresorioRendersDetailsProps,
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
 
-
-async def _new_render(token: str,
-                      create_render: Dict[str, Any],
-                      launch_render: Dict[str, Any]
-                      ) -> Coroutine:
-    """This function creates a new render, packs the textures, uploads the blend
-       file, and finally launches the rendering."""
+async def _new_upload(token: str) -> Coroutine:
+    """This function upload a new .blend file"""
 
     blendfile = bpy.data.filepath
     render_form = bpy.context.scene.tresorio_render_form
@@ -394,7 +395,8 @@ async def _new_render(token: str,
     try:
         async with Platform() as plt:
             bpy.context.window_manager.tresorio_report_props.creating_render = True
-            render_info = await plt.req_create_render(token, create_render, jsonify=True)
+            render_info = await plt.req_create_render(token, os.path.getsize(bpy.data.filepath), jsonify=True)
+            bpy.context.scene.tresorio_render_form.project_id = render_info['id']
         try:
             await _update_list_renderings(token)
         except Exception:
@@ -425,9 +427,18 @@ async def _new_render(token: str,
         bpy.context.scene.tresorio_render_form.upload_percent = 0.0
         bpy.context.window_manager.tresorio_report_props.creating_render = False
 
+async def _new_render(token: str,
+                      launch_render: Dict[str, Any]
+                      ) -> Coroutine:
+    """This function creates a new render, packs the textures, uploads the blend
+       file, and finally launches the rendering."""
+
+    render_form = bpy.context.scene.tresorio_render_form
+
     try:
         async with Platform() as plt:
-            await plt.req_launch_render(token, render_info['id'], launch_render, jsonify=True)
+            launch_render['projectId'] = render_form.project_id
+            await plt.req_launch_render(token, launch_render, jsonify=True)
             await _update_list_renderings(token)
     except Exception as err:
         BACKEND_LOGGER.error(err)

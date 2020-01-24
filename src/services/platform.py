@@ -122,7 +122,6 @@ class Platform:
     @_platformrequest.__func__
     async def req_launch_render(self,
                                 token: str,
-                                render_id: str,
                                 launch_render_params: Dict[str, Any]
                                 ) -> aiohttp.ClientResponse:
         """Launch a render
@@ -135,20 +134,29 @@ class Platform:
         Example:
             >>> async with Platform() as plt:
             ...     token = 'eyJ0eXAiOiJKV1QiLC'
-            ...     render_id = '5c5793e2-055d-11ea-9a9f-362b9e155667'
             ...     params = {
+            ...         'name': props.rendering_name,
+            ...         'engine': props.render_engines_list,
+            ...         'outputFormat': props.output_formats_list,
+            ...         'timeout': props.timeout,
+            ...         'farm': props.render_pack,
+            ...         'renderType': render_type,
+            ...         'numberOfFarmers': props.nb_farmers,
+            ...         'numberOfFrames': number_of_frames,
+            ...         'autoTileSize': props.auto_tile_size,
+            ...         'useOptix': use_optix,
             ...         'currentFrame': 0,
             ...         'startingFrame': 12,
             ...         'endingFrame': 27,
+            ...         'projectID': 1,
             ...     }
-            ...     res = await plt.req_launch_render(token, render_id, params)
+            ...     res = await plt.req_launch_render(token, params)
         """
         headers = {
             'Authorization': f'JWT {token}',
             'Content-Type': 'application/json'
         }
-        url = urljoin(
-            self.url, API_CONFIG['routes']['launch_render'].format(render_id))
+        url = urljoin(self.url, API_CONFIG['routes']['launch_render'])
         return await self.session.post(url,
                                        json=launch_render_params,
                                        headers=headers,
@@ -262,7 +270,7 @@ class Platform:
     @_platformrequest.__func__
     async def req_create_render(self,
                                 token: str,
-                                render: Dict[str, Any]
+                                renderSize: int
                                 ) -> aiohttp.ClientResponse:
         """Create a render
 
@@ -271,9 +279,9 @@ class Platform:
 
         Example:
             >>> async with Platform() as plt:
-            ...     render = { ... }
+            ...     renderSize = 42
             ...     token = 'eyJ0eXAiOiJKV1QiLC'
-            ...     res = await plt.req_create_render(token, render)
+            ...     res = await plt.req_create_render(token, renderSize)
         """
         headers = {
             'Authorization': f'JWT {token}',
@@ -281,7 +289,7 @@ class Platform:
         }
         url = urljoin(self.url, API_CONFIG['routes']['create_render'])
         return await self.session.post(url,
-                                       json=render,
+                                       json={'size': renderSize},
                                        raise_for_status=True,
                                        headers=headers,
                                        ssl_context=SSL_CONTEXT)
