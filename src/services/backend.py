@@ -412,13 +412,8 @@ async def _new_upload(token: str) -> Coroutine:
         popup_msg = TRADUCTOR['notif']['err_upl_blendfile'][CONFIG_LANG]
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
-            if err.status == HTTPStatus.FORBIDDEN:
-                popup_msg = TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG]
-            elif err.status == HTTPStatus.SERVICE_UNAVAILABLE:
+            if err.status == HTTPStatus.SERVICE_UNAVAILABLE:
                 popup_msg = TRADUCTOR['notif']['not_enough_servers'][CONFIG_LANG]
-            elif err.status == HTTPStatus.CONFLICT:
-                popup_msg = TRADUCTOR['notif']['render_name_already_taken'][CONFIG_LANG].format(
-                    render_form.rendering_name)
         if render_info is not None:
             await _delete_render(token, render_info['id'])
         popup(msg=popup_msg, icon='ERROR')
@@ -445,8 +440,15 @@ async def _new_render(token: str,
         popup_msg = TRADUCTOR['notif']['err_launch_render'][CONFIG_LANG]
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
-            if err.status == HTTPStatus.SERVICE_UNAVAILABLE:
+            if err.status == HTTPStatus.FORBIDDEN:
+                popup_msg = TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG]
+            elif err.status == HTTPStatus.SERVICE_UNAVAILABLE:
                 popup_msg = TRADUCTOR['notif']['not_enough_servers'][CONFIG_LANG]
+            elif err.status == HTTPStatus.CONFLICT:
+                popup_msg = TRADUCTOR['notif']['render_name_already_taken'][CONFIG_LANG].format(
+                    render_form.rendering_name)
+            elif err.status == HTTPStatus.BAD_REQUEST:
+                popup_msg = TRADUCTOR['notif']['no_scene'][CONFIG_LANG]
         popup(msg=popup_msg, icon='ERROR')
 
 

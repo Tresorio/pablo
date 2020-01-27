@@ -56,8 +56,8 @@
         "fr": "Erreur lors de l'obtention des packs de rendu disponibles"
     },
     "err_upl_blendfile": {
-        "en": "Error while uploading blend file",
-        "fr": "Erreur lors de l'envoi du fichier blend"
+        "en": "Error while uploading blend file. Please try again",
+        "fr": "Erreur lors de l'envoi du fichier blend. Veuillez réessayer"
     },
     "expired_session": {
         "en": "Your session expired, please reconnect",
@@ -72,8 +72,8 @@
         "fr": "Erreur pendant la récupération de votre rendu"
     },
     "err_download_results": {
-        "en": "Couldn't download your results",
-        "fr": "Erreur pendant le téléchargement des résultats"
+        "en": "Couldn't download your results. Please try again",
+        "fr": "Erreur pendant le téléchargement des résultats. Veuillez réessayer"
     },
     "refreshing": {
         "en": "Refreshing ...",
@@ -88,16 +88,16 @@
         "fr": "Téléchargement ..."
     },
     "err_stop_render": {
-        "en": "Error while stopping render",
-        "fr": "Erreur pendant l'arrêt du rendu"
+        "en": "Error while stopping render. Please try again",
+        "fr": "Erreur pendant l'arrêt du rendu. Veuillez réessayer"
     },
     "err_launch_render": {
-        "en": "Error while creating the new render",
-        "fr": "Erreur pendant la création du nouveau rendu"
+        "en": "Error while creating the new render. Please try again",
+        "fr": "Erreur pendant la création du nouveau rendu. Veuillez réessayer"
     },
     "err_delete_render": {
-        "en": "Error while deleting render",
-        "fr": "Erreur pendant la suppression du rendu"
+        "en": "Error while deleting render. Please try again",
+        "fr": "Erreur pendant la suppression du rendu. Veuillez réessayer"
     },
     "launching": {
         "en": "Launching ...",
@@ -122,6 +122,10 @@
     "not_enough_servers": {
         "en": "We can't handle your request as not enough resources are available on our servers. Please retry later",
         "fr": "Nous ne pouvous pas traiter votre requête car nos serveurs ne disposent plus d'assez de ressources. Veuillez réessayer plus tard"
+    },
+    "no_scene": {
+        "en": "No blend scene found for this project. You should upload one first!",
+        "fr": "Aucune scene blender disponible pour ce projet. Vous devriez en uploader une!"
     },
     "err_download_logs": {
         "en": "Error while downloading the logs",
