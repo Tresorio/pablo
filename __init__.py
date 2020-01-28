@@ -35,6 +35,7 @@ from src.operators.stop_render import TresorioStopRenderOperator
 from src.operators.redirect import TresorioRedirectRegisterOperator
 from src.operators.delete_render import TresorioDeleteRenderOperator
 from src.operators.redirect import TresorioRedirectGetCreditsOperator
+from src.operators.redirect import TresorioRedirectDownloadAddon
 from src.operators.redirect import TresorioRedirectForgotPasswordOperator
 from src.operators.delete_all_renders import TresorioDeleteAllRendersOperator
 from src.operators.download_render_results import TresorioDownloadRenderResultsOperator
@@ -43,9 +44,11 @@ from src.operators.logout import logout
 from src.operators.async_loop import setup_asyncio_executor
 from src.config.user_json import set_user_config
 
+from src.config.api import API_CONFIG
+
 bl_info = {
     'name': 'Tresorio cloud rendering',
-    'version': (0, 0, 1),
+    'version': (1, 0, 0),
     'blender': (2, 80, 0),
     'category': 'Output',
     'file': '/$HOME/.config/blender/2.80/scripts/addons/tresorio',
@@ -53,6 +56,8 @@ bl_info = {
     'description': 'Cloud distributed rendering for Blender, by Tresorio',
     'wiki_url': 'https://tresorio.com/en/how-to-render-in-blender-using-tresorio-cloud/',
 }
+
+assert bl_info['version'] == (API_CONFIG['version']['major'], API_CONFIG['version']['minor'], API_CONFIG['version']['patch']), "Version in config.json must match the bl_info"
 
 TO_REGISTER_CLASSES = (
     # Properties
@@ -76,6 +81,7 @@ TO_REGISTER_CLASSES = (
     TresorioRedirectGetCreditsOperator,
     TresorioDeleteAllRendersOperator,
     TresorioAsyncLoopModalOperator,
+    TresorioRedirectDownloadAddon,
     # UI
     TresorioMainPanel,
     TresorioRendersPanel,

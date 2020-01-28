@@ -1,9 +1,12 @@
 """Main panel"""
 
 from src.ui.draw_connection_panel import draw_connection_panel
+from src.ui.draw_version_panel import draw_version_panel
 from src.ui.icons import TresorioIconsLoader as til
+from src.services.loggers import BACKEND_LOGGER
+from src.config.langs import TRADUCTOR, CONFIG_LANG
+from src.config.api import API_CONFIG
 import bpy
-
 
 class TresorioMainPanel(bpy.types.Panel):
     """Main panel"""
@@ -27,5 +30,14 @@ class TresorioMainPanel(bpy.types.Panel):
         user_props = context.window_manager.tresorio_user_props
         layout = self.layout
 
-        if not user_props.is_logged:
+        latest_version = user_props.latest_version
+
+        actual_version = f"{API_CONFIG['version']['major']}.{API_CONFIG['version']['minor']}.{API_CONFIG['version']['patch']}"
+
+        # Get version from gandalf
+        # If pas à jour, panel mettre à jour
+
+        if actual_version != latest_version:
+            draw_version_panel(layout, context, actual_version, latest_version)
+        elif not user_props.is_logged:
             draw_connection_panel(layout, context)

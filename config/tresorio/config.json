@@ -15,6 +15,7 @@
         "homepage": "https://www.tresorio.com"
     },
     "routes": {
+        "latest_version": "/addon/version",
         "forgot_password": "/password",
         "register": "/register",
         "signin": "/auth/signin",
@@ -26,6 +27,12 @@
         "list_renderings_details": "/user/products/render",
         "rendering_details": "/user/products/render/{0}",
         "stop_render": "/user/products/render/{0}/stop",
-        "delete_render": "/user/products/render/{0}"
+        "delete_render": "/user/products/render/{0}",
+        "download_addon": "/renderings/addon"
+    },
+    "version": {
+        "major": 1,
+        "minor": 0,
+        "patch": 0
     }
 }

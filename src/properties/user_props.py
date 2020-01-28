@@ -3,8 +3,21 @@
 from src.config.user_json import USER_CONFIG
 from src.utils.password import switch_password_visibility
 from src.config.langs import set_new_lang, TRADUCTOR, CONFIG_LANG, ALL_LANGS
+from collections.abc import Coroutine
+from src.services.loggers import BACKEND_LOGGER
+from src.services.platform import Platform
+import asyncio
 import bpy
 
+async def fetch_latest_version() -> str:
+    latest_version = '0.0.0'
+    try:
+        async with Platform() as plt:
+            res = await plt.req_latest_version()
+    except Exception as err:
+        BACKEND_LOGGER.error(err)
+        popup_msg = TRADUCTOR['notif']['cant_connect_to_tresorio'][CONFIG_LANG]
+    return await res.text()
 
 class TresorioUserProps(bpy.types.PropertyGroup):
     """User properties"""
@@ -12,6 +25,12 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         name='',
         options={'HIDDEN', 'SKIP_SAVE'},
         default=False,
+    )
+
+    latest_version: bpy.props.StringProperty(
+        name='latest_version',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        default=asyncio.get_event_loop().run_until_complete(fetch_latest_version()),
     )
 
     token: bpy.props.StringProperty(

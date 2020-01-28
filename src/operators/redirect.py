@@ -78,3 +78,14 @@ class TresorioRedirectHomeOperator(RedirectorOperator):
     def __init__(self):
         super().__init__()
         self.url = API_CONFIG[MODE]['homepage']
+
+class TresorioRedirectDownloadAddon(RedirectorOperator):
+    """This operator redirects to the download plugin page."""
+    ___doc___ = TRADUCTOR['desc']['redirect_download'][CONFIG_LANG]
+
+    bl_idname = 'tresorio.download_addon'
+    bl_label = 'Tresorio Addon'
+
+    def __init__(self):
+        super().__init__()
+        self.url = API_CONFIG[MODE]['frontend'] + API_CONFIG['routes']['download_addon']

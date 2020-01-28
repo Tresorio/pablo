@@ -96,6 +96,13 @@ class Platform:
         return wrapper
 
     @_platformrequest.__func__
+    async def req_latest_version(self) -> aiohttp.ClientResponse:
+        url = urljoin(self.url, API_CONFIG['routes']['latest_version'])
+        return await self.session.get(url,
+            raise_for_status=True,
+            ssl_context=SSL_CONTEXT)
+
+    @_platformrequest.__func__
     async def req_connect_to_tresorio(self,
                                       credentials: Dict[str, str]
                                       ) -> aiohttp.ClientResponse:
