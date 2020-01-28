@@ -1,4 +1,24 @@
 {
+    "redirect_download": {
+        "en": "Redirects to the download addon page of Tresorio",
+        "fr": "Redirige vers la page de téléchargement de l'addon de Tresorio"
+    },
+    "new_version": {
+        "en": "A new version is available",
+        "fr": "Une nouvelle version est disponible"
+    },
+    "actual_version": {
+        "en": "Current version",
+        "fr": "Version actuelle"
+    },
+    "latest_version": {
+        "en": "Latest version",
+        "fr": "Dernière version"
+    },
+    "download_latest": {
+        "en": "Download latest available version",
+        "fr": "Télécharger la dernière version disponible"
+    },
     "tresorio_login": {
         "en": "Login to Tresorio",
         "fr": "Connexion à Tresorio"

@@ -451,7 +451,6 @@ async def _new_render(token: str,
                 popup_msg = TRADUCTOR['notif']['no_scene'][CONFIG_LANG]
         popup(msg=popup_msg, icon='ERROR')
 
-
 async def _stop_render(token: str,
                        render: TresorioRendersDetailsProps
                        ) -> Coroutine:

@@ -1,4 +1,8 @@
 {
+    "cant_connect_to_tresorio": {
+        "en": "Can't connect to Tresorio. You should relaunch the addon",
+        "fr": "Impossible de se connecter à Tresorio. Veuillez relancer l'addon"
+    },
     "no_password": {
         "en": "Please enter a valid password",
         "fr": "Veuillez entrer un mot de passe valide"
