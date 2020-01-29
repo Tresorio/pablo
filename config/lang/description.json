@@ -64,8 +64,8 @@
         "fr": "Redirige vers la page principale de Tresorio"
     },
     "rendering_name": {
-        "en": "Name to identify your new rendering. It doesn't need to be unique",
-        "fr": "Nom de votre nouveau rendu. Il ne nécessite pas d'être unique"
+        "en": "Name to identify your new rendering. Must be unique",
+        "fr": "Nom de votre nouveau rendu. Doit être unique"
     },
     "render_engines_list": {
         "en": "The render engine that will be used for this rendering",
