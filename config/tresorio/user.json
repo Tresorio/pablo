@@ -1,6 +1,6 @@
 {
     "lang": "en",
     "email": "",
-    "open_image_on_download": false,
-    "decompress_results": false
+    "open_image_on_download": true,
+    "decompress_results": true
 }
