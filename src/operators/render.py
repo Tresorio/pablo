@@ -36,11 +36,6 @@ class TresorioRenderFrameOperator(bpy.types.Operator):
                   [CONFIG_LANG], icon='ERROR')
             return {'CANCELLED'}
 
-        if not bpy.data.is_saved or bpy.data.is_dirty:
-            popup(TRADUCTOR['notif']['file_not_saved']
-                  [CONFIG_LANG], icon='ERROR')
-            return {'CANCELLED'}
-
         new_render()
 
         return {'FINISHED'}
