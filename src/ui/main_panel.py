@@ -37,7 +37,9 @@ class TresorioMainPanel(bpy.types.Panel):
         # Get version from gandalf
         # If pas à jour, panel mettre à jour
 
-        if actual_version != latest_version:
+        major, minor, patch = map(int, latest_version.split('.'))
+
+        if major != API_CONFIG['version']['major'] or minor != API_CONFIG['version']['minor']:
             draw_version_panel(layout, context, actual_version, latest_version)
         elif not user_props.is_logged:
             draw_connection_panel(layout, context)
