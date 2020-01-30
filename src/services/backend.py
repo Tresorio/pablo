@@ -180,7 +180,7 @@ def _download_frames(fragments: List[Dict[str, Any]],
         with SyncNas() as nas:
             for frag in fragments:
                 nas.url = frag['ip']
-                res = nas.download(frag['jwt'], folder='artifacts')
+                res = nas.download(frag['jwt'], folder='')
                 zfilepath = render_result_path
                 with open(zfilepath, 'wb') as file:
                     shutil.copyfileobj(res.raw, file)
@@ -532,6 +532,7 @@ def _fill_render_details(render: TresorioRendersDetailsProps,
     render.rendered_frames = res['finishedFrames']
     render.number_farmers = res['numberOfFarmers']
     render.progression = res['progression']
+    render.number_of_fragments = res['fragmentCount']
     if is_new and render.status != RenderStatus.FINISHED:
         render.created_at = datetime.strptime(
             res['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ').timestamp()

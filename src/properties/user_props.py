@@ -14,10 +14,11 @@ async def fetch_latest_version() -> str:
     try:
         async with Platform() as plt:
             res = await plt.req_latest_version()
+            latest_version = await res.text()
     except Exception as err:
         BACKEND_LOGGER.error(err)
         popup_msg = TRADUCTOR['notif']['cant_connect_to_tresorio'][CONFIG_LANG]
-    return await res.text()
+    return latest_version
 
 class TresorioUserProps(bpy.types.PropertyGroup):
     """User properties"""
