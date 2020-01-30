@@ -203,7 +203,7 @@ def update_renderings_uptime() -> None:
     """Update the uptime of all non finished renders"""
     renders = bpy.context.window_manager.tresorio_renders_details
     for render in renders:
-        if render.status != RenderStatus.FINISHED:
+        if render.status != RenderStatus.FINISHED and render.status != RenderStatus.ERROR:
             render.uptime = get_uptime(render.created_at)
 
 
