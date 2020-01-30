@@ -10,6 +10,7 @@ class RenderStatus():
     RUNNING = 'RUNNING'
     STOPPING = 'STOPPING'
     LAUNCHING = 'LAUNCHING'
+    ERROR = 'ERROR'
 
 
 @dataclass
