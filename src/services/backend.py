@@ -186,13 +186,16 @@ def _download_frames(fragments: List[Dict[str, Any]],
                     shutil.copyfileobj(res.raw, file)
                 if decompress_results:
                     with ZipFile(zfilepath) as zfile:
-                        extract_path = os.path.dirname(render_result_path)
+                        extract_path = os.path.splitext(zfilepath)[0]
                         zfile.extractall(path=extract_path)
-                        os.remove(zfilepath)
                         if open_on_download:
-                            image = zfile.namelist()[0]
+                            if render_details['status'] != RenderStatus.ERROR:
+                                image = zfile.namelist()[0].rstrip('/')
+                            else:
+                                image = ""
                             image_path = os.path.join(extract_path, image)
                             open_image(image_path)
+                    os.remove(zfilepath)
         UPDATE_QUEUE.put(('finished_download', render_details['id']))
     except Exception as err:
         BACKEND_LOGGER.error(err)
