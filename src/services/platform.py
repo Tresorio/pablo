@@ -336,7 +336,7 @@ class Platform:
                                         token: str,
                                         render_id: str
                                         ) -> aiohttp.ClientResponse:
-        """Fetch the renderpacks information
+        """Fetch the details of a specific rendering
 
         Args:
             token: The token given at the connection to Tresorio's API.
@@ -346,7 +346,7 @@ class Platform:
             >>> async with Platform() as plt:
             ...     token = 'eyJ0eXAiOiJKV1QiLC'
             ...     render_id = '23kze239'
-            ...     res = await plt.req_get_renderpacks(token, render_id)
+            ...     res = await plt.req_get_rendering_details(token, render_id)
         """
         headers = {
             'Authorization': f'JWT {token}',
