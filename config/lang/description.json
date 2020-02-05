@@ -36,7 +36,7 @@
         "fr": "Réalise l'upload du fichier .blend sur les serveurs de Tresorio"
     },
     "mail": {
-        "en": "Email address of the Tresorio account",
+        "en": "Email address of your Tresorio account",
         "fr": "Adresse mail de votre compte Tresorio"
     },
     "password": {
@@ -184,7 +184,7 @@
         "fr": "Sélectionne / déselectionne tous les rendus"
     },
     "use_optix": {
-        "en": "Wether to use Optix instead of Cuda (GPU / Cycles only)",
+        "en": "Whether to use Optix instead of Cuda (GPU / Cycles only)",
         "fr": "Utiliser Optix à la place de Cuda (GPU / Cyles seulement)"
     }
 }
