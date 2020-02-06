@@ -1,6 +1,5 @@
 """Tresorio's only interace with operators"""
 
-from zipfile import ZipFile
 from http import HTTPStatus
 from datetime import datetime
 from typing import Dict, Any, List
@@ -16,7 +15,7 @@ import bpy
 from src.ui.popup import popup
 from src.operators.logout import logout
 from src.services.platform import Platform
-from src.utils.open_image import open_image
+from src.utils.decompress import decompress_rendering_results
 from src.utils.force_sync import force_sync
 from src.services.nas import AsyncNas, SyncNas
 from src.services.loggers import BACKEND_LOGGER
@@ -185,17 +184,8 @@ def _download_frames(fragments: List[Dict[str, Any]],
                 with open(zfilepath, 'wb') as file:
                     shutil.copyfileobj(res.raw, file)
                 if decompress_results:
-                    with ZipFile(zfilepath) as zfile:
-                        extract_path = os.path.splitext(zfilepath)[0]
-                        zfile.extractall(path=extract_path)
-                        if open_on_download:
-                            if render_details['status'] != RenderStatus.ERROR:
-                                image = zfile.namelist()[0].rstrip('/')
-                            else:
-                                image = ""
-                            image_path = os.path.join(extract_path, image)
-                            open_image(image_path)
-                    os.remove(zfilepath)
+                    decompress_rendering_results(zfilepath, open_on_download, render_details)
+
         UPDATE_QUEUE.put(('finished_download', render_details['id']))
     except Exception as err:
         BACKEND_LOGGER.error(err)
