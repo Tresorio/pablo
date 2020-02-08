@@ -12,7 +12,7 @@ import asyncio
 import functools
 
 import bpy
-from src.ui.popup import popup
+from src.ui.popup import popup, alert
 from src.operators.logout import logout
 from src.services.platform import Platform
 from src.utils.decompress import decompress_rendering_results
@@ -172,8 +172,9 @@ def delete_all_renders():
 def _download_frames(fragments: List[Dict[str, Any]],
                      render_result_path: str,
                      render_details: Dict[str, Any],
+                     render_name: str,
                      decompress_results: bool = False,
-                     open_on_download: bool = False,
+                     open_on_download: bool = False
                      ) -> None:
     try:
         with SyncNas() as nas:
@@ -190,6 +191,7 @@ def _download_frames(fragments: List[Dict[str, Any]],
     except Exception as err:
         BACKEND_LOGGER.error(err)
         UPDATE_QUEUE.put(('finished_download', render_details['id']))
+        raise
 
 
 def update_renderings_uptime() -> None:
@@ -219,16 +221,17 @@ async def _download_render_results(token: str,
             fragments,
             render_result_path,
             render_details,
+            render.name,
             decompress_results,
-            open_on_dl
+            open_on_dl,
         )
         render.downloading = True
         await loop.run_in_executor(None, download)
     except Exception as err:
         BACKEND_LOGGER.error(err)
         UPDATE_QUEUE.put(('finished_download', render_details['id']))
-        popup(TRADUCTOR['notif']['err_download_results']
-              [CONFIG_LANG], icon='ERROR')
+        alert(TRADUCTOR['notif']['err_download_results']
+              [CONFIG_LANG])
 
 
 async def _update_user_info(token: str,
@@ -379,8 +382,8 @@ async def _new_upload(token: str) -> Coroutine:
             bpy.ops.wm.save_as_mainfile(filepath=blendfile)
     except RuntimeError as err:
         BACKEND_LOGGER.error(err)
-        popup(TRADUCTOR['notif']['cant_pack_textures']
-              [CONFIG_LANG], icon='ERROR')
+        alert(TRADUCTOR['notif']['cant_pack_textures']
+              [CONFIG_LANG])
         return
     finally:
         bpy.context.window_manager.tresorio_report_props.packing_textures = False
@@ -409,7 +412,7 @@ async def _new_upload(token: str) -> Coroutine:
                 popup_msg = TRADUCTOR['notif']['not_enough_servers'][CONFIG_LANG]
         if render_info is not None:
             await _delete_render(token, render_info['id'])
-        popup(msg=popup_msg, icon='ERROR')
+        alert(popup_msg)
         return
     finally:
         bpy.context.scene.tresorio_render_form.upload_percent = 0.0
@@ -455,7 +458,7 @@ async def _stop_render(token: str,
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
-        popup(TRADUCTOR['notif']['err_stop_render'][CONFIG_LANG], icon='ERROR')
+        alert(TRADUCTOR['notif']['err_stop_render'][CONFIG_LANG])
     else:
         await _update_rendering(render, token)
 
@@ -471,8 +474,7 @@ async def _delete_render(token: str,
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
-        popup(TRADUCTOR['notif']['err_delete_render'][CONFIG_LANG],
-              icon='ERROR')
+        alert(TRADUCTOR['notif']['err_delete_render'][CONFIG_LANG])
 
 
 async def _delete_all_renders(token: str) -> Coroutine:

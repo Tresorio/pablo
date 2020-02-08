@@ -2,7 +2,6 @@
 
 import bpy
 
-
 def popup(msg: str = '',
           title: str = '',
           icon: str = 'NONE',
@@ -24,3 +23,7 @@ def popup(msg: str = '',
         window_manager.layout.label(text=msg, icon=icon, icon_value=icon_value)
 
     bpy.context.window_manager.popup_menu(draw, title=title)
+
+def alert(msg: str = '') -> None:
+
+    bpy.ops.object.error_popup('INVOKE_DEFAULT', error_msg=msg)
