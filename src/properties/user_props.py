@@ -7,6 +7,7 @@ from collections.abc import Coroutine
 from src.services.loggers import BACKEND_LOGGER
 from src.services.platform import Platform
 import asyncio
+from src.config.api import API_CONFIG
 import bpy
 
 async def fetch_latest_version() -> str:
@@ -18,6 +19,7 @@ async def fetch_latest_version() -> str:
     except Exception as err:
         BACKEND_LOGGER.error(err)
         popup_msg = TRADUCTOR['notif']['cant_connect_to_tresorio'][CONFIG_LANG]
+        latest_version = f"{API_CONFIG['version']['major']}.{API_CONFIG['version']['minor']}.{API_CONFIG['version']['patch']}"
     return latest_version
 
 class TresorioUserProps(bpy.types.PropertyGroup):
