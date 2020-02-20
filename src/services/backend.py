@@ -410,8 +410,6 @@ async def _new_upload(token: str) -> Coroutine:
             logout_if_unauthorized(err)
             if err.status == HTTPStatus.SERVICE_UNAVAILABLE:
                 popup_msg = TRADUCTOR['notif']['not_enough_servers'][CONFIG_LANG]
-        if render_info is not None:
-            await _delete_render(token, render_info['id'])
         alert(popup_msg)
         return
     finally:
