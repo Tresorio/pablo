@@ -1,33 +1,9 @@
 stages:
-    - bundle
-    - bundle_release
-    - dev_deploy
+    - release
 
-job_bundle:
-    stage: bundle
+release:
+    stage: release
     image: alpine
-    tags:
-        - unit-docker
-    script:
-        - mkdir tresorio
-        - cp -r bundle_modules ./tresorio/bundle_modules
-        - cp -r config ./tresorio/config
-        - cp -r src ./tresorio/src
-        - cp -r __init__.py ./tresorio/__init__.py
-        - cp -r assets ./tresorio/assets
-    artifacts:
-        name: "tresorio"
-        paths:
-            - tresorio
-        expire_in: 1 week
-    except:
-        - tags
-
-job_bundle_release:
-    stage: bundle_release
-    image: alpine
-    tags:
-        - unit-docker
     script:
         - rm -rf tresorio
         - mkdir tresorio
@@ -42,19 +18,3 @@ job_bundle_release:
             - tresorio
     only:
        - tags
-
-job_dev_deploy:
-    stage: dev_deploy
-    tags:
-        - dev
-    needs:
-        - job: job_bundle_release
-          artifacts: true
-    script:
-      - zip -r /etc/gandalf/addon/blender/tresorio-$CI_COMMIT_TAG.zip tresorio
-      - rm -rf tresorio
-    only:
-       - tags
-    except:
-       variables:
-           - $CI_COMMIT_REF_NAME != "dev"
