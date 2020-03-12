@@ -2,9 +2,8 @@
 
 from src.ui.draw_connection_panel import draw_connection_panel
 from src.ui.draw_version_panel import draw_version_panel
+from src.ui.draw_advanced_settings_pannel import draw_advanced_settings_panel
 from src.ui.icons import TresorioIconsLoader as til
-from src.services.loggers import BACKEND_LOGGER
-from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.config.api import API_CONFIG
 import bpy
 
@@ -41,5 +40,7 @@ class TresorioMainPanel(bpy.types.Panel):
 
         if major != API_CONFIG['version']['major'] or minor != API_CONFIG['version']['minor']:
             draw_version_panel(layout, context, actual_version, latest_version)
-        elif not user_props.is_logged:
+        elif not user_props.is_logged and not user_props.advanced_settings:
             draw_connection_panel(layout, context)
+        elif user_props.advanced_settings:
+            draw_advanced_settings_panel(layout, context)

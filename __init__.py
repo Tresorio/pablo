@@ -43,6 +43,10 @@ from src.operators.download_render_results import TresorioDownloadRenderResultsO
 from src.operators.async_loop import TresorioAsyncLoopModalOperator
 from src.operators.logout import logout
 from src.operators.async_loop import setup_asyncio_executor
+from src.operators.advanced_settings import TresorioAdvancedSettingsNavigationOutOperator,\
+    TresorioAdvancedSettingsNavigationInOperator,\
+    TresorioAdvancedSettingsResetOperator,\
+    TresorioAdvancedSettingsOperator
 from src.config.user_json import set_user_config
 
 from src.config.api import API_CONFIG
@@ -84,6 +88,10 @@ TO_REGISTER_CLASSES = (
     TresorioDeleteAllRendersOperator,
     TresorioAsyncLoopModalOperator,
     TresorioRedirectDownloadAddon,
+    TresorioAdvancedSettingsNavigationInOperator,
+    TresorioAdvancedSettingsNavigationOutOperator,
+    TresorioAdvancedSettingsOperator,
+    TresorioAdvancedSettingsResetOperator,
     # UI
     TresorioMainPanel,
     TresorioRendersPanel,

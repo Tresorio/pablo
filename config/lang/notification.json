@@ -150,5 +150,9 @@
     "deleting_all_renders": {
         "en": "Deleting renders ...",
         "fr": "Suppression des rendus ..."
+    },
+    "no_ip_address": {
+        "en": "Please enter a valid IP address",
+        "fr": "Veuillez entrer une adresse IP valide"
     }
 }

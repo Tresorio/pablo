@@ -7,7 +7,8 @@ from collections.abc import Coroutine
 from src.services.loggers import BACKEND_LOGGER
 from src.services.platform import Platform
 import asyncio
-from src.config.api import API_CONFIG
+from src.config.api import API_CONFIG, MODE
+from urllib.parse import urlparse
 import bpy
 
 async def fetch_latest_version() -> str:
@@ -116,6 +117,37 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         name='',
         description='',
         update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    advanced_settings: bpy.props.BoolProperty(
+        name='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        default=False,
+    )
+
+    parsed_url = urlparse(API_CONFIG[MODE]['backend'])
+    backend_ip_address: bpy.props.StringProperty(
+        default=parsed_url.hostname,
+        name='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    port = ''
+    if parsed_url.port:
+        port = str(parsed_url.port)
+    backend_port: bpy.props.StringProperty(
+        default=port,
+        name='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    https = False
+    if parsed_url.scheme == 'https':
+        https = True
+    backend_https: bpy.props.BoolProperty(
+        default=https,
+        name='',
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 

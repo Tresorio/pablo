@@ -12,15 +12,18 @@ def draw_connection_panel(layout: bpy.types.UILayout,
     user_props = context.window_manager.tresorio_user_props
     report_props = bpy.context.window_manager.tresorio_report_props
 
-    case = layout.row().grid_flow(columns=10)
+    case = layout.row().split(factor=0.5)
     case.label(text=TRADUCTOR['field']['connection'][CONFIG_LANG])
-    align_case = case.row()
+    align_case = case.column().row().split(factor=0.8)
     align_case.column().prop(user_props, 'langs')
+    align_case.column().operator('tresorio.advanced_settings_navigation_in',
+                                 icon_value=til.icon('TRESORIO_SETTINGS'),
+                                 text='')
 
     box = layout.box()
-    box.label(text=TRADUCTOR['field']['mail'][CONFIG_LANG]+':')
+    box.label(text=TRADUCTOR['field']['mail'][CONFIG_LANG] + ':')
     box.prop(user_props, 'email', text='')
-    box.label(text=TRADUCTOR['field']['password'][CONFIG_LANG]+':')
+    box.label(text=TRADUCTOR['field']['password'][CONFIG_LANG] + ':')
 
     row = box.row().split(factor=0.9)
     if user_props.show_password:

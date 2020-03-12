@@ -186,5 +186,21 @@
     "use_optix": {
         "en": "Whether to use Optix instead of Cuda (GPU / Cycles only)",
         "fr": "Utiliser Optix à la place de Cuda (GPU / Cyles seulement)"
+    },
+    "save_advanced_settings": {
+        "en": "Save",
+        "fr": "Sauvegarder"
+    },
+    "advanced_settings_navigation_in": {
+        "en": "Advanced settings panel",
+        "fr": "Menu des options avancées"
+    },
+    "advanced_settings_navigation_out": {
+        "en": "Back to login",
+        "fr": "Retour à la connexion"
+    },
+    "advanced_settings_reset": {
+        "en": "Reset advanced settings",
+        "fr": "Réinitialiser les options avancées"
     }
 }
