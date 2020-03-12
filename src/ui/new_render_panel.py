@@ -101,7 +101,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             packs_cols = box.column_flow(columns=len(render_packs), align=True)
             for pack in render_packs:
                 packs_cols.prop(pack, 'is_selected',
-                                text=pack.name.capitalize(), toggle=1)
+                                text=pack.name.upper(), toggle=1)
                 if pack.is_selected:
                     description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
                         pack.cost * render_form.nb_farmers,

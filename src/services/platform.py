@@ -8,6 +8,13 @@ from bundle_modules import aiohttp
 from src.services.loggers import PLATFORM_LOGGER
 from src.config.api import API_CONFIG, SSL_CONTEXT, MODE
 
+backend_url = API_CONFIG[MODE]['backend']
+
+
+def set_backend_url(url):
+    global backend_url
+    backend_url = url
+
 
 class Platform:
     """Tresorio's asynchronous backend sdk
@@ -28,7 +35,7 @@ class Platform:
 
     def __init__(self,
                  mocked: bool = False):
-        self.url = API_CONFIG[MODE]['backend']
+        self.url = backend_url
         self.mocked = mocked
         self.session = None
         self.logger = PLATFORM_LOGGER

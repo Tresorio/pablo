@@ -208,6 +208,29 @@
     "use_optix": {
         "en": "Use Optix",
         "fr": "Utiliser Optix"
+    },
+    "advanced_settings": {
+        "en": "Advanced settings",
+        "fr": "Options avancées"
+    },
+    "backend_ip": {
+        "en": "IP address",
+        "fr": "Adresse IP"
+    },
+    "backend_port": {
+        "en": "Port",
+        "fr": "Port"
+    },
+    "backend_https": {
+        "en": "HTTPS",
+        "fr": "HTTPS"
+    },
+    "save_settings": {
+        "en": "Save settings",
+        "fr": "Sauvegarder les options"
+    },
+    "reset_advanced_settings": {
+        "en": "Reset",
+        "fr": "Réinitialiser"
     }
-
 }
