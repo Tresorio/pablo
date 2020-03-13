@@ -65,6 +65,8 @@ class TresorioRendersList(bpy.types.UIList):
             split.label(text='', icon_value=til.icon('TRESORIO_LAUNCHING'))
         elif render.status == RenderStatus.ERROR:
             split.label(text='', icon='KEYTYPE_KEYFRAME_VEC')
+        elif render.status == RenderStatus.REASSEMBLING:
+            split.label(text='', icon='FILE_CACHE')
         icon = 'RENDER_ANIMATION' if render.type == 'ANIMATION' else 'RESTRICT_RENDER_OFF'
         split.label(text=render.name, icon=icon)
 
@@ -77,20 +79,23 @@ class TresorioRendersList(bpy.types.UIList):
             row.prop(render, 'progression')
         elif render.status == RenderStatus.STOPPING:
             row.label(text=TRADUCTOR['notif']['stopping'][CONFIG_LANG])
-        elif render.status == RenderStatus.FINISHED:
+        elif render.status == RenderStatus.FINISHED or render.status == RenderStatus.ERROR:
             if render.downloading:
                 row.label(text=TRADUCTOR['notif']['downloading'][CONFIG_LANG])
+        elif render.status == RenderStatus.REASSEMBLING:
+            row.label(text=TRADUCTOR['notif']['reassembling'][CONFIG_LANG])
 
         # OPS_CASE
-        if render.number_of_fragments > 0 and render.status != RenderStatus.STOPPING:
+        if render.number_of_fragments > 0 and render.status != RenderStatus.STOPPING and render.status != RenderStatus.REASSEMBLING:
             row.operator('tresorio.download_render_results',
                          text='',
                          icon='IMPORT').index = index
         if render.status == RenderStatus.RUNNING:
             row.operator('tresorio.stop_render', icon='X').index = index
-        row.operator('tresorio.delete_render',
-                     text='',
-                     icon='TRASH').index = index
+        if render.status != RenderStatus.STOPPING and render.status != RenderStatus.REASSEMBLING:
+            row.operator('tresorio.delete_render',
+                         text='',
+                         icon='TRASH').index = index
 
 
 class TresorioRendersPanel(bpy.types.Panel):

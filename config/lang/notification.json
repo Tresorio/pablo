@@ -111,6 +111,10 @@
         "en": "Stopping ...",
         "fr": "Arrêt ..."
     },
+    "reassembling": {
+        "en": "Reassembling...",
+        "fr": "Assemblage..."
+    },
     "cant_pack_textures": {
         "en": "Can't pack the textures into the file",
         "fr": "Impossible de charger les textures dans le fichier"
@@ -121,7 +125,7 @@
     },
     "finished_render": {
         "en": "Finished",
-        "fr": "Fini"
+        "fr": "Terminé"
     },
     "not_enough_servers": {
         "en": "We can't handle your request as not enough resources are available on our servers. Please retry later",
