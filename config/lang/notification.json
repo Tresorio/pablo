@@ -135,6 +135,10 @@
         "en": "No blend scene found for this project. You should upload one first!",
         "fr": "Aucune scene blender disponible pour ce projet. Vous devriez en uploader une!"
     },
+    "wrong_name": {
+        "en": "Rendering name should not contain any '/'",
+        "fr": "Le nom du rendu ne devrait pas contenir de '/'"
+    },
     "err_download_logs": {
         "en": "Error while downloading the logs",
         "fr": "Erreur pendant le téléchargement des logs"
