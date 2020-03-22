@@ -441,8 +441,10 @@ async def _new_render(token: str,
             elif err.status == HTTPStatus.CONFLICT:
                 popup_msg = TRADUCTOR['notif']['render_name_already_taken'][CONFIG_LANG].format(
                     render_form.rendering_name)
-            elif err.status == HTTPStatus.BAD_REQUEST:
+            elif err.status == HTTPStatus.NOT_FOUND:
                 popup_msg = TRADUCTOR['notif']['no_scene'][CONFIG_LANG]
+            elif err.status == HTTPStatus.BAD_REQUEST:
+                popup_msg = TRADUCTOR['notif']['wrong_name'][CONFIG_LANG]
         popup(msg=popup_msg, icon='ERROR')
 
 async def _stop_render(token: str,
