@@ -20,7 +20,7 @@ release:
         - cp -r assets tresorio/assets
         - |
           curl --header 'Content-Type: application/json' --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" \
-             --data "{ \"name\": \"$VERSION\", \"tag_name\": \"$VERSION\", \"description\": \"$CI_COMMIT_REG_NAME[tresorio.zip](https://gitlab.com/tresorio/pablo/-/jobs/$CI_JOB_ID/artifacts/download)\" }" \
+             --data "{ \"name\": \"$VERSION\", \"tag_name\": \"$VERSION\", \"description\": \"$CI_COMMIT_REF_NAME-[tresorio.zip](https://gitlab.com/tresorio/pablo/-/jobs/$CI_JOB_ID/artifacts/download)\" }" \
              --request POST "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases"
 
     artifacts:
