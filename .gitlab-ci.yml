@@ -8,17 +8,18 @@ release:
     stage: release
     image: alpine
     script:
-        - rm -rf tresorio
-        - mkdir tresorio
-        - cp -r bundle_modules tresorio/bundle_modules
-        - cp -r config tresorio/config
-        - cp -r src tresorio/src
-        - cp -r __init__.py tresorio/__init__.py
-        - cp -r assets tresorio/assets
-        - |
-          curl --header 'Content-Type: application/json' --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" \
-             --data "{ \"name\": \"$CI_COMMIT_TAG\", \"tag_name\": \"$CI_COMMIT_TAG\", \"description\": \"[tresorio.zip](https://gitlab.com/tresorio/pablo/-/jobs/$CI_JOB_ID/artifacts/download)\" }" \
-             --request POST "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases"
+      - echo $CI_COMMIT_BRANCH
+    #     - rm -rf tresorio
+    #     - mkdir tresorio
+    #     - cp -r bundle_modules tresorio/bundle_modules
+    #     - cp -r config tresorio/config
+    #     - cp -r src tresorio/src
+    #     - cp -r __init__.py tresorio/__init__.py
+    #     - cp -r assets tresorio/assets
+    #     - |
+    #       curl --header 'Content-Type: application/json' --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" \
+    #          --data "{ \"name\": \"$CI_COMMIT_TAG\", \"tag_name\": \"$CI_COMMIT_TAG\", \"description\": \"[tresorio.zip](https://gitlab.com/tresorio/pablo/-/jobs/$CI_JOB_ID/artifacts/download)\" }" \
+    #          --request POST "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases"
 
     artifacts:
         name: "tresorio-$CI_COMMIT_TAG"
