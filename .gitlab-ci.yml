@@ -9,7 +9,8 @@ release:
     tags:
       - builder
     script:
-        - git branch --contains $CI_COMMIT_TAG
+        - echo $CI_COMMIT_REF_NAME
+        - echo $VERSION
         - rm -rf tresorio
         - mkdir tresorio
         - cp -r bundle_modules tresorio/bundle_modules
@@ -19,7 +20,7 @@ release:
         - cp -r assets tresorio/assets
         - |
           curl --header 'Content-Type: application/json' --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" \
-             --data "{ \"name\": \"$CI_COMMIT_TAG\", \"tag_name\": \"$CI_COMMIT_TAG\", \"description\": \"[tresorio.zip](https://gitlab.com/tresorio/pablo/-/jobs/$CI_JOB_ID/artifacts/download)\" }" \
+             --data "{ \"name\": \"$VERSION\", \"tag_name\": \"$VERSION\", \"description\": \"$CI_COMMIT_REG_NAME[tresorio.zip](https://gitlab.com/tresorio/pablo/-/jobs/$CI_JOB_ID/artifacts/download)\" }" \
              --request POST "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases"
 
     artifacts:
@@ -27,4 +28,9 @@ release:
         paths:
             - tresorio
     only:
-       - tags
+      refs:
+        - master
+        - staging
+        - dev
+      variables:
+        - $VERSION
