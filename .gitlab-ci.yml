@@ -6,7 +6,8 @@ before_script:
 
 release:
     stage: release
-    image: alpine
+    tags:
+      - builder
     script:
         - git branch --contains $CI_COMMIT_TAG
         - rm -rf tresorio
