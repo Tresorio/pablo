@@ -1,5 +1,5 @@
 {
-    "prod": {
+    "master": {
         "backend": "https://api.tresorio.com",
         "frontend": "https://platform.tresorio.com",
         "homepage": "https://tresorio.com"
