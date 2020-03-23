@@ -11,6 +11,7 @@ release:
     script:
         - rm -rf tresorio
         - ./build_plugin.sh $CI_COMMIT_REF_NAME
+        - ls
         - unzip tresorio.zip
         - |
           curl --header 'Content-Type: application/json' --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" \
