@@ -8,7 +8,7 @@ release:
     stage: release
     image: alpine
     script:
-        - echo $CI_COMMIT_BRANCH
+        - echo $CI_COMMIT_REF_NAME
         - rm -rf tresorio
         - mkdir tresorio
         - cp -r bundle_modules tresorio/bundle_modules
