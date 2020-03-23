@@ -9,15 +9,9 @@ release:
     tags:
       - builder
     script:
-        - echo $CI_COMMIT_REF_NAME
-        - echo $VERSION
         - rm -rf tresorio
-        - mkdir tresorio
-        - cp -r bundle_modules tresorio/bundle_modules
-        - cp -r config tresorio/config
-        - cp -r src tresorio/src
-        - cp -r __init__.py tresorio/__init__.py
-        - cp -r assets tresorio/assets
+        - ./build_plugin.sh $CI_COMMIT_REF_NAME
+        - unzip tresorio.zip
         - |
           curl --header 'Content-Type: application/json' --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" \
              --data "{ \"tag_name\": \"$VERSION\", \"ref\": \"$CI_COMMIT_REF_NAME\" }" \
