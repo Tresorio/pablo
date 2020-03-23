@@ -6,7 +6,12 @@
     },
     "dev": {
         "backend": "https://dev-gandalf.tresorio.com",
-        "frontend": "http://dev-platform.tresorio.com",
+        "frontend": "https://dev-platform.tresorio.com",
+        "homepage": "https://tresorio.com"
+    },
+    "staging": {
+        "backend": "https://staging-gandalf.tresorio.com",
+        "frontend": "https://staging-platform.tresorio.com",
         "homepage": "https://tresorio.com"
     },
     "local": {
