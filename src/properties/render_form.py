@@ -182,7 +182,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
     desc = TRADUCTOR['desc']['nb_farmers'][CONFIG_LANG]
     nb_farmers: bpy.props.IntProperty(
         min=1,
-        max=10,
+        max=45,
         description=desc,
         name='',
         default=1,
