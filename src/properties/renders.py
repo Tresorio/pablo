@@ -12,19 +12,25 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
     # Render specifics
     name: bpy.props.StringProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
-    number_farmers: bpy.props.IntProperty(
+    gpu: bpy.props.IntProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    cpu: bpy.props.IntProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    ram: bpy.props.IntProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    cost: bpy.props.FloatProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    total_cost: bpy.props.FloatProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     engine: bpy.props.StringProperty(
-        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
-    farm: bpy.props.StringProperty(
-        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
-    timeout: bpy.props.IntProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     type: bpy.props.StringProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     output_format: bpy.props.StringProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     launched: bpy.props.BoolProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    mode: bpy.props.StringProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
 
     # Advancement
@@ -33,8 +39,6 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
     total_frames: bpy.props.IntProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     rendered_frames: bpy.props.IntProperty(
-        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
-    created_at: bpy.props.IntProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     uptime: bpy.props.IntProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})

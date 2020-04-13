@@ -38,7 +38,7 @@ class TresorioMainPanel(bpy.types.Panel):
 
         major, minor, patch = map(int, latest_version.split('.'))
 
-        if major != API_CONFIG['version']['major'] or minor != API_CONFIG['version']['minor']:
+        if major > API_CONFIG['version']['major'] or (major == API_CONFIG['version']['major'] and minor > API_CONFIG['version']['minor']):
             draw_version_panel(layout, context, actual_version, latest_version)
         elif not user_props.is_logged and not user_props.advanced_settings:
             draw_connection_panel(layout, context)

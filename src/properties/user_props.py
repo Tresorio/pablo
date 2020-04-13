@@ -31,6 +31,17 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         default=False,
     )
 
+    is_launching_rendering: bpy.props.BoolProperty(
+        name='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        default=False,
+    )
+
+    rendering_mode: bpy.props.StringProperty(
+        name='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
     latest_version: bpy.props.StringProperty(
         name='latest_version',
         options={'HIDDEN', 'SKIP_SAVE'},
@@ -61,12 +72,13 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         default=conf_email,
     )
 
+    password = USER_CONFIG['password']
     desc = TRADUCTOR['desc']['password'][CONFIG_LANG]
     hidden_password: bpy.props.StringProperty(
         name='',
         description=desc,
         maxlen=128,
-        default='',
+        default=password,
         subtype='PASSWORD',
         options={'HIDDEN', 'SKIP_SAVE'},
     )
@@ -76,7 +88,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         name='',
         description=desc,
         maxlen=128,
-        default='',
+        default=password,
         subtype='NONE',
         options={'HIDDEN', 'SKIP_SAVE'},
     )

@@ -1,6 +1,7 @@
 {
     "lang": "en",
     "email": "",
+    "password": "",
     "open_image_on_download": true,
     "decompress_results": true
 }

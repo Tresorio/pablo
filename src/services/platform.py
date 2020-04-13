@@ -158,7 +158,6 @@ class Platform:
             ...         'numberOfFarmers': props.nb_farmers,
             ...         'numberOfFrames': number_of_frames,
             ...         'autoTileSize': props.auto_tile_size,
-            ...         'useOptix': use_optix,
             ...         'currentFrame': 0,
             ...         'startingFrame': 12,
             ...         'endingFrame': 27,
@@ -257,29 +256,6 @@ class Platform:
                                       headers=headers,
                                       ssl_context=SSL_CONTEXT)
 
-    @_platformrequest.__func__
-    async def req_get_renderpacks(self,
-                                  token: str
-                                  ) -> aiohttp.ClientResponse:
-        """Fetch the renderpacks information
-
-        Args:
-            token: The token given at the connection to Tresorio's API.
-
-        Example:
-            >>> async with Platform() as plt:
-            ...     token = 'eyJ0eXAiOiJKV1QiLC'
-            ...     res = await plt.req_get_renderpacks(token)
-        """
-        headers = {
-            'Authorization': f'JWT {token}',
-            'Content-Type': 'application/json'
-        }
-        url = urljoin(self.url, API_CONFIG['routes']['renderpacks'])
-        return await self.session.get(url,
-                                      raise_for_status=True,
-                                      headers=headers,
-                                      ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_create_render(self,
@@ -337,6 +313,24 @@ class Platform:
                                       raise_for_status=True,
                                       headers=headers,
                                       ssl_context=SSL_CONTEXT)
+
+
+    @_platformrequest.__func__
+    async def req_get_farms(self,
+        token: str,
+        params: Dict[str, Any]
+    ) -> aiohttp.ClientResponse:
+        headers = {
+            'Authorization': f'JWT {token}',
+            'Content-Type': 'application/json'
+        }
+        url = urljoin(self.url,
+            API_CONFIG['routes']['farms'])
+        return await self.session.get(url,
+            headers=headers,
+            params=params,
+            ssl_context=SSL_CONTEXT)
+
 
     @_platformrequest.__func__
     async def req_get_rendering_details(self,
