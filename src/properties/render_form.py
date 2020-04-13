@@ -39,25 +39,6 @@ def get_render_type() -> str:
         return RenderTypes.FRAME
     return RenderTypes.ANIMATION
 
-
-def update_max_cost(prop: 'TresorioRenderFormProps',
-                    context: bpy.types.Context
-                    ) -> None:
-    """Update max cost in the render form"""
-    del prop
-    render_form = context.scene.tresorio_render_form
-    user_credits = context.window_manager.tresorio_user_props.total_credits
-    if render_form.timeout == 0 and render_form.price_per_hour > 0.0:
-        render_form.max_timeout = math.floor(
-            user_credits / render_form.price_per_hour)
-        render_form.max_cost = render_form.max_timeout * \
-            render_form.price_per_hour * render_form.nb_farmers
-    else:
-        render_form.max_timeout = render_form.timeout
-        render_form.max_cost = render_form.price_per_hour * \
-            render_form.timeout * render_form.nb_farmers
-
-
 class TresorioRenderFormProps(bpy.types.PropertyGroup):
     """Render form panel"""
     desc = TRADUCTOR['desc']['show_settings'][CONFIG_LANG]
@@ -68,21 +49,17 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['show_pack'][CONFIG_LANG]
-    show_packs: bpy.props.BoolProperty(
-        name='',
-        default=True,
-        description=desc,
-        options={'HIDDEN', 'SKIP_SAVE'},
-    )
-
     desc = TRADUCTOR['desc']['rendering_name'][CONFIG_LANG]
     rendering_name: bpy.props.StringProperty(
         description=desc,
         name='',
-        default='untitled',
+        default=TRADUCTOR['field']['default_render_name'][CONFIG_LANG],
         maxlen=255,
         options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    number_of_frames: bpy.props.IntProperty(
+        update=lambda a,b: None, options={'HIDDEN', 'SKIP_SAVE'}, default=-1
     )
 
     desc = TRADUCTOR['desc']['render_engines_list'][CONFIG_LANG]
@@ -91,6 +68,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         name='',
         items=(
             ('CYCLES', 'Cycles', '', 'EMPTY_AXIS', 1),
+            ('EEVEE', 'Eevee (experimental !)', '', 'EMPTY_AXIS', 2)
         ),
         default='CYCLES',
         options={'HIDDEN', 'SKIP_SAVE'},
@@ -120,19 +98,6 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         ),
         default='PNG',
         options={'HIDDEN', 'SKIP_SAVE'},
-    )
-
-    last_renderpack_selected: bpy.props.StringProperty(
-        description='',
-        name='',
-        options={'HIDDEN', 'SKIP_SAVE'},
-    )
-
-    render_pack: bpy.props.StringProperty(
-        description='',
-        name='',
-        options={'HIDDEN', 'SKIP_SAVE'},
-        update=lambda a, b: None,
     )
 
     is_switching_render_type: bpy.props.BoolProperty(
@@ -167,29 +132,6 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['timeout'][CONFIG_LANG]
-    timeout: bpy.props.IntProperty(
-        min=0,
-        max=100_000,
-        description=desc,
-        name='',
-        default=12,
-        subtype='TIME',
-        options={'HIDDEN', 'SKIP_SAVE'},
-        update=update_max_cost,
-    )
-
-    desc = TRADUCTOR['desc']['nb_farmers'][CONFIG_LANG]
-    nb_farmers: bpy.props.IntProperty(
-        min=1,
-        max=45,
-        description=desc,
-        name='',
-        default=1,
-        options={'HIDDEN', 'SKIP_SAVE'},
-        update=update_max_cost,
-    )
-
     upload_percent: bpy.props.FloatProperty(
         min=0,
         max=100,
@@ -222,17 +164,6 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         name='',
         options={'HIDDEN', 'SKIP_SAVE'},
     )
-
-    project_id: bpy.props.StringProperty(
-        description='',
-        name='',
-        options={'HIDDEN', 'SKIP_SAVE'},
-    )
-
-    max_cost: bpy.props.FloatProperty(options={'HIDDEN', 'SKIP_SAVE'},)
-    max_timeout: bpy.props.IntProperty(options={'HIDDEN', 'SKIP_SAVE'},)
-    current_pack_index: bpy.props.IntProperty(options={'HIDDEN', 'SKIP_SAVE'},)
-    price_per_hour: bpy.props.FloatProperty(options={'HIDDEN', 'SKIP_SAVE'},)
 
     @classmethod
     def register(cls) -> None:

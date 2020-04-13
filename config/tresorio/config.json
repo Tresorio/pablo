@@ -26,7 +26,7 @@
         "signin": "/auth/signin",
         "user_info": "/user/informations",
         "get_credits": "/profile/credits/get",
-        "renderpacks": "/user/products/assets/renderpacks",
+        "farms": "/user/products/render/farms",
         "create_render": "/user/products/render/scene",
         "launch_render": "/user/products/render/",
         "list_renderings_details": "/user/products/render",
@@ -36,8 +36,8 @@
         "download_addon": "/renderings/addon"
     },
     "version": {
-        "major": 1,
-        "minor": 2,
+        "major": 2,
+        "minor": 0,
         "patch": 0
     }
 }

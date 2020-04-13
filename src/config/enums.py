@@ -6,13 +6,12 @@ from dataclasses import dataclass
 @dataclass
 class RenderStatus():
     """Status of a render"""
-    FINISHED = 'FINISHED'
+    LAUNCHING = 'LAUNCHING'
     RUNNING = 'RUNNING'
     STOPPING = 'STOPPING'
-    LAUNCHING = 'LAUNCHING'
+    STOPPED = 'STOPPED'
+    FINISHED = 'FINISHED'
     ERROR = 'ERROR'
-    REASSEMBLING = 'REASSEMBLING'
-
 
 @dataclass
 class RenderTypes():
