@@ -1,6 +1,5 @@
 """Render creation panel"""
 
-from src.properties.render_packs import get_selected_pack
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 import bpy
 
@@ -17,14 +16,14 @@ class TresorioNewRenderPanel(bpy.types.Panel):
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
         """Chose wether to render the new render panel or not"""
-        return context.window_manager.tresorio_user_props.is_logged
+        return (context.window_manager.tresorio_user_props.is_logged and
+            not context.window_manager.tresorio_user_props.is_launching_rendering)
 
     def draw(self,
              context: bpy.types.Context
              ) -> None:
         """Draw the form required for a rendering"""
         render_form = context.scene.tresorio_render_form
-        render_packs = context.window_manager.tresorio_render_packs
         report_props = context.window_manager.tresorio_report_props
 
         layout = self.layout
@@ -75,63 +74,12 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                            text=TRADUCTOR['field']['pack_textures'][CONFIG_LANG])
             grid_flow.prop(render_form, 'auto_tile_size',
                            text=TRADUCTOR['field']['auto_tile_size'][CONFIG_LANG])
-            row = grid_flow.row()
-            curr_pack = get_selected_pack()
-            if render_form.render_engines_list != 'CYCLES' or curr_pack is not None and curr_pack.gpu <= 0:
-                row.enabled = False
+            grid_flow.prop(render_form, 'use_optix',
+                            text=TRADUCTOR['field']['use_optix'][CONFIG_LANG])
 
-            # Deactivating optix box for now
-            # row.prop(render_form, 'use_optix',
-                     # text=TRADUCTOR['field']['use_optix'][CONFIG_LANG])
-
-        # RENDERPACKS
-        row = box.row()
-        row_1 = row.row()
-        row_1.alignment = 'LEFT'
-        row_1.prop(render_form, 'show_packs', emboss=False,
-                   text=TRADUCTOR['field']['render_pack'][CONFIG_LANG]+':')
-        row_2 = row.row()
-        row_2.alignment = 'RIGHT'
-        icon = 'DISCLOSURE_TRI_DOWN' if render_form.show_packs else 'DISCLOSURE_TRI_RIGHT'
-        row_2.prop(render_form, 'show_packs', text='', emboss=False,
-                   icon=icon)
-
-        if render_form.show_packs:
-            description = ''
-            packs_cols = box.column_flow(columns=len(render_packs), align=True)
-            for pack in render_packs:
-                packs_cols.prop(pack, 'is_selected',
-                                text=pack.name.upper(), toggle=1)
-                if pack.is_selected:
-                    description = TRADUCTOR['desc']['pack_description'][CONFIG_LANG].format(
-                        pack.cost * render_form.nb_farmers,
-                        pack.gpu * render_form.nb_farmers,
-                        pack.cpu * render_form.nb_farmers,
-                        pack.ram // 1024 * render_form.nb_farmers  # converting RAM in Go
-                    )
-
-            row = box.row().split(factor=0.4)
-            row.label(text=TRADUCTOR['field']['nb_farmers'][CONFIG_LANG]+':')
-            row.prop(render_form, 'nb_farmers')
-
-            row = box.row().split(factor=0.4)
-            row.label(text=TRADUCTOR['field']['timeout'][CONFIG_LANG]+':')
-            row.prop(render_form, 'timeout',
-                     text=TRADUCTOR['field']['hours'][CONFIG_LANG],
-                     expand=True)
-
-            row = box.row(align=True)
-            row.alignment = 'CENTER'
-            row.label(text=description)
-
-            row = box.row().split(factor=0.3)
-            row.label(text=TRADUCTOR['field']['max_cost'][CONFIG_LANG]+':')
-            max_cost = round(render_form.max_cost * 100) / 100
-            row.label(text=f'{max_cost:.2f} ' +
-                      TRADUCTOR['field']['credits'][CONFIG_LANG] +
-                      f' ({render_form.max_timeout} h)')
 
         # LAUNCH
+        is_ready_to_launch = False
         if context.window_manager.tresorio_report_props.deleting_all_renders:
             layout.label(text=TRADUCTOR['notif']
                          ['deleting_all_renders'][CONFIG_LANG])
@@ -144,8 +92,9 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         elif report_props.creating_render:
             box.label(text=TRADUCTOR['notif']['creating_render'][CONFIG_LANG])
         else:
-            split = box.row().split(factor=0.5)
-            split.operator('tresorio.upload',
-                            text=TRADUCTOR['field']['upload'][CONFIG_LANG])
-            split.operator('tresorio.render',
-                            text=TRADUCTOR['field']['launch'][CONFIG_LANG])
+            is_ready_to_launch = True
+            box.operator('tresorio.upload')
+        split = box.row().split()
+        split.enabled = is_ready_to_launch
+        split.operator('tresorio.cpurender')
+        split.operator('tresorio.gpurender')

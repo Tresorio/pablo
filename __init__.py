@@ -20,17 +20,21 @@ from src.properties.user_props import TresorioUserProps
 from src.properties.report_props import TresorioReportProps
 from src.properties.render_form import TresorioRenderFormProps
 from src.properties.renders import TresorioRendersDetailsProps
-from src.properties.render_packs import TresorioRenderPacksProps
+from src.properties.farm import TresorioFarmProps
 from src.properties.user_settings import TresorioUserSettingsProps
 from src.ui.main_panel import TresorioMainPanel
 from src.ui.account_panel import TresorioAccountPanel
 from src.ui.new_render_panel import TresorioNewRenderPanel
 from src.ui.user_renders_panel import TresorioRendersPanel, TresorioRendersList
-from src.operators.error_popup import ErrorPopup
+from src.ui.render_launch import TresorioRenderLauncher, TresorioFarmList
+from src.operators.popup import ErrorPopup, InfoPopup
 from src.operators.login import TresorioLoginOperator
 from src.operators.logout import TresorioLogoutOperator
 from src.operators.upload import TresorioUploadOperator
-from src.operators.render import TresorioRenderFrameOperator
+from src.operators.gpu_render import TresorioGpuRenderFrameOperator
+from src.operators.cpu_render import TresorioCpuRenderFrameOperator
+from src.operators.cancel_rendering import TresorioCancelRenderingOperator
+from src.operators.launch_rendering import TresorioLaunchRenderingOperator
 from src.operators.redirect import TresorioRedirectHomeOperator
 from src.operators.stop_render import TresorioStopRenderOperator
 from src.operators.redirect import TresorioRedirectRegisterOperator
@@ -53,7 +57,7 @@ from src.config.api import API_CONFIG
 
 bl_info = {
     'name': 'Tresorio cloud rendering',
-    'version': (1, 2, 0),
+    'version': (2, 0, 0),
     'blender': (2, 80, 0),
     'category': 'Output',
     'file': '/$HOME/.config/blender/2.80/scripts/addons/tresorio',
@@ -69,7 +73,7 @@ TO_REGISTER_CLASSES = (
     TresorioUserProps,
     TresorioReportProps,
     TresorioUserSettingsProps,
-    TresorioRenderPacksProps,
+    TresorioFarmProps,
     TresorioRenderFormProps,
     TresorioRendersDetailsProps,
     # Operators
@@ -80,7 +84,10 @@ TO_REGISTER_CLASSES = (
     TresorioRedirectHomeOperator,
     TresorioUploadOperator,
     ErrorPopup,
-    TresorioRenderFrameOperator,
+    InfoPopup,
+    TresorioGpuRenderFrameOperator,
+    TresorioCpuRenderFrameOperator,
+    TresorioCancelRenderingOperator,
     TresorioDownloadRenderResultsOperator,
     TresorioStopRenderOperator,
     TresorioDeleteRenderOperator,
@@ -92,12 +99,15 @@ TO_REGISTER_CLASSES = (
     TresorioAdvancedSettingsNavigationOutOperator,
     TresorioAdvancedSettingsOperator,
     TresorioAdvancedSettingsResetOperator,
+    TresorioLaunchRenderingOperator,
     # UI
     TresorioMainPanel,
     TresorioRendersPanel,
     TresorioNewRenderPanel,
     TresorioAccountPanel,
     TresorioRendersList,
+    TresorioFarmList,
+    TresorioRenderLauncher,
 )
 
 
