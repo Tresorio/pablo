@@ -1,7 +1,7 @@
 {
     "cant_connect_to_tresorio": {
-        "en": "Can't connect to Tresorio. You should relaunch the addon",
-        "fr": "Impossible de se connecter à Tresorio. Veuillez relancer l'addon"
+        "en": "Can't connect to Tresorio. Check your internet connection and relaunch the addon",
+        "fr": "Impossible de se connecter à Tresorio. Vérifiez votre connexion et veuillez relancer l'addon"
     },
     "no_password": {
         "en": "Please enter a valid password",
@@ -36,8 +36,8 @@
         "fr": "Déconnexion effectuée avec succès"
     },
     "file_not_saved": {
-        "en": "Your file isn't saved",
-        "fr": "Votre fichier n'est pas sauvegardé"
+        "en": "Your scene isn't saved",
+        "fr": "Votre scène n'est pas sauvegardée"
     },
     "internal_error_login": {
         "en": "An internal error occured on login, please retry",
@@ -84,8 +84,8 @@
         "fr": "Rafraichissement ..."
     },
     "not_enough_credits": {
-        "en": "Not enough credits",
-        "fr": "Pas assez de crédits"
+        "en": "You don't have enough credits",
+        "fr": "Vous n'avez pas assez de crédits"
     },
     "downloading": {
         "en": "Downloading ...",
@@ -111,10 +111,6 @@
         "en": "Stopping ...",
         "fr": "Arrêt ..."
     },
-    "reassembling": {
-        "en": "Reassembling...",
-        "fr": "Assemblage..."
-    },
     "cant_pack_textures": {
         "en": "Can't pack the textures into the file",
         "fr": "Impossible de charger les textures dans le fichier"
@@ -128,16 +124,16 @@
         "fr": "Terminé"
     },
     "not_enough_servers": {
-        "en": "We can't handle your request as not enough resources are available on our servers. Please retry later",
-        "fr": "Nous ne pouvous pas traiter votre requête car nos serveurs ne disposent plus d'assez de ressources. Veuillez réessayer plus tard"
+        "en": "Whoops, we've a problem : it seems those resources are not available anymore. Please retry later",
+        "fr": "Mince, nous avons un problème : il semblerait que ces ressources ne sont plus disponibles. Veuillez réessayer plus tard"
     },
     "no_scene": {
         "en": "No blend scene found for this project. You should upload one first!",
         "fr": "Aucune scene blender disponible pour ce projet. Vous devriez en uploader une!"
     },
     "wrong_name": {
-        "en": "Rendering name should not contain any '/'",
-        "fr": "Le nom du rendu ne devrait pas contenir de '/'"
+        "en": "Rendering name should not contain any '/' and should not be empty",
+        "fr": "Le nom du rendu ne devrait pas contenir de '/' ni être vide"
     },
     "err_download_logs": {
         "en": "Error while downloading the logs",
@@ -162,5 +158,25 @@
     "no_ip_address": {
         "en": "Please enter a valid IP address",
         "fr": "Veuillez entrer une adresse IP valide"
+    },
+    "something_went_wrong": {
+        "en": "Something went wrong... Please retry",
+        "fr": "Quelque chose semble s'être mal passé... Veuillez réessayer"
+    },
+    "choose_farm": {
+        "en": "Select a rendering farm",
+        "fr": "Selectionnez une ferme de rendu"
+    },
+    "farm_not_available": {
+        "en": "This farm is not available yet",
+        "fr": "Cette ferme n'est pas disponible pour le moment"
+    },
+    "rendering_launched": {
+        "en": "Rendering \"{0}\" successfully launched",
+        "fr": "Rendu \"{0}\" lancé avec succès"
+    },
+    "rendering_failed": {
+        "en": "Rendering \"{0}\" launching failed : ",
+        "fr": "Le rendu \"{0}\" ne s'est pas lancé : "
     }
 }

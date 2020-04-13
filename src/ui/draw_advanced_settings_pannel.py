@@ -1,6 +1,7 @@
 """Defines the drawer for the connection panel"""
 
 from src.config.langs import TRADUCTOR, CONFIG_LANG
+from src.config.api import API_CONFIG
 import bpy
 
 
@@ -19,6 +20,15 @@ def draw_advanced_settings_panel(layout: bpy.types.UILayout,
     case.operator('tresorio.advanced_settings_navigation_out',
                   text='',
                   icon='CANCEL')
+
+    latest_version = user_props.latest_version
+    actual_version = f"{API_CONFIG['version']['major']}.{API_CONFIG['version']['minor']}.{API_CONFIG['version']['patch']}"
+    box = layout.split(factor=0.5).box()
+    box.enabled = False
+    box.scale_x = 0.5
+    box.scale_y = 0.5
+    box.label(text=TRADUCTOR['field']['version'][CONFIG_LANG] + " : " + actual_version)
+    box.label(text=TRADUCTOR['field']['latest'][CONFIG_LANG] + " : " + latest_version)
 
     box = layout.box()
     split = box.split(factor=0.4, align=True)

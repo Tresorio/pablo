@@ -14,7 +14,7 @@ class TresorioUploadOperator(bpy.types.Operator):
     """Render operator"""
     __doc__ = TRADUCTOR['desc']['tresorio_upload'][CONFIG_LANG]
     bl_idname = 'tresorio.upload'
-    bl_label = 'Upload blend file'
+    bl_label = TRADUCTOR['field']['upload'][CONFIG_LANG]
 
     @classmethod
     def poll(cls,

@@ -18,7 +18,8 @@ class TresorioAccountPanel(bpy.types.Panel):
     @classmethod
     def poll(cls, context: bpy.types.Context) -> bool:
         """Chose wether to render the new render panel or not"""
-        return context.window_manager.tresorio_user_props.is_logged
+        return (context.window_manager.tresorio_user_props.is_logged and
+            not context.window_manager.tresorio_user_props.is_launching_rendering)
 
     def draw(self,
              context: bpy.types.Context

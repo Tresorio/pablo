@@ -47,9 +47,14 @@ class TresorioLoginOperator(bpy.types.Operator):
 
         if user_props.remember_email:
             USER_CONFIG['email'] = email
+            USER_CONFIG['password'] = password
         else:
             USER_CONFIG['email'] = ''
             user_props.email = ''
+            USER_CONFIG['password'] = ''
+            user_props.email = ''
+            user_props.hidden_password = ''
+            user_props.clear_password = ''
 
         connect_to_tresorio(email, password)
 
