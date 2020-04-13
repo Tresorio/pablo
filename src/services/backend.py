@@ -12,7 +12,8 @@ import asyncio
 import functools
 
 import bpy
-from src.ui.popup import popup, alert
+import time
+from src.ui.popup import popup, alert, notif
 from src.operators.logout import logout
 from src.services.platform import Platform
 from src.utils.decompress import decompress_rendering_results
@@ -24,7 +25,6 @@ from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.operators.async_loop import ensure_async_loop
 from src.config.enums import RenderStatus, RenderTypes
 from src.properties.render_form import get_render_type
-from src.properties.render_packs import get_selected_pack
 from src.properties.renders import TresorioRendersDetailsProps
 from bundle_modules.aiohttp import ClientResponseError, ClientResponse
 
@@ -43,6 +43,15 @@ def logout_if_unauthorized(err: ClientResponseError) -> None:
         popup(TRADUCTOR['notif']['expired_session'][CONFIG_LANG], icon='ERROR')
 
 
+def get_farms(rendering_mode: str) -> None:
+    token = bpy.context.window_manager.tresorio_user_props.token
+    number_of_frames = bpy.context.scene.frame_end - bpy.context.scene.frame_start + 1
+    if get_render_type() == RenderTypes.FRAME:
+        number_of_frames = 1
+
+    future = _get_farms(token, rendering_mode, number_of_frames)
+    asyncio.ensure_future(future)
+
 def new_upload() -> None:
     """Upload a new blend file"""
 
@@ -56,32 +65,23 @@ def new_render() -> None:
     """Create and launch a new render"""
     props = bpy.context.scene.tresorio_render_form
     render_type = get_render_type()
-    number_of_frames = 1
 
-    if render_type == RenderTypes.ANIMATION:
-        number_of_frames = 1 + bpy.context.scene.frame_end - bpy.context.scene.frame_start
-
-    # Deactivating Optix for now, systematically send False to Gandalf
-    use_optix = False
-    # use_optix = props.use_optix
-    # curr_pack = get_selected_pack()
-    # if props.render_engines_list != 'CYCLES' or curr_pack is not None and curr_pack.gpu <= 0:
-        # use_optix = False
+    starting_frame = bpy.context.scene.frame_start
+    ending_frame = bpy.context.scene.frame_end
+    if render_type == RenderTypes.FRAME:
+        starting_frame = bpy.context.scene.frame_current
+        ending_frame = bpy.context.scene.frame_current
 
     launch_render = {
         'name': props.rendering_name,
         'engine': props.render_engines_list,
         'outputFormat': props.output_formats_list,
-        'timeout': props.timeout,
-        'farm': props.render_pack,
-        'renderType': render_type,
-        'numberOfFarmers': props.nb_farmers,
-        'numberOfFrames': number_of_frames,
+        'mode': bpy.context.window_manager.tresorio_user_props.rendering_mode,
+        'farmIndex': bpy.context.window_manager.tresorio_farm_props_index,
         'autoTileSize': props.auto_tile_size,
-        'useOptix': use_optix,
-        'currentFrame': bpy.context.scene.frame_current,
-        'startingFrame': bpy.context.scene.frame_start,
-        'endingFrame': bpy.context.scene.frame_end,
+        'useOptix': props.use_optix,
+        'startingFrame': starting_frame,
+        'endingFrame': ending_frame,
     }
     token = bpy.context.window_manager.tresorio_user_props.token
 
@@ -101,21 +101,6 @@ def connect_to_tresorio(email: str,
     future = _connect_to_tresorio(credentials)
     asyncio.ensure_future(future)
     ensure_async_loop()
-
-
-def get_uptime(created_at: int) -> int:
-    """Calculates a time difference using UTC time
-
-    Arg:
-        created_at: Creation date in unix seconds (UTC)
-
-    Example:
-
-        >>> start = utc.now()
-        ... time.sleep(2)
-        ... uptime = get_uptime(start) # 2
-    """
-    return datetime.utcnow().timestamp() - created_at
 
 
 def delete_render(render_id: str) -> None:
@@ -194,14 +179,6 @@ def _download_frames(fragments: List[Dict[str, Any]],
         raise
 
 
-def update_renderings_uptime() -> None:
-    """Update the uptime of all non finished renders"""
-    renders = bpy.context.window_manager.tresorio_renders_details
-    for render in renders:
-        if render.status != RenderStatus.FINISHED and render.status != RenderStatus.ERROR:
-            render.uptime = get_uptime(render.created_at)
-
-
 # ASYNC CORE-------------------------------------------------------------------
 
 async def _download_render_results(token: str,
@@ -250,20 +227,6 @@ async def _update_user_info(token: str,
                       [CONFIG_LANG], icon='ERROR')
 
 
-async def _update_renderpacks_info(token: str) -> Coroutine:
-    async with Platform() as plt:
-        try:
-            res_renderpacks = await plt.req_get_renderpacks(token, jsonify=True)
-            _get_renderpacks_callback(res_renderpacks)
-        except Exception as err:
-            bpy.context.scene.tresorio_render_form.render_pack = ''
-            BACKEND_LOGGER.error(err)
-            popup(TRADUCTOR['notif']
-                  ['err_renderpacks'][CONFIG_LANG], icon='ERROR')
-            if isinstance(err, ClientResponseError):
-                logout_if_unauthorized(err)
-
-
 def update_upload_percent(value: float):
     render_form = bpy.context.scene.tresorio_render_form
     render_form.upload_percent = value
@@ -298,7 +261,6 @@ async def _refresh_loop(token: str) -> Coroutine:
             while not UPDATE_QUEUE.empty():
                 instruction, obj = UPDATE_QUEUE.get(block=False)
                 comms[instruction](obj)
-            update_renderings_uptime()
             await asyncio.sleep(0.25)
         is_logged = bpy.context.window_manager.tresorio_user_props.is_logged
 
@@ -322,7 +284,6 @@ async def _connect_to_tresorio(data: Dict[str, str]) -> Coroutine:
                       ['err_connection'][CONFIG_LANG], icon='ERROR')
         else:
             bpy.context.window_manager.tresorio_report_props.login_in = False
-            await _update_renderpacks_info(res_connect['token'])
             await _refresh_loop(res_connect['token'])
 
 
@@ -416,6 +377,37 @@ async def _new_upload(token: str) -> Coroutine:
         bpy.context.scene.tresorio_render_form.upload_percent = 0.0
         bpy.context.window_manager.tresorio_report_props.creating_render = False
 
+async def _get_farms(
+    token: str,
+    rendering_mode: str,
+    number_of_frames: int
+) -> Coroutine:
+    try:
+        async with Platform() as plt:
+            farms = await plt.req_get_farms(token, {
+                'mode': rendering_mode,
+                'numberOfFrames': number_of_frames
+            }, jsonify=True)
+            if len(farms) == 0:
+                bpy.context.window_manager.tresorio_user_props.is_launching_rendering = False
+                BACKEND_LOGGER.error("Empty response from server while getting farms")
+                alert(TRADUCTOR['notif']['something_went_wrong'][CONFIG_LANG])
+                return
+            for farm in farms:
+                item = bpy.context.window_manager.tresorio_farm_props.add()
+                item.cost = farm["resources"]["cost"]
+                item.gpu = farm["resources"]["gpu"]
+                item.cpu = farm["resources"]["vcpu"]
+                item.ram = farm["resources"]["ram"]
+                item.is_available = farm["isAvailable"]
+                item.units_per_farmer = farm["farmer"]["units"]
+                item.number_of_farmers = farm["numberOfFarmers"]
+    except Exception as err:
+        bpy.context.window_manager.tresorio_user_props.is_launching_rendering = False
+        BACKEND_LOGGER.error(err)
+        alert(TRADUCTOR['notif']['something_went_wrong'][CONFIG_LANG])
+
+
 async def _new_render(token: str,
                       launch_render: Dict[str, Any]
                       ) -> Coroutine:
@@ -429,6 +421,9 @@ async def _new_render(token: str,
             launch_render['projectId'] = render_form.project_id
             await plt.req_launch_render(token, launch_render, jsonify=True)
             await _update_list_renderings(token)
+            notif(TRADUCTOR['notif']['rendering_launched'][CONFIG_LANG].format(render_form.rendering_name.capitalize()))
+            bpy.context.window_manager.tresorio_renders_list_index = 0
+            bpy.context.window_manager.tresorio_user_settings_props.show_selected_render = True
     except Exception as err:
         BACKEND_LOGGER.error(err)
         popup_msg = TRADUCTOR['notif']['err_launch_render'][CONFIG_LANG]
@@ -437,7 +432,8 @@ async def _new_render(token: str,
             if err.status == HTTPStatus.FORBIDDEN:
                 popup_msg = TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG]
             elif err.status == HTTPStatus.SERVICE_UNAVAILABLE:
-                popup_msg = TRADUCTOR['notif']['not_enough_servers'][CONFIG_LANG]
+                alert(TRADUCTOR['notif']['rendering_failed'][CONFIG_LANG].format(render_form.rendering_name.capitalize()), subtitle=TRADUCTOR['notif']['not_enough_servers'][CONFIG_LANG])
+                return
             elif err.status == HTTPStatus.CONFLICT:
                 popup_msg = TRADUCTOR['notif']['render_name_already_taken'][CONFIG_LANG].format(
                     render_form.rendering_name)
@@ -445,7 +441,7 @@ async def _new_render(token: str,
                 popup_msg = TRADUCTOR['notif']['no_scene'][CONFIG_LANG]
             elif err.status == HTTPStatus.BAD_REQUEST:
                 popup_msg = TRADUCTOR['notif']['wrong_name'][CONFIG_LANG]
-        popup(msg=popup_msg, icon='ERROR')
+        alert(TRADUCTOR['notif']['rendering_failed'][CONFIG_LANG].format(render_form.rendering_name.capitalize()) + popup_msg)
 
 async def _stop_render(token: str,
                        render: TresorioRendersDetailsProps
@@ -517,52 +513,25 @@ def _fill_render_details(render: TresorioRendersDetailsProps,
                          ) -> None:
     render.id = res['id']
     render.name = res['name']
-    render.timeout = res['timeout']
-    render.type = res['renderType']
+    render.cpu = res['vcpu']
+    render.gpu = res['gpu']
+    render.ram = res['ram']
+    render.cost = res['cost']
+    render.total_cost = res['totalCost']
     render.engine = res['engine']
-    render.farm = res['farm']
+    render.type = res['renderType']
     render.output_format = res['outputFormat']
     render.status = res['status']
     render.total_frames = res['numberOfFrames']
     render.rendered_frames = res['finishedFrames']
-    render.number_farmers = res['numberOfFarmers']
     render.progression = res['progression']
     render.number_of_fragments = res['fragmentCount']
-    if is_new and render.status != RenderStatus.FINISHED:
-        render.created_at = datetime.strptime(
-            res['createdAt'], '%Y-%m-%dT%H:%M:%S.%fZ').timestamp()
-        render.uptime = get_uptime(render.created_at)
-    if res['status'] == RenderStatus.FINISHED:
-        render.uptime = res['uptime']
-
+    render.uptime = res['uptime']
+    render.mode = res['mode']
 
 def _add_renders_details_prop(res: Dict[str, Any]) -> None:
     render = bpy.context.window_manager.tresorio_renders_details.add()
     _fill_render_details(render, res, is_new=True)
-
-
-def _get_renderpacks_callback(res: ClientResponse) -> None:
-    bpy.context.window_manager.property_unset('tresorio_render_packs')
-    last_selected = bpy.context.scene.tresorio_render_form.last_renderpack_selected
-    for i, pack in enumerate(res):
-        new_pack = bpy.context.window_manager.tresorio_render_packs.add()
-        new_pack.name = pack['name']
-        new_pack.cost = pack['cost']
-        new_pack.gpu = pack['gpu']
-        new_pack.cpu = pack['vcpu']
-        new_pack.ram = pack['ram']
-        new_pack.description = TRADUCTOR['desc']['pack_full_description_popup'][CONFIG_LANG].format(
-            new_pack.cost,
-            new_pack.gpu,
-            pack['gpuModel'],
-            new_pack.cpu, pack['cpuModel'],
-            new_pack.ram)
-        if i == 0:
-            new_pack.is_selected = True
-            bpy.context.scene.tresorio_render_form.render_pack = pack['name']
-        elif last_selected == pack['name']:
-            new_pack.is_selected = True
-            bpy.context.scene.tresorio_render_form.render_pack = pack['name']
 
 
 def _get_user_info_callback(res: ClientResponse) -> None:
