@@ -154,7 +154,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
     desc = TRADUCTOR['desc']['use_optix'][CONFIG_LANG]
     use_optix: bpy.props.BoolProperty(
         description=desc,
-        default=True,
+        default=False,
         name='',
         options={'HIDDEN', 'SKIP_SAVE'},
     )
