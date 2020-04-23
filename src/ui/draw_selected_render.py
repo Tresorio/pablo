@@ -14,8 +14,8 @@ def format_uptime(uptime):
     days = math.floor(uptime / (60 * 60 * 24))
     uptime -= days * 60 * 60 * 24
 
-    hours = math.floor(uptime / (60 * 24))
-    uptime -= hours * 60 * 24
+    hours = math.floor(uptime / (60 * 60))
+    uptime -= hours * 60 * 60
 
     minutes = math.floor(uptime / 60)
     uptime -= minutes * 60
