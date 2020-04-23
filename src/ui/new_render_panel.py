@@ -74,8 +74,8 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                            text=TRADUCTOR['field']['pack_textures'][CONFIG_LANG])
             grid_flow.prop(render_form, 'auto_tile_size',
                            text=TRADUCTOR['field']['auto_tile_size'][CONFIG_LANG])
-            grid_flow.prop(render_form, 'use_optix',
-                            text=TRADUCTOR['field']['use_optix'][CONFIG_LANG])
+            # grid_flow.prop(render_form, 'use_optix',
+            #                 text=TRADUCTOR['field']['use_optix'][CONFIG_LANG])
 
 
         # LAUNCH
