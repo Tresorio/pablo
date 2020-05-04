@@ -31,6 +31,7 @@ from src.operators.popup import ErrorPopup, InfoPopup
 from src.operators.login import TresorioLoginOperator
 from src.operators.logout import TresorioLogoutOperator
 from src.operators.upload import TresorioUploadOperator
+from src.operators.pack import TresorioPackOperator
 from src.operators.gpu_render import TresorioGpuRenderFrameOperator
 from src.operators.cpu_render import TresorioCpuRenderFrameOperator
 from src.operators.cancel_rendering import TresorioCancelRenderingOperator
@@ -57,7 +58,7 @@ from src.config.api import API_CONFIG
 
 bl_info = {
     'name': 'Tresorio cloud rendering',
-    'version': (2, 1, 0),
+    'version': (2, 2, 0),
     'blender': (2, 80, 0),
     'category': 'Output',
     'file': '/$HOME/.config/blender/2.80/scripts/addons/tresorio',
@@ -83,6 +84,7 @@ TO_REGISTER_CLASSES = (
     TresorioRedirectRegisterOperator,
     TresorioRedirectHomeOperator,
     TresorioUploadOperator,
+    TresorioPackOperator,
     ErrorPopup,
     InfoPopup,
     TresorioGpuRenderFrameOperator,

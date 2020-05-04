@@ -108,8 +108,24 @@
         "fr": "Configuration"
     },
     "upload": {
-        "en": "Upload scene",
-        "fr": "Uploader la scène"
+        "en": "Upload",
+        "fr": "Uploader"
+    },
+    "project_directory": {
+        "en": "Directory",
+        "fr": "Dossier"
+    },
+    "project_name": {
+        "en": "Project name",
+        "fr": "Nom du projet"
+    },
+    "project": {
+        "en": "Project",
+        "fr": "Projet"
+    },
+    "pack": {
+        "en": "Export",
+        "fr": "Exporter"
     },
     "gpulaunch": {
         "en": "GPU render",

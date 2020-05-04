@@ -10,9 +10,11 @@ import os
 import shutil
 import asyncio
 import functools
+import tempfile
 
 import bpy
 import time
+import pathlib
 from src.ui.popup import popup, alert, notif
 from src.operators.logout import logout
 from src.services.platform import Platform
@@ -27,6 +29,8 @@ from src.config.enums import RenderStatus, RenderTypes
 from src.properties.render_form import get_render_type
 from src.properties.renders import TresorioRendersDetailsProps
 from bundle_modules.aiohttp import ClientResponseError, ClientResponse
+
+from src.services.pack_scene import pack_scene
 
 # pylint: disable=assignment-from-no-return,assignment-from-none,unexpected-keyword-arg
 UPDATE_QUEUE = Queue()
@@ -52,12 +56,19 @@ def get_farms(rendering_mode: str) -> None:
     future = _get_farms(token, rendering_mode, number_of_frames)
     asyncio.ensure_future(future)
 
-def new_upload() -> None:
+def new_upload(path: str) -> None:
     """Upload a new blend file"""
 
     token = bpy.context.window_manager.tresorio_user_props.token
 
-    future = _new_upload(token)
+    future = _new_upload(token, path)
+    asyncio.ensure_future(future)
+
+
+def pack_project(path: str, project: str) -> None:
+    """Pack project"""
+
+    future = _pack_project(path, project)
     asyncio.ensure_future(future)
 
 
@@ -102,6 +113,18 @@ def connect_to_tresorio(email: str,
     asyncio.ensure_future(future)
     ensure_async_loop()
 
+    scene = bpy.data.filepath
+    if bpy.context.scene.tresorio_render_form.project_name == '':
+        if scene == '':
+            bpy.context.scene.tresorio_render_form.project_name = 'Untitled_Tresorio'
+        else:
+            bpy.context.scene.tresorio_render_form.project_name = os.path.splitext(os.path.basename(scene))[0].capitalize() + '_Tresorio'
+
+    if bpy.context.scene.tresorio_render_form.project_folder == '':
+        if scene == '':
+            bpy.context.scene.tresorio_render_form.project_folder = tempfile.gettempdir()
+        else:
+            bpy.context.scene.tresorio_render_form.project_folder = os.path.dirname(scene)
 
 def delete_render(render_id: str) -> None:
     """Delete a render
@@ -235,7 +258,6 @@ def update_upload_percent(value: float):
 def update_finished_upload(dummy):
     report_props = bpy.context.window_manager.tresorio_report_props
     render_form = bpy.context.scene.tresorio_render_form
-    report_props.uploading_blend_file = False
     render_form.upload_percent = 0.0
 
 
@@ -329,41 +351,60 @@ async def _update_rendering(render: TresorioRendersDetailsProps,
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
 
-async def _new_upload(token: str) -> Coroutine:
-    """This function upload a new .blend file"""
-
-    blendfile = bpy.data.filepath
-    render_form = bpy.context.scene.tresorio_render_form
-    render_info = None
-
-    try:
-        if render_form.pack_textures:
-            bpy.context.window_manager.tresorio_report_props.packing_textures = True
-            bpy.ops.file.pack_all()
-            bpy.ops.wm.save_as_mainfile(filepath=blendfile)
-    except RuntimeError as err:
-        BACKEND_LOGGER.error(err)
-        alert(TRADUCTOR['notif']['cant_pack_textures']
-              [CONFIG_LANG])
+async def _pack_project(path: str, project: str) -> Coroutine:
+    project_path = os.path.join(path, project)
+    if not os.path.exists(path):
+        alert(TRADUCTOR['notif']['doesnt_exist'][CONFIG_LANG].format(path))
         return
+    if not os.path.isdir(path):
+        alert(TRADUCTOR['notif']['not_dir'][CONFIG_LANG].format(path))
+        return
+
+    bpy.context.window_manager.tresorio_report_props.packing_textures = True
+    try:
+        pack_scene(project_path)
+        notif(TRADUCTOR['notif']['exported'][CONFIG_LANG].format(project_path))
+    except Exception as e:
+        print(e)
+        alert(str(e))
+        alert(TRADUCTOR['notif']['cant_pack_textures'][CONFIG_LANG])
     finally:
         bpy.context.window_manager.tresorio_report_props.packing_textures = False
 
+
+async def _new_upload(token: str, path: str) -> Coroutine:
+    """This function upload a new .blend file"""
+
+    render_form = bpy.context.scene.tresorio_render_form
+    render_info = None
+
+    print("Uploading", path)
+    bpy.context.window_manager.tresorio_report_props.uploading_blend_file = True
+
     try:
         async with Platform() as plt:
-            bpy.context.window_manager.tresorio_report_props.creating_render = True
-            render_info = await plt.req_create_render(token, os.path.getsize(bpy.data.filepath), jsonify=True)
+            render_info = await plt.req_create_render(token, os.path.getsize(path), jsonify=True)
             bpy.context.scene.tresorio_render_form.project_id = render_info['id']
         try:
             await _update_list_renderings(token)
         except Exception:
             pass
         bpy.context.window_manager.tresorio_renders_list_index = 0
-        loop = asyncio.get_running_loop()
-        upload = functools.partial(
-            force_sync(_upload_blend_file_async), blendfile, render_info)
-        bpy.context.window_manager.tresorio_report_props.uploading_blend_file = True
-        await loop.run_in_executor(None, upload)
+
+        for dirname, dirnames, filenames in os.walk(path):
+            # for subdirname in dirnames:
+            #     print(os.path.relpath(os.path.join(dirname, subdirname), path))
+
+            for filename in filenames:
+                abspath = os.path.join(dirname, filename)
+                relpath = pathlib.PurePosixPath(pathlib.Path(os.path.relpath(abspath, path)))
+                print("Uploading", relpath)
+                bpy.context.scene.tresorio_render_form.file_uploading = os.path.basename(abspath)
+                loop = asyncio.get_running_loop()
+                upload = functools.partial(
+                    force_sync(_upload_blend_file_async), abspath, relpath, render_info)
+                await loop.run_in_executor(None, upload)
+
     except Exception as err:
         BACKEND_LOGGER.error(err)
         popup_msg = TRADUCTOR['notif']['err_upl_blendfile'][CONFIG_LANG]
@@ -375,7 +416,7 @@ async def _new_upload(token: str) -> Coroutine:
         return
     finally:
         bpy.context.scene.tresorio_render_form.upload_percent = 0.0
-        bpy.context.window_manager.tresorio_report_props.creating_render = False
+        bpy.context.window_manager.tresorio_report_props.uploading_blend_file = False
 
 async def _get_farms(
     token: str,
@@ -488,7 +529,8 @@ async def _delete_all_renders(token: str) -> Coroutine:
         bpy.context.window_manager.tresorio_report_props.deleting_all_renders = False
 
 
-async def _upload_blend_file_async(blendfile: str,
+async def _upload_blend_file_async(filepath: str,
+                                   relpath: str,
                                    render_info: Dict[str, Any]
                                    ) -> Coroutine:
     """Upload the blend file on a Nas
@@ -498,9 +540,9 @@ async def _upload_blend_file_async(blendfile: str,
         render_info: information about the render linked to the blend file
     """
     async with AsyncNas(render_info['ip']) as nas:
-        with PercentReader(blendfile, update_queue=UPDATE_QUEUE) as file:
+        with PercentReader(filepath, update_queue=UPDATE_QUEUE) as file:
             return await nas.upload_content(render_info['jwt'],
-                                            'scene.blend',
+                                            relpath,
                                             file)
 
 
