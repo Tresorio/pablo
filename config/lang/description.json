@@ -36,8 +36,20 @@
         "fr": "Lance un rendu GPU sur les serveurs de Tresorio"
     },
     "tresorio_upload": {
-        "en": "Starts uploading current scene on Tresorio's servers",
-        "fr": "Lance l'upload la scène actuelle sur les serveurs de Tresorio"
+        "en": "Upload your Tresorio project on our servers",
+        "fr": "Upload votre projet Tresorio sur nos servers"
+    },
+    "tresorio_pack": {
+        "en": "Pack the whole project into a single exportable directory. Does not modify current scene",
+        "fr": "Rassemble le projet entier dans un seul dossier exportable. Ne modifie pas la scène actuelle"
+    },
+    "project_directory": {
+        "en": "Tresorio project directory, where assets are packed and from which files are uploaded",
+        "fr": "Dossier du project Tresorio, où les dépendances sont rassemblées et depuis lequel les fichiers sont envoyés"
+    },
+    "project_name": {
+        "en": "Tresorio project name",
+        "fr": "Nom du projet Tresorio"
     },
     "mail": {
         "en": "Email address of your Tresorio account",
@@ -80,8 +92,8 @@
         "fr": "Format des fichiers de sortie du rendu"
     },
     "uploading": {
-        "en": "Uploading files ...",
-        "fr": "Envoi des fichier ..."
+        "en": "Uploading {0}...",
+        "fr": "Envoi de {0}..."
     },
     "upload_failed": {
         "en": "The upload failed, please retry",

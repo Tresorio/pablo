@@ -60,8 +60,8 @@
         "fr": "Erreur lors de l'obtention des packs de rendu disponibles"
     },
     "err_upl_blendfile": {
-        "en": "Error while uploading blend file. Please try again",
-        "fr": "Erreur lors de l'envoi du fichier blend. Veuillez réessayer"
+        "en": "Error while uploading Tresorio project. Please try again",
+        "fr": "Erreur lors de l'envoi du projet Tresorio. Veuillez réessayer"
     },
     "expired_session": {
         "en": "Your session expired, please reconnect",
@@ -112,8 +112,12 @@
         "fr": "Arrêt ..."
     },
     "cant_pack_textures": {
-        "en": "Can't pack the textures into the file",
-        "fr": "Impossible de charger les textures dans le fichier"
+        "en": "An error occured while packing the project",
+        "fr": "Une erreur s'est produite lors du rassemblement des dépendances"
+    },
+    "exported": {
+        "en": "Project successfully exported in {0}",
+        "fr": "Projet exporté avec succès dans {0}"
     },
     "no_result_render": {
         "en": "No frames rendered",
@@ -178,5 +182,21 @@
     "rendering_failed": {
         "en": "Rendering \"{0}\" launching failed : ",
         "fr": "Le rendu \"{0}\" ne s'est pas lancé : "
+    },
+    "doesnt_exist": {
+        "en": "Path {0} doesn't exist",
+        "fr": "Le chemin {0} n'existe pas"
+    },
+    "not_dir": {
+        "en": "{0} is not a directory",
+        "fr": "{0} n'est pas un dossier"
+    },
+    "pack_first": {
+        "en": "{0} doesn't exist already. You should export your project first",
+        "fr": "{0} n'existe pas encore. Vous devriez d'abord exporter votre projet"
+    },
+    "pack_error": {
+        "en": "{0} is not a Tresorio project. You should export your project first",
+        "fr": "{0} n'est pas un projet Tresorio. Vous devriez d'abord exporter votre projet"
     }
 }
