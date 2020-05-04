@@ -76,7 +76,6 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         name='',
         items=(
             ('CYCLES', 'Cycles', '', 'EMPTY_AXIS', 1),
-            ('EEVEE', 'Eevee (experimental !)', '', 'EMPTY_AXIS', 2)
         ),
         default='CYCLES',
         options={'HIDDEN', 'SKIP_SAVE'},
