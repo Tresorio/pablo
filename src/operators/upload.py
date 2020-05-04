@@ -2,10 +2,11 @@
 
 from typing import Set
 
-from src.ui.popup import popup
+from src.ui.popup import popup, alert
 from src.services.backend import new_upload
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 import bpy
+import os
 
 # pylint: disable=no-self-use
 
@@ -30,17 +31,23 @@ class TresorioUploadOperator(bpy.types.Operator):
                 ) -> Set[str]:
         """Called when operator is called"""
         user_props = context.window_manager.tresorio_user_props
-
         if not user_props.is_logged:
             popup(TRADUCTOR['notif']['not_logged_in']
                   [CONFIG_LANG], icon='ERROR')
             return {'CANCELLED'}
 
-        if not bpy.data.is_saved or bpy.data.is_dirty:
-            popup(TRADUCTOR['notif']['file_not_saved']
-                  [CONFIG_LANG], icon='ERROR')
-            return {'CANCELLED'}
 
-        new_upload()
+        folder = context.scene.tresorio_render_form.project_folder
+        project = context.scene.tresorio_render_form.project_name
+        path = os.path.join(folder, project)
+
+        if not os.path.exists(path):
+            alert(TRADUCTOR['notif']['pack_first'][CONFIG_LANG].format(project))
+            return {'FINISHED'}
+        if not os.path.isdir(path):
+            alert(TRADUCTOR['notif']['pack_error'][CONFIG_LANG].format(project))
+            return {'FINISHED'}
+
+        new_upload(path)
 
         return {'FINISHED'}

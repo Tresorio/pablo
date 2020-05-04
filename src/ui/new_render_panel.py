@@ -70,31 +70,52 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             grid_flow = split.grid_flow(
                 even_rows=False, even_columns=True, align=True)
 
-            grid_flow.prop(render_form, 'pack_textures',
-                           text=TRADUCTOR['field']['pack_textures'][CONFIG_LANG])
             grid_flow.prop(render_form, 'auto_tile_size',
                            text=TRADUCTOR['field']['auto_tile_size'][CONFIG_LANG])
             # grid_flow.prop(render_form, 'use_optix',
             #                 text=TRADUCTOR['field']['use_optix'][CONFIG_LANG])
 
 
+        # PROJECT
+        box = layout.box()
+        row = box.row()
+        row_1 = row.row()
+        row_1.alignment = 'LEFT'
+        row_1.prop(render_form, 'show_project', emboss=False,
+                   text=TRADUCTOR['field']['project'][CONFIG_LANG]+':')
+        row_2 = row.row()
+        row_2.alignment = 'RIGHT'
+        icon = 'DISCLOSURE_TRI_DOWN' if render_form.show_project else 'DISCLOSURE_TRI_RIGHT'
+        row_2.prop(render_form, 'show_project', text='', emboss=False,
+                   icon=icon)
+
+        if render_form.show_project:
+            project_name = box.row().split(factor=0.4, align=True)
+            project_name.label(text=TRADUCTOR['field']['project_name'][CONFIG_LANG]+':')
+            project_name.prop(render_form, 'project_name')
+            project_content = box.row().split(factor=0.7, align=True)
+            project_dir = project_content.column()
+            project_dir.label(text=TRADUCTOR['field']['project_directory'][CONFIG_LANG])
+            project_dir.prop(render_form, 'project_folder')
+
+            project_actions = project_content.column()
+            project_actions.separator()
+            if report_props.packing_textures:
+                project_actions.label(text=TRADUCTOR['notif']['packing'][CONFIG_LANG])
+            else:
+                project_actions.operator('tresorio.pack')
+            upload = project_actions.operator('tresorio.upload')
+
+            if report_props.uploading_blend_file:
+                project_actions.enabled = False
+                box.prop(render_form, 'upload_percent',
+                         text=TRADUCTOR['desc']['uploading'][CONFIG_LANG].format(render_form.file_uploading),
+                         slider=True)
+
+
         # LAUNCH
-        is_ready_to_launch = False
-        if context.window_manager.tresorio_report_props.deleting_all_renders:
-            layout.label(text=TRADUCTOR['notif']
-                         ['deleting_all_renders'][CONFIG_LANG])
-        elif report_props.uploading_blend_file:
-            box.prop(render_form, 'upload_percent',
-                     text=TRADUCTOR['desc']['uploading'][CONFIG_LANG],
-                     slider=True)
-        elif report_props.packing_textures:
-            box.label(text=TRADUCTOR['notif']['packing'][CONFIG_LANG])
-        elif report_props.creating_render:
-            box.label(text=TRADUCTOR['notif']['creating_render'][CONFIG_LANG])
-        else:
-            is_ready_to_launch = True
-            box.operator('tresorio.upload')
-        split = box.row().split()
+        is_ready_to_launch = not report_props.uploading_blend_file
+        split = layout.row().split()
         split.enabled = is_ready_to_launch
         split.operator('tresorio.cpurender')
         split.operator('tresorio.gpurender')

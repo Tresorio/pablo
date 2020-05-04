@@ -64,15 +64,14 @@ class TresorioRendersList(bpy.types.UIList):
         # INFO_CASE
         row = split.row(align=True)
         row.alignment = 'RIGHT'
-        if render.status == RenderStatus.LAUNCHING:
+        if render.downloading:
+            row.label(text=TRADUCTOR['notif']['downloading'][CONFIG_LANG])
+        elif render.status == RenderStatus.LAUNCHING:
             row.label(text=TRADUCTOR['notif']['launching'][CONFIG_LANG])
         elif render.status == RenderStatus.RUNNING:
             row.prop(render, 'progression')
         elif render.status == RenderStatus.STOPPING:
             row.label(text=TRADUCTOR['notif']['stopping'][CONFIG_LANG])
-        elif render.status == RenderStatus.FINISHED or render.status == RenderStatus.ERROR or render.status == RenderStatus.STOPPED:
-            if render.downloading:
-                row.label(text=TRADUCTOR['notif']['downloading'][CONFIG_LANG])
 
         # OPS_CASE
         if render.number_of_fragments > 0 and render.status != RenderStatus.STOPPING:
