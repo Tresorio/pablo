@@ -1,6 +1,7 @@
 """This module defines the properties for the render form"""
 
 import math
+import os
 
 from src.config.enums import RenderTypes
 from src.config.langs import TRADUCTOR, CONFIG_LANG
@@ -49,6 +50,13 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
+    show_project: bpy.props.BoolProperty(
+        name='',
+        default=True,
+        description=desc,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
     desc = TRADUCTOR['desc']['rendering_name'][CONFIG_LANG]
     rendering_name: bpy.props.StringProperty(
         description=desc,
@@ -68,7 +76,6 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         name='',
         items=(
             ('CYCLES', 'Cycles', '', 'EMPTY_AXIS', 1),
-            ('EEVEE', 'Eevee (experimental !)', '', 'EMPTY_AXIS', 2)
         ),
         default='CYCLES',
         options={'HIDDEN', 'SKIP_SAVE'},
@@ -124,14 +131,6 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         update=set_animation_type,
     )
 
-    desc = TRADUCTOR['desc']['pack_textures'][CONFIG_LANG]
-    pack_textures: bpy.props.BoolProperty(
-        default=True,
-        description=desc,
-        name='',
-        options={'HIDDEN', 'SKIP_SAVE'},
-    )
-
     upload_percent: bpy.props.FloatProperty(
         min=0,
         max=100,
@@ -141,6 +140,10 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         subtype='PERCENTAGE',
         options={'HIDDEN', 'SKIP_SAVE'},
         update=lambda a, b: None,
+    )
+
+    file_uploading: bpy.props.StringProperty(
+        options={'HIDDEN', 'SKIP_SAVE'},
     )
 
     desc = TRADUCTOR['desc']['auto_tile_size'][CONFIG_LANG]
@@ -161,6 +164,21 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
 
     project_id: bpy.props.StringProperty(
         description='',
+        name='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    desc = TRADUCTOR['desc']['project_directory'][CONFIG_LANG]
+    project_folder: bpy.props.StringProperty(
+        description=desc,
+        name='',
+        subtype='DIR_PATH',
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    desc = TRADUCTOR['desc']['project_name'][CONFIG_LANG]
+    project_name: bpy.props.StringProperty(
+        description=desc,
         name='',
         options={'HIDDEN', 'SKIP_SAVE'},
     )
