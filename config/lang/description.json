@@ -43,6 +43,10 @@
         "en": "Pack the whole project into a single exportable directory. Does not modify current scene",
         "fr": "Rassemble le projet entier dans un seul dossier exportable. Ne modifie pas la scène actuelle"
     },
+    "resume_render": {
+        "en": "Finish to render uncompleted frames",
+        "fr": "Fini de rendre les frames incomplètes"
+    },
     "project_directory": {
         "en": "Tresorio project directory, where assets are packed and from which files are uploaded",
         "fr": "Dossier du project Tresorio, où les dépendances sont rassemblées et depuis lequel les fichiers sont envoyés"
