@@ -10,6 +10,8 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
                                  options={'HIDDEN', 'SKIP_SAVE'})
 
     # Render specifics
+    project_name: bpy.props.StringProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     name: bpy.props.StringProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     gpu: bpy.props.IntProperty(

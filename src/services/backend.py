@@ -47,28 +47,34 @@ def logout_if_unauthorized(err: ClientResponseError) -> None:
         popup(TRADUCTOR['notif']['expired_session'][CONFIG_LANG], icon='ERROR')
 
 
-def get_farms(rendering_mode: str) -> None:
+def get_farms(rendering_mode: str, number_of_frames: int) -> None:
     token = bpy.context.window_manager.tresorio_user_props.token
-    number_of_frames = bpy.context.scene.frame_end - bpy.context.scene.frame_start + 1
-    if get_render_type() == RenderTypes.FRAME:
-        number_of_frames = 1
 
     future = _get_farms(token, rendering_mode, number_of_frames)
     asyncio.ensure_future(future)
 
-def new_upload(path: str) -> None:
+def new_upload(path: str, project_name: str) -> None:
     """Upload a new blend file"""
 
     token = bpy.context.window_manager.tresorio_user_props.token
 
-    future = _new_upload(token, path)
+    future = _new_upload(token, path, project_name)
     asyncio.ensure_future(future)
 
 
-def pack_project(path: str, project: str) -> None:
+def pack_project(path: str) -> None:
     """Pack project"""
 
-    future = _pack_project(path, project)
+    future = _pack_project(path)
+    asyncio.ensure_future(future)
+
+
+def resume_render(render, farm_index) -> None:
+    """Resume an already existing render"""
+
+    token = bpy.context.window_manager.tresorio_user_props.token
+
+    future = _resume_render(token, render, farm_index)
     asyncio.ensure_future(future)
 
 
@@ -83,6 +89,8 @@ def new_render() -> None:
         starting_frame = bpy.context.scene.frame_current
         ending_frame = bpy.context.scene.frame_current
 
+    project_name = bpy.context.scene.tresorio_render_form.project_name
+
     launch_render = {
         'name': props.rendering_name,
         'engine': props.render_engines_list,
@@ -93,6 +101,7 @@ def new_render() -> None:
         'useOptix': props.use_optix,
         'startingFrame': starting_frame,
         'endingFrame': ending_frame,
+        'projectName': project_name
     }
     token = bpy.context.window_manager.tresorio_user_props.token
 
@@ -116,10 +125,9 @@ def connect_to_tresorio(email: str,
     scene = bpy.data.filepath
     if bpy.context.scene.tresorio_render_form.project_name == '':
         if scene == '':
-            bpy.context.scene.tresorio_render_form.project_name = 'Untitled_Tresorio'
+            bpy.context.scene.tresorio_render_form.project_name = TRADUCTOR['field']['default_project_name'][CONFIG_LANG]
         else:
-            bpy.context.scene.tresorio_render_form.project_name = os.path.splitext(os.path.basename(scene))[0].capitalize() + '_Tresorio'
-
+            bpy.context.scene.tresorio_render_form.project_name = os.path.splitext(os.path.basename(scene))[0].capitalize()
     if bpy.context.scene.tresorio_render_form.project_folder == '':
         if scene == '':
             bpy.context.scene.tresorio_render_form.project_folder = tempfile.gettempdir()
@@ -351,19 +359,11 @@ async def _update_rendering(render: TresorioRendersDetailsProps,
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
 
-async def _pack_project(path: str, project: str) -> Coroutine:
-    project_path = os.path.join(path, project)
-    if not os.path.exists(path):
-        alert(TRADUCTOR['notif']['doesnt_exist'][CONFIG_LANG].format(path))
-        return
-    if not os.path.isdir(path):
-        alert(TRADUCTOR['notif']['not_dir'][CONFIG_LANG].format(path))
-        return
-
+async def _pack_project(path: str) -> Coroutine:
     bpy.context.window_manager.tresorio_report_props.packing_textures = True
     try:
-        pack_scene(project_path)
-        notif(TRADUCTOR['notif']['exported'][CONFIG_LANG].format(project_path))
+        pack_scene(path)
+        notif(TRADUCTOR['notif']['exported'][CONFIG_LANG].format(path))
     except Exception as e:
         print(e)
         alert(str(e))
@@ -372,7 +372,7 @@ async def _pack_project(path: str, project: str) -> Coroutine:
         bpy.context.window_manager.tresorio_report_props.packing_textures = False
 
 
-async def _new_upload(token: str, path: str) -> Coroutine:
+async def _new_upload(token: str, path: str, project_name: str) -> Coroutine:
     """This function upload a new .blend file"""
 
     render_form = bpy.context.scene.tresorio_render_form
@@ -383,7 +383,7 @@ async def _new_upload(token: str, path: str) -> Coroutine:
 
     try:
         async with Platform() as plt:
-            render_info = await plt.req_create_render(token, os.path.getsize(path), jsonify=True)
+            render_info = await plt.req_create_render(token, os.path.getsize(path), project_name, jsonify=True)
             bpy.context.scene.tresorio_render_form.project_id = render_info['id']
         try:
             await _update_list_renderings(token)
@@ -449,11 +449,38 @@ async def _get_farms(
         alert(TRADUCTOR['notif']['something_went_wrong'][CONFIG_LANG])
 
 
+async def _resume_render(token: str,
+                        render,
+                        farm_index: int
+                        ) -> Coroutine:
+    """Resume rendering"""
+
+    try:
+        async with Platform() as plt:
+            await plt.req_resume_render(token, render.id, farm_index, jsonify=True)
+            await _update_list_renderings(token)
+            notif(TRADUCTOR['notif']['rendering_resumed'][CONFIG_LANG].format(render.name))
+            bpy.context.window_manager.tresorio_user_settings_props.show_selected_render = True
+    except Exception as err:
+        BACKEND_LOGGER.error(err)
+        popup_msg = TRADUCTOR['notif']['err_launch_render'][CONFIG_LANG]
+        if isinstance(err, ClientResponseError):
+            logout_if_unauthorized(err)
+            if err.status == HTTPStatus.FORBIDDEN:
+                popup_msg = TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG]
+            elif err.status == HTTPStatus.SERVICE_UNAVAILABLE:
+                alert(TRADUCTOR['notif']['rendering_failed'][CONFIG_LANG].format(render.name.capitalize()), subtitle=TRADUCTOR['notif']['not_enough_servers'][CONFIG_LANG])
+                return
+            elif err.status == HTTPStatus.NOT_FOUND:
+                popup_msg = TRADUCTOR['notif']['no_scene'][CONFIG_LANG].format(render.project_name.capitalize())
+
+        alert(TRADUCTOR['notif']['rendering_failed'][CONFIG_LANG].format(render.name.capitalize()) + popup_msg)
+
+
 async def _new_render(token: str,
                       launch_render: Dict[str, Any]
                       ) -> Coroutine:
-    """This function creates a new render, packs the textures, uploads the blend
-       file, and finally launches the rendering."""
+    """This function creates a new render and launches it."""
 
     render_form = bpy.context.scene.tresorio_render_form
 
@@ -462,7 +489,7 @@ async def _new_render(token: str,
             launch_render['projectId'] = render_form.project_id
             await plt.req_launch_render(token, launch_render, jsonify=True)
             await _update_list_renderings(token)
-            notif(TRADUCTOR['notif']['rendering_launched'][CONFIG_LANG].format(render_form.rendering_name.capitalize()))
+            notif(TRADUCTOR['notif']['rendering_launched'][CONFIG_LANG].format(render_form.rendering_name.capitalize(), render_form.project_name.capitalize()))
             bpy.context.window_manager.tresorio_renders_list_index = 0
             bpy.context.window_manager.tresorio_user_settings_props.show_selected_render = True
     except Exception as err:
@@ -479,7 +506,7 @@ async def _new_render(token: str,
                 popup_msg = TRADUCTOR['notif']['render_name_already_taken'][CONFIG_LANG].format(
                     render_form.rendering_name)
             elif err.status == HTTPStatus.NOT_FOUND:
-                popup_msg = TRADUCTOR['notif']['no_scene'][CONFIG_LANG]
+                popup_msg = TRADUCTOR['notif']['no_scene'][CONFIG_LANG].format(render_form.project_name.capitalize())
             elif err.status == HTTPStatus.BAD_REQUEST:
                 popup_msg = TRADUCTOR['notif']['wrong_name'][CONFIG_LANG]
         alert(TRADUCTOR['notif']['rendering_failed'][CONFIG_LANG].format(render_form.rendering_name.capitalize()) + popup_msg)
@@ -554,6 +581,10 @@ def _fill_render_details(render: TresorioRendersDetailsProps,
                          is_new: bool = False
                          ) -> None:
     render.id = res['id']
+    try:
+        render.project_name = res['projectName']
+    except Exception as e:
+        pass
     render.name = res['name']
     render.cpu = res['vcpu']
     render.gpu = res['gpu']

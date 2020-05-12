@@ -134,6 +134,23 @@ class Platform:
                                        ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
+    async def req_resume_render(self,
+                                token: str,
+                                render_id: str,
+                                farm_index: int
+                                ) -> aiohttp.ClientResponse:
+        headers = {
+            'Authorization': f'JWT {token}',
+            'Content-Type': 'application/json'
+        }
+        url = urljoin(self.url, API_CONFIG['routes']['resume_render'].format(render_id))
+        return await self.session.put(url,
+                                       json={'farmIndex': farm_index},
+                                       headers=headers,
+                                       raise_for_status=True,
+                                       ssl_context=SSL_CONTEXT)
+
+    @_platformrequest.__func__
     async def req_launch_render(self,
                                 token: str,
                                 launch_render_params: Dict[str, Any]
@@ -260,7 +277,8 @@ class Platform:
     @_platformrequest.__func__
     async def req_create_render(self,
                                 token: str,
-                                renderSize: int
+                                renderSize: int,
+                                projectName: str
                                 ) -> aiohttp.ClientResponse:
         """Create a render
 
@@ -279,7 +297,7 @@ class Platform:
         }
         url = urljoin(self.url, API_CONFIG['routes']['create_render'])
         return await self.session.post(url,
-                                       json={'size': renderSize},
+                                       json={'size': renderSize, 'name': projectName},
                                        raise_for_status=True,
                                        headers=headers,
                                        ssl_context=SSL_CONTEXT)

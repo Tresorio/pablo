@@ -52,6 +52,9 @@ def draw_selected_render(layout: bpy.types.UILayout,
         left = box.column()
         right = box.column()
 
+        left.label(text=TRADUCTOR['field']['project'][CONFIG_LANG]+':')
+        right.label(text=render.project_name.capitalize())
+
         left.label(text=TRADUCTOR['field']['name'][CONFIG_LANG]+':')
         right.label(text=render.name.capitalize())
 

@@ -58,6 +58,6 @@ class TresorioGpuRenderFrameOperator(bpy.types.Operator):
 
         context.window_manager.tresorio_farm_props.clear()
         context.window_manager.tresorio_user_props.rendering_mode = 'GPU'
-        get_farms('GPU')
+        get_farms('GPU', number_of_frames)
 
         return {'FINISHED'}

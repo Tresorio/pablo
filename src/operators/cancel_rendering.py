@@ -21,4 +21,5 @@ class TresorioCancelRenderingOperator(bpy.types.Operator):
                 ) -> Set[str]:
         """Called when operator is called"""
         context.window_manager.tresorio_user_props.is_launching_rendering = False
+        context.window_manager.tresorio_user_props.is_resuming_rendering = False
         return {'FINISHED'}

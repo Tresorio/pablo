@@ -132,8 +132,8 @@
         "fr": "Mince, nous avons un problème : il semblerait que ces ressources ne sont plus disponibles. Veuillez réessayer plus tard"
     },
     "no_scene": {
-        "en": "No blend scene found for this project. You should upload one first!",
-        "fr": "Aucune scene blender disponible pour ce projet. Vous devriez en uploader une!"
+        "en": "No scene found for {0} project. You should upload one first!",
+        "fr": "Aucune scene disponible pour le projet {0}. Vous devriez en uploader une!"
     },
     "wrong_name": {
         "en": "Rendering name should not contain any '/' and should not be empty",
@@ -176,8 +176,12 @@
         "fr": "Cette ferme n'est pas disponible pour le moment"
     },
     "rendering_launched": {
-        "en": "Rendering \"{0}\" successfully launched",
-        "fr": "Rendu \"{0}\" lancé avec succès"
+        "en": "Rendering \"{0}\" successfully launched on project \"{1}\"",
+        "fr": "Rendu \"{0}\" lancé avec succès sur le projet \"{1}\""
+    },
+    "rendering_resumed": {
+        "en": "Rendering \"{0}\" successfully restarted",
+        "fr": "Rendu \"{0}\" relancé avec succès"
     },
     "rendering_failed": {
         "en": "Rendering \"{0}\" launching failed : ",

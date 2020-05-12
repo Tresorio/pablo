@@ -36,9 +36,18 @@ class TresorioPackOperator(bpy.types.Operator):
                   [CONFIG_LANG], icon='ERROR')
             return {'CANCELLED'}
 
-        path = context.scene.tresorio_render_form.project_folder
-        project = context.scene.tresorio_render_form.project_name
+        folder = context.scene.tresorio_render_form.project_folder
+        project = context.scene.tresorio_render_form.project_name.replace(" ", "_") + TRADUCTOR['field']['tresorio_suffix'][CONFIG_LANG]
+        path = os.path.join(folder, project)
 
-        pack_project(path, project)
+        if not os.path.exists(folder):
+            alert(TRADUCTOR['notif']['doesnt_exist'][CONFIG_LANG].format(folder))
+            return
+        if not os.path.isdir(folder):
+            alert(TRADUCTOR['notif']['not_dir'][CONFIG_LANG].format(folder))
+            return
+
+
+        pack_project(path)
 
         return {'FINISHED'}

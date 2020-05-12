@@ -68,7 +68,7 @@ class TresorioRendersList(bpy.types.UIList):
             row.label(text=TRADUCTOR['notif']['downloading'][CONFIG_LANG])
         elif render.status == RenderStatus.LAUNCHING:
             row.label(text=TRADUCTOR['notif']['launching'][CONFIG_LANG])
-        elif render.status == RenderStatus.RUNNING:
+        elif render.status == RenderStatus.RUNNING or render.status == RenderStatus.STOPPED:
             row.prop(render, 'progression')
         elif render.status == RenderStatus.STOPPING:
             row.label(text=TRADUCTOR['notif']['stopping'][CONFIG_LANG])
@@ -78,8 +78,12 @@ class TresorioRendersList(bpy.types.UIList):
             row.operator('tresorio.download_render_results',
                          text='',
                          icon='IMPORT').index = index
+        if render.status == RenderStatus.STOPPED:
+            row.operator('tresorio.resume_render', icon='PLAY').index = index
+        if render.status == RenderStatus.ERROR:
+            row.operator('tresorio.resume_render', icon='FILE_REFRESH').index = index
         if render.status == RenderStatus.RUNNING:
-            row.operator('tresorio.stop_render', icon='X').index = index
+            row.operator('tresorio.stop_render', icon='PAUSE').index = index
         row.operator('tresorio.delete_render',
                      text='',
                      icon='TRASH').index = index
@@ -100,7 +104,8 @@ class TresorioRendersPanel(bpy.types.Panel):
              ) -> bool:
         """Chose wether to render the renders panel or not"""
         return (context.window_manager.tresorio_user_props.is_logged and
-            not context.window_manager.tresorio_user_props.is_launching_rendering)
+            not context.window_manager.tresorio_user_props.is_launching_rendering and
+            not context.window_manager.tresorio_user_props.is_resuming_rendering)
 
     def draw(self,
              context: bpy.types.Context

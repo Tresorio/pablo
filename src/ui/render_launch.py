@@ -37,6 +37,78 @@ class TresorioFarmList(bpy.types.UIList):
     def draw_filter(self, context, layout):
         pass
 
+class TresorioRenderResumer(bpy.types.Panel):
+    bl_idname = 'OBJECT_PT_TRESORIO_RENDERING_RESUMER'
+    bl_label = 'Tresorio Rendering Resumer'
+    bl_parent_id = 'OBJECT_PT_TRESORIO_PANEL'
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = 'output'
+    bl_options = {'HIDE_HEADER'}
+
+    @classmethod
+    def poll(cls,
+             context: bpy.types.Context
+             ) -> bool:
+        """Chose wether to render the renders panel or not"""
+        return (context.window_manager.tresorio_user_props.is_logged and
+            context.window_manager.tresorio_user_props.is_resuming_rendering)
+
+    def draw(self, context):
+        farms = bpy.context.window_manager.tresorio_farm_props
+        index = bpy.context.window_manager.tresorio_farm_props_index
+
+        # Render to restart and its informations
+        render_index = context.window_manager.tresorio_renders_list_index
+        render = context.window_manager.tresorio_renders_details[render_index]
+        mode = render.mode
+        number_of_frames = render.total_frames - render.rendered_frames
+        name = render.name
+
+        layout = self.layout
+        layout.label(text=TRADUCTOR['field']['resuming_summary'][CONFIG_LANG].format(str(number_of_frames), ('s' if number_of_frames > 1 else ''), mode, name))
+        layout.separator()
+        available_farms_count = functools.reduce(lambda acc,val : acc + val.is_available, farms, 0)
+        if len(farms) == 0:
+            layout.label(text=TRADUCTOR['field']['optimizing'][CONFIG_LANG])
+        else:
+
+            if index >= 0 and index < len(farms) and not farms[index].is_available:
+                bpy.context.window_manager.tresorio_farm_props_index = bpy.context.window_manager.tresorio_farm_props_old_index
+                popup(TRADUCTOR['notif']['farm_not_available'][CONFIG_LANG], icon='ERROR')
+            else:
+                bpy.context.window_manager.tresorio_farm_props_old_index = index
+
+            if available_farms_count == 0:
+                layout.label(text=TRADUCTOR['field']['farms_unavailable'][CONFIG_LANG])
+                layout.label(text=TRADUCTOR['field']['servers_try_again'][CONFIG_LANG])
+            else:
+                layout.label(text=TRADUCTOR['field']['select_farm'][CONFIG_LANG])
+            layout.separator()
+            header = layout.box().split()
+            if farms[0].gpu != 0:
+                header.label(text="Gpu")
+            header.label(text="Cpu")
+            header.label(text="RAM")
+            header.label(text=TRADUCTOR['field']['cost_per_hour'][CONFIG_LANG])
+            layout.template_list('OBJECT_UL_TRESORIO_FARMS_LIST',
+                                'Farms_list',
+                                context.window_manager,
+                                'tresorio_farm_props',
+                                context.window_manager,
+                                'tresorio_farm_props_index',
+                                rows=1,
+                                maxrows=len(farms),
+            )
+        layout.separator()
+        layout.separator()
+        row = layout.row()
+        row.operator('tresorio.cancelrendering')
+        if len(farms) != 0 and available_farms_count != 0:
+            row.operator('tresorio.launchresume')
+
+
+
 class TresorioRenderLauncher(bpy.types.Panel):
     bl_idname = 'OBJECT_PT_TRESORIO_RENDERING_LAUNCHER'
     bl_label = 'Tresorio Rendering Launcher'
