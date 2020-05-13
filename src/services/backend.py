@@ -18,7 +18,7 @@ import pathlib
 from src.ui.popup import popup, alert, notif
 from src.operators.logout import logout
 from src.services.platform import Platform
-from src.utils.decompress import decompress_rendering_results
+from src.utils.decompress import decompress_rendering_results, get_extract_path
 from src.utils.force_sync import force_sync
 from src.services.nas import AsyncNas, SyncNas
 from src.services.loggers import BACKEND_LOGGER
@@ -29,6 +29,7 @@ from src.config.enums import RenderStatus, RenderTypes
 from src.properties.render_form import get_render_type
 from src.properties.renders import TresorioRendersDetailsProps
 from bundle_modules.aiohttp import ClientResponseError, ClientResponse
+from src.utils.open_image import open_image
 
 from src.services.pack_scene import pack_scene
 
@@ -194,14 +195,25 @@ def _download_frames(fragments: List[Dict[str, Any]],
                      ) -> None:
     try:
         with SyncNas() as nas:
+            zfilepath = render_result_path
+            extract_path = get_extract_path(zfilepath)
             for frag in fragments:
                 nas.url = frag['ip']
                 res = nas.download(frag['jwt'], folder='')
-                zfilepath = render_result_path
                 with open(zfilepath, 'wb') as file:
                     shutil.copyfileobj(res.raw, file)
                 if decompress_results:
-                    decompress_rendering_results(zfilepath, open_on_download, render_details)
+                    decompress_rendering_results(zfilepath, extract_path)
+        if open_on_download:
+            # Open the outputs directory if there is no error, else base directory
+            if render_details['status'] != RenderStatus.ERROR:
+                open_path = os.path.join(extract_path, 'outputs', 'frames')
+                if not os.path.isdir(open_path):
+                    open_path = ""
+            else:
+                open_path = ""
+            abs_open_path = os.path.join(extract_path, open_path)
+            open_image(abs_open_path)
 
         UPDATE_QUEUE.put(('finished_download', render_details['id']))
     except Exception as err:

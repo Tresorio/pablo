@@ -21,9 +21,9 @@ class TresorioRendersList(bpy.types.UIList):
         del unused_self
         user_settings = context.window_manager.tresorio_user_settings_props
         layout.separator()
-        layout.prop(user_settings,
-                    'decompress_results',
-                    text=TRADUCTOR['field']['decompress_results'][CONFIG_LANG])
+        # layout.prop(user_settings,
+        #             'decompress_results',
+        #             text=TRADUCTOR['field']['decompress_results'][CONFIG_LANG])
         row = layout.row()
         if user_settings.decompress_results is False:
             row.enabled = False
