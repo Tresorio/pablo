@@ -48,8 +48,8 @@
         "fr": "Fini de rendre les frames incomplètes"
     },
     "project_directory": {
-        "en": "Tresorio project directory, where assets are packed and from which files are uploaded",
-        "fr": "Dossier du project Tresorio, où les dépendances sont rassemblées et depuis lequel les fichiers sont envoyés"
+        "en": "Directory where your project will be exported",
+        "fr": "Dossier où sera exporté votre projet"
     },
     "project_name": {
         "en": "Tresorio project name",

@@ -120,8 +120,8 @@
         "fr": "Uploader"
     },
     "project_directory": {
-        "en": "Directory",
-        "fr": "Dossier"
+        "en": "Export path",
+        "fr": "Chemin d'export"
     },
     "project_name": {
         "en": "Project name",
