@@ -38,7 +38,8 @@ class TresorioUploadOperator(bpy.types.Operator):
 
 
         folder = context.scene.tresorio_render_form.project_folder
-        project = context.scene.tresorio_render_form.project_name
+        project_name = context.scene.tresorio_render_form.project_name
+        project = project_name.replace(" ", "_") + TRADUCTOR['field']['tresorio_suffix'][CONFIG_LANG]
         path = os.path.join(folder, project)
 
         if not os.path.exists(path):
@@ -48,6 +49,6 @@ class TresorioUploadOperator(bpy.types.Operator):
             alert(TRADUCTOR['notif']['pack_error'][CONFIG_LANG].format(project))
             return {'FINISHED'}
 
-        new_upload(path)
+        new_upload(path, project_name)
 
         return {'FINISHED'}

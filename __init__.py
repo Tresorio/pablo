@@ -26,16 +26,18 @@ from src.ui.main_panel import TresorioMainPanel
 from src.ui.account_panel import TresorioAccountPanel
 from src.ui.new_render_panel import TresorioNewRenderPanel
 from src.ui.user_renders_panel import TresorioRendersPanel, TresorioRendersList
-from src.ui.render_launch import TresorioRenderLauncher, TresorioFarmList
+from src.ui.render_launch import TresorioRenderLauncher, TresorioRenderResumer, TresorioFarmList
 from src.operators.popup import ErrorPopup, InfoPopup
 from src.operators.login import TresorioLoginOperator
 from src.operators.logout import TresorioLogoutOperator
+from src.operators.resume_render import TresorioResumeRenderOperator
 from src.operators.upload import TresorioUploadOperator
 from src.operators.pack import TresorioPackOperator
 from src.operators.gpu_render import TresorioGpuRenderFrameOperator
 from src.operators.cpu_render import TresorioCpuRenderFrameOperator
 from src.operators.cancel_rendering import TresorioCancelRenderingOperator
 from src.operators.launch_rendering import TresorioLaunchRenderingOperator
+from src.operators.launch_resume import TresorioLaunchResumeOperator
 from src.operators.redirect import TresorioRedirectHomeOperator
 from src.operators.stop_render import TresorioStopRenderOperator
 from src.operators.redirect import TresorioRedirectRegisterOperator
@@ -58,7 +60,7 @@ from src.config.api import API_CONFIG
 
 bl_info = {
     'name': 'Tresorio cloud rendering',
-    'version': (2, 2, 0),
+    'version': (2, 3, 0),
     'blender': (2, 80, 0),
     'category': 'Output',
     'file': '/$HOME/.config/blender/2.80/scripts/addons/tresorio',
@@ -89,6 +91,7 @@ TO_REGISTER_CLASSES = (
     InfoPopup,
     TresorioGpuRenderFrameOperator,
     TresorioCpuRenderFrameOperator,
+    TresorioLaunchResumeOperator,
     TresorioCancelRenderingOperator,
     TresorioDownloadRenderResultsOperator,
     TresorioStopRenderOperator,
@@ -97,6 +100,7 @@ TO_REGISTER_CLASSES = (
     TresorioDeleteAllRendersOperator,
     TresorioAsyncLoopModalOperator,
     TresorioRedirectDownloadAddon,
+    TresorioResumeRenderOperator,
     TresorioAdvancedSettingsNavigationInOperator,
     TresorioAdvancedSettingsNavigationOutOperator,
     TresorioAdvancedSettingsOperator,
@@ -110,6 +114,7 @@ TO_REGISTER_CLASSES = (
     TresorioRendersList,
     TresorioFarmList,
     TresorioRenderLauncher,
+    TresorioRenderResumer
 )
 
 
