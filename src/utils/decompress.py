@@ -21,18 +21,9 @@ def get_extract_path(zfilepath):
     return extract_path
 
 
-def decompress_rendering_results(zfilepath, open_on_download, render_details):
+def decompress_rendering_results(zfilepath, extract_path):
     """Decompresses rendering results in a directory named after the rendering name"""
 
     with ZipFile(zfilepath) as zfile:
-        extract_path = get_extract_path(zfilepath)
         zfile.extractall(path=extract_path)
-        if open_on_download:
-            # Open the artifacts directory if there is no error, else base directory
-            if render_details['status'] != RenderStatus.ERROR:
-                image = zfile.namelist()[0].rstrip('/')
-            else:
-                image = ""
-            image_path = os.path.join(extract_path, image)
-            open_image(image_path)
     os.remove(zfilepath)

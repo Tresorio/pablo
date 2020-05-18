@@ -37,6 +37,12 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         default=False,
     )
 
+    is_resuming_rendering: bpy.props.BoolProperty(
+        name='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        default=False,
+    )
+
     rendering_mode: bpy.props.StringProperty(
         name='',
         options={'HIDDEN', 'SKIP_SAVE'},

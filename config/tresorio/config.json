@@ -32,12 +32,13 @@
         "list_renderings_details": "/user/products/render",
         "rendering_details": "/user/products/render/{0}",
         "stop_render": "/user/products/render/{0}/stop",
+        "resume_render": "/user/products/render/{0}/resume",
         "delete_render": "/user/products/render/{0}",
         "download_addon": "/renderings/addon"
     },
     "version": {
         "major": 2,
-        "minor": 2,
+        "minor": 3,
         "patch": 0
     }
 }

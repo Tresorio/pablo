@@ -99,6 +99,14 @@
         "en": "Untitled",
         "fr": "Défaut"
     },
+    "default_project_name": {
+        "en": "Untitled project",
+        "fr": "Projet défaut"
+    },
+    "tresorio_suffix": {
+        "en": "_Tresorio",
+        "fr": "_Tresorio"
+    },
     "GB": {
         "en": "GB",
         "fr": "Go"
@@ -112,8 +120,8 @@
         "fr": "Uploader"
     },
     "project_directory": {
-        "en": "Directory",
-        "fr": "Dossier"
+        "en": "Export path",
+        "fr": "Chemin d'export"
     },
     "project_name": {
         "en": "Project name",
@@ -276,6 +284,10 @@
     "rendering_summary": {
         "en": "{0} rendering for {1} frame{2}",
         "fr": "Rendu {0} pour {1} frame{2}"
+    },
+    "resuming_summary": {
+        "en": "Finishing {0} frame{1} for the {2} render \"{3}\"",
+        "fr": "Reprise de {0} frame{1} du rendu {2} \"{3}\""
     },
     "optimizing": {
         "en": "Optimizing...",
