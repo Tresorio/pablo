@@ -42,10 +42,10 @@ class TresorioPackOperator(bpy.types.Operator):
 
         if not os.path.exists(folder):
             alert(TRADUCTOR['notif']['doesnt_exist'][CONFIG_LANG].format(folder))
-            return
+            return {'CANCELLED'}
         if not os.path.isdir(folder):
             alert(TRADUCTOR['notif']['not_dir'][CONFIG_LANG].format(folder))
-            return
+            return {'CANCELLED'}
 
 
         pack_project(path)
