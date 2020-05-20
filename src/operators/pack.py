@@ -2,7 +2,7 @@
 
 from typing import Set
 
-from src.ui.popup import popup
+from src.ui.popup import popup, alert
 from src.services.backend import pack_project
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 import bpy
