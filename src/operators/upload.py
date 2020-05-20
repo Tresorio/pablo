@@ -44,10 +44,10 @@ class TresorioUploadOperator(bpy.types.Operator):
 
         if not os.path.exists(path):
             alert(TRADUCTOR['notif']['pack_first'][CONFIG_LANG].format(project))
-            return {'FINISHED'}
+            return {'CANCELLED'}
         if not os.path.isdir(path):
             alert(TRADUCTOR['notif']['pack_error'][CONFIG_LANG].format(project))
-            return {'FINISHED'}
+            return {'CANCELLED'}
 
         new_upload(path, project_name)
 
