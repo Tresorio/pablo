@@ -11,6 +11,7 @@ import shutil
 import asyncio
 import functools
 import tempfile
+import sys
 
 import bpy
 import time
@@ -377,9 +378,10 @@ async def _pack_project(path: str) -> Coroutine:
         pack_scene(path)
         notif(TRADUCTOR['notif']['exported'][CONFIG_LANG].format(path))
     except Exception as e:
-        print(e)
-        alert(str(e))
-        alert(TRADUCTOR['notif']['cant_pack_textures'][CONFIG_LANG])
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print(exc_type, e)
+        alert(str(exc_type), subtitle=str(e))
+#        alert(TRADUCTOR['notif']['cant_pack_textures'][CONFIG_LANG])
     finally:
         bpy.context.window_manager.tresorio_report_props.packing_textures = False
 
