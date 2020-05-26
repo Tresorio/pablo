@@ -36,19 +36,28 @@ class TresorioUploadOperator(bpy.types.Operator):
                   [CONFIG_LANG], icon='ERROR')
             return {'CANCELLED'}
 
-
-        folder = context.scene.tresorio_render_form.project_folder
-        project_name = context.scene.tresorio_render_form.project_name
-        project = project_name.replace(" ", "_") + TRADUCTOR['field']['tresorio_suffix'][CONFIG_LANG]
-        path = os.path.join(folder, project)
-
-        if not os.path.exists(path):
-            alert(TRADUCTOR['notif']['pack_first'][CONFIG_LANG].format(project))
+        if not bpy.data.is_saved or bpy.data.is_dirty:
+            popup(TRADUCTOR['notif']['file_not_saved']
+                  [CONFIG_LANG], icon='ERROR')
             return {'CANCELLED'}
-        if not os.path.isdir(path):
+
+
+        blend_path = bpy.data.filepath
+        folder = context.scene.tresorio_render_form.project_folder
+        project_name = bpy.path.clean_name(context.scene.tresorio_render_form.project_name)
+        project = project_name + TRADUCTOR['field']['tresorio_suffix'][CONFIG_LANG]
+        target_path = os.path.join(folder, project)
+
+        if not os.path.exists(folder):
+            alert(TRADUCTOR['notif']['doesnt_exist'][CONFIG_LANG].format(folder))
+            return {'CANCELLED'}
+        if not os.path.isdir(folder):
+            alert(TRADUCTOR['notif']['not_dir'][CONFIG_LANG].format(folder))
+            return {'CANCELLED'}
+        if os.path.exists(target_path) and not os.path.isdir(target_path):
             alert(TRADUCTOR['notif']['pack_error'][CONFIG_LANG].format(project))
             return {'CANCELLED'}
 
-        new_upload(path, project_name)
+        new_upload(blend_path, target_path, project_name)
 
         return {'FINISHED'}

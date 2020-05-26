@@ -16,6 +16,14 @@ class TresorioReportProps(bpy.types.PropertyGroup):
     )
 
     # Uploading
+    uploading: bpy.props.BoolProperty(
+        default=False,
+        name='',
+        description='',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
+    )
+
     uploading_blend_file: bpy.props.BoolProperty(
         default=False,
         name='',

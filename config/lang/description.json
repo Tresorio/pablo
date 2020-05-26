@@ -99,6 +99,18 @@
         "en": "Uploading {0}...",
         "fr": "Envoi de {0}..."
     },
+    "preparing_upload": {
+        "en": "Checking integrity...",
+        "fr": "Vérification des fichiers..."
+    },
+    "exporting": {
+        "en": "Exporting...",
+        "fr": "Export..."
+    },
+    "preparing_export": {
+        "en": "Preparing export...",
+        "fr": "Préparation de l'export..."
+    },
     "upload_failed": {
         "en": "The upload failed, please retry",
         "fr": "L'envoi des fichiers a échoué, veuillez réessayer"

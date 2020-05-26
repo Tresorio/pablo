@@ -142,6 +142,17 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         update=lambda a, b: None,
     )
 
+    pack_percent: bpy.props.FloatProperty(
+        min=0,
+        max=100,
+        name='',
+        description='',
+        default=0,
+        subtype='PERCENTAGE',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        update=lambda a, b: None,
+    )
+
     file_uploading: bpy.props.StringProperty(
         options={'HIDDEN', 'SKIP_SAVE'},
     )
