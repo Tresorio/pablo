@@ -32,7 +32,7 @@ from src.operators.login import TresorioLoginOperator
 from src.operators.logout import TresorioLogoutOperator
 from src.operators.resume_render import TresorioResumeRenderOperator
 from src.operators.upload import TresorioUploadOperator
-from src.operators.pack import TresorioPackOperator
+from src.operators.cancel_upload import TresorioCancelUploadOperator
 from src.operators.gpu_render import TresorioGpuRenderFrameOperator
 from src.operators.cpu_render import TresorioCpuRenderFrameOperator
 from src.operators.cancel_rendering import TresorioCancelRenderingOperator
@@ -48,6 +48,7 @@ from src.operators.redirect import TresorioRedirectForgotPasswordOperator
 from src.operators.delete_all_renders import TresorioDeleteAllRendersOperator
 from src.operators.download_render_results import TresorioDownloadRenderResultsOperator
 from src.operators.async_loop import TresorioAsyncLoopModalOperator
+from src.operators.upload_modal import TresorioUploadModalOperator
 from src.operators.logout import logout
 from src.operators.async_loop import setup_asyncio_executor
 from src.operators.advanced_settings import TresorioAdvancedSettingsNavigationOutOperator,\
@@ -60,7 +61,7 @@ from src.config.api import API_CONFIG
 
 bl_info = {
     'name': 'Tresorio cloud rendering',
-    'version': (2, 3, 0),
+    'version': (2, 4, 0),
     'blender': (2, 80, 0),
     'category': 'Output',
     'file': '/$HOME/.config/blender/2.80/scripts/addons/tresorio',
@@ -86,7 +87,7 @@ TO_REGISTER_CLASSES = (
     TresorioRedirectRegisterOperator,
     TresorioRedirectHomeOperator,
     TresorioUploadOperator,
-    TresorioPackOperator,
+    TresorioCancelUploadOperator,
     ErrorPopup,
     InfoPopup,
     TresorioGpuRenderFrameOperator,
@@ -99,6 +100,7 @@ TO_REGISTER_CLASSES = (
     TresorioRedirectGetCreditsOperator,
     TresorioDeleteAllRendersOperator,
     TresorioAsyncLoopModalOperator,
+    TresorioUploadModalOperator,
     TresorioRedirectDownloadAddon,
     TresorioResumeRenderOperator,
     TresorioAdvancedSettingsNavigationInOperator,

@@ -25,6 +25,7 @@ import logging
 import pathlib
 import queue
 import typing
+import sys
 
 import blender_asset_tracer.trace.progress
 
@@ -73,6 +74,9 @@ class Callback(blender_asset_tracer.trace.progress.Callback):
         :param transferred_bytes: The total amount of bytes transfered for
             the current packing operation.
         """
+        progress = transferred_bytes / total_bytes * 100
+        print(f'CALLBACK PACK_PROGRESS {str(progress)}')
+        sys.stdout.flush()
 
     def missing_file(self, filename: pathlib.Path) -> None:
         """Called for every asset that does not exist on the filesystem."""

@@ -18,7 +18,7 @@ import time
 import pathlib
 from src.ui.popup import popup, alert, notif
 from src.operators.logout import logout
-from src.services.platform import Platform
+from src.services.tresorio_platform import Platform, backend_url
 from src.utils.decompress import decompress_rendering_results, get_extract_path
 from src.utils.force_sync import force_sync
 from src.services.nas import AsyncNas, SyncNas
@@ -32,7 +32,7 @@ from src.properties.renders import TresorioRendersDetailsProps
 from bundle_modules.aiohttp import ClientResponseError, ClientResponse
 from src.utils.open_image import open_image
 
-from src.services.pack_scene import pack_scene
+import src.operators.upload_modal
 
 # pylint: disable=assignment-from-no-return,assignment-from-none,unexpected-keyword-arg
 UPDATE_QUEUE = Queue()
@@ -55,19 +55,12 @@ def get_farms(rendering_mode: str, number_of_frames: int) -> None:
     future = _get_farms(token, rendering_mode, number_of_frames)
     asyncio.ensure_future(future)
 
-def new_upload(path: str, project_name: str) -> None:
+def new_upload(blend_path: str, target_path: str, project_name: str) -> None:
     """Upload a new blend file"""
 
     token = bpy.context.window_manager.tresorio_user_props.token
 
-    future = _new_upload(token, path, project_name)
-    asyncio.ensure_future(future)
-
-
-def pack_project(path: str) -> None:
-    """Pack project"""
-
-    future = _pack_project(path)
+    future = _chunked_upload(token, blend_path, target_path, project_name)
     asyncio.ensure_future(future)
 
 
@@ -91,7 +84,7 @@ def new_render() -> None:
         starting_frame = bpy.context.scene.frame_current
         ending_frame = bpy.context.scene.frame_current
 
-    project_name = bpy.context.scene.tresorio_render_form.project_name
+    project_name = bpy.path.clean_name(bpy.context.scene.tresorio_render_form.project_name)
 
     launch_render = {
         'name': props.rendering_name,
@@ -372,18 +365,110 @@ async def _update_rendering(render: TresorioRendersDetailsProps,
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
 
-async def _pack_project(path: str) -> Coroutine:
+def _on_upload_start(target_path: str):
+    print('[UPL START]')
+    bpy.context.scene.tresorio_render_form.upload_percent = 0.0
+    bpy.context.window_manager.tresorio_report_props.uploading_blend_file = True
+
+def _on_upload_progress(filename: str, progress: float):
+    bpy.context.scene.tresorio_render_form.file_uploading = filename
+    bpy.context.scene.tresorio_render_form.upload_percent = progress
+
+def _on_upload_end(target_path: str, success: bool):
+    print('[UPL END]')
+    bpy.context.scene.tresorio_render_form.upload_percent = 0.0
+    bpy.context.window_manager.tresorio_report_props.uploading_blend_file = False
+    bpy.context.scene.tresorio_render_form.file_uploading = ''
+    bpy.context.window_manager.tresorio_report_props.uploading = False
+
+def _on_upload_error(filename: str, error: str):
+    print('[UPL ERROR]')
+    alert(TRADUCTOR['notif']['err_upl'][CONFIG_LANG].format(filename, error))
+
+def _on_pack_start(blend_path: str, target_path: str):
+    print('[PACK START]')
     bpy.context.window_manager.tresorio_report_props.packing_textures = True
+    bpy.context.scene.tresorio_render_form.pack_percent = 0.0
+
+def _on_pack_progress(progress: float):
+    bpy.context.scene.tresorio_render_form.pack_percent = progress
+
+def _on_pack_error(blend_path: str, target_path: str, error: str):
+    print('[PACK ERROR]')
+    alert(TRADUCTOR['notif']['cant_pack_textures'][CONFIG_LANG], subtitle=error)
+
+def _on_missing_file(blend_path: str, target_path: str, file: str):
+    print('[MISSING FILE]')
+    notif(TRADUCTOR['notif']['missing_file'][CONFIG_LANG].format(file))
+
+def _on_pack_end(blend_path: str, target_path: str, success: bool):
+    print('[PACK END]')
+    bpy.context.scene.tresorio_render_form.pack_percent = 0.0
+    bpy.context.window_manager.tresorio_report_props.packing_textures = False
+    bpy.context.window_manager.tresorio_report_props.uploading_blend_file = True
+
+def _on_project_creation_error(project_name: str, error: str):
+    print('[PROJECT CREATION ERROR]')
+    alert(TRADUCTOR['notif']['error_project'][CONFIG_LANG].format(project_name), subtitle=error)
+
+def _on_end(exit_code: int):
+    print('[END]')
+    print('Exited with ', exit_code)
+    bpy.context.window_manager.tresorio_report_props.uploading = False
+    bpy.context.scene.tresorio_render_form.upload_percent = 0.0
+    bpy.context.window_manager.tresorio_report_props.uploading_blend_file = False
+    bpy.context.scene.tresorio_render_form.pack_percent = 0.0
+    bpy.context.window_manager.tresorio_report_props.packing_textures = False
+    bpy.context.scene.tresorio_render_form.file_uploading = ''
+    if exit_code == 0:
+        notif(TRADUCTOR['notif']['exported'][CONFIG_LANG])
+
+def _on_unknown_error(error: str):
+    print('[UNKNOWN ERROR]')
+    alert(TRADUCTOR['notif']['unknown_error_upl'][CONFIG_LANG], subtitle=error)
+
+async def _chunked_upload(token: str, blend_path: str, target_path: str, project_name: str) -> Coroutine:
+    """This function upload a new .blend file"""
+
+    render_form = bpy.context.scene.tresorio_render_form
+    bpy.context.window_manager.tresorio_report_props.uploading = True
+
     try:
-        pack_scene(path)
-        notif(TRADUCTOR['notif']['exported'][CONFIG_LANG].format(path))
-    except Exception as e:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        print(exc_type, e)
-        alert(str(exc_type), subtitle=str(e))
-#        alert(TRADUCTOR['notif']['cant_pack_textures'][CONFIG_LANG])
-    finally:
+        src.operators.upload_modal.end_callback = _on_end
+        src.operators.upload_modal.error_callback = _on_unknown_error
+
+        src.operators.upload_modal.pack_start_callback = _on_pack_start
+        src.operators.upload_modal.pack_progress_callback = _on_pack_progress
+        src.operators.upload_modal.pack_end_callback = _on_pack_end
+        src.operators.upload_modal.pack_error_callback = _on_pack_error
+        src.operators.upload_modal.missing_file_callback = _on_missing_file
+        src.operators.upload_modal.project_creation_error_callback = _on_project_creation_error
+
+        src.operators.upload_modal.upload_start_callback = _on_upload_start
+        src.operators.upload_modal.upload_progress_callback = _on_upload_progress
+        src.operators.upload_modal.upload_end_callback = _on_upload_end
+        src.operators.upload_modal.upload_error_callback = _on_upload_error
+
+
+        bpy.ops.tresorio.upload_modal(
+            blend_path = blend_path,
+            target_path = target_path,
+            project_name = project_name,
+            url = backend_url,
+            jwt = token
+        )
+
+
+    except Exception as err:
+        bpy.context.window_manager.tresorio_report_props.uploading = False
+        bpy.context.scene.tresorio_render_form.upload_percent = 0.0
+        bpy.context.window_manager.tresorio_report_props.uploading_blend_file = False
+        bpy.context.scene.tresorio_render_form.pack_percent = 0.0
         bpy.context.window_manager.tresorio_report_props.packing_textures = False
+        bpy.context.scene.tresorio_render_form.file_uploading = ''
+        BACKEND_LOGGER.error(err)
+        popup_msg = TRADUCTOR['notif']['err_upl_blendfile'][CONFIG_LANG]
+        alert(popup_msg)
 
 
 async def _new_upload(token: str, path: str, project_name: str) -> Coroutine:

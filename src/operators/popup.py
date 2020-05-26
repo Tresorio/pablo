@@ -10,8 +10,7 @@ class ErrorPopup(bpy.types.Operator):
 
     def draw(self, context):
         self.layout.label(text=self.error_msg, icon="ERROR")
-        if len(self.subtitle) != 0:
-            self.layout.label(text=self.subtitle)
+        self.layout.label(text=self.subtitle)
 
     def execute(self, context):
         return {'FINISHED'}
