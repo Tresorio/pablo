@@ -24,8 +24,14 @@ def popup(msg: str = '',
 
     bpy.context.window_manager.popup_menu(draw, title=title)
 
-def alert(msg: str = '', subtitle: str = '') -> None:
-    bpy.ops.object.error_popup('INVOKE_DEFAULT', error_msg=msg, subtitle=subtitle)
+def alert(msg: str = '', subtitle: str = '', context = None) -> None:
+    if context is not None:
+        bpy.ops.object.error_popup(context, 'INVOKE_DEFAULT', error_msg=msg, subtitle=subtitle)
+    else:
+        bpy.ops.object.error_popup('INVOKE_DEFAULT', error_msg=msg, subtitle=subtitle)
 
-def notif(msg: str = '') -> None:
-    bpy.ops.object.info_popup('INVOKE_DEFAULT', info_msg=msg)
+def notif(msg: str = '', context = None) -> None:
+    if context is not None:
+        bpy.ops.object.info_popup(context, 'INVOKE_DEFAULT', info_msg=msg)
+    else:
+        bpy.ops.object.info_popup('INVOKE_DEFAULT', info_msg=msg)

@@ -5,7 +5,7 @@ from typing import Set
 import bpy
 from src.ui.popup import popup
 from src.config.langs import TRADUCTOR, CONFIG_LANG
-from src.services.platform import set_backend_url
+from src.services.tresorio_platform import set_backend_url
 from src.config.api import API_CONFIG, MODE
 from urllib.parse import urlparse
 

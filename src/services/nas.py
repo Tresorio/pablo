@@ -322,6 +322,43 @@ class SyncNas:
                                 verify=True)
 
     @_nasrequest.__func__
+    def upload_chunk(self,
+                    jwt: str,
+                    headers: str,
+                    data,
+                    ) -> requests.Response:
+        headers['Authorization'] = f'JWT {jwt}'
+        url = urljoin(self.url, '/chunk')
+        return self.session.post(url,
+                                headers=headers,
+                                data=data,
+                                verify=True)
+
+    @_nasrequest.__func__
+    def check_file(self,
+                    jwt: str,
+                    headers: str,
+                    ) -> requests.Response:
+        headers['Authorization'] = f'JWT {jwt}'
+        url = urljoin(self.url, '/chunk')
+        return self.session.get(url,
+                                headers=headers,
+                                verify=True)
+
+
+    @_nasrequest.__func__
+    def merge_file(self,
+                    jwt: str,
+                    headers: str,
+                    ) -> requests.Response:
+        headers['Authorization'] = f'JWT {jwt}'
+        url = urljoin(self.url, '/chunkend')
+        return self.session.get(url,
+                                headers=headers,
+                                verify=True)
+
+
+    @_nasrequest.__func__
     def upload_content(self,
                        jwt: str,
                        filename: str,

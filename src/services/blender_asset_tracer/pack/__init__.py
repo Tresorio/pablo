@@ -346,9 +346,9 @@ class Packer:
         while actions:
             action = actions.pop()
 
-            if action.path_action != PathAction.FIND_NEW_LOCATION:
-                # This asset doesn't require a new location, so no rewriting necessary.
-                continue
+            # if action.path_action != PathAction.FIND_NEW_LOCATION:
+            #     # This asset doesn't require a new location, so no rewriting necessary.
+            #     continue
 
             for usage in action.usages:
                 bfile_path = bpathlib.make_absolute(usage.block.bfile.filepath)

@@ -94,25 +94,47 @@ class TresorioNewRenderPanel(bpy.types.Panel):
             project_name = box.row().split(factor=0.4, align=True)
             project_name.label(text=TRADUCTOR['field']['project_name'][CONFIG_LANG]+':')
             project_name.prop(render_form, 'project_name')
+
+            box.row().label(text=TRADUCTOR['field']['project_directory'][CONFIG_LANG])
+
             project_content = box.row().split(factor=0.7, align=True)
+
             project_dir = project_content.column()
-            project_dir.label(text=TRADUCTOR['field']['project_directory'][CONFIG_LANG])
             project_dir.prop(render_form, 'project_folder')
 
             project_actions = project_content.column()
-            project_actions.separator()
-            if report_props.packing_textures:
-                project_actions.label(text=TRADUCTOR['notif']['packing'][CONFIG_LANG])
-            else:
-                project_actions.operator('tresorio.pack')
             upload = project_actions.operator('tresorio.upload')
 
-            if report_props.uploading_blend_file:
-                project_actions.enabled = False
-                box.prop(render_form, 'upload_percent',
-                         text=TRADUCTOR['desc']['uploading'][CONFIG_LANG].format(render_form.file_uploading),
-                         slider=True)
 
+            if report_props.uploading:
+                project_actions.enabled = False
+                if report_props.uploading_blend_file:
+                    if render_form.file_uploading == "":
+                        row = box.row()
+                        sub_box = row.box()
+                        sub_box.scale_x = 0.5
+                        sub_box.scale_y = 0.5
+                        sub_box.label(text=TRADUCTOR['desc']['preparing_upload'][CONFIG_LANG])
+                        row.operator('tresorio.cancelupload', icon='X')
+                    else:
+                        row = box.row()
+                        row.prop(render_form, 'upload_percent',
+                                 text=TRADUCTOR['desc']['uploading'][CONFIG_LANG].format(render_form.file_uploading),
+                                 slider=True)
+                        row.operator('tresorio.cancelupload', icon='X')
+                elif report_props.packing_textures:
+                    row = box.row()
+                    row.prop(render_form, 'pack_percent',
+                             text=TRADUCTOR['desc']['exporting'][CONFIG_LANG],
+                             slider=True)
+                    row.operator('tresorio.cancelupload', icon='X')
+                else:
+                    row = box.row()
+                    sub_box = row.box()
+                    sub_box.scale_x = 0.5
+                    sub_box.scale_y = 0.5
+                    sub_box.label(text=TRADUCTOR['desc']['preparing_export'][CONFIG_LANG])
+                    row.operator('tresorio.cancelupload', icon='X')
 
         # LAUNCH
         is_ready_to_launch = not report_props.uploading_blend_file

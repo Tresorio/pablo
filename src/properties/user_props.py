@@ -5,7 +5,7 @@ from src.utils.password import switch_password_visibility
 from src.config.langs import set_new_lang, TRADUCTOR, CONFIG_LANG, ALL_LANGS
 from collections.abc import Coroutine
 from src.services.loggers import BACKEND_LOGGER
-from src.services.platform import Platform
+from src.services.tresorio_platform import Platform
 import asyncio
 from src.config.api import API_CONFIG, MODE
 from urllib.parse import urlparse
