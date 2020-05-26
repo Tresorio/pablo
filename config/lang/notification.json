@@ -63,6 +63,10 @@
         "en": "Error while uploading Tresorio project. Please try again",
         "fr": "Erreur lors de l'envoi du projet Tresorio. Veuillez réessayer"
     },
+    "err_upl": {
+        "en": "File {0} uploading failed : {1}",
+        "fr": "L'upload du fichier {0} a rencontré une erreur : {1}"
+    },
     "expired_session": {
         "en": "Your session expired, please reconnect",
         "fr": "Votre session a expiré, veuillez vous reconnecter"
@@ -112,12 +116,20 @@
         "fr": "Arrêt ..."
     },
     "cant_pack_textures": {
-        "en": "An error occured while packing the project",
-        "fr": "Une erreur s'est produite lors du rassemblement des dépendances"
+        "en": "An error occured while exporting the project",
+        "fr": "Une erreur s'est produite lors de l'export du projet"
+    },
+    "missing_file": {
+        "en": "Warning - Missing file: {0}",
+        "fr": "Attention - Fichier manquant: {0}"
+    },
+    "error_project": {
+        "en": "Error while creating project {0}",
+        "fr": "Erreur pendant la création du projet {0}"
     },
     "exported": {
-        "en": "Project successfully exported in {0}",
-        "fr": "Projet exporté avec succès dans {0}"
+        "en": "Project successfully upload",
+        "fr": "Projet envoyé avec succès"
     },
     "no_result_render": {
         "en": "No frames rendered",
@@ -166,6 +178,10 @@
     "something_went_wrong": {
         "en": "Something went wrong... Please retry",
         "fr": "Quelque chose semble s'être mal passé... Veuillez réessayer"
+    },
+    "unknown_error_upl": {
+        "en": "An unknown error occured",
+        "fr": "Une erreur inconnue s'est produite"
     },
     "choose_farm": {
         "en": "Select a rendering farm",
