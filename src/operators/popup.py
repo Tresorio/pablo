@@ -17,7 +17,7 @@ class ErrorPopup(bpy.types.Operator):
 
     def invoke(self, context, event):
         wm = context.window_manager
-        return wm.invoke_props_dialog(self, width=700, height=1000)
+        return wm.invoke_props_dialog(self, width=700)
 
 class InfoPopup(bpy.types.Operator):
     bl_idname = "object.info_popup"
@@ -33,4 +33,4 @@ class InfoPopup(bpy.types.Operator):
 
     def invoke(self, context, event):
         wm = context.window_manager
-        return wm.invoke_props_dialog(self, width=700, height=1000)
+        return wm.invoke_props_dialog(self, width=700)
