@@ -10,7 +10,6 @@ def load(filepath: str) -> str:
         try:
             return json.load(file)
         except json.JSONDecodeError:
-            print("ohalal!!!!!")
             return {}
 
 
