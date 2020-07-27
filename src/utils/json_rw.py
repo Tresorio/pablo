@@ -10,7 +10,8 @@ def load(filepath: str) -> str:
         try:
             return json.load(file)
         except json.JSONDecodeError:
-            return ''
+            print("ohalal!!!!!")
+            return {}
 
 
 def write(json_dict: Dict[str, Any],
