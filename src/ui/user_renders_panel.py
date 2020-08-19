@@ -69,20 +69,20 @@ class TresorioRendersList(bpy.types.UIList):
         elif render.status == RenderStatus.LAUNCHING:
             row.label(text=TRADUCTOR['notif']['launching'][CONFIG_LANG])
         elif render.status == RenderStatus.RUNNING or render.status == RenderStatus.STOPPED:
-            row.prop(render, 'progression')
+            row.prop(render, 'progress')
         elif render.status == RenderStatus.STOPPING:
             row.label(text=TRADUCTOR['notif']['stopping'][CONFIG_LANG])
 
         # OPS_CASE
-        if render.number_of_fragments > 0 and render.status != RenderStatus.STOPPING:
+        if render.is_downloadable:
             row.operator('tresorio.download_render_results',
                          text='',
                          icon='IMPORT').index = index
-        if render.status == RenderStatus.STOPPED:
+        if render.is_resumable:
             row.operator('tresorio.resume_render', icon='PLAY').index = index
-        if render.status == RenderStatus.ERROR:
+        if render.is_restartable:
             row.operator('tresorio.resume_render', icon='FILE_REFRESH').index = index
-        if render.status == RenderStatus.RUNNING:
+        if render.is_stoppable:
             row.operator('tresorio.stop_render', icon='PAUSE').index = index
         row.operator('tresorio.delete_render',
                      text='',

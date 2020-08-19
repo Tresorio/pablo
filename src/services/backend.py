@@ -180,27 +180,55 @@ def delete_all_renders():
     asyncio.ensure_future(future)
 
 
-def _download_frames(fragments: List[Dict[str, Any]],
-                     render_result_path: str,
-                     render_details: Dict[str, Any],
-                     render_name: str,
-                     decompress_results: bool = False,
+def _download_(render_result_path: str,
+                     render: TresorioRendersDetailsProps,
                      open_on_download: bool = False
-                     ) -> None:
+
+
+    ### HARDCODED
+    config = Config(
+        s3={
+          "addressing_style":"virtual"
+        },
+        signature_version='s3v4',
+    )
+
+    ### WILL BE CONFIGURED AT LOGIN
+    s3_resource = boto3.resource(
+        's3',
+        aws_access_key_id="test10",
+        aws_secret_access_key="test10-secret",
+        endpoint_url="https://storage.tresorio.com:9000",
+        config=config,
+    )
+
+    ### WILL BE CONFIGURED AT LOGIN
+    bucket = s3_resource.Bucket(name="test-bucket2")
+
+    ### WILL BE AVAILABLE IN RENDER DETAILS
+    remoteDir = render.project_id
+
+    ### Add suffix after target directory if it does already exist
+    os.makedirs(render_result_path, exist_ok=True)
+    counter = 1
+    subdir = render.name
+    target_dir = os.path.join(render_result_path, subdir)
+    while os.path.exists(target_dir):
+        subdir = render.name+"("+str(counter)+")"
+        target_dir = os.path.join(render_result_path, subdir)
+        counter += 1
+
     try:
-        with SyncNas() as nas:
-            zfilepath = render_result_path
-            extract_path = get_extract_path(zfilepath)
-            for frag in fragments:
-                nas.url = frag['ip']
-                res = nas.download(frag['jwt'], folder='')
-                with open(zfilepath, 'wb') as file:
-                    shutil.copyfileobj(res.raw, file)
-                if decompress_results:
-                    decompress_rendering_results(zfilepath, extract_path)
+        for object in bucket.objects.filter(Prefix = remoteDir):
+            print("Downloading "+object.key+" (size: "+str(object.size)+")...")
+            filename=os.path.join(target_dir, object.key)
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+            with open(filename, 'wb+') as file:
+                bucket.download_fileobj(object.key, file, Callback=callback)
+
         if open_on_download:
             # Open the outputs directory if there is no error, else base directory
-            if render_details['status'] != RenderStatus.ERROR:
+            if render.status != RenderStatus.ERROR:
                 open_path = os.path.join(extract_path, 'outputs', 'frames')
                 if not os.path.isdir(open_path):
                     open_path = ""
@@ -209,12 +237,12 @@ def _download_frames(fragments: List[Dict[str, Any]],
             abs_open_path = os.path.join(extract_path, open_path)
             open_image(abs_open_path)
 
-        UPDATE_QUEUE.put(('finished_download', render_details['id']))
+        UPDATE_QUEUE.put(('finished_download', render.id))
+
     except Exception as err:
         BACKEND_LOGGER.error(err)
-        UPDATE_QUEUE.put(('finished_download', render_details['id']))
+        UPDATE_QUEUE.put(('finished_download', render.id))
         raise
-
 
 # ASYNC CORE-------------------------------------------------------------------
 
@@ -223,20 +251,13 @@ async def _download_render_results(token: str,
                                    render_result_path: str
                                    ) -> Coroutine:
     try:
-        async with Platform() as plt:
-            render_details = await plt.req_get_rendering_details(token, render.id, jsonify=True)
         user_settings = bpy.context.window_manager.tresorio_user_settings_props
-        fragments = render_details['fragments']
         loop = asyncio.get_running_loop()
         open_on_dl = user_settings.open_image_on_download
-        decompress_results = user_settings.decompress_results
         download = functools.partial(
-            _download_frames,
-            fragments,
+            _download_,
             render_result_path,
-            render_details,
-            render.name,
-            decompress_results,
+            render,
             open_on_dl,
         )
         render.downloading = True
@@ -684,22 +705,28 @@ def _fill_render_details(render: TresorioRendersDetailsProps,
         render.project_name = res['projectName']
     except Exception as e:
         pass
+    render.project_id = res['projectId']
     render.name = res['name']
     render.cpu = res['vcpu']
     render.gpu = res['gpu']
     render.ram = res['ram']
-    render.cost = res['cost']
-    render.total_cost = res['totalCost']
+    render.cost = res['costPerHour']
+    render.total_cost = res['cost']
     render.engine = res['engine']
     render.type = res['renderType']
     render.output_format = res['outputFormat']
     render.status = res['status']
     render.total_frames = res['numberOfFrames']
     render.rendered_frames = res['finishedFrames']
-    render.progression = res['progression']
+    render.progress = res['progress']
     render.number_of_fragments = res['fragmentCount']
     render.uptime = res['uptime']
     render.mode = res['mode']
+
+    render.is_downloadable = res['isDownloadable']
+    render.is_stoppable = res['isStoppable']
+    render.is_resumable = res['isResumable']
+    render.is_restartable = res['isRestartable']
 
 def _add_renders_details_prop(res: Dict[str, Any]) -> None:
     render = bpy.context.window_manager.tresorio_renders_details.add()
