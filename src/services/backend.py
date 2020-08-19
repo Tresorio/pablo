@@ -5,6 +5,8 @@ from datetime import datetime
 from typing import Dict, Any, List
 from collections.abc import Coroutine
 from queue import Queue
+import boto3
+from botocore.config import Config
 import io
 import os
 import shutil
@@ -23,6 +25,7 @@ from src.utils.decompress import decompress_rendering_results, get_extract_path
 from src.utils.force_sync import force_sync
 from src.services.nas import AsyncNas, SyncNas
 from src.services.loggers import BACKEND_LOGGER
+from src.config.api import API_CONFIG, MODE
 from src.utils.percent_reader import PercentReader
 from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.operators.async_loop import ensure_async_loop
@@ -162,7 +165,7 @@ def download_render_results(render_id: str,
         render_result_path: the filepath where to write the downloaded results
     """
     token = bpy.context.window_manager.tresorio_user_props.token
-    future = _download_render_results(token, render_id, render_result_path)
+    future = _download_folder_from_S3render_results(token, render_id, render_result_path)
     asyncio.ensure_future(future)
 
 
@@ -180,12 +183,13 @@ def delete_all_renders():
     asyncio.ensure_future(future)
 
 
-def _download_(render_result_path: str,
-                     render: TresorioRendersDetailsProps,
-                     open_on_download: bool = False
+def _download_folder_from_S3(render_result_path: str,
+               render: TresorioRendersDetailsProps,
+               open_on_download: bool = False):
 
+    user=bpy.context.window_manager.tresorio_user_props
 
-    ### HARDCODED
+    ### Hardcoded configuration needed to communicate with MinIO
     config = Config(
         s3={
           "addressing_style":"virtual"
@@ -193,17 +197,14 @@ def _download_(render_result_path: str,
         signature_version='s3v4',
     )
 
-    ### WILL BE CONFIGURED AT LOGIN
     s3_resource = boto3.resource(
         's3',
-        aws_access_key_id="test10",
-        aws_secret_access_key="test10-secret",
-        endpoint_url="https://storage.tresorio.com:9000",
+        aws_access_key_id=user.access_key,
+        aws_secret_access_key=user.secret_key,
+        endpoint_url=API_CONFIG[MODE]['storage'],
         config=config,
     )
-
-    ### WILL BE CONFIGURED AT LOGIN
-    bucket = s3_resource.Bucket(name="test-bucket2")
+    bucket = s3_resource.Bucket(name=f'{user.id}-renderings')
 
     ### WILL BE AVAILABLE IN RENDER DETAILS
     remoteDir = render.project_id
@@ -255,7 +256,7 @@ async def _download_render_results(token: str,
         loop = asyncio.get_running_loop()
         open_on_dl = user_settings.open_image_on_download
         download = functools.partial(
-            _download_,
+            _download_folder_from_S3folder_from_S3,
             render_result_path,
             render,
             open_on_dl,
@@ -265,7 +266,7 @@ async def _download_render_results(token: str,
     except Exception as err:
         BACKEND_LOGGER.error(err)
         UPDATE_QUEUE.put(('finished_download', render_details['id']))
-        alert(TRADUCTOR['notif']['err_download_results']
+        alert(TRADUCTOR['notif']['err_download_folder_from_S3results']
               [CONFIG_LANG])
 
 
@@ -735,3 +736,6 @@ def _add_renders_details_prop(res: Dict[str, Any]) -> None:
 
 def _get_user_info_callback(res: ClientResponse) -> None:
     bpy.context.window_manager.tresorio_user_props.total_credits = res['credits']
+    bpy.context.window_manager.tresorio_user_props.access_key = res['accessKey']
+    bpy.context.window_manager.tresorio_user_props.secret_key = res['secretKey']
+    bpy.context.window_manager.tresorio_user_props.id = res['id']

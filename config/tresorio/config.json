@@ -2,31 +2,35 @@
     "master": {
         "backend": "https://api.tresorio.com",
         "frontend": "https://platform.tresorio.com",
-        "homepage": "https://tresorio.com"
+        "homepage": "https://tresorio.com",
+        "storage": "https://storage.tresorio.com:9000"
     },
     "dev": {
         "backend": "https://dev-gandalf.tresorio.com",
         "frontend": "https://dev-platform.tresorio.com",
-        "homepage": "https://tresorio.com"
+        "homepage": "https://tresorio.com",
+        "storage": "https://storage.tresorio.com:9000"
     },
     "staging": {
         "backend": "https://staging-gandalf.tresorio.com",
         "frontend": "https://staging-platform.tresorio.com",
-        "homepage": "https://tresorio.com"
+        "homepage": "https://tresorio.com",
+        "storage": "https://storage.tresorio.com:9000"
     },
     "local": {
         "backend": "http://localhost:5000",
         "frontend": "http://localhost:3000",
-        "homepage": "https://tresorio.com"
+        "homepage": "https://tresorio.com",
+        "storage": "https://storage.tresorio.com:9000"
     },
     "routes": {
         "latest_version": "/addon/version",
         "forgot_password": "/password",
         "register": "/register",
-        "signin": "/auth/signin",
+        "signin": "/auth",
         "user_info": "/user/informations",
         "get_credits": "/profile/credits/get",
-        "farms": "/user/products/render/farms",
+        "farms": "/users/me/renderings/farms",
         "create_render": "/user/products/render/scene",
         "launch_render": "/user/products/render/",
         "list_renderings_details": "/user/products/render",

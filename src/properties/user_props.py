@@ -122,6 +122,24 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
+    access_key: bpy.props.StringProperty(
+        name='',
+        update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    secret_key: bpy.props.StringProperty(
+        name='',
+        update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    id: bpy.props.StringProperty(
+        name='',
+        update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
     firstname: bpy.props.StringProperty(
         default='',
         name='',
