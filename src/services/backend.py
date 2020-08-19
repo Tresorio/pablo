@@ -557,13 +557,13 @@ async def _get_farms(
                 return
             for farm in farms:
                 item = bpy.context.window_manager.tresorio_farm_props.add()
-                item.cost = farm["resources"]["cost"]
-                item.gpu = farm["resources"]["gpu"]
-                item.cpu = farm["resources"]["vcpu"]
-                item.ram = farm["resources"]["ram"]
+                item.cost = farm["totalResources"]["costPerHour"]
+                item.gpu = farm["totalResources"]["gpus"]["SAAS"]
+                item.cpu = farm["totalResources"]["cpus"]
+                item.ram = farm["totalResources"]["ram"]
                 item.is_available = farm["isAvailable"]
-                item.units_per_farmer = farm["farmer"]["units"]
-                item.number_of_farmers = farm["numberOfFarmers"]
+                item.units_per_farmer = farm["singleFarmerResources"]["units"]
+                item.number_of_farmers = farm["farmersCount"]
     except Exception as err:
         bpy.context.window_manager.tresorio_user_props.is_launching_rendering = False
         BACKEND_LOGGER.error(err)
