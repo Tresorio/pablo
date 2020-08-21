@@ -558,11 +558,13 @@ async def _get_farms(
                 alert(TRADUCTOR['notif']['something_went_wrong'][CONFIG_LANG])
                 return
             for farm in farms:
+                print(farm)
                 item = bpy.context.window_manager.tresorio_farm_props.add()
-                item.cost = farm["totalResources"]["costPerHour"]
+                item.cost = farm["costPerHour"]
                 item.gpu = farm["totalResources"]["gpus"]["SAAS"]
                 item.cpu = farm["totalResources"]["cpus"]
-                item.ram = farm["totalResources"]["ram"]
+                # Ram is converted into MB
+                item.ram = farm["totalResources"]["ram"] / (1000 * 1000)
                 item.is_available = farm["isAvailable"]
                 item.units_per_farmer = farm["singleFarmerResources"]["units"]
                 item.number_of_farmers = farm["farmersCount"]
