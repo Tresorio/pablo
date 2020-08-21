@@ -549,7 +549,7 @@ async def _get_farms(
     try:
         async with Platform() as plt:
             farms = await plt.req_get_farms(cookie, {
-                'mode': rendering_mode,
+                'renderingMode': rendering_mode,
                 'numberOfFrames': number_of_frames
             }, jsonify=True)
             if len(farms) == 0:
