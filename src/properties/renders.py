@@ -38,8 +38,6 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
 
     # Advancement
-    number_of_fragments: bpy.props.IntProperty(
-        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     total_frames: bpy.props.IntProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     rendered_frames: bpy.props.IntProperty(

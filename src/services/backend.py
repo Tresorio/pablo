@@ -199,17 +199,26 @@ def _download_folder_from_S3(render_result_path: str,
         signature_version='s3v4',
     )
 
+    # s3_resource = boto3.resource(
+    #     's3',
+    #     aws_access_key_id=user.access_key,
+    #     aws_secret_access_key=user.secret_key,
+    #     endpoint_url=API_CONFIG[MODE]['storage'],
+    #     config=config,
+    # )
     s3_resource = boto3.resource(
         's3',
-        aws_access_key_id=user.access_key,
-        aws_secret_access_key=user.secret_key,
+        aws_access_key_id='test10',
+        aws_secret_access_key='test10-secret',
         endpoint_url=API_CONFIG[MODE]['storage'],
         config=config,
     )
-    bucket = s3_resource.Bucket(name=f'{user.id}-renderings')
+    # bucket = s3_resource.Bucket(name=f'{user.id}-renderings')
+    bucket = s3_resource.Bucket(name=test-bucket2)
 
     ### WILL BE AVAILABLE IN RENDER DETAILS
-    remoteDir = render.project_id
+    # remoteDir = render.project_id
+    remoteDir = 'cke4co1h100194skz9njgr2wq'
 
     ### Add suffix after target directory if it does already exist
     os.makedirs(render_result_path, exist_ok=True)
@@ -712,22 +721,22 @@ def _fill_render_details(render: TresorioRendersDetailsProps,
     except Exception as e:
         pass
     render.project_id = res['projectId']
+#    render.project_name = res['projectName']
     render.name = res['name']
-    render.cpu = res['vcpu']
-    render.gpu = res['gpu']
-    render.ram = res['ram']
+    render.cpu = res['cpus']
+    render.gpu = res['gpus']
+    render.ram = res['ram'] / (1000 * 1000)
     render.cost = res['costPerHour']
     render.total_cost = res['cost']
     render.engine = res['engine']
-    render.type = res['renderType']
+    render.type = RenderTypes.ANIMATION if res['numberOfFrames'] > 1 else RenderTypes.FRAME
     render.output_format = res['outputFormat']
     render.status = res['status']
     render.total_frames = res['numberOfFrames']
     render.rendered_frames = res['finishedFrames']
     render.progress = res['progress']
-    render.number_of_fragments = res['fragmentCount']
     render.uptime = res['uptime']
-    render.mode = res['mode']
+    render.mode = 'GPU' if res['gpus'] > 0 else 'CPU'
 
     render.is_downloadable = res['isDownloadable']
     render.is_stoppable = res['isStoppable']
