@@ -93,13 +93,14 @@ def new_render() -> None:
         'name': props.rendering_name,
         'engine': props.render_engines_list,
         'outputFormat': props.output_formats_list,
-        'mode': bpy.context.window_manager.tresorio_user_props.rendering_mode,
+        'renderingMode': bpy.context.window_manager.tresorio_user_props.rendering_mode,
         'farmIndex': bpy.context.window_manager.tresorio_farm_props_index,
         'autoTileSize': props.auto_tile_size,
-        'useOptix': props.use_optix,
+        'optix': props.use_optix,
         'startingFrame': starting_frame,
         'endingFrame': ending_frame,
-        'projectName': project_name
+        'projectName': project_name,
+        'sceneName': os.path.basename(bpy.data.filepath)
     }
     cookie = bpy.context.window_manager.tresorio_user_props.cookie
 
