@@ -323,7 +323,7 @@ class Platform:
         return await self.session.get(url,
                                       headers={'Content-Type': 'application/json'},
                                       cookies={'connect.sid': cookie},
-                                      params=params,
+                                      json=params,
                                       ssl_context=SSL_CONTEXT)
 
 
