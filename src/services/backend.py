@@ -42,7 +42,7 @@ UPDATE_QUEUE = Queue()
 
 
 def logout_if_unauthorized(err: ClientResponseError) -> None:
-    """Log the user out if its token became invalid
+    """Log the user out if its cookie became invalid
 
     Arg:
         err: The error that appeared doing a request to the backend of Tresorio
@@ -53,26 +53,26 @@ def logout_if_unauthorized(err: ClientResponseError) -> None:
 
 
 def get_farms(rendering_mode: str, number_of_frames: int) -> None:
-    token = bpy.context.window_manager.tresorio_user_props.token
+    cookie = bpy.context.window_manager.tresorio_user_props.cookie
 
-    future = _get_farms(token, rendering_mode, number_of_frames)
+    future = _get_farms(cookie, rendering_mode, number_of_frames)
     asyncio.ensure_future(future)
 
 def new_upload(blend_path: str, target_path: str, project_name: str) -> None:
     """Upload a new blend file"""
 
-    token = bpy.context.window_manager.tresorio_user_props.token
+    cookie = bpy.context.window_manager.tresorio_user_props.cookie
 
-    future = _chunked_upload(token, blend_path, target_path, project_name)
+    future = _chunked_upload(cookie, blend_path, target_path, project_name)
     asyncio.ensure_future(future)
 
 
 def resume_render(render, farm_index) -> None:
     """Resume an already existing render"""
 
-    token = bpy.context.window_manager.tresorio_user_props.token
+    cookie = bpy.context.window_manager.tresorio_user_props.cookie
 
-    future = _resume_render(token, render, farm_index)
+    future = _resume_render(cookie, render, farm_index)
     asyncio.ensure_future(future)
 
 
@@ -101,9 +101,9 @@ def new_render() -> None:
         'endingFrame': ending_frame,
         'projectName': project_name
     }
-    token = bpy.context.window_manager.tresorio_user_props.token
+    cookie = bpy.context.window_manager.tresorio_user_props.cookie
 
-    future = _new_render(token, launch_render)
+    future = _new_render(cookie, launch_render)
     asyncio.ensure_future(future)
 
 
@@ -140,8 +140,8 @@ def delete_render(render_id: str) -> None:
         render_id: The unique id of the render to delete
         index: the index in the blender renders list of the render to delete
     """
-    token = bpy.context.window_manager.tresorio_user_props.token
-    future = _delete_render(token, render_id)
+    cookie = bpy.context.window_manager.tresorio_user_props.cookie
+    future = _delete_render(cookie, render_id)
     asyncio.ensure_future(future)
 
 
@@ -151,8 +151,8 @@ def stop_render(render: TresorioRendersDetailsProps) -> None:
     Arg:
         render: The render to stop
     """
-    token = bpy.context.window_manager.tresorio_user_props.token
-    future = _stop_render(token, render)
+    cookie = bpy.context.window_manager.tresorio_user_props.cookie
+    future = _stop_render(cookie, render)
     asyncio.ensure_future(future)
 
 
@@ -165,22 +165,22 @@ def download_render_results(render_id: str,
         render_id: The unique id of the render to target
         render_result_path: the filepath where to write the downloaded results
     """
-    token = bpy.context.window_manager.tresorio_user_props.token
-    future = _download_folder_from_S3(token, render_id, render_result_path)
+    cookie = bpy.context.window_manager.tresorio_user_props.cookie
+    future = _download_folder_from_S3(cookie, render_id, render_result_path)
     asyncio.ensure_future(future)
 
 
 def update_list_renderings():
     """Update all the renderings"""
-    token = bpy.context.window_manager.tresorio_user_props.token
-    future = _update_list_renderings(token)
+    cookie = bpy.context.window_manager.tresorio_user_props.cookie
+    future = _update_list_renderings(cookie)
     asyncio.ensure_future(future)
 
 
 def delete_all_renders():
     """Delete all the renders"""
-    token = bpy.context.window_manager.tresorio_user_props.token
-    future = _delete_all_renders(token)
+    cookie = bpy.context.window_manager.tresorio_user_props.cookie
+    future = _delete_all_renders(cookie)
     asyncio.ensure_future(future)
 
 
@@ -248,7 +248,7 @@ def _download_folder_from_S3(render_result_path: str,
 
 # ASYNC CORE-------------------------------------------------------------------
 
-async def _download_render_results(token: str,
+async def _download_render_results(cookie: str,
                                    render: TresorioRendersDetailsProps,
                                    render_result_path: str
                                    ) -> Coroutine:
@@ -271,12 +271,12 @@ async def _download_render_results(token: str,
               [CONFIG_LANG])
 
 
-async def _update_user_info(token: str,
+async def _update_user_info(cookie: str,
                             silence_errors: bool = False
                             ) -> Coroutine:
     async with Platform() as plt:
         try:
-            res_user_info = await plt.req_get_user_info(token, jsonify=True)
+            res_user_info = await plt.req_get_user_info(cookie, jsonify=True)
             _get_user_info_callback(res_user_info)
         except Exception as err:
             BACKEND_LOGGER.error(err)
@@ -306,7 +306,7 @@ def update_finished_download(render_id: str):
             return
 
 
-async def _refresh_loop(token: str) -> Coroutine:
+async def _refresh_loop(cookie: str) -> Coroutine:
     comms = {
         'upload_percent': update_upload_percent,
         'finished_upload': update_finished_upload,
@@ -314,8 +314,8 @@ async def _refresh_loop(token: str) -> Coroutine:
     }
     is_logged = bpy.context.window_manager.tresorio_user_props.is_logged
     while is_logged:
-        await _update_user_info(token, silence_errors=True)
-        await _update_list_renderings(token, silence_errors=True)
+        await _update_user_info(cookie, silence_errors=True)
+        await _update_list_renderings(cookie, silence_errors=True)
         for _ in range(20):
             while not UPDATE_QUEUE.empty():
                 instruction, obj = UPDATE_QUEUE.get(block=False)
@@ -328,8 +328,9 @@ async def _connect_to_tresorio(data: Dict[str, str]) -> Coroutine:
     async with Platform() as plt:
         try:
             bpy.context.window_manager.tresorio_report_props.login_in = True
-            res_connect = await plt.req_connect_to_tresorio(data, jsonify=True)
-            bpy.context.window_manager.tresorio_user_props.token = res_connect['token']
+            res = await plt.req_connect_to_tresorio(data, jsonify=False)
+            session_cookie = res.cookies['connect.sid'].value
+            bpy.context.window_manager.tresorio_user_props.cookie = session_cookie
             bpy.context.window_manager.tresorio_user_props.is_logged = True
         except Exception as err:
             bpy.context.window_manager.tresorio_report_props.login_in = False
@@ -343,15 +344,15 @@ async def _connect_to_tresorio(data: Dict[str, str]) -> Coroutine:
                       ['err_connection'][CONFIG_LANG], icon='ERROR')
         else:
             bpy.context.window_manager.tresorio_report_props.login_in = False
-            await _refresh_loop(res_connect['token'])
+            await _refresh_loop(session_cookie)
 
 
-async def _update_list_renderings(token: str,
+async def _update_list_renderings(cookie: str,
                                   silence_errors: bool = False
                                   ) -> Coroutine:
     try:
         async with Platform() as plt:
-            res_renders = await plt.req_list_renderings_details(token, jsonify=True)
+            res_renders = await plt.req_list_renderings_details(cookie, jsonify=True)
             update_ui_renderings(res_renders, is_new=True)
     except Exception as err:
         BACKEND_LOGGER.error(err)
@@ -375,12 +376,12 @@ def update_ui_renderings(res_renders,
 
 
 async def _update_rendering(render: TresorioRendersDetailsProps,
-                            token: str
+                            cookie: str
                             ) -> Coroutine:
     try:
         async with Platform() as plt:
             BACKEND_LOGGER.debug(f'Updating render {render.id}')
-            render_details = await plt.req_get_rendering_details(token, render.id, jsonify=True)
+            render_details = await plt.req_get_rendering_details(cookie, render.id, jsonify=True)
             _fill_render_details(render, render_details)
     except Exception as err:
         BACKEND_LOGGER.error(err)
@@ -450,7 +451,7 @@ def _on_unknown_error(error: str):
     print('[UNKNOWN ERROR]')
     alert(TRADUCTOR['notif']['unknown_error_upl'][CONFIG_LANG], subtitle=error)
 
-async def _chunked_upload(token: str, blend_path: str, target_path: str, project_name: str) -> Coroutine:
+async def _chunked_upload(cookie: str, blend_path: str, target_path: str, project_name: str) -> Coroutine:
     """This function upload a new .blend file"""
 
     render_form = bpy.context.scene.tresorio_render_form
@@ -478,7 +479,7 @@ async def _chunked_upload(token: str, blend_path: str, target_path: str, project
             target_path = target_path,
             project_name = project_name,
             url = backend_url,
-            jwt = token
+            jwt = cookie
         )
 
 
@@ -494,7 +495,7 @@ async def _chunked_upload(token: str, blend_path: str, target_path: str, project
         alert(popup_msg)
 
 
-async def _new_upload(token: str, path: str, project_name: str) -> Coroutine:
+async def _new_upload(cookie: str, path: str, project_name: str) -> Coroutine:
     """This function upload a new .blend file"""
 
     render_form = bpy.context.scene.tresorio_render_form
@@ -505,10 +506,10 @@ async def _new_upload(token: str, path: str, project_name: str) -> Coroutine:
 
     try:
         async with Platform() as plt:
-            render_info = await plt.req_create_render(token, os.path.getsize(path), project_name, jsonify=True)
+            render_info = await plt.req_create_render(cookie, os.path.getsize(path), project_name, jsonify=True)
             bpy.context.scene.tresorio_render_form.project_id = render_info['id']
         try:
-            await _update_list_renderings(token)
+            await _update_list_renderings(cookie)
         except Exception:
             pass
         bpy.context.window_manager.tresorio_renders_list_index = 0
@@ -541,13 +542,13 @@ async def _new_upload(token: str, path: str, project_name: str) -> Coroutine:
         bpy.context.window_manager.tresorio_report_props.uploading_blend_file = False
 
 async def _get_farms(
-    token: str,
+    cookie: str,
     rendering_mode: str,
     number_of_frames: int
 ) -> Coroutine:
     try:
         async with Platform() as plt:
-            farms = await plt.req_get_farms(token, {
+            farms = await plt.req_get_farms(cookie, {
                 'mode': rendering_mode,
                 'numberOfFrames': number_of_frames
             }, jsonify=True)
@@ -571,7 +572,7 @@ async def _get_farms(
         alert(TRADUCTOR['notif']['something_went_wrong'][CONFIG_LANG])
 
 
-async def _resume_render(token: str,
+async def _resume_render(cookie: str,
                         render,
                         farm_index: int
                         ) -> Coroutine:
@@ -579,8 +580,8 @@ async def _resume_render(token: str,
 
     try:
         async with Platform() as plt:
-            await plt.req_resume_render(token, render.id, farm_index, jsonify=True)
-            await _update_list_renderings(token)
+            await plt.req_resume_render(cookie, render.id, farm_index, jsonify=True)
+            await _update_list_renderings(cookie)
             notif(TRADUCTOR['notif']['rendering_resumed'][CONFIG_LANG].format(render.name))
             bpy.context.window_manager.tresorio_user_settings_props.show_selected_render = True
     except Exception as err:
@@ -599,7 +600,7 @@ async def _resume_render(token: str,
         alert(TRADUCTOR['notif']['rendering_failed'][CONFIG_LANG].format(render.name.capitalize()) + popup_msg)
 
 
-async def _new_render(token: str,
+async def _new_render(cookie: str,
                       launch_render: Dict[str, Any]
                       ) -> Coroutine:
     """This function creates a new render and launches it."""
@@ -609,8 +610,8 @@ async def _new_render(token: str,
     try:
         async with Platform() as plt:
             launch_render['projectId'] = render_form.project_id
-            await plt.req_launch_render(token, launch_render, jsonify=True)
-            await _update_list_renderings(token)
+            await plt.req_launch_render(cookie, launch_render, jsonify=True)
+            await _update_list_renderings(cookie)
             notif(TRADUCTOR['notif']['rendering_launched'][CONFIG_LANG].format(render_form.rendering_name.capitalize(), render_form.project_name.capitalize()))
             bpy.context.window_manager.tresorio_renders_list_index = 0
             bpy.context.window_manager.tresorio_user_settings_props.show_selected_render = True
@@ -633,28 +634,28 @@ async def _new_render(token: str,
                 popup_msg = TRADUCTOR['notif']['wrong_name'][CONFIG_LANG]
         alert(TRADUCTOR['notif']['rendering_failed'][CONFIG_LANG].format(render_form.rendering_name.capitalize()) + popup_msg)
 
-async def _stop_render(token: str,
+async def _stop_render(cookie: str,
                        render: TresorioRendersDetailsProps
                        ) -> Coroutine:
     try:
         async with Platform() as plt:
             BACKEND_LOGGER.debug(f'Stopping render {render.id}')
-            await plt.req_stop_render(token, render.id, jsonify=True)
+            await plt.req_stop_render(cookie, render.id, jsonify=True)
     except Exception as err:
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
         alert(TRADUCTOR['notif']['err_stop_render'][CONFIG_LANG])
     else:
-        await _update_rendering(render, token)
+        await _update_rendering(render, cookie)
 
 
-async def _delete_render(token: str,
+async def _delete_render(cookie: str,
                          render_id: str,
                          ) -> Coroutine:
     try:
         async with Platform() as plt:
-            renders = await plt.req_delete_render(token, render_id, jsonify=True)
+            renders = await plt.req_delete_render(cookie, render_id, jsonify=True)
             update_ui_renderings(renders, is_new=True)
     except Exception as err:
         BACKEND_LOGGER.error(err)
@@ -663,13 +664,13 @@ async def _delete_render(token: str,
         alert(TRADUCTOR['notif']['err_delete_render'][CONFIG_LANG])
 
 
-async def _delete_all_renders(token: str) -> Coroutine:
+async def _delete_all_renders(cookie: str) -> Coroutine:
     try:
         bpy.context.window_manager.tresorio_report_props.deleting_all_renders = True
         async with Platform() as plt:
-            renders = await plt.req_list_renderings_details(token, jsonify=True)
+            renders = await plt.req_list_renderings_details(cookie, jsonify=True)
             for render in renders:
-                await _delete_render(token, render['id'])
+                await _delete_render(cookie, render['id'])
     except Exception as err:
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError):

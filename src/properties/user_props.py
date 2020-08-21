@@ -54,7 +54,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         default=asyncio.get_event_loop().run_until_complete(fetch_latest_version()),
     )
 
-    token: bpy.props.StringProperty(
+    cookie: bpy.props.StringProperty(
         name='',
         options={'HIDDEN', 'SKIP_SAVE'},
         default='',
