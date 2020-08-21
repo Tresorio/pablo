@@ -214,7 +214,7 @@ def _download_folder_from_S3(render_result_path: str,
         config=config,
     )
     # bucket = s3_resource.Bucket(name=f'{user.id}-renderings')
-    bucket = s3_resource.Bucket(name=test-bucket2)
+    bucket = s3_resource.Bucket(name="test-bucket2")
 
     ### WILL BE AVAILABLE IN RENDER DETAILS
     # remoteDir = render.project_id
