@@ -29,18 +29,16 @@ class TresorioMainPanel(bpy.types.Panel):
         user_props = context.window_manager.tresorio_user_props
         layout = self.layout
 
-        latest_version = user_props.latest_version
+        # latest_version = user_props.latest_version
 
-        actual_version = f"{API_CONFIG['version']['major']}.{API_CONFIG['version']['minor']}.{API_CONFIG['version']['patch']}"
+        # actual_version = f"{API_CONFIG['version']['major']}.{API_CONFIG['version']['minor']}.{API_CONFIG['version']['patch']}"
 
-        # Get version from gandalf
-        # If pas à jour, panel mettre à jour
+        # major, minor, patch = map(int, latest_version.split('.'))
 
-        major, minor, patch = map(int, latest_version.split('.'))
-
-        if major > API_CONFIG['version']['major'] or (major == API_CONFIG['version']['major'] and minor > API_CONFIG['version']['minor']):
-            draw_version_panel(layout, context, actual_version, latest_version)
-        elif not user_props.is_logged and not user_props.advanced_settings:
+        # if major > API_CONFIG['version']['major'] or (major == API_CONFIG['version']['major'] and minor > API_CONFIG['version']['minor']):
+        #     draw_version_panel(layout, context, actual_version, latest_version)
+        # elif not user_props.is_logged and not user_props.advanced_settings:
+        if not user_props.is_logged and not user_props.advanced_settings:
             draw_connection_panel(layout, context)
         elif user_props.advanced_settings:
             draw_advanced_settings_panel(layout, context)
