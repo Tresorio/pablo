@@ -1,7 +1,7 @@
 {
     "master": {
-        "backend": "https://api.tresorio.com",
-        "frontend": "https://platform.tresorio.com",
+        "backend": "https://apiv2.tresorio.com",
+        "frontend": "https://skyrocket.tresorio.com",
         "homepage": "https://tresorio.com",
         "storage": "https://storage.tresorio.com:9000"
     },
