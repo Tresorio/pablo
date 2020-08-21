@@ -11,6 +11,8 @@ import sys
 from urllib.parse import urljoin
 from http import HTTPStatus
 from typing import Callable, Any, Union, Tuple, Dict
+import boto3
+from botocore.config import Config
 
 
 # Allow blender_asset_tracer to be imported in addon-mode as module AND as a standalone script when launched in subprocess
@@ -220,22 +222,25 @@ class Nas:
 class UploadJob:
 
 
-    def __init__(self, path: str, root: str, chunk_size: int):
+    def __init__(self, path: str, root: str, project_id: str, chunk_size: int):
         self.path = path
-        relpath = pathlib.Path(os.path.relpath(path, root))
-        self.upload_path = str(pathlib.PurePosixPath(relpath))
+        self.relpath = pathlib.Path(os.path.relpath(path, root))
+        self.upload_path = os.path.join(project_id, str(pathlib.PurePosixPath(self.relpath)))
 
         self.retries = 0
         self.uploaded_chunks = 0
         self.chunk_size = chunk_size
         self.size = os.stat(path).st_size
         self.number_of_chunks = math.ceil(self.size / chunk_size)
-        self.file_checksum = self.__file_crc32(path)
+        self.file_checksum = self.__compute_etag(path)
 
-        print(f'Created job for \'{relpath}\' ({self.size} bytes, {self.number_of_chunks} chunks)')
+        print(f'Created job for \'{self.relpath}\' ({self.size} bytes, {self.number_of_chunks} chunks)')
+        print(f'Etag: {self.file_checksum}')
         sys.stdout.flush()
 
 
+    # DEPRECATED (V1)
+    # Used in V1 to generate a CRC32 of a file, to avoid useless uploads on NAS
     def __file_crc32(self, path: str, chunk_size: int = 65536):
         with open(path, 'rb') as file:
             checksum = 0
@@ -245,6 +250,21 @@ class UploadJob:
                     break
                 checksum = zlib.crc32(chunk, checksum)
             return str(checksum)
+
+
+    # Chunk size should match the one used while uploading. It differs from one SDK to another
+    # AWS_CLI and BOTO3 uses 8388608
+    # S3CMD uses 15728640
+    # Other clients uses factor of 1048576 (1Mb)
+    def __compute_etag(self, path: str, chunk_size: int = 8388608):
+        with open(path, 'rb') as file:
+            md5_digests = []
+            while True:
+                chunk = file.read(chunk_size)
+                if not chunk:
+                    break
+                md5_digests.append(md5(chunk).digest())
+            return md5(b''.join(md5_digests)).hexdigest() + '-' + str(len(md5_digests))
 
 
 class Uploader:
@@ -259,6 +279,10 @@ class Uploader:
         project_name: str,
         url: str,
         jwt: str,
+        storage_url: str,
+        storage_access_key: str,
+        storage_secret_key: str,
+        bucket_name: str,
         chunk_size: int = 16 * 1024 * 1024,
         max_retries_per_chunk: int = 5,
         number_of_threads: int = 3,
@@ -268,9 +292,27 @@ class Uploader:
         self.number_of_threads = number_of_threads
         self.url = url
         self.jwt = jwt
+        self.storage_url = storage_url
+        self.storage_access_key = storage_access_key
+        self.storage_secret_key = storage_secret_key
+        self.bucket_name = bucket_name
         self.blend_path = blend_path
         self.target_path = target_path
         self.project_name = project_name
+
+        self.s3_resource = boto3.resource(
+            's3',
+            aws_access_key_id = storage_access_key,
+            aws_secret_access_key = storage_secret_key,
+            endpoint_url = storage_url,
+            config = Config(
+                s3 = {
+                    "addressing_style": "virtual"
+                },
+                signature_version = 's3v4',
+            ),
+        )
+        self.s3_bucket = self.s3_resource.Bucket(name = bucket_name)
 
         print('Uploading', project_name)
         print('Spec:')
@@ -304,6 +346,8 @@ class Uploader:
             sys.exit(1)
 
 
+    # DEPRECATED (V1)
+    # Used in V1 to get target size, to request a NAS to gandalf with enough memory
     def get_target_size(self) -> int:
         try:
             size = os.path.getsize(self.target_path)
@@ -313,6 +357,8 @@ class Uploader:
         return size
 
 
+    # DEPRECATED (V1)
+    # Used in V1 to request a NAS and its credentials
     def get_nas(self, size: int) -> Tuple[str, str]:
         with Platform(url) as plt:
             try:
@@ -328,11 +374,23 @@ class Uploader:
                 sys.exit(1)
 
 
-    def start(self, nas_url: str, nas_jwt: str):
-        self.__signal_upload_start()
+    def prepare_upload(self) -> str:
+        with Platform(self.url) as plt:
+            try:
+                res = plt.prepare_upload(self.jwt, self.project_name, jsonify=True)
+                return res['projectId']
+            except requests.exceptions.HTTPError as error:
+                self.__print(f'Project creation failed : {error.response.status_code} - {error.response.text}')
+                self.__signal_project_creation_error(error.response.text)
+                sys.exit(1)
+            except Exception as error:
+                self.__print(f'Project creation failed :', error)
+                self.__signal_project_creation_error(error)
+                sys.exit(1)
 
-        self.nas_url = nas_url
-        self.nas_jwt = nas_jwt
+
+    def start(self, project_id: str):
+        self.__signal_upload_start()
 
         if not os.path.exists(self.target_path):
             raise Exception(f'{self.target_path} doesn\'t exist')
@@ -340,7 +398,7 @@ class Uploader:
             for dirname, dirnames, filenames in os.walk(self.target_path):
                 for filename in filenames:
                     abspath = os.path.join(dirname, filename)
-                    self.jobs.append(UploadJob(abspath, root=self.target_path, chunk_size=self.chunk_size))
+                    self.jobs.append(UploadJob(abspath, root=self.target_path, project_id, chunk_size=self.chunk_size))
         else:
             raise Exception(f'{path} file format not supported')
 
@@ -378,6 +436,20 @@ class Uploader:
                 self.__print(f'Check of {job.upload_path} failed :', error)
 
         return already_uploaded
+
+
+    def __is_already_on_serverV2(self, job: UploadJob) -> bool:
+        self.__print(f'Checking if {job.upload_path} is already on server...')
+
+        try:
+            object = self.s3_bucket.Object(job.upload_path).load()
+        except:
+            return False
+        if object.e_tag != job.file_checksum:
+            return False
+
+        return True
+
 
 
     def __merge_file(self, job: UploadJob):
@@ -460,6 +532,20 @@ class Uploader:
         self.__print()
 
 
+    def __upload_fileV2(self, job: UploadJob):
+        if self.stop or self.__is_already_on_server(job):
+            self.__print(f'Skipping {job.upload_path}')
+            return
+
+        self.__print(f'Uploading {job.upload_path}...')
+        self.__signal_upload_progress(job)
+
+        try:
+            with open(job.path, 'rb') as file:
+                bucket.upload_fileobj(file, job.upload_path)
+        except Exception as error:
+
+
     def __signal_pack_start(self):
         self.__print(f'CALLBACK PACK_START {self.__format_blend_path()} {self.__format_target_path()}')
 
@@ -486,7 +572,7 @@ class Uploader:
 
     def __signal_upload_progress(self, job: UploadJob):
         progress = job.uploaded_chunks / job.number_of_chunks * 100.0
-        self.__print(f'CALLBACK UPLOAD_PROGRESS {job.upload_path.replace(" ", "_")} {progress}')
+        self.__print(f'CALLBACK UPLOAD_PROGRESS {job.relpath.replace(" ", "_")} {progress}')
 
 
     def __signal_upload_end(self, success: bool):
@@ -494,7 +580,7 @@ class Uploader:
 
 
     def __signal_upload_error(self, job: UploadJob, error):
-        self.__print(f'CALLBACK UPLOAD_ERROR {job.upload_path.replace(" ", "_")} {str(error)}')
+        self.__print(f'CALLBACK UPLOAD_ERROR {job.relpath.replace(" ", "_")} {str(error)}')
 
 
     def __format_target_path(self):
@@ -532,10 +618,9 @@ if __name__ == '__main__':
 
         uploader.pack()
 
-        project_size = uploader.get_target_size()
-        nas_url, nas_jwt = uploader.get_nas(project_size)
+        project_id = uploader.prepare_upload()
 
-        uploader.start(nas_url, nas_jwt)
+        uploader.start(project_id)
 
         failure = uploader.stop
     except Exception as error:

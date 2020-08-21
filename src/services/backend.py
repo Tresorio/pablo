@@ -165,7 +165,7 @@ def download_render_results(render_id: str,
         render_result_path: the filepath where to write the downloaded results
     """
     token = bpy.context.window_manager.tresorio_user_props.token
-    future = _download_folder_from_S3render_results(token, render_id, render_result_path)
+    future = _download_folder_from_S3(token, render_id, render_result_path)
     asyncio.ensure_future(future)
 
 

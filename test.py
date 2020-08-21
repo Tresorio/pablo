@@ -31,6 +31,3 @@ def downloadDirectory(bucketName, remoteDir, targetDir):
             bucket.download_fileobj(object.key, file, Callback=callback)
 
 downloadDirectory("test-bucket2", "ckdfyih8l00003xoxssh1uger", "/tmp")
-
-def uploadDirectory(bucketName, targetDir, remoteDir):
-    bucket = s3_resource.Bucket(name=bucketName)
