@@ -114,7 +114,7 @@ def connect_to_tresorio(email: str,
     credentials = {
         'email': email,
         'password': password,
-        'extended': false,
+        'extended': False,
     }
 
     future = _connect_to_tresorio(credentials)
