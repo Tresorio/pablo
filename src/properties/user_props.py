@@ -54,7 +54,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         default=asyncio.get_event_loop().run_until_complete(fetch_latest_version()),
     )
 
-    token: bpy.props.StringProperty(
+    cookie: bpy.props.StringProperty(
         name='',
         options={'HIDDEN', 'SKIP_SAVE'},
         default='',
@@ -117,6 +117,24 @@ class TresorioUserProps(bpy.types.PropertyGroup):
     )
 
     total_credits: bpy.props.FloatProperty(
+        name='',
+        update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    access_key: bpy.props.StringProperty(
+        name='',
+        update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    secret_key: bpy.props.StringProperty(
+        name='',
+        update=lambda a, b: None,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
+
+    id: bpy.props.StringProperty(
         name='',
         update=lambda a, b: None,
         options={'HIDDEN', 'SKIP_SAVE'},

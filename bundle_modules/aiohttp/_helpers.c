@@ -801,7 +801,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "aiohttp/_helpers.pyx",
+  "aiohttp\\_helpers.pyx",
   "stringsource",
 };
 
