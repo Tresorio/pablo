@@ -113,7 +113,8 @@ def connect_to_tresorio(email: str,
     """Connects the user to Tresorio and fetch required data"""
     credentials = {
         'email': email,
-        'password': password
+        'password': password,
+        'extended': false,
     }
 
     future = _connect_to_tresorio(credentials)
