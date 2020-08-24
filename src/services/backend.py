@@ -167,7 +167,7 @@ def download_render_results(render_id: str,
         render_result_path: the filepath where to write the downloaded results
     """
     cookie = bpy.context.window_manager.tresorio_user_props.cookie
-    future = _download_folder_from_S3(cookie, render_id, render_result_path)
+    future = _download_render_results(cookie, render_id, render_result_path)
     asyncio.ensure_future(future)
 
 
@@ -224,7 +224,10 @@ def _download_folder_from_S3(render_result_path: str,
     os.makedirs(render_result_path, exist_ok=True)
     counter = 1
     subdir = render.name
+    print(f'Render result path {render_result_path}')
+    print(f'Subdir {subdir}')
     target_dir = os.path.join(render_result_path, subdir)
+    print(f'TargetDir: {target_dir}')
     while os.path.exists(target_dir):
         subdir = render.name+"("+str(counter)+")"
         target_dir = os.path.join(render_result_path, subdir)
@@ -232,21 +235,23 @@ def _download_folder_from_S3(render_result_path: str,
 
     try:
         for object in bucket.objects.filter(Prefix = remoteDir):
-            print("Downloading "+object.key+" (size: "+str(object.size)+")...")
-            filename=os.path.join(target_dir, object.key)
+            remote_filepath = os.path.relpath(object.key, remoteDir)
+            print("Downloading "+remote_filepath+" (size: "+str(object.size)+")...")
+            filename=os.path.join(target_dir, remote_filepath)
             os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, 'wb+') as file:
-                bucket.download_fileobj(object.key, file, Callback=callback)
+                # bucket.download_fileobj(object.key, file, Callback=callback)
+                bucket.download_fileobj(object.key, file)
 
         if open_on_download:
             # Open the outputs directory if there is no error, else base directory
             if render.status != RenderStatus.ERROR:
-                open_path = os.path.join(extract_path, 'outputs', 'frames')
+                open_path = os.path.join(target_dir, 'outputs', 'frames')
                 if not os.path.isdir(open_path):
                     open_path = ""
             else:
                 open_path = ""
-            abs_open_path = os.path.join(extract_path, open_path)
+            abs_open_path = os.path.join(target_dir, open_path)
             open_image(abs_open_path)
 
         UPDATE_QUEUE.put(('finished_download', render.id))
@@ -267,7 +272,7 @@ async def _download_render_results(cookie: str,
         loop = asyncio.get_running_loop()
         open_on_dl = user_settings.open_image_on_download
         download = functools.partial(
-            _download_folder_from_S3folder_from_S3,
+            _download_folder_from_S3,
             render_result_path,
             render,
             open_on_dl,
