@@ -43,7 +43,12 @@ class TresorioUploadModalOperator(bpy.types.Operator):
     target_path: bpy.props.StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
     project_name: bpy.props.StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
     url: bpy.props.StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
-    jwt: bpy.props.StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
+    cookie: bpy.props.StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
+    storage_url: bpy.props.StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
+    storage_access_key: bpy.props.StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
+    storage_secret_key: bpy.props.StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
+    bucket_name: bpy.props.StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
+
 
 
     def execute(self,
@@ -54,7 +59,7 @@ class TresorioUploadModalOperator(bpy.types.Operator):
         cancel_upload = False
 
         script_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'services', 'uploader.py'))
-        self.cmd = [sys.argv[0], '--factory-startup', '-noaudio', '-b', '-P', script_path, '--', self.blend_path, self.target_path, self.project_name, self.url, self.jwt]
+        self.cmd = [sys.argv[0], '--factory-startup', '-noaudio', '-b', '-P', script_path, '--', self.blend_path, self.target_path, self.project_name, self.url, self.cookie, self.storage_url, self.storage_access_key, self.storage_secret_key, self.bucket_name]
         self.stop = False
 
         return self.invoke(context, None)

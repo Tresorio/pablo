@@ -470,6 +470,7 @@ async def _chunked_upload(cookie: str, blend_path: str, target_path: str, projec
     """This function upload a new .blend file"""
 
     render_form = bpy.context.scene.tresorio_render_form
+    user = bpy.context.window_manager.tresorio_user_props
     bpy.context.window_manager.tresorio_report_props.uploading = True
 
     try:
@@ -494,7 +495,14 @@ async def _chunked_upload(cookie: str, blend_path: str, target_path: str, projec
             target_path = target_path,
             project_name = project_name,
             url = backend_url,
-            jwt = cookie
+            cookie = cookie,
+            storage_url = API_CONFIG[MODE]['storage'],
+            # storage_access_key = user.storage_access_key,
+            # storage_secret_key = user.storage_secret_key,
+            # bucket_name = user.id + '-renderings'
+            storage_access_key = 'test10',
+            storage_secret_key = 'test10-secret',
+            bucket_name = 'test-bucket2'
         )
 
 

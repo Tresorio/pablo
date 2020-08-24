@@ -11,14 +11,17 @@ import sys
 from urllib.parse import urljoin
 from http import HTTPStatus
 from typing import Callable, Any, Union, Tuple, Dict
-import boto3
-from botocore.config import Config
+from hashlib import md5
 
 
 # Allow blender_asset_tracer to be imported in addon-mode as module AND as a standalone script when launched in subprocess
 import site
 site.addsitedir(os.path.dirname(os.path.abspath(__file__)))
 from blender_asset_tracer import bpathlib, pack
+
+site.addsitedir(os.path.abspath(os.path.join('/home/LeChatErrant/Work/tresorio/pablo/src/services/uploader.py', '..', '..', '..', 'bundle_modules')))
+import boto3
+from botocore.config import Config
 
 
 class Platform:
@@ -112,6 +115,21 @@ class Platform:
         url = urljoin(self.url, '/user/products/render/scene')
         return self.session.post(url, headers=headers, json=data, verify=True)
 
+
+    @_platformrequest.__func__
+    def prepare_upload(self, cookie: str, project_id: str) -> requests.Response:
+        url = urljoin(self.url, 'todo')
+        return self.session.put(url,
+                                 headers={"connect.sid": cookie},
+                                 verify=True)
+
+
+    @_platformrequest.__func__
+    def finish_upload(self, cookie: str, project_id: str) -> requests.Response:
+        url = urljoin(self.url, 'todo')
+        return self.session.put(url,
+                                 headers={"connect.sid": cookie},
+                                 verify=True)
 
     def close(self):
         '''Close the aiohttp session. To use if Nas is not instanciated with `with`.'''
@@ -224,7 +242,7 @@ class UploadJob:
 
     def __init__(self, path: str, root: str, project_id: str, chunk_size: int):
         self.path = path
-        self.relpath = pathlib.Path(os.path.relpath(path, root))
+        self.relpath = str(pathlib.Path(os.path.relpath(path, root)))
         self.upload_path = os.path.join(project_id, str(pathlib.PurePosixPath(self.relpath)))
 
         self.retries = 0
@@ -278,7 +296,7 @@ class Uploader:
         target_path: str,
         project_name: str,
         url: str,
-        jwt: str,
+        cookie: str,
         storage_url: str,
         storage_access_key: str,
         storage_secret_key: str,
@@ -291,7 +309,7 @@ class Uploader:
         self.max_retries_per_chunk = max_retries_per_chunk
         self.number_of_threads = number_of_threads
         self.url = url
-        self.jwt = jwt
+        self.cookie = cookie
         self.storage_url = storage_url
         self.storage_access_key = storage_access_key
         self.storage_secret_key = storage_secret_key
@@ -374,9 +392,15 @@ class Uploader:
                 sys.exit(1)
 
 
-    def prepare_upload(self) -> str:
+    def __finish_upload(self, project_id: str):
+        with Platform(self.url) as plt:
+            plt.finish_upload(self.cookie, project_id)
+
+
+    def __prepare_upload(self) -> str:
         with Platform(self.url) as plt:
             try:
+                return "Charlie gros pd"
                 res = plt.prepare_upload(self.jwt, self.project_name, jsonify=True)
                 return res['projectId']
             except requests.exceptions.HTTPError as error:
@@ -389,7 +413,9 @@ class Uploader:
                 sys.exit(1)
 
 
-    def start(self, project_id: str):
+    def start(self):
+        project_id = self.__prepare_upload()
+
         self.__signal_upload_start()
 
         if not os.path.exists(self.target_path):
@@ -398,15 +424,17 @@ class Uploader:
             for dirname, dirnames, filenames in os.walk(self.target_path):
                 for filename in filenames:
                     abspath = os.path.join(dirname, filename)
-                    self.jobs.append(UploadJob(abspath, root=self.target_path, project_id, chunk_size=self.chunk_size))
+                    self.jobs.append(UploadJob(abspath, root=self.target_path, project_id=project_id, chunk_size=self.chunk_size))
         else:
             raise Exception(f'{path} file format not supported')
 
         self.__print(f'Starting {self.number_of_threads} thread')
         self.pool = multiprocessing.pool.ThreadPool(self.number_of_threads)
-        self.pool.map(self.__upload_file, self.jobs)
+        self.pool.map(self.__upload_fileV2, self.jobs)
         self.pool.close()
         self.pool.join()
+
+        self.__finish_upload(project_id)
 
         self.__print(f'Uploading finished')
         self.__signal_upload_end(not self.stop)
@@ -445,6 +473,8 @@ class Uploader:
             object = self.s3_bucket.Object(job.upload_path).load()
         except:
             return False
+        if object is None:
+            return False
         if object.e_tag != job.file_checksum:
             return False
 
@@ -465,10 +495,12 @@ class Uploader:
             try:
                 nas.merge_file(self.nas_jwt, headers)
             except requests.exceptions.HTTPError as error:
+                print('fack')
                 self.__print(f'Merge of {job.upload_path} failed : {error.response.status_code} - {error.response.text}')
                 self.__signal_upload_error(job, error)
                 self.__stop()
             except Exception as error:
+                print('fack')
                 self.__print(f'Merge of {job.upload_path} failed :', error)
                 self.__signal_upload_error(job, error)
                 self.__stop()
@@ -493,12 +525,14 @@ class Uploader:
                     self.__print(f'Chunk {job.uploaded_chunks} of {job.upload_path} uploading failed : {error.response.status_code} - {error.response.text}')
                     job.retries += 1
                     if job.retries > self.max_retries_per_chunk:
+                        print('fack')
                         self.__print(f'Failed to upload {job.upload_path}')
                         self.__signal_upload_error(job, error)
                 except Exception as error:
                     self.__print(f'Chunk {job.uploaded_chunks} of {job.upload_path} uploading failed :', error)
                     job.retries += 1
                     if job.retries > self.max_retries_per_chunk:
+                        print('fack')
                         self.__print(f'Failed to upload {job.upload_path}')
                         self.__signal_upload_error(job, error)
 
@@ -533,7 +567,7 @@ class Uploader:
 
 
     def __upload_fileV2(self, job: UploadJob):
-        if self.stop or self.__is_already_on_server(job):
+        if self.stop or self.__is_already_on_serverV2(job):
             self.__print(f'Skipping {job.upload_path}')
             return
 
@@ -542,8 +576,11 @@ class Uploader:
 
         try:
             with open(job.path, 'rb') as file:
-                bucket.upload_fileobj(file, job.upload_path)
+                self.s3_bucket.upload_fileobj(file, job.upload_path)
         except Exception as error:
+            self.__print(f'Upload of {job.upload_path} uploading failed :', error)
+            self.__signal_upload_error(job, error)
+            self.__stop()
 
 
     def __signal_pack_start(self):
@@ -600,11 +637,11 @@ if __name__ == '__main__':
     failure = True
     try:
         argv = sys.argv[sys.argv.index('--') + 1:]
-        if len(argv) != 5:
+        if len(argv) != 9:
             print(argv)
-            print('Usage: python3 ./uploader.py blend_path target_path project_name url jwt')
+            print('Usage: python3 ./uploader.py blend_path target_path project_name url cookie storage_url storage_access_key storage_secret_key bucket_name')
             sys.exit(1)
-        blend_path, target_path, project_name, url, jwt = argv
+        blend_path, target_path, project_name, url, cookie, storage_url, storage_access_key, storage_secret_key, bucket_name = argv
 
         uploader = Uploader(
             blend_path = blend_path,
@@ -613,14 +650,16 @@ if __name__ == '__main__':
             # Currently, only one thread is supported (for a better UI display and error handling)
             number_of_threads = 1,
             url = url,
-            jwt = jwt,
+            cookie = cookie,
+            storage_url = storage_url,
+            storage_access_key = storage_access_key,
+            storage_secret_key = storage_secret_key,
+            bucket_name = bucket_name
         )
 
         uploader.pack()
 
-        project_id = uploader.prepare_upload()
-
-        uploader.start(project_id)
+        uploader.start()
 
         failure = uploader.stop
     except Exception as error:
