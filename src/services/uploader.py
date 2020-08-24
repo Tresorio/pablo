@@ -120,8 +120,8 @@ class Platform:
     def prepare_upload(self, cookie: str, project_id: str) -> requests.Response:
         url = urljoin(self.url, 'todo')
         return self.session.put(url,
-                                 headers={"connect.sid": cookie},
-                                 verify=True)
+                                headers={"connect.sid": cookie},
+                                verify=True)
 
 
     @_platformrequest.__func__
@@ -247,6 +247,7 @@ class UploadJob:
 
         self.retries = 0
         self.uploaded_chunks = 0
+        self.uploaded_bytes = 0
         self.chunk_size = chunk_size
         self.size = os.stat(path).st_size
         self.number_of_chunks = math.ceil(self.size / chunk_size)
@@ -572,11 +573,11 @@ class Uploader:
             return
 
         self.__print(f'Uploading {job.upload_path}...')
-        self.__signal_upload_progress(job)
+        self.__signal_upload_progressV2(job, 0)
 
         try:
             with open(job.path, 'rb') as file:
-                self.s3_bucket.upload_fileobj(file, job.upload_path)
+                self.s3_bucket.upload_fileobj(file, job.upload_path, Callback=lambda bytes: self.__signal_upload_progressV2(job, bytes))
         except Exception as error:
             self.__print(f'Upload of {job.upload_path} uploading failed :', error)
             self.__signal_upload_error(job, error)
@@ -609,6 +610,12 @@ class Uploader:
 
     def __signal_upload_progress(self, job: UploadJob):
         progress = job.uploaded_chunks / job.number_of_chunks * 100.0
+        self.__print(f'CALLBACK UPLOAD_PROGRESS {job.relpath.replace(" ", "_")} {progress}')
+
+
+    def __signal_upload_progressV2(self, job: UploadJob, bytes: int):
+        job.uploaded_bytes += bytes
+        progress = job.uploaded_bytes / job.size * 100.0
         self.__print(f'CALLBACK UPLOAD_PROGRESS {job.relpath.replace(" ", "_")} {progress}')
 
 
