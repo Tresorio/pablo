@@ -100,7 +100,7 @@ def new_render() -> None:
         'startingFrame': starting_frame,
         'endingFrame': ending_frame,
         'projectName': project_name,
-        'sceneName': os.path.basename(bpy.data.filepath)
+        'scenePath': os.path.basename(bpy.data.filepath)
     }
     cookie = bpy.context.window_manager.tresorio_user_props.cookie
 

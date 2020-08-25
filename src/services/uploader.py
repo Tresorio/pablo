@@ -487,7 +487,6 @@ class Uploader:
         return True
 
 
-
     def __merge_file(self, job: UploadJob):
         self.__print(f'Merging {job.upload_path}...')
 
