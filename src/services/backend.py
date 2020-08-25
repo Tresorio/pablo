@@ -100,7 +100,6 @@ def new_render() -> None:
         'startingFrame': starting_frame,
         'endingFrame': ending_frame,
         'projectName': project_name,
-        'scenePath': os.path.basename(bpy.data.filepath)
     }
     cookie = bpy.context.window_manager.tresorio_user_props.cookie
 
@@ -199,26 +198,26 @@ def _download_folder_from_S3(render_result_path: str,
         signature_version='s3v4',
     )
 
-    # s3_resource = boto3.resource(
-    #     's3',
-    #     aws_access_key_id=user.access_key,
-    #     aws_secret_access_key=user.secret_key,
-    #     endpoint_url=API_CONFIG[MODE]['storage'],
-    #     config=config,
-    # )
     s3_resource = boto3.resource(
         's3',
-        aws_access_key_id='test10',
-        aws_secret_access_key='test10-secret',
+        aws_access_key_id=user.access_key,
+        aws_secret_access_key=user.secret_key,
         endpoint_url=API_CONFIG[MODE]['storage'],
         config=config,
     )
-    # bucket = s3_resource.Bucket(name=f'{user.id}-renderings')
-    bucket = s3_resource.Bucket(name="test-bucket2")
+    # s3_resource = boto3.resource(
+    #     's3',
+    #     aws_access_key_id='test10',
+    #     aws_secret_access_key='test10-secret',
+    #     endpoint_url=API_CONFIG[MODE]['storage'],
+    #     config=config,
+    # )
+    bucket = s3_resource.Bucket(name=f'{user.id}-renderings')
+    # bucket = s3_resource.Bucket(name="test-bucket2")
 
     ### WILL BE AVAILABLE IN RENDER DETAILS
-    # remoteDir = render.project_id
-    remoteDir = 'cke4co1h100194skz9njgr2wq'
+    remoteDir = render.project_id
+    # remoteDir = 'cke4co1h100194skz9njgr2wq'
 
     ### Add suffix after target directory if it does already exist
     os.makedirs(render_result_path, exist_ok=True)
@@ -497,12 +496,12 @@ async def _chunked_upload(cookie: str, blend_path: str, target_path: str, projec
             url = backend_url,
             cookie = cookie,
             storage_url = API_CONFIG[MODE]['storage'],
-            # storage_access_key = user.storage_access_key,
-            # storage_secret_key = user.storage_secret_key,
-            # bucket_name = user.id + '-renderings'
-            storage_access_key = 'test10',
-            storage_secret_key = 'test10-secret',
-            bucket_name = 'test-bucket2'
+            storage_access_key = user.storage_access_key,
+            storage_secret_key = user.storage_secret_key,
+            bucket_name = user.id + '-renderings'
+            # storage_access_key = 'test10',
+            # storage_secret_key = 'test10-secret',
+            # bucket_name = 'test-bucket2'
         )
 
 

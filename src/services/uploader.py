@@ -117,19 +117,25 @@ class Platform:
 
 
     @_platformrequest.__func__
-    def prepare_upload(self, cookie: str, project_id: str) -> requests.Response:
-        url = urljoin(self.url, 'todo')
-        return self.session.put(url,
+    def prepare_upload(self, cookie: str, project_name: str, scene_path: str) -> requests.Response:
+        url = urljoin(self.url, '/users/me/renderingProjects')
+        data = {
+            "name": project_name,
+            "scenePath": scene_path
+        }
+        return self.session.post(url,
                                 headers={"connect.sid": cookie},
+                                json=data,
                                 verify=True)
 
 
     @_platformrequest.__func__
     def finish_upload(self, cookie: str, project_id: str) -> requests.Response:
-        url = urljoin(self.url, 'todo')
+        url = urljoin(self.url, f'/users/me/renderingProjects/{project_id}/upload-finished')
         return self.session.put(url,
-                                 headers={"connect.sid": cookie},
-                                 verify=True)
+                                headers={"connect.sid": cookie},
+                                verify=True)
+
 
     def close(self):
         '''Close the aiohttp session. To use if Nas is not instanciated with `with`.'''
@@ -403,8 +409,7 @@ class Uploader:
     def __prepare_upload(self) -> str:
         with Platform(self.url) as plt:
             try:
-                return "Charlie gros pd"
-                res = plt.prepare_upload(self.jwt, self.project_name, jsonify=True)
+                res = plt.prepare_upload(self.cookie, self.project_name, os.path.basename(self.blend_path), jsonify=True)
                 return res['projectId']
             except requests.exceptions.HTTPError as error:
                 self.__print(f'Project creation failed : {error.response.status_code} - {error.response.text}')
