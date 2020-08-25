@@ -123,8 +123,9 @@ class Platform:
             "name": project_name,
             "scenePath": scene_path
         }
+        print(cookie)
         return self.session.post(url,
-                                headers={"connect.sid": cookie},
+                                cookies={"connect.sid": cookie},
                                 json=data,
                                 verify=True)
 
@@ -133,7 +134,7 @@ class Platform:
     def finish_upload(self, cookie: str, project_id: str) -> requests.Response:
         url = urljoin(self.url, f'/users/me/renderingProjects/{project_id}/upload-finished')
         return self.session.put(url,
-                                headers={"connect.sid": cookie},
+                                cookies={"connect.sid": cookie},
                                 verify=True)
 
 
@@ -327,6 +328,11 @@ class Uploader:
         self.target_path = target_path
         self.project_name = project_name
 
+
+        print("Access key: ", storage_access_key)
+        print("Secret key: ", storage_secret_key)
+        print("Bucket name: ", bucket_name)
+        print("Url: ", storage_url)
         self.s3_resource = boto3.resource(
             's3',
             aws_access_key_id = storage_access_key,
@@ -410,7 +416,7 @@ class Uploader:
         with Platform(self.url) as plt:
             try:
                 res = plt.prepare_upload(self.cookie, self.project_name, os.path.basename(self.blend_path), jsonify=True)
-                return res['projectId']
+                return res['id']
             except requests.exceptions.HTTPError as error:
                 self.__print(f'Project creation failed : {error.response.status_code} - {error.response.text}')
                 self.__signal_project_creation_error(error.response.text)
