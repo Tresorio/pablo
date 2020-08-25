@@ -277,6 +277,8 @@ class UploadJob:
     # Other clients uses factor of 1048576 (1Mb)
     def __compute_etag(self, path: str, chunk_size: int = 8388608):
         with open(path, 'rb') as file:
+            if self.size <= chunk_size:
+                return md5(file.read()).hexdigest()
             md5_digests = []
             while True:
                 chunk = file.read(chunk_size)
@@ -302,7 +304,7 @@ class Uploader:
         storage_access_key: str,
         storage_secret_key: str,
         bucket_name: str,
-        chunk_size: int = 16 * 1024 * 1024,
+        chunk_size: int = 8388608,
         max_retries_per_chunk: int = 5,
         number_of_threads: int = 3,
     ):
@@ -471,12 +473,15 @@ class Uploader:
         self.__print(f'Checking if {job.upload_path} is already on server...')
 
         try:
-            object = self.s3_bucket.Object(job.upload_path).load()
+            object = self.s3_bucket.Object(job.upload_path)
+            object.load()
         except:
             return False
         if object is None:
             return False
-        if object.e_tag != job.file_checksum:
+        print("Etag: ", object.e_tag[1: -1])
+        print("File checksum: ", job.file_checksum)
+        if object.e_tag[1: -1] != job.file_checksum:
             return False
 
         return True

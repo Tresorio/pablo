@@ -24,10 +24,12 @@ def callback(bytes):
 def downloadDirectory(bucketName, remoteDir, targetDir):
     bucket = s3_resource.Bucket(name=bucketName)
     for object in bucket.objects.filter(Prefix = remoteDir):
+        print(object.key, " - ", object.size, " - ", object.e_tag)
+        continue
         print("Downloading "+object.key+" (size: "+str(object.size)+")...")
         filename=os.path.join(targetDir, object.key)
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, 'wb+') as file:
             bucket.download_fileobj(object.key, file, Callback=callback)
 
-downloadDirectory("test-bucket2", "ckdfyih8l00003xoxssh1uger", "/tmp")
+downloadDirectory("test-bucket2", "Charlie gros pd", "/tmp")
