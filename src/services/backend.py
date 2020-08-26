@@ -291,7 +291,6 @@ async def _update_user_info(cookie: str,
     async with Platform() as plt:
         try:
             res_user_info = await plt.req_get_user_info(cookie, jsonify=True)
-            print(res_user_info)
             _get_user_info_callback(res_user_info)
         except Exception as err:
             BACKEND_LOGGER.error(err)
