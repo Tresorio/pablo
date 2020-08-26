@@ -200,8 +200,8 @@ def _download_folder_from_S3(render_result_path: str,
 
     s3_resource = boto3.resource(
         's3',
-        aws_access_key_id=user.access_key,
-        aws_secret_access_key=user.secret_key,
+        aws_access_key_id=user.storage_access_key,
+        aws_secret_access_key=user.storage_secret_key,
         endpoint_url=API_CONFIG[MODE]['storage'],
         config=config,
     )
