@@ -329,10 +329,6 @@ class Uploader:
         self.project_name = project_name
 
 
-        print("Access key: ", storage_access_key)
-        print("Secret key: ", storage_secret_key)
-        print("Bucket name: ", bucket_name)
-        print("Url: ", storage_url)
         self.s3_resource = boto3.resource(
             's3',
             aws_access_key_id = storage_access_key,
