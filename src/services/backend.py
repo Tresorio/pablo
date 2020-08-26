@@ -216,21 +216,21 @@ def _download_folder_from_S3(render_result_path: str,
     # bucket = s3_resource.Bucket(name="test-bucket2")
 
     ### WILL BE AVAILABLE IN RENDER DETAILS
-    remoteDir = render.project_id
+    remoteDir = render.id
     # remoteDir = 'cke4co1h100194skz9njgr2wq'
 
     ### Add suffix after target directory if it does already exist
-    os.makedirs(render_result_path, exist_ok=True)
     counter = 1
     subdir = render.name
-    print(f'Render result path {render_result_path}')
-    print(f'Subdir {subdir}')
     target_dir = os.path.join(render_result_path, subdir)
-    print(f'TargetDir: {target_dir}')
     while os.path.exists(target_dir):
         subdir = render.name+"("+str(counter)+")"
         target_dir = os.path.join(render_result_path, subdir)
         counter += 1
+    os.makedirs(target_dir, exist_ok=True)
+    print(f'BucketName: {user.id}-renderings')
+    print(f'RemoteDir: {remoteDir}')
+    print(f'TargetDir: {target_dir}')
 
     try:
         for object in bucket.objects.filter(Prefix = remoteDir):

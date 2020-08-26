@@ -54,7 +54,7 @@ class TresorioRendersList(bpy.types.UIList):
             split.label(text='', icon='KEYTYPE_BREAKDOWN_VEC')
         elif render.status == RenderStatus.STOPPING or render.status == RenderStatus.STOPPED:
             split.label(text='', icon_value=til.icon('TRESORIO_STOPPING'))
-        elif render.status == RenderStatus.LAUNCHING:
+        elif render.status == RenderStatus.STARTING:
             split.label(text='', icon_value=til.icon('TRESORIO_LAUNCHING'))
         elif render.status == RenderStatus.ERROR:
             split.label(text='', icon='KEYTYPE_KEYFRAME_VEC')
@@ -66,7 +66,7 @@ class TresorioRendersList(bpy.types.UIList):
         row.alignment = 'RIGHT'
         if render.downloading:
             row.label(text=TRADUCTOR['notif']['downloading'][CONFIG_LANG])
-        elif render.status == RenderStatus.LAUNCHING:
+        elif render.status == RenderStatus.STARTING:
             row.label(text=TRADUCTOR['notif']['launching'][CONFIG_LANG])
         elif render.status == RenderStatus.RUNNING or render.status == RenderStatus.STOPPED:
             row.prop(render, 'progress')

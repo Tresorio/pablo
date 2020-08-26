@@ -6,7 +6,7 @@ from dataclasses import dataclass
 @dataclass
 class RenderStatus():
     """Status of a render"""
-    LAUNCHING = 'STARTING'
+    STARTING = 'STARTING'
     RUNNING = 'RUNNING'
     STOPPING = 'STOPPING'
     STOPPED = 'STOPPED'
