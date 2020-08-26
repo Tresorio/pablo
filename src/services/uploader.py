@@ -19,7 +19,7 @@ import site
 site.addsitedir(os.path.dirname(os.path.abspath(__file__)))
 from blender_asset_tracer import bpathlib, pack
 
-site.addsitedir(os.path.abspath(os.path.join('/home/LeChatErrant/Work/tresorio/pablo/src/services/uploader.py', '..', '..', '..', 'bundle_modules')))
+site.addsitedir(os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..', 'bundle_modules')))
 import boto3
 from botocore.config import Config
 
