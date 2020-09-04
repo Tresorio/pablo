@@ -137,11 +137,12 @@ class Platform:
     async def req_resume_render(self,
                                 cookie: str,
                                 render_id: str,
-                                farm_index: int
+                                farm_index: int,
+                                rendering_mode: str
                                 ) -> aiohttp.ClientResponse:
         url = urljoin(self.url, API_CONFIG['routes']['resume_render'].format(render_id))
         return await self.session.put(url,
-                                       json={'farmIndex': farm_index},
+                                       json={'farmIndex': farm_index, 'renderingMode': rendering_mode},
                                        headers={'Content-Type': 'application/json'},
                                        cookies={'connect.sid': cookie},
                                        raise_for_status=True,

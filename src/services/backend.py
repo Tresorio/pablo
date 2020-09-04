@@ -604,7 +604,7 @@ async def _resume_render(cookie: str,
 
     try:
         async with Platform() as plt:
-            await plt.req_resume_render(cookie, render.id, farm_index, jsonify=True)
+            await plt.req_resume_render(cookie, render.id, farm_index, render.mode, jsonify=True)
             await _update_list_renderings(cookie)
             notif(TRADUCTOR['notif']['rendering_resumed'][CONFIG_LANG].format(render.name))
             bpy.context.window_manager.tresorio_user_settings_props.show_selected_render = True
