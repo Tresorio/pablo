@@ -6,8 +6,8 @@
         "storage": "https://storage.tresorio.com:9000"
     },
     "dev": {
-        "backend": "https://dev-gandalf.tresorio.com",
-        "frontend": "https://dev-platform.tresorio.com",
+        "backend": "https://api.tresorio.dev",
+        "frontend": "https://platform.tresorio.dev",
         "homepage": "https://tresorio.com",
         "storage": "https://storage.tresorio.com:9000"
     },
