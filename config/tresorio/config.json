@@ -9,19 +9,19 @@
         "backend": "https://api.tresorio.dev",
         "frontend": "https://platform.tresorio.dev",
         "homepage": "https://tresorio.com",
-        "storage": "https://storage.tresorio.com:9000"
+        "storage": "https://storage.tresorio.dev:9000"
     },
     "staging": {
         "backend": "https://staging-gandalf.tresorio.com",
         "frontend": "https://staging-platform.tresorio.com",
         "homepage": "https://tresorio.com",
-        "storage": "https://storage.tresorio.com:9000"
+        "storage": "https://storage.tresorio.dev:9000"
     },
     "local": {
         "backend": "http://localhost:5000",
         "frontend": "http://localhost:3000",
         "homepage": "https://tresorio.com",
-        "storage": "https://storage.tresorio.com:9000"
+        "storage": "https://storage.tresorio.dev:9000"
     },
     "routes": {
         "latest_version": "/addon/version",
