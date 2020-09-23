@@ -8,7 +8,7 @@ on:
 
 jobs:
   release:
-    name: Create releases
+    name: Addon release
     runs-on: [self-hosted, dev]
 
     steps:
@@ -26,10 +26,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: $ADDON_RELEASE_VERSION-${{ github.ref }}
+          tag_name: ${{ADDON_RELEASE_VERSION}}-${{ github.ref }}
           release_name: ${{ github.ref }}
-          body: Release for ${{ github.ref }}, version $ADDON_RELEASE_VERSION
-          draft: false
+          body: Release for ${{ github.ref }}, version ${{ADDON_RELEASE_VERSION}}
+          draft: true
           prerelease: false
 
       - name: Upload Release Asset
