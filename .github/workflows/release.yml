@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build plugin
-        run: ./build_plugin.sh ${{ env.GITHUB_REF##*/ }}
+        run: ./build_plugin.sh ${ env.GITHUB_REF##*/ }
 
       - name: Set version
         run: echo ::set-env name=ADDON_RELEASE_VERSION::$(node version.js)
@@ -26,9 +26,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.ADDON_RELEASE_VERSION }}-${{ env.GITHUB_REF##*/ }}
-          release_name: ${{ env.GITHUB_REF##*/ }}
-          body: Release for ${{ env.GITHUB_REF##*/ }}, version ${{ env.ADDON_RELEASE_VERSION }}
+          tag_name: ${{ env.ADDON_RELEASE_VERSION }}-${ env.GITHUB_REF##*/ }
+          release_name: ${ env.GITHUB_REF##*/ }
+          body: Release for ${ env.GITHUB_REF##*/ }, version ${{ env.ADDON_RELEASE_VERSION }}
           draft: true
           prerelease: false
 
