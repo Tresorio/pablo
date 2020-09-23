@@ -12,6 +12,8 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
     # Render specifics
     project_name: bpy.props.StringProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    project_id: bpy.props.StringProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     name: bpy.props.StringProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     gpu: bpy.props.IntProperty(
@@ -36,8 +38,6 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
 
     # Advancement
-    number_of_fragments: bpy.props.IntProperty(
-        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     total_frames: bpy.props.IntProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
     rendered_frames: bpy.props.IntProperty(
@@ -49,8 +49,18 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
     downloading: bpy.props.BoolProperty(
         update=lambda a, b: None, default=False, options={'HIDDEN', 'SKIP_SAVE'})
 
+    # Actions
+    is_downloadable: bpy.props.BoolProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    is_stoppable: bpy.props.BoolProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    is_resumable: bpy.props.BoolProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+    is_restartable: bpy.props.BoolProperty(
+        update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
+
     desc = TRADUCTOR['desc']['render_advancement_percent'][CONFIG_LANG]
-    progression: bpy.props.FloatProperty(
+    progress: bpy.props.FloatProperty(
         min=0,
         max=100,
         name='',

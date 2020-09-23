@@ -8,15 +8,15 @@ Author-email: fafhrd91@gmail.com
 Maintainer: Nikolay Kim <fafhrd91@gmail.com>, Andrew Svetlov <andrew.svetlov@gmail.com>
 Maintainer-email: aio-libs@googlegroups.com
 License: Apache 2
-Project-URL: Chat: Gitter, https://gitter.im/aio-libs/Lobby
-Project-URL: CI: AppVeyor, https://ci.appveyor.com/project/aio-libs/aiohttp
-Project-URL: CI: Circle, https://circleci.com/gh/aio-libs/aiohttp
-Project-URL: CI: Shippable, https://app.shippable.com/github/aio-libs/aiohttp
-Project-URL: CI: Travis, https://travis-ci.com/aio-libs/aiohttp
 Project-URL: Coverage: codecov, https://codecov.io/github/aio-libs/aiohttp
 Project-URL: Docs: RTD, https://docs.aiohttp.org
+Project-URL: CI: AppVeyor, https://ci.appveyor.com/project/aio-libs/aiohttp
+Project-URL: CI: Circle, https://circleci.com/gh/aio-libs/aiohttp
+Project-URL: Chat: Gitter, https://gitter.im/aio-libs/Lobby
 Project-URL: GitHub: issues, https://github.com/aio-libs/aiohttp/issues
+Project-URL: CI: Shippable, https://app.shippable.com/github/aio-libs/aiohttp
 Project-URL: GitHub: repo, https://github.com/aio-libs/aiohttp
+Project-URL: CI: Travis, https://travis-ci.com/aio-libs/aiohttp
 Platform: UNKNOWN
 Classifier: License :: OSI Approved :: Apache Software License
 Classifier: Intended Audience :: Developers

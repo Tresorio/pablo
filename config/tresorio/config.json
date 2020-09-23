@@ -1,39 +1,43 @@
 {
     "master": {
-        "backend": "https://api.tresorio.com",
-        "frontend": "https://platform.tresorio.com",
-        "homepage": "https://tresorio.com"
+        "backend": "https://apiv2.tresorio.com",
+        "frontend": "https://skyrocket.tresorio.com",
+        "homepage": "https://tresorio.com",
+        "storage": "https://storage.tresorio.com:9000"
     },
     "dev": {
-        "backend": "https://dev-gandalf.tresorio.com",
-        "frontend": "https://dev-platform.tresorio.com",
-        "homepage": "https://tresorio.com"
+        "backend": "https://api.tresorio.dev",
+        "frontend": "https://platform.tresorio.dev",
+        "homepage": "https://tresorio.com",
+        "storage": "https://storage.tresorio.com:9000"
     },
     "staging": {
         "backend": "https://staging-gandalf.tresorio.com",
         "frontend": "https://staging-platform.tresorio.com",
-        "homepage": "https://tresorio.com"
+        "homepage": "https://tresorio.com",
+        "storage": "https://storage.tresorio.com:9000"
     },
     "local": {
         "backend": "http://localhost:5000",
         "frontend": "http://localhost:3000",
-        "homepage": "https://tresorio.com"
+        "homepage": "https://tresorio.com",
+        "storage": "https://storage.tresorio.com:9000"
     },
     "routes": {
         "latest_version": "/addon/version",
         "forgot_password": "/password",
         "register": "/register",
-        "signin": "/auth/signin",
-        "user_info": "/user/informations",
+        "signin": "/auth",
+        "user_info": "/users/me",
         "get_credits": "/profile/credits/get",
-        "farms": "/user/products/render/farms",
-        "create_render": "/user/products/render/scene",
-        "launch_render": "/user/products/render/",
-        "list_renderings_details": "/user/products/render",
-        "rendering_details": "/user/products/render/{0}",
-        "stop_render": "/user/products/render/{0}/stop",
-        "resume_render": "/user/products/render/{0}/resume",
-        "delete_render": "/user/products/render/{0}",
+        "farms": "/users/me/renderings/farms",
+        "create_render": "/users/me/renderings/project",
+        "launch_render": "/users/me/renderings",
+        "list_renderings_details": "/users/me/renderings",
+        "rendering_details": "/users/me/renderings/{0}",
+        "stop_render": "/users/me/renderings/{0}/stop",
+        "resume_render": "/users/me/renderings/{0}/resume",
+        "delete_render": "/users/me/renderings/{0}",
         "download_addon": "/renderings/addon"
     },
     "version": {

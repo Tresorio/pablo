@@ -135,36 +135,35 @@ class Platform:
 
     @_platformrequest.__func__
     async def req_resume_render(self,
-                                token: str,
+                                cookie: str,
                                 render_id: str,
-                                farm_index: int
+                                farm_index: int,
+                                rendering_mode: str
                                 ) -> aiohttp.ClientResponse:
-        headers = {
-            'Authorization': f'JWT {token}',
-            'Content-Type': 'application/json'
-        }
         url = urljoin(self.url, API_CONFIG['routes']['resume_render'].format(render_id))
         return await self.session.put(url,
-                                       json={'farmIndex': farm_index},
-                                       headers=headers,
+                                       json={'farmIndex': farm_index, 'renderingMode': rendering_mode},
+                                       headers={'Content-Type': 'application/json'},
+                                       cookies={'connect.sid': cookie},
                                        raise_for_status=True,
                                        ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_launch_render(self,
-                                token: str,
+                                cookie: str,
                                 launch_render_params: Dict[str, Any]
                                 ) -> aiohttp.ClientResponse:
         """Launch a render
 
         Args:
-            token: The token given at the connection to Tresorio's API.
+            cookie: The session cookie given at the connection to
+            cookie: The session cookie given at the connection to Tresorio's API.
             render_id: The id of the render to launch.
             launch_render_params: parameters required to launch the rendering
 
         Example:
             >>> async with Platform() as plt:
-            ...     token = 'eyJ0eXAiOiJKV1QiLC'
+            ...     cookie = 'eyJ0eXAiOiJKV1QiLC'
             ...     params = {
             ...         'name': props.rendering_name,
             ...         'engine': props.render_engines_list,
@@ -180,146 +179,127 @@ class Platform:
             ...         'endingFrame': 27,
             ...         'projectID': 1,
             ...     }
-            ...     res = await plt.req_launch_render(token, params)
+            ...     res = await plt.req_launch_render(cookie, params)
         """
-        headers = {
-            'Authorization': f'JWT {token}',
-            'Content-Type': 'application/json'
-        }
         url = urljoin(self.url, API_CONFIG['routes']['launch_render'])
         return await self.session.post(url,
                                        json=launch_render_params,
-                                       headers=headers,
+                                       headers={'Content-Type': 'application/json'},
+                                       cookies={'connect.sid': cookie},
                                        raise_for_status=True,
                                        ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_stop_render(self,
-                              token: str,
+                              cookie: str,
                               render_id: str
                               ) -> aiohttp.ClientResponse:
         """Stop a render
 
         Args:
-            token: The token given at the connection to Tresorio's API.
+            cookie: The session cookie given at the connection to Tresorio's API.
             render_id: The id of the render to stop.
 
         Example:
             >>> async with Platform() as plt:
-            ...     token = 'eyJ0eXAiOiJKV1QiLC'
+            ...     cookie = 'eyJ0eXAiOiJKV1QiLC'
             ...     render_id = '5c5793e2-055d-11ea-9a9f-362b9e155667'
-            ...     res = await plt.req_stop_render(token, render_id)
+            ...     res = await plt.req_stop_render(cookie, render_id)
         """
-        headers = {
-            'Authorization': f'JWT {token}',
-            'Content-Type': 'application/json'
-        }
         url = urljoin(self.url,
                       API_CONFIG['routes']['stop_render'].format(render_id))
         return await self.session.put(url,
-                                      headers=headers,
+                                      headers={'Content-Type': 'application/json'},
+                                      cookies={'connect.sid': cookie},
                                       raise_for_status=True,
                                       ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_delete_render(self,
-                                token: str,
+                                cookie: str,
                                 render_id: str
                                 ) -> aiohttp.ClientResponse:
         """Delete a render
 
         Args:
-            token: The token given at the connection to Tresorio's API.
+            cookie: The session cookie given at the connection to Tresorio's API.
             render_id: The id of the render to delete.
 
         Example:
             >>> async with Platform() as plt:
-            ...     token = 'eyJ0eXAiOiJKV1QiLC'
+            ...     cookie = 'eyJ0eXAiOiJKV1QiLC'
             ...     render_id = '5c5793e2-055d-11ea-9a9f-362b9e155667'
-            ...     res = await plt.req_delete_render(token, render_id)
+            ...     res = await plt.req_delete_render(cookie, render_id)
         """
-        headers = {
-            'Authorization': f'JWT {token}',
-            'Content-Type': 'application/json'
-        }
         url = urljoin(self.url,
                       API_CONFIG['routes']['delete_render'].format(render_id))
         return await self.session.delete(url,
-                                         headers=headers,
+                                         headers={'Content-Type': 'application/json'},
+                                         cookies={'connect.sid': cookie},
                                          raise_for_status=True,
                                          ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_get_user_info(self,
-                                token: str
+                                cookie: str
                                 ) -> aiohttp.ClientResponse:
         """Fetch the user information
 
         Args:
-            token: The token given at the connection to Tresorio's API.
+            cookie: The session cookie given at the connection to Tresorio's API.
 
         Example:
             >>> async with Platform() as plt:
-            ...     token = 'eyJ0eXAiOiJKV1QiLC'
-            ...     res = await plt.req_get_user_info(token)
+            ...     cookie = 'eyJ0eXAiOiJKV1QiLC'
+            ...     res = await plt.req_get_user_info(cookie)
         """
-        headers = {
-            'Authorization': f'JWT {token}',
-            'Content-Type': 'application/json'
-        }
         url = urljoin(self.url, API_CONFIG['routes']['user_info'])
         return await self.session.get(url,
                                       raise_for_status=True,
-                                      headers=headers,
+                                      headers={'Content-Type': 'application/json'},
+                                      cookies={'connect.sid': cookie},
                                       ssl_context=SSL_CONTEXT)
 
 
     @_platformrequest.__func__
     async def req_create_render(self,
-                                token: str,
+                                cookie: str,
                                 renderSize: int,
                                 projectName: str
                                 ) -> aiohttp.ClientResponse:
         """Create a render
 
         Args:
-            token: The token given at the connection to Tresorio's API.
+            cookie: The session cookie given at the connection to Tresorio's API.
 
         Example:
             >>> async with Platform() as plt:
             ...     renderSize = 42
-            ...     token = 'eyJ0eXAiOiJKV1QiLC'
-            ...     res = await plt.req_create_render(token, renderSize)
+            ...     cookie = 'eyJ0eXAiOiJKV1QiLC'
+            ...     res = await plt.req_create_render(cookie, renderSize)
         """
-        headers = {
-            'Authorization': f'JWT {token}',
-            'Content-Type': 'application/json'
-        }
         url = urljoin(self.url, API_CONFIG['routes']['create_render'])
         return await self.session.post(url,
                                        json={'size': renderSize, 'name': projectName},
                                        raise_for_status=True,
-                                       headers=headers,
+                                       headers={'Content-Type': 'application/json'},
+                                       cookies={'connect.sid': cookie},
                                        ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_list_renderings_details(self,
-                                          token: str
+                                          cookie: str
                                           ) -> aiohttp.ClientResponse:
         """List the renderings of the user
 
         Args:
-            token: The token given at the connection to Tresorio's API.
+            cookie: The session cookie given at the connection to Tresorio's API.
 
         Example:
             >>> async with Platform() as plt:
-            ...     token = 'eyJ0eXAiOiJKV1QiLC'
-            ...     res = await plt.req_list_renderings_details(token)
+            ...     cookie = 'eyJ0eXAiOiJKV1QiLC'
+            ...     res = await plt.req_list_renderings_details(cookie)
         """
-        headers = {
-            'Authorization': f'JWT {token}',
-            'Content-Type': 'application/json'
-        }
         params = {
             'offset': 0,
             'count': 100,
@@ -329,52 +309,47 @@ class Platform:
         return await self.session.get(url,
                                       params=params,
                                       raise_for_status=True,
-                                      headers=headers,
+                                      headers={'Content-Type': 'application/json'},
+                                      cookies={'connect.sid': cookie},
                                       ssl_context=SSL_CONTEXT)
 
 
     @_platformrequest.__func__
     async def req_get_farms(self,
-        token: str,
+        cookie: str,
         params: Dict[str, Any]
     ) -> aiohttp.ClientResponse:
-        headers = {
-            'Authorization': f'JWT {token}',
-            'Content-Type': 'application/json'
-        }
         url = urljoin(self.url,
             API_CONFIG['routes']['farms'])
         return await self.session.get(url,
-            headers=headers,
-            params=params,
-            ssl_context=SSL_CONTEXT)
+                                      headers={'Content-Type': 'application/json'},
+                                      cookies={'connect.sid': cookie},
+                                      json=params,
+                                      ssl_context=SSL_CONTEXT)
 
 
     @_platformrequest.__func__
     async def req_get_rendering_details(self,
-                                        token: str,
+                                        cookie: str,
                                         render_id: str
                                         ) -> aiohttp.ClientResponse:
         """Fetch the details of a specific rendering
 
         Args:
-            token: The token given at the connection to Tresorio's API.
+            cookie: The session cookie given at the connection to Tresorio's API.
             render_id: The unique id of the render to fetch
 
         Example:
             >>> async with Platform() as plt:
-            ...     token = 'eyJ0eXAiOiJKV1QiLC'
+            ...     cookie = 'eyJ0eXAiOiJKV1QiLC'
             ...     render_id = '23kze239'
-            ...     res = await plt.req_get_rendering_details(token, render_id)
+            ...     res = await plt.req_get_rendering_details(cookie, render_id)
         """
-        headers = {
-            'Authorization': f'JWT {token}',
-            'Content-Type': 'application/json'
-        }
         url = urljoin(self.url,
                       API_CONFIG['routes']['rendering_details'].format(render_id))
         return await self.session.get(url,
-                                      headers=headers,
+                                      headers={'Content-Type': 'application/json'},
+                                      cookies={'connect.sid': cookie},
                                       ssl_context=SSL_CONTEXT)
 
     async def close(self):

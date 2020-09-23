@@ -805,10 +805,10 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "aiohttp/_websocket.pyx",
-  ".build-venv/lib/python3.7/site-packages/Cython/Includes/cpython/type.pxd",
-  ".build-venv/lib/python3.7/site-packages/Cython/Includes/cpython/bool.pxd",
-  ".build-venv/lib/python3.7/site-packages/Cython/Includes/cpython/complex.pxd",
+  "aiohttp\\_websocket.pyx",
+  "type.pxd",
+  "bool.pxd",
+  "complex.pxd",
 };
 
 /*--- Type declarations ---*/
@@ -1179,7 +1179,7 @@ static const char __pyx_k_uint64_msk[] = "uint64_msk";
 static const char __pyx_k_aiohttp__websocket[] = "aiohttp._websocket";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_websocket_mask_cython[] = "_websocket_mask_cython";
-static const char __pyx_k_aiohttp__websocket_pyx[] = "aiohttp/_websocket.pyx";
+static const char __pyx_k_aiohttp__websocket_pyx[] = "aiohttp\\_websocket.pyx";
 static PyObject *__pyx_n_s_aiohttp__websocket;
 static PyObject *__pyx_kp_s_aiohttp__websocket_pyx;
 static PyObject *__pyx_n_s_cline_in_traceback;
