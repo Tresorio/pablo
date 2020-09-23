@@ -2,9 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [master, dev]
   pull_request:
-    branches: [master, dev]
 
 jobs:
   release:
@@ -14,17 +12,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build plugin
-        run: ./build_plugin.sh ${{ env.BRANCH_NAME }}
-
       - name: Set version
         run: echo ::set-env name=ADDON_RELEASE_VERSION::$(node version.js)
 
       - name: Extract branch name
-        shell: bash
         run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
-      - name: Test
-        run: echo "${BRANCH_NAME}"
+
+      - name: Build plugin
+        run: ./build_plugin.sh ${{ env.BRANCH_NAME }}
 
       - name: Create Release
         id: create_release
@@ -32,8 +27,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.ADDON_RELEASE_VERSION }}-${{ env.BRANCH_NAME }}
-          release_name: ${{ env.BRANCH_NAME }}
+          tag_name: ${{ env.BRANCH_NAME }}-${{ env.ADDON_RELEASE_VERSION }}
+          release_name: ${{ env.ADDON_RELEASE_VERSION }}
           body: Release for ${{ env.BRANCH_NAME }}, version ${{ env.ADDON_RELEASE_VERSION }}
           draft: true
           prerelease: false
