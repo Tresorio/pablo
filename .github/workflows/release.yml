@@ -30,7 +30,7 @@ jobs:
           tag_name: ${{ env.ADDON_RELEASE_VERSION }}-${{ env.BRANCH_NAME }}
           release_name: ${{ env.BRANCH_NAME }}
           body: Release for ${{ env.BRANCH_NAME }}, version ${{ env.ADDON_RELEASE_VERSION }}
-          draft: true
+          draft: false
           prerelease: false
 
       - name: Upload Release Asset
