@@ -61,7 +61,7 @@ from src.config.api import API_CONFIG
 
 bl_info = {
     'name': 'Tresorio cloud rendering',
-    'version': (2, 4, 0),
+    'version': (2, 4, 1),
     'blender': (2, 80, 0),
     'category': 'Output',
     'file': '/$HOME/.config/blender/2.80/scripts/addons/tresorio',
