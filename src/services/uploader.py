@@ -249,8 +249,8 @@ class UploadJob:
 
     def __init__(self, path: str, root: str, project_id: str, chunk_size: int):
         self.path = path
-        self.relpath = str(pathlib.Path(os.path.relpath(path, root)))
-        self.upload_path = str(pathlib.PurePosixPath(self.relpath, os.path.join('scenes', project_id)))
+        self.relpath = str(pathlib.PurePosixPath(pathlib.Path(os.path.relpath(path, root))))
+        self.upload_path = str(pathlib.PurePosixPath('scenes', project_id, self.relpath))
 
         self.retries = 0
         self.uploaded_chunks = 0
