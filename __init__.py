@@ -67,7 +67,6 @@ bl_info = {
     'file': '/$HOME/.config/blender/2.80/scripts/addons/tresorio',
     'location': 'Properties: Output > Tresorio',
     'description': 'Cloud distributed rendering for Blender, by Tresorio',
-    'wiki_url': 'https://tresorio.com/en/how-to-render-in-blender-using-tresorio-cloud/',
 }
 
 assert bl_info['version'] == (API_CONFIG['version']['major'], API_CONFIG['version']['minor'], API_CONFIG['version']['patch']), "Version in config.json must match the bl_info"
