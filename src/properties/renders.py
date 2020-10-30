@@ -1,8 +1,8 @@
 """This module defines the properties of a render"""
 
-from src.config.langs import TRADUCTOR, CONFIG_LANG
-import bpy
 
+import bpy
+from bundle_modules import i18n
 
 class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
     """Details properties of a render"""
@@ -59,7 +59,7 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
     is_restartable: bpy.props.BoolProperty(
         update=lambda a, b: None, options={'HIDDEN', 'SKIP_SAVE'})
 
-    desc = TRADUCTOR['desc']['render_advancement_percent'][CONFIG_LANG]
+    desc = i18n.t('blender.render-advancement-percent')
     progress: bpy.props.FloatProperty(
         min=0,
         max=100,
@@ -74,7 +74,7 @@ class TresorioRendersDetailsProps(bpy.types.PropertyGroup):
     @classmethod
     def register(cls):
         """Link to window manager so these settings are reset at launch"""
-        desc = TRADUCTOR['desc']['render_details'][CONFIG_LANG]
+        desc = i18n.t('blender.render-details')
         bpy.types.WindowManager.tresorio_renders_details = bpy.props.CollectionProperty(
             type=cls,
             name='tresorio_renders_details',

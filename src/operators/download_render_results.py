@@ -2,16 +2,16 @@
 
 from typing import Set
 
-from src.config.langs import TRADUCTOR, CONFIG_LANG
+from bundle_modules import i18n
 from src.services.backend import download_render_results
 import bpy
 
 
 class TresorioDownloadRenderResultsOperator(bpy.types.Operator):
     """Download render result operator"""
-    __doc__ = TRADUCTOR['desc']['download_render_results'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.download-render-results')
     bl_idname = 'tresorio.download_render_results'
-    bl_label = TRADUCTOR['field']['download_results'][CONFIG_LANG]
+    bl_label = i18n.t('blender.download-results')
 
     index: bpy.props.IntProperty(options={'HIDDEN', 'SKIP_SAVE'})
     directory: bpy.props.StringProperty(

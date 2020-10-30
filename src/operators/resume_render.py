@@ -2,16 +2,16 @@
 
 from typing import Set
 
-from src.config.enums import RenderStatus
 from src.services.backend import get_farms
-from src.config.langs import TRADUCTOR, CONFIG_LANG
+from src.ui.popup import popup
+from bundle_modules import i18n
 import bpy
 
 # pylint: disable=too-few-public-methods
 
 class TresorioResumeRenderOperator(bpy.types.Operator):
     """Delete render operator"""
-    __doc__ = TRADUCTOR['desc']['resume_render'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.resume-render')
     bl_idname = 'tresorio.resume_render'
     bl_label = ''
 
@@ -29,8 +29,7 @@ class TresorioResumeRenderOperator(bpy.types.Operator):
 
         user_props = context.window_manager.tresorio_user_props
         if not user_props.is_logged:
-            popup(TRADUCTOR['notif']['not_logged_in']
-                  [CONFIG_LANG], icon='ERROR')
+            popup(i18n.t('blender.not-logged-in'), icon='ERROR')
             return {'CANCELLED'}
 
         # Reset context

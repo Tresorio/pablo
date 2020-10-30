@@ -1,38 +1,32 @@
 """Tresorio's only interace with operators"""
 
 from http import HTTPStatus
-from datetime import datetime
-from typing import Dict, Any, List
+from typing import Dict, Any
 from collections.abc import Coroutine
 from queue import Queue
 import boto3
 from botocore.config import Config
-import io
 import os
-import shutil
 import asyncio
 import functools
 import tempfile
-import sys
+import pathlib
 
 import bpy
-import time
-import pathlib
+from bundle_modules import i18n
+from bundle_modules.aiohttp import ClientResponseError, ClientResponse
 from src.ui.popup import popup, alert, notif
 from src.operators.logout import logout
 from src.services.tresorio_platform import Platform, backend_url
-from src.utils.decompress import decompress_rendering_results, get_extract_path
 from src.utils.force_sync import force_sync
-from src.services.nas import AsyncNas, SyncNas
+from src.services.nas import AsyncNas
 from src.services.loggers import BACKEND_LOGGER
 from src.config.api import API_CONFIG, MODE
 from src.utils.percent_reader import PercentReader
-from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.operators.async_loop import ensure_async_loop
 from src.config.enums import RenderStatus, RenderTypes
 from src.properties.render_form import get_render_type
 from src.properties.renders import TresorioRendersDetailsProps
-from bundle_modules.aiohttp import ClientResponseError, ClientResponse
 from src.utils.open_image import open_image
 
 import src.operators.upload_modal
@@ -49,7 +43,7 @@ def logout_if_unauthorized(err: ClientResponseError) -> None:
     """
     if err.status == HTTPStatus.UNAUTHORIZED:
         logout(bpy.context)
-        popup(TRADUCTOR['notif']['expired_session'][CONFIG_LANG], icon='ERROR')
+        popup(i18n.t('blender.expired-session'), icon='ERROR')
 
 
 def get_farms(rendering_mode: str, number_of_frames: int) -> None:
@@ -124,7 +118,7 @@ def connect_to_tresorio(email: str,
     scene = bpy.data.filepath
     if bpy.context.scene.tresorio_render_form.project_name == '':
         if scene == '':
-            bpy.context.scene.tresorio_render_form.project_name = TRADUCTOR['field']['default_project_name'][CONFIG_LANG]
+            bpy.context.scene.tresorio_render_form.project_name = i18n.t('blender.default-project-name')
         else:
             bpy.context.scene.tresorio_render_form.project_name = os.path.splitext(os.path.basename(scene))[0].capitalize()
     if bpy.context.scene.tresorio_render_form.project_folder == '':
@@ -281,8 +275,7 @@ async def _download_render_results(cookie: str,
     except Exception as err:
         BACKEND_LOGGER.error(err)
         UPDATE_QUEUE.put(('finished_download', render_details['id']))
-        alert(TRADUCTOR['notif']['err_download_folder_from_S3results']
-              [CONFIG_LANG])
+        alert(i18n.t('blender.err-download-folder-from-S3results'))
 
 
 async def _update_user_info(cookie: str,
@@ -297,8 +290,7 @@ async def _update_user_info(cookie: str,
             if isinstance(err, ClientResponseError):
                 logout_if_unauthorized(err)
             elif silence_errors is False:
-                popup(TRADUCTOR['notif']['err_acc_info']
-                      [CONFIG_LANG], icon='ERROR')
+                popup(i18n.t('blender.err-acc-info'), icon='ERROR')
 
 
 def update_upload_percent(value: float):
@@ -351,11 +343,9 @@ async def _connect_to_tresorio(data: Dict[str, str]) -> Coroutine:
             BACKEND_LOGGER.error(err)
             if isinstance(err, ClientResponseError):
                 if err.status == HTTPStatus.UNAUTHORIZED:
-                    popup(TRADUCTOR['notif']['invalid_login'][CONFIG_LANG],
-                          icon='ERROR')
+                    popup(i18n.t('blender.invalid-login'), icon='ERROR')
             else:
-                popup(TRADUCTOR['notif']
-                      ['err_connection'][CONFIG_LANG], icon='ERROR')
+                popup(i18n.t('blender.err-connection'), icon='ERROR')
         else:
             bpy.context.window_manager.tresorio_report_props.login_in = False
             await _refresh_loop(session_cookie)
@@ -373,7 +363,7 @@ async def _update_list_renderings(cookie: str,
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
         elif silence_errors is False:
-            popup(TRADUCTOR['notif']['err_renders'][CONFIG_LANG], icon='ERROR')
+            popup(i18n.t('blender.err-renders'), icon='ERROR')
 
 
 def update_ui_renderings(res_renders,
@@ -399,7 +389,7 @@ async def _update_rendering(render: TresorioRendersDetailsProps,
             _fill_render_details(render, render_details)
     except Exception as err:
         BACKEND_LOGGER.error(err)
-        popup(TRADUCTOR['notif']['err_render'][CONFIG_LANG], icon='ERROR')
+        popup(i18n.t('blender.err-render'), icon='ERROR')
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
 
@@ -421,7 +411,7 @@ def _on_upload_end(target_path: str, success: bool):
 
 def _on_upload_error(filename: str, error: str):
     print('[UPL ERROR]')
-    alert(TRADUCTOR['notif']['err_upl'][CONFIG_LANG].format(filename, error))
+    alert(i18n.t('blender.err-upl').format(filename, error))
 
 def _on_pack_start(blend_path: str, target_path: str):
     print('[PACK START]')
@@ -433,11 +423,11 @@ def _on_pack_progress(progress: float):
 
 def _on_pack_error(blend_path: str, target_path: str, error: str):
     print('[PACK ERROR]')
-    alert(TRADUCTOR['notif']['cant_pack_textures'][CONFIG_LANG], subtitle=error)
+    alert(i18n.t('blender.cant-pack-textures'), subtitle=error)
 
 def _on_missing_file(blend_path: str, target_path: str, file: str):
     print('[MISSING FILE]')
-    notif(TRADUCTOR['notif']['missing_file'][CONFIG_LANG].format(file))
+    notif(i18n.t('blender.missing-file').format(file))
 
 def _on_pack_end(blend_path: str, target_path: str, success: bool):
     print('[PACK END]')
@@ -447,7 +437,7 @@ def _on_pack_end(blend_path: str, target_path: str, success: bool):
 
 def _on_project_creation_error(project_name: str, error: str):
     print('[PROJECT CREATION ERROR]')
-    alert(TRADUCTOR['notif']['error_project'][CONFIG_LANG].format(project_name), subtitle=error)
+    alert(i18n.t('blender.error-project').format(project_name), subtitle=error)
 
 def _on_end(exit_code: int):
     print('[END]')
@@ -459,11 +449,11 @@ def _on_end(exit_code: int):
     bpy.context.window_manager.tresorio_report_props.packing_textures = False
     bpy.context.scene.tresorio_render_form.file_uploading = ''
     if exit_code == 0:
-        notif(TRADUCTOR['notif']['exported'][CONFIG_LANG])
+        notif(i18n.t('blender.exported'))
 
 def _on_unknown_error(error: str):
     print('[UNKNOWN ERROR]')
-    alert(TRADUCTOR['notif']['unknown_error_upl'][CONFIG_LANG], subtitle=error)
+    alert(i18n.t('blender.unknown-error-upl'), subtitle=error)
 
 async def _chunked_upload(cookie: str, blend_path: str, target_path: str, project_name: str) -> Coroutine:
     """This function upload a new .blend file"""
@@ -513,7 +503,7 @@ async def _chunked_upload(cookie: str, blend_path: str, target_path: str, projec
         bpy.context.window_manager.tresorio_report_props.packing_textures = False
         bpy.context.scene.tresorio_render_form.file_uploading = ''
         BACKEND_LOGGER.error(err)
-        popup_msg = TRADUCTOR['notif']['err_upl_blendfile'][CONFIG_LANG]
+        popup_msg = i18n.t('blender.err-upl-blendfile')
         alert(popup_msg)
 
 
@@ -552,11 +542,11 @@ async def _new_upload(cookie: str, path: str, project_name: str) -> Coroutine:
 
     except Exception as err:
         BACKEND_LOGGER.error(err)
-        popup_msg = TRADUCTOR['notif']['err_upl_blendfile'][CONFIG_LANG]
+        popup_msg = i18n.t('blender.err-upl-blendfile')
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
             if err.status == HTTPStatus.SERVICE_UNAVAILABLE:
-                popup_msg = TRADUCTOR['notif']['not_enough_servers'][CONFIG_LANG]
+                popup_msg = i18n.t('blender.not-enough-servers')
         alert(popup_msg)
         return
     finally:
@@ -577,7 +567,7 @@ async def _get_farms(
             if len(farms) == 0:
                 bpy.context.window_manager.tresorio_user_props.is_launching_rendering = False
                 BACKEND_LOGGER.error("Empty response from server while getting farms")
-                alert(TRADUCTOR['notif']['something_went_wrong'][CONFIG_LANG])
+                alert(i18n.t('blender.something-went-wrong'))
                 return
             for farm in farms:
                 item = bpy.context.window_manager.tresorio_farm_props.add()
@@ -592,7 +582,7 @@ async def _get_farms(
     except Exception as err:
         bpy.context.window_manager.tresorio_user_props.is_launching_rendering = False
         BACKEND_LOGGER.error(err)
-        alert(TRADUCTOR['notif']['something_went_wrong'][CONFIG_LANG])
+        alert(i18n.t('blender.something-went-wrong'))
 
 
 async def _resume_render(cookie: str,
@@ -605,22 +595,22 @@ async def _resume_render(cookie: str,
         async with Platform() as plt:
             await plt.req_resume_render(cookie, render.id, farm_index, render.mode, jsonify=True)
             await _update_list_renderings(cookie)
-            notif(TRADUCTOR['notif']['rendering_resumed'][CONFIG_LANG].format(render.name))
+            notif(i18n.t('blender.rendering-resumed').format(render.name))
             bpy.context.window_manager.tresorio_user_settings_props.show_selected_render = True
     except Exception as err:
         BACKEND_LOGGER.error(err)
-        popup_msg = TRADUCTOR['notif']['err_launch_render'][CONFIG_LANG]
+        popup_msg = i18n.t('blender.err-launch-render')
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
             if err.status == HTTPStatus.FORBIDDEN:
-                popup_msg = TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG]
+                popup_msg = i18n.t('blender.not-enough-credits')
             elif err.status == HTTPStatus.SERVICE_UNAVAILABLE:
-                alert(TRADUCTOR['notif']['rendering_failed'][CONFIG_LANG].format(render.name.capitalize()), subtitle=TRADUCTOR['notif']['not_enough_servers'][CONFIG_LANG])
+                alert(i18n.t('blender.rendering-failed').format(render.name.capitalize()), subtitle=i18n.t('blender.not-enough-servers'))
                 return
             elif err.status == HTTPStatus.NOT_FOUND:
-                popup_msg = TRADUCTOR['notif']['no_scene'][CONFIG_LANG].format(render.project_name.capitalize())
+                popup_msg = i18n.t('blender.no-scene').format(render.project_name.capitalize())
 
-        alert(TRADUCTOR['notif']['rendering_failed'][CONFIG_LANG].format(render.name.capitalize()) + popup_msg)
+        alert(i18n.t('blender.rendering-failed').format(render.name.capitalize()) + popup_msg)
 
 
 async def _new_render(cookie: str,
@@ -635,27 +625,27 @@ async def _new_render(cookie: str,
             launch_render['projectId'] = render_form.project_id
             await plt.req_launch_render(cookie, launch_render, jsonify=True)
             await _update_list_renderings(cookie)
-            notif(TRADUCTOR['notif']['rendering_launched'][CONFIG_LANG].format(render_form.rendering_name.capitalize(), render_form.project_name.capitalize()))
+            notif(i18n.t('blender.rendering-launched').format(render_form.rendering_name.capitalize(), render_form.project_name.capitalize()))
             bpy.context.window_manager.tresorio_renders_list_index = 0
             bpy.context.window_manager.tresorio_user_settings_props.show_selected_render = True
     except Exception as err:
         BACKEND_LOGGER.error(err)
-        popup_msg = TRADUCTOR['notif']['err_launch_render'][CONFIG_LANG]
+        popup_msg = i18n.t('blender.err-launch-render')
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
             if err.status == HTTPStatus.FORBIDDEN:
-                popup_msg = TRADUCTOR['notif']['not_enough_credits'][CONFIG_LANG]
+                popup_msg = i18n.t('blender.not-enough-credits')
             elif err.status == HTTPStatus.SERVICE_UNAVAILABLE:
-                alert(TRADUCTOR['notif']['rendering_failed'][CONFIG_LANG].format(render_form.rendering_name.capitalize()), subtitle=TRADUCTOR['notif']['not_enough_servers'][CONFIG_LANG])
+                alert(i18n.t('blender.rendering-failed').format(render_form.rendering_name.capitalize()), subtitle=i18n.t('blender.not-enough-servers'))
                 return
             elif err.status == HTTPStatus.CONFLICT:
-                popup_msg = TRADUCTOR['notif']['render_name_already_taken'][CONFIG_LANG].format(
+                popup_msg = i18n.t('blender.render-name-already-taken').format(
                     render_form.rendering_name)
             elif err.status == HTTPStatus.NOT_FOUND:
-                popup_msg = TRADUCTOR['notif']['no_scene'][CONFIG_LANG].format(render_form.project_name.capitalize())
+                popup_msg = i18n.t('blender.no-scene').format(render_form.project_name.capitalize())
             elif err.status == HTTPStatus.BAD_REQUEST:
-                popup_msg = TRADUCTOR['notif']['wrong_name'][CONFIG_LANG]
-        alert(TRADUCTOR['notif']['rendering_failed'][CONFIG_LANG].format(render_form.rendering_name.capitalize()) + popup_msg)
+                popup_msg = i18n.t('blender.wrong-name')
+        alert(i18n.t('blender.rendering-failed').format(render_form.rendering_name.capitalize()) + popup_msg)
 
 async def _stop_render(cookie: str,
                        render: TresorioRendersDetailsProps
@@ -668,7 +658,7 @@ async def _stop_render(cookie: str,
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
-        alert(TRADUCTOR['notif']['err_stop_render'][CONFIG_LANG])
+        alert(i18n.t('blender.err-stop-render'))
     else:
         await _update_rendering(render, cookie)
 
@@ -684,7 +674,7 @@ async def _delete_render(cookie: str,
         BACKEND_LOGGER.error(err)
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
-        alert(TRADUCTOR['notif']['err_delete_render'][CONFIG_LANG])
+        alert(i18n.t('blender.err-delete-render'))
 
 
 async def _delete_all_renders(cookie: str) -> Coroutine:

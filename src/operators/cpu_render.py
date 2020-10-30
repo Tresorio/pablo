@@ -2,8 +2,9 @@
 
 from typing import Set
 
+from bundle_modules import i18n
 from src.ui.popup import popup, alert, notif
-from src.config.langs import TRADUCTOR, CONFIG_LANG
+
 from src.services.backend import get_farms
 from src.properties.render_form import get_render_type
 from src.config.enums import RenderStatus, RenderTypes
@@ -11,9 +12,9 @@ import bpy
 
 class TresorioCpuRenderFrameOperator(bpy.types.Operator):
     """Render operator"""
-    __doc__ = TRADUCTOR['desc']['tresorio_cpurender'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.tresorio-cpurender')
     bl_idname = 'tresorio.cpurender'
-    bl_label = TRADUCTOR['field']['cpulaunch'][CONFIG_LANG]
+    bl_label = i18n.t('blender.cpulaunch')
 
     @classmethod
     def poll(cls,
@@ -36,10 +37,10 @@ class TresorioCpuRenderFrameOperator(bpy.types.Operator):
                 is_name_already_taken = True
 
         if len(name) == 0 or "/" in name or name.isspace():
-            popup(msg=TRADUCTOR['notif']['wrong_name'][CONFIG_LANG], icon='ERROR')
+            popup(msg=i18n.t('blender.wrong-name'), icon='ERROR')
             return {'FINISHED'}
         elif is_name_already_taken == True:
-            popup(msg= TRADUCTOR['notif']['render_name_already_taken'][CONFIG_LANG].format(name.capitalize()), icon='ERROR')
+            popup(msg=i18n.t('blender.render-name-already-taken').format(name.capitalize()), icon='ERROR')
             return {'FINISHED'}
 
         bpy.context.window_manager.tresorio_farm_props_index = -1
@@ -52,8 +53,7 @@ class TresorioCpuRenderFrameOperator(bpy.types.Operator):
         bpy.context.scene.tresorio_render_form.number_of_frames = number_of_frames
 
         if not user_props.is_logged:
-            popup(TRADUCTOR['notif']['not_logged_in']
-                  [CONFIG_LANG], icon='ERROR')
+            popup(i18n.t('blender.not-logged-in'), icon='ERROR')
             return {'CANCELLED'}
 
         context.window_manager.tresorio_farm_props.clear()

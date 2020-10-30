@@ -2,7 +2,7 @@
 
 import bpy
 from src.config.user_json import USER_CONFIG
-from src.config.langs import TRADUCTOR, CONFIG_LANG
+from bundle_modules import i18n
 
 
 def update_open_image_on_download(ptr: 'TresorioUserSettingsProps',
@@ -39,7 +39,7 @@ class TresorioUserSettingsProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['open_image_on_download'][CONFIG_LANG]
+    desc = i18n.t('blender.open-image-on-download')
     open_image_on_download: bpy.props.BoolProperty(
         name='',
         default=USER_CONFIG['open_image_on_download'],
@@ -48,7 +48,7 @@ class TresorioUserSettingsProps(bpy.types.PropertyGroup):
         update=update_open_image_on_download,
     )
 
-    desc = TRADUCTOR['desc']['decompress_results'][CONFIG_LANG]
+    desc = i18n.t('blender.decompress-results')
     decompress_results: bpy.props.BoolProperty(
         name='',
         default=USER_CONFIG['decompress_results'],
@@ -57,7 +57,7 @@ class TresorioUserSettingsProps(bpy.types.PropertyGroup):
         update=update_decompress_results,
     )
 
-    desc = TRADUCTOR['desc']['show_selected_render'][CONFIG_LANG]
+    desc = i18n.t('blender.show-selected-render')
     show_selected_render: bpy.props.BoolProperty(
         name='',
         description=desc,

@@ -1,10 +1,7 @@
 """This module defines the properties for the render form"""
 
-import math
-import os
-
 from src.config.enums import RenderTypes
-from src.config.langs import TRADUCTOR, CONFIG_LANG
+from bundle_modules import i18n
 import bpy
 
 
@@ -42,7 +39,7 @@ def get_render_type() -> str:
 
 class TresorioRenderFormProps(bpy.types.PropertyGroup):
     """Render form panel"""
-    desc = TRADUCTOR['desc']['show_settings'][CONFIG_LANG]
+    desc = i18n.t('blender.show-settings')
     show_settings: bpy.props.BoolProperty(
         name='',
         default=True,
@@ -57,11 +54,11 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['rendering_name'][CONFIG_LANG]
+    desc = i18n.t('blender.rendering-name')
     rendering_name: bpy.props.StringProperty(
         description=desc,
         name='',
-        default=TRADUCTOR['field']['default_render_name'][CONFIG_LANG],
+        default=i18n.t('blender.default-render-name'),
         maxlen=255,
         options={'HIDDEN', 'SKIP_SAVE'},
     )
@@ -70,7 +67,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         update=lambda a,b: None, options={'HIDDEN', 'SKIP_SAVE'}, default=-1
     )
 
-    desc = TRADUCTOR['desc']['render_engines_list'][CONFIG_LANG]
+    desc = i18n.t('blender.render-engines-list')
     render_engines_list: bpy.props.EnumProperty(
         description=desc,
         name='',
@@ -81,7 +78,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['output_formats_list'][CONFIG_LANG]
+    desc = i18n.t('blender.output-formats-list')
     output_formats_list: bpy.props.EnumProperty(
         description=desc,
         name='',
@@ -113,7 +110,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['render_type_frame'][CONFIG_LANG]
+    desc = i18n.t('blender.render-type-frame')
     is_frame_selected: bpy.props.BoolProperty(
         description=desc,
         default=True,
@@ -122,7 +119,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         update=set_frame_type,
     )
 
-    desc = TRADUCTOR['desc']['render_type_animation'][CONFIG_LANG]
+    desc = i18n.t('blender.render-type-animation')
     is_animation_selected: bpy.props.BoolProperty(
         description=desc,
         default=False,
@@ -157,7 +154,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['auto_tile_size'][CONFIG_LANG]
+    desc = i18n.t('blender.auto-tile-size')
     auto_tile_size: bpy.props.BoolProperty(
         description=desc,
         default=True,
@@ -165,7 +162,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['use_optix'][CONFIG_LANG]
+    desc = i18n.t('blender.use-optix')
     use_optix: bpy.props.BoolProperty(
         description=desc,
         default=False,
@@ -179,7 +176,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['project_directory'][CONFIG_LANG]
+    desc = i18n.t('blender.project-directory')
     project_folder: bpy.props.StringProperty(
         description=desc,
         name='',
@@ -187,7 +184,7 @@ class TresorioRenderFormProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['project_name'][CONFIG_LANG]
+    desc = i18n.t('blender.project-name')
     project_name: bpy.props.StringProperty(
         description=desc,
         name='',

@@ -2,9 +2,7 @@
 
 from typing import Set
 
-from src.ui.popup import popup
-from src.services.backend import new_render
-from src.config.langs import TRADUCTOR, CONFIG_LANG
+from bundle_modules import i18n
 import bpy
 
 # pylint: disable=no-self-use
@@ -12,9 +10,9 @@ import bpy
 
 class TresorioCancelRenderingOperator(bpy.types.Operator):
     """Render operator"""
-    __doc__ = TRADUCTOR['desc']['cancel'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.cancel')
     bl_idname = 'tresorio.cancelrendering'
-    bl_label = TRADUCTOR['desc']['cancel'][CONFIG_LANG]
+    bl_label = i18n.t('blender.cancel')
 
     def execute(self,
                 context: bpy.types.Context

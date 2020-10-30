@@ -818,7 +818,7 @@ static const char *__pyx_filename;
 static const char *__pyx_f[] = {
   "yarl/_quoting_c.pyx",
   "stringsource",
-  ".build-venv/lib/python3.8/site-packages/Cython/Includes/cpython/type.pxd",
+  "type.pxd",
 };
 
 /*--- Type declarations ---*/
@@ -826,7 +826,7 @@ struct __pyx_obj_4yarl_10_quoting_c__Quoter;
 struct __pyx_obj_4yarl_10_quoting_c__Unquoter;
 struct __pyx_t_4yarl_10_quoting_c_Writer;
 
-/* "yarl/_quoting_c.pyx":76
+/* "yarl/_quoting_c.pyx":80
  * # ----------------- writer ---------------------------
  * 
  * cdef struct Writer:             # <<<<<<<<<<<<<<
@@ -840,7 +840,7 @@ struct __pyx_t_4yarl_10_quoting_c_Writer {
   int changed;
 };
 
-/* "yarl/_quoting_c.pyx":186
+/* "yarl/_quoting_c.pyx":170
  * 
  * 
  * cdef class _Quoter:             # <<<<<<<<<<<<<<
@@ -857,7 +857,7 @@ struct __pyx_obj_4yarl_10_quoting_c__Quoter {
 };
 
 
-/* "yarl/_quoting_c.pyx":305
+/* "yarl/_quoting_c.pyx":272
  * 
  * 
  * cdef class _Unquoter:             # <<<<<<<<<<<<<<
@@ -875,7 +875,7 @@ struct __pyx_obj_4yarl_10_quoting_c__Unquoter {
 
 
 
-/* "yarl/_quoting_c.pyx":186
+/* "yarl/_quoting_c.pyx":170
  * 
  * 
  * cdef class _Quoter:             # <<<<<<<<<<<<<<
@@ -891,7 +891,7 @@ static struct __pyx_vtabstruct_4yarl_10_quoting_c__Quoter *__pyx_vtabptr_4yarl_1
 static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_7_Quoter__write(struct __pyx_obj_4yarl_10_quoting_c__Quoter *, struct __pyx_t_4yarl_10_quoting_c_Writer *, Py_UCS4);
 
 
-/* "yarl/_quoting_c.pyx":305
+/* "yarl/_quoting_c.pyx":272
  * 
  * 
  * cdef class _Unquoter:             # <<<<<<<<<<<<<<
@@ -1121,6 +1121,14 @@ static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject 
 #define __Pyx_ExceptionReset(type, value, tb)  PyErr_SetExcInfo(type, value, tb)
 #endif
 
+/* GetItemIntUnicode.proto */
+#define __Pyx_GetItemInt_Unicode(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
+    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
+    __Pyx_GetItemInt_Unicode_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
+    (PyErr_SetString(PyExc_IndexError, "string index out of range"), (Py_UCS4)-1))
+static CYTHON_INLINE Py_UCS4 __Pyx_GetItemInt_Unicode_Fast(PyObject* ustring, Py_ssize_t i,
+                                                           int wraparound, int boundscheck);
+
 /* ReRaiseException.proto */
 static CYTHON_INLINE void __Pyx_ReraiseException(void);
 
@@ -1192,25 +1200,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
 #define __Pyx_PyObject_CallNoArg(func) __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL)
 #endif
 
-/* PyObjectCall2Args.proto */
-static CYTHON_UNUSED PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2);
-
-/* PyObjectGetMethod.proto */
-static int __Pyx_PyObject_GetMethod(PyObject *obj, PyObject *name, PyObject **method);
-
-/* PyObjectCallMethod1.proto */
-static PyObject* __Pyx_PyObject_CallMethod1(PyObject* obj, PyObject* method_name, PyObject* arg);
-
-/* ByteArrayAppend.proto */
-static CYTHON_INLINE int __Pyx_PyByteArray_Append(PyObject* bytearray, int value);
-
-/* ByteArrayAppendObject.proto */
-static CYTHON_INLINE int __Pyx_PyByteArray_AppendObject(PyObject* bytearray, PyObject* value);
-
-/* PyUnicode_Substring.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyUnicode_Substring(
-            PyObject* text, Py_ssize_t start, Py_ssize_t stop);
-
 /* decode_c_string_utf16.proto */
 static CYTHON_INLINE PyObject *__Pyx_PyUnicode_DecodeUTF16(const char *s, Py_ssize_t size, const char *errors) {
     int byteorder = 0;
@@ -1264,6 +1253,9 @@ static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
 #define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
 #endif
 
+/* PyObjectCall2Args.proto */
+static CYTHON_UNUSED PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2);
+
 /* SliceObject.proto */
 #define __Pyx_PyObject_DelSlice(obj, cstart, cstop, py_start, py_stop, py_slice, has_cstart, has_cstop, wraparound)\
     __Pyx_PyObject_SetSlice(obj, (PyObject*)NULL, cstart, cstop, py_start, py_stop, py_slice, has_cstart, has_cstop, wraparound)
@@ -1272,26 +1264,18 @@ static CYTHON_INLINE int __Pyx_PyObject_SetSlice(
         PyObject** py_start, PyObject** py_stop, PyObject** py_slice,
         int has_cstart, int has_cstop, int wraparound);
 
-/* IncludeStringH.proto */
-#include <string.h>
+/* PyObjectGetMethod.proto */
+static int __Pyx_PyObject_GetMethod(PyObject *obj, PyObject *name, PyObject **method);
 
-/* BytesEquals.proto */
-static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals);
+/* PyObjectCallMethod1.proto */
+static PyObject* __Pyx_PyObject_CallMethod1(PyObject* obj, PyObject* method_name, PyObject* arg);
 
-/* UnicodeEquals.proto */
-static CYTHON_INLINE int __Pyx_PyUnicode_Equals(PyObject* s1, PyObject* s2, int equals);
+/* ByteArrayAppend.proto */
+static CYTHON_INLINE int __Pyx_PyByteArray_Append(PyObject* bytearray, int value);
 
-/* UnicodeAsUCS4.proto */
-static CYTHON_INLINE Py_UCS4 __Pyx_PyUnicode_AsPy_UCS4(PyObject*);
-
-/* object_ord.proto */
-#if PY_MAJOR_VERSION >= 3
-#define __Pyx_PyObject_Ord(c)\
-    (likely(PyUnicode_Check(c)) ? (long)__Pyx_PyUnicode_AsPy_UCS4(c) : __Pyx__PyObject_Ord(c))
-#else
-#define __Pyx_PyObject_Ord(c) __Pyx__PyObject_Ord(c)
-#endif
-static long __Pyx__PyObject_Ord(PyObject* c);
+/* PyUnicode_Substring.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyUnicode_Substring(
+            PyObject* text, Py_ssize_t start, Py_ssize_t stop);
 
 /* SliceObject.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyObject_GetSlice(
@@ -1326,6 +1310,9 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize
 static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j);
 static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i,
                                                      int is_list, int wraparound, int boundscheck);
+
+/* IncludeStringH.proto */
+#include <string.h>
 
 /* HasAttr.proto */
 static CYTHON_INLINE int __Pyx_HasAttr(PyObject *, PyObject *);
@@ -1394,7 +1381,16 @@ static void __Pyx_AddTraceback(const char *funcname, int c_line,
                                int py_line, const char *filename);
 
 /* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
+
+/* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
+
+/* PyUCS4InUnicode.proto */
+static CYTHON_INLINE int __Pyx_UnicodeContainsUCS4(PyObject* unicode, Py_UCS4 character);
+
+/* UnicodeAsUCS4.proto */
+static CYTHON_INLINE Py_UCS4 __Pyx_PyUnicode_AsPy_UCS4(PyObject*);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE uint8_t __Pyx_PyInt_As_uint8_t(PyObject *);
@@ -1404,6 +1400,11 @@ static CYTHON_INLINE uint64_t __Pyx_PyInt_As_uint64_t(PyObject *);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *);
+
+/* ObjectAsUCS4.proto */
+#define __Pyx_PyObject_AsPy_UCS4(x)\
+    (likely(PyUnicode_Check(x)) ? __Pyx_PyUnicode_AsPy_UCS4(x) : __Pyx__PyObject_AsPy_UCS4(x))
+static Py_UCS4 __Pyx__PyObject_AsPy_UCS4(PyObject*);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
@@ -1467,6 +1468,7 @@ static uint8_t __pyx_v_4yarl_10_quoting_c_ALLOWED_TABLE[16];
 static uint8_t __pyx_v_4yarl_10_quoting_c_ALLOWED_NOTQS_TABLE[16];
 static CYTHON_INLINE Py_UCS4 __pyx_f_4yarl_10_quoting_c__to_hex(uint8_t); /*proto*/
 static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__from_hex(Py_UCS4); /*proto*/
+static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__is_lower_hex(Py_UCS4); /*proto*/
 static CYTHON_INLINE Py_UCS4 __pyx_f_4yarl_10_quoting_c__restore_ch(Py_UCS4, Py_UCS4); /*proto*/
 static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_bit_at(uint8_t *, uint64_t); /*proto*/
 static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c_set_bit(uint8_t *, uint64_t); /*proto*/
@@ -1474,8 +1476,6 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c__init_writer(struct __pyx_t
 static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c__release_writer(struct __pyx_t_4yarl_10_quoting_c_Writer *); /*proto*/
 static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4yarl_10_quoting_c_Writer *, Py_UCS4, int); /*proto*/
 static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_pct(struct __pyx_t_4yarl_10_quoting_c_Writer *, uint8_t, int); /*proto*/
-static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_percent(struct __pyx_t_4yarl_10_quoting_c_Writer *); /*proto*/
-static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_pct_check(struct __pyx_t_4yarl_10_quoting_c_Writer *, Py_UCS4, Py_UCS4 *); /*proto*/
 static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4yarl_10_quoting_c_Writer *, Py_UCS4); /*proto*/
 static PyObject *__pyx_f_4yarl_10_quoting_c___pyx_unpickle__Quoter__set_state(struct __pyx_obj_4yarl_10_quoting_c__Quoter *, PyObject *); /*proto*/
 static PyObject *__pyx_f_4yarl_10_quoting_c___pyx_unpickle__Unquoter__set_state(struct __pyx_obj_4yarl_10_quoting_c__Unquoter *, PyObject *); /*proto*/
@@ -1497,9 +1497,9 @@ static PyObject *__pyx_builtin_IndexError;
 static const char __pyx_k_[] = "";
 static const char __pyx_k_i[] = "i";
 static const char __pyx_k__4[] = "+=&;";
-static const char __pyx_k__5[] = "%";
-static const char __pyx_k__6[] = "+";
-static const char __pyx_k__7[] = " ";
+static const char __pyx_k__5[] = "+";
+static const char __pyx_k__6[] = " ";
+static const char __pyx_k__7[] = "%";
 static const char __pyx_k__9[] = ":/?#[]@";
 static const char __pyx_k_qs[] = "qs";
 static const char __pyx_k__10[] = "!$'()*,";
@@ -1510,7 +1510,6 @@ static const char __pyx_k_chr[] = "chr";
 static const char __pyx_k_hex[] = "hex";
 static const char __pyx_k_new[] = "__new__";
 static const char __pyx_k_val[] = "val";
-static const char __pyx_k_base[] = "base";
 static const char __pyx_k_dict[] = "__dict__";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_name[] = "__name__";
@@ -1582,7 +1581,6 @@ static PyObject *__pyx_kp_u__7;
 static PyObject *__pyx_kp_u__9;
 static PyObject *__pyx_n_s_append;
 static PyObject *__pyx_n_s_ascii_letters;
-static PyObject *__pyx_n_s_base;
 static PyObject *__pyx_n_s_chr;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_dict;
@@ -1635,7 +1633,6 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_2__pyx_unpickle__Unquoter(CYTHON_UN
 static PyObject *__pyx_tp_new_4yarl_10_quoting_c__Quoter(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_4yarl_10_quoting_c__Unquoter(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_int_2;
-static PyObject *__pyx_int_16;
 static PyObject *__pyx_int_41310077;
 static PyObject *__pyx_int_244432181;
 static PyObject *__pyx_slice__8;
@@ -1859,6 +1856,48 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__from_hex(Py_UCS4 __pyx_v_v)
 /* "yarl/_quoting_c.pyx":42
  * 
  * 
+ * cdef inline int _is_lower_hex(Py_UCS4 v):             # <<<<<<<<<<<<<<
+ *     return 'a' <= v <= 'f'
+ * 
+ */
+
+static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__is_lower_hex(Py_UCS4 __pyx_v_v) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  __Pyx_RefNannySetupContext("_is_lower_hex", 0);
+
+  /* "yarl/_quoting_c.pyx":43
+ * 
+ * cdef inline int _is_lower_hex(Py_UCS4 v):
+ *     return 'a' <= v <= 'f'             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_t_1 = (97 <= __pyx_v_v);
+  if (__pyx_t_1) {
+    __pyx_t_1 = (__pyx_v_v <= 0x66);
+  }
+  __pyx_r = __pyx_t_1;
+  goto __pyx_L0;
+
+  /* "yarl/_quoting_c.pyx":42
+ * 
+ * 
+ * cdef inline int _is_lower_hex(Py_UCS4 v):             # <<<<<<<<<<<<<<
+ *     return 'a' <= v <= 'f'
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "yarl/_quoting_c.pyx":46
+ * 
+ * 
  * cdef inline Py_UCS4 _restore_ch(Py_UCS4 d1, Py_UCS4 d2):             # <<<<<<<<<<<<<<
  *     cdef int digit1 = _from_hex(d1)
  *     if digit1 < 0:
@@ -1872,7 +1911,7 @@ static CYTHON_INLINE Py_UCS4 __pyx_f_4yarl_10_quoting_c__restore_ch(Py_UCS4 __py
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("_restore_ch", 0);
 
-  /* "yarl/_quoting_c.pyx":43
+  /* "yarl/_quoting_c.pyx":47
  * 
  * cdef inline Py_UCS4 _restore_ch(Py_UCS4 d1, Py_UCS4 d2):
  *     cdef int digit1 = _from_hex(d1)             # <<<<<<<<<<<<<<
@@ -1881,7 +1920,7 @@ static CYTHON_INLINE Py_UCS4 __pyx_f_4yarl_10_quoting_c__restore_ch(Py_UCS4 __py
  */
   __pyx_v_digit1 = __pyx_f_4yarl_10_quoting_c__from_hex(__pyx_v_d1);
 
-  /* "yarl/_quoting_c.pyx":44
+  /* "yarl/_quoting_c.pyx":48
  * cdef inline Py_UCS4 _restore_ch(Py_UCS4 d1, Py_UCS4 d2):
  *     cdef int digit1 = _from_hex(d1)
  *     if digit1 < 0:             # <<<<<<<<<<<<<<
@@ -1891,7 +1930,7 @@ static CYTHON_INLINE Py_UCS4 __pyx_f_4yarl_10_quoting_c__restore_ch(Py_UCS4 __py
   __pyx_t_1 = ((__pyx_v_digit1 < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "yarl/_quoting_c.pyx":45
+    /* "yarl/_quoting_c.pyx":49
  *     cdef int digit1 = _from_hex(d1)
  *     if digit1 < 0:
  *         return <Py_UCS4>-1             # <<<<<<<<<<<<<<
@@ -1901,7 +1940,7 @@ static CYTHON_INLINE Py_UCS4 __pyx_f_4yarl_10_quoting_c__restore_ch(Py_UCS4 __py
     __pyx_r = ((Py_UCS4)-1L);
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":44
+    /* "yarl/_quoting_c.pyx":48
  * cdef inline Py_UCS4 _restore_ch(Py_UCS4 d1, Py_UCS4 d2):
  *     cdef int digit1 = _from_hex(d1)
  *     if digit1 < 0:             # <<<<<<<<<<<<<<
@@ -1910,7 +1949,7 @@ static CYTHON_INLINE Py_UCS4 __pyx_f_4yarl_10_quoting_c__restore_ch(Py_UCS4 __py
  */
   }
 
-  /* "yarl/_quoting_c.pyx":46
+  /* "yarl/_quoting_c.pyx":50
  *     if digit1 < 0:
  *         return <Py_UCS4>-1
  *     cdef int digit2 = _from_hex(d2)             # <<<<<<<<<<<<<<
@@ -1919,7 +1958,7 @@ static CYTHON_INLINE Py_UCS4 __pyx_f_4yarl_10_quoting_c__restore_ch(Py_UCS4 __py
  */
   __pyx_v_digit2 = __pyx_f_4yarl_10_quoting_c__from_hex(__pyx_v_d2);
 
-  /* "yarl/_quoting_c.pyx":47
+  /* "yarl/_quoting_c.pyx":51
  *         return <Py_UCS4>-1
  *     cdef int digit2 = _from_hex(d2)
  *     if digit2 < 0:             # <<<<<<<<<<<<<<
@@ -1929,7 +1968,7 @@ static CYTHON_INLINE Py_UCS4 __pyx_f_4yarl_10_quoting_c__restore_ch(Py_UCS4 __py
   __pyx_t_1 = ((__pyx_v_digit2 < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "yarl/_quoting_c.pyx":48
+    /* "yarl/_quoting_c.pyx":52
  *     cdef int digit2 = _from_hex(d2)
  *     if digit2 < 0:
  *         return <Py_UCS4>-1             # <<<<<<<<<<<<<<
@@ -1939,7 +1978,7 @@ static CYTHON_INLINE Py_UCS4 __pyx_f_4yarl_10_quoting_c__restore_ch(Py_UCS4 __py
     __pyx_r = ((Py_UCS4)-1L);
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":47
+    /* "yarl/_quoting_c.pyx":51
  *         return <Py_UCS4>-1
  *     cdef int digit2 = _from_hex(d2)
  *     if digit2 < 0:             # <<<<<<<<<<<<<<
@@ -1948,7 +1987,7 @@ static CYTHON_INLINE Py_UCS4 __pyx_f_4yarl_10_quoting_c__restore_ch(Py_UCS4 __py
  */
   }
 
-  /* "yarl/_quoting_c.pyx":49
+  /* "yarl/_quoting_c.pyx":53
  *     if digit2 < 0:
  *         return <Py_UCS4>-1
  *     return <Py_UCS4>(digit1 << 4 | digit2)             # <<<<<<<<<<<<<<
@@ -1958,7 +1997,7 @@ static CYTHON_INLINE Py_UCS4 __pyx_f_4yarl_10_quoting_c__restore_ch(Py_UCS4 __py
   __pyx_r = ((Py_UCS4)((__pyx_v_digit1 << 4) | __pyx_v_digit2));
   goto __pyx_L0;
 
-  /* "yarl/_quoting_c.pyx":42
+  /* "yarl/_quoting_c.pyx":46
  * 
  * 
  * cdef inline Py_UCS4 _restore_ch(Py_UCS4 d1, Py_UCS4 d2):             # <<<<<<<<<<<<<<
@@ -1972,7 +2011,7 @@ static CYTHON_INLINE Py_UCS4 __pyx_f_4yarl_10_quoting_c__restore_ch(Py_UCS4 __py
   return __pyx_r;
 }
 
-/* "yarl/_quoting_c.pyx":56
+/* "yarl/_quoting_c.pyx":60
  * 
  * 
  * cdef inline bint bit_at(uint8_t array[], uint64_t ch):             # <<<<<<<<<<<<<<
@@ -1985,7 +2024,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_bit_at(uint8_t *__pyx_v_arra
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("bit_at", 0);
 
-  /* "yarl/_quoting_c.pyx":57
+  /* "yarl/_quoting_c.pyx":61
  * 
  * cdef inline bint bit_at(uint8_t array[], uint64_t ch):
  *     return array[ch >> 3] & (1 << (ch & 7))             # <<<<<<<<<<<<<<
@@ -1995,7 +2034,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_bit_at(uint8_t *__pyx_v_arra
   __pyx_r = ((__pyx_v_array[(__pyx_v_ch >> 3)]) & (1 << (__pyx_v_ch & 7)));
   goto __pyx_L0;
 
-  /* "yarl/_quoting_c.pyx":56
+  /* "yarl/_quoting_c.pyx":60
  * 
  * 
  * cdef inline bint bit_at(uint8_t array[], uint64_t ch):             # <<<<<<<<<<<<<<
@@ -2009,7 +2048,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_bit_at(uint8_t *__pyx_v_arra
   return __pyx_r;
 }
 
-/* "yarl/_quoting_c.pyx":60
+/* "yarl/_quoting_c.pyx":64
  * 
  * 
  * cdef inline void set_bit(uint8_t array[], uint64_t ch):             # <<<<<<<<<<<<<<
@@ -2022,7 +2061,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c_set_bit(uint8_t *__pyx_v_ar
   uint64_t __pyx_t_1;
   __Pyx_RefNannySetupContext("set_bit", 0);
 
-  /* "yarl/_quoting_c.pyx":61
+  /* "yarl/_quoting_c.pyx":65
  * 
  * cdef inline void set_bit(uint8_t array[], uint64_t ch):
  *     array[ch >> 3] |= (1 << (ch & 7))             # <<<<<<<<<<<<<<
@@ -2032,7 +2071,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c_set_bit(uint8_t *__pyx_v_ar
   __pyx_t_1 = (__pyx_v_ch >> 3);
   (__pyx_v_array[__pyx_t_1]) = ((__pyx_v_array[__pyx_t_1]) | (1 << (__pyx_v_ch & 7)));
 
-  /* "yarl/_quoting_c.pyx":60
+  /* "yarl/_quoting_c.pyx":64
  * 
  * 
  * cdef inline void set_bit(uint8_t array[], uint64_t ch):             # <<<<<<<<<<<<<<
@@ -2044,7 +2083,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c_set_bit(uint8_t *__pyx_v_ar
   __Pyx_RefNannyFinishContext();
 }
 
-/* "yarl/_quoting_c.pyx":83
+/* "yarl/_quoting_c.pyx":87
  * 
  * 
  * cdef inline void _init_writer(Writer* writer):             # <<<<<<<<<<<<<<
@@ -2056,7 +2095,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c__init_writer(struct __pyx_t
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("_init_writer", 0);
 
-  /* "yarl/_quoting_c.pyx":84
+  /* "yarl/_quoting_c.pyx":88
  * 
  * cdef inline void _init_writer(Writer* writer):
  *     writer.buf = &BUFFER[0]             # <<<<<<<<<<<<<<
@@ -2065,7 +2104,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c__init_writer(struct __pyx_t
  */
   __pyx_v_writer->buf = (&(__pyx_v_4yarl_10_quoting_c_BUFFER[0]));
 
-  /* "yarl/_quoting_c.pyx":85
+  /* "yarl/_quoting_c.pyx":89
  * cdef inline void _init_writer(Writer* writer):
  *     writer.buf = &BUFFER[0]
  *     writer.size = BUF_SIZE             # <<<<<<<<<<<<<<
@@ -2074,7 +2113,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c__init_writer(struct __pyx_t
  */
   __pyx_v_writer->size = 0x2000;
 
-  /* "yarl/_quoting_c.pyx":86
+  /* "yarl/_quoting_c.pyx":90
  *     writer.buf = &BUFFER[0]
  *     writer.size = BUF_SIZE
  *     writer.pos = 0             # <<<<<<<<<<<<<<
@@ -2083,7 +2122,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c__init_writer(struct __pyx_t
  */
   __pyx_v_writer->pos = 0;
 
-  /* "yarl/_quoting_c.pyx":87
+  /* "yarl/_quoting_c.pyx":91
  *     writer.size = BUF_SIZE
  *     writer.pos = 0
  *     writer.changed = 0             # <<<<<<<<<<<<<<
@@ -2092,7 +2131,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c__init_writer(struct __pyx_t
  */
   __pyx_v_writer->changed = 0;
 
-  /* "yarl/_quoting_c.pyx":83
+  /* "yarl/_quoting_c.pyx":87
  * 
  * 
  * cdef inline void _init_writer(Writer* writer):             # <<<<<<<<<<<<<<
@@ -2104,7 +2143,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c__init_writer(struct __pyx_t
   __Pyx_RefNannyFinishContext();
 }
 
-/* "yarl/_quoting_c.pyx":90
+/* "yarl/_quoting_c.pyx":94
  * 
  * 
  * cdef inline void _release_writer(Writer* writer):             # <<<<<<<<<<<<<<
@@ -2117,7 +2156,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c__release_writer(struct __py
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("_release_writer", 0);
 
-  /* "yarl/_quoting_c.pyx":91
+  /* "yarl/_quoting_c.pyx":95
  * 
  * cdef inline void _release_writer(Writer* writer):
  *     if writer.buf != BUFFER:             # <<<<<<<<<<<<<<
@@ -2127,7 +2166,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c__release_writer(struct __py
   __pyx_t_1 = ((__pyx_v_writer->buf != __pyx_v_4yarl_10_quoting_c_BUFFER) != 0);
   if (__pyx_t_1) {
 
-    /* "yarl/_quoting_c.pyx":92
+    /* "yarl/_quoting_c.pyx":96
  * cdef inline void _release_writer(Writer* writer):
  *     if writer.buf != BUFFER:
  *         PyMem_Free(writer.buf)             # <<<<<<<<<<<<<<
@@ -2136,7 +2175,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c__release_writer(struct __py
  */
     PyMem_Free(__pyx_v_writer->buf);
 
-    /* "yarl/_quoting_c.pyx":91
+    /* "yarl/_quoting_c.pyx":95
  * 
  * cdef inline void _release_writer(Writer* writer):
  *     if writer.buf != BUFFER:             # <<<<<<<<<<<<<<
@@ -2145,7 +2184,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c__release_writer(struct __py
  */
   }
 
-  /* "yarl/_quoting_c.pyx":90
+  /* "yarl/_quoting_c.pyx":94
  * 
  * 
  * cdef inline void _release_writer(Writer* writer):             # <<<<<<<<<<<<<<
@@ -2157,7 +2196,7 @@ static CYTHON_INLINE void __pyx_f_4yarl_10_quoting_c__release_writer(struct __py
   __Pyx_RefNannyFinishContext();
 }
 
-/* "yarl/_quoting_c.pyx":95
+/* "yarl/_quoting_c.pyx":99
  * 
  * 
  * cdef inline int _write_char(Writer* writer, Py_UCS4 ch, bint changed):             # <<<<<<<<<<<<<<
@@ -2177,7 +2216,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_write_char", 0);
 
-  /* "yarl/_quoting_c.pyx":99
+  /* "yarl/_quoting_c.pyx":103
  *     cdef Py_ssize_t size
  * 
  *     if writer.pos == writer.size:             # <<<<<<<<<<<<<<
@@ -2187,7 +2226,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
   __pyx_t_1 = ((__pyx_v_writer->pos == __pyx_v_writer->size) != 0);
   if (__pyx_t_1) {
 
-    /* "yarl/_quoting_c.pyx":101
+    /* "yarl/_quoting_c.pyx":105
  *     if writer.pos == writer.size:
  *         # reallocate
  *         size = writer.size + BUF_SIZE             # <<<<<<<<<<<<<<
@@ -2196,7 +2235,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
  */
     __pyx_v_size = (__pyx_v_writer->size + 0x2000);
 
-    /* "yarl/_quoting_c.pyx":102
+    /* "yarl/_quoting_c.pyx":106
  *         # reallocate
  *         size = writer.size + BUF_SIZE
  *         if writer.buf == BUFFER:             # <<<<<<<<<<<<<<
@@ -2206,7 +2245,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
     __pyx_t_1 = ((__pyx_v_writer->buf == __pyx_v_4yarl_10_quoting_c_BUFFER) != 0);
     if (__pyx_t_1) {
 
-      /* "yarl/_quoting_c.pyx":103
+      /* "yarl/_quoting_c.pyx":107
  *         size = writer.size + BUF_SIZE
  *         if writer.buf == BUFFER:
  *             buf = <char*>PyMem_Malloc(size)             # <<<<<<<<<<<<<<
@@ -2215,7 +2254,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
  */
       __pyx_v_buf = ((char *)PyMem_Malloc(__pyx_v_size));
 
-      /* "yarl/_quoting_c.pyx":104
+      /* "yarl/_quoting_c.pyx":108
  *         if writer.buf == BUFFER:
  *             buf = <char*>PyMem_Malloc(size)
  *             if buf == NULL:             # <<<<<<<<<<<<<<
@@ -2225,16 +2264,16 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
       __pyx_t_1 = ((__pyx_v_buf == NULL) != 0);
       if (__pyx_t_1) {
 
-        /* "yarl/_quoting_c.pyx":105
+        /* "yarl/_quoting_c.pyx":109
  *             buf = <char*>PyMem_Malloc(size)
  *             if buf == NULL:
  *                 PyErr_NoMemory()             # <<<<<<<<<<<<<<
  *                 return -1
  *             memcpy(buf, writer.buf, writer.size)
  */
-        __pyx_t_2 = PyErr_NoMemory(); if (unlikely(__pyx_t_2 == ((PyObject *)NULL))) __PYX_ERR(0, 105, __pyx_L1_error)
+        __pyx_t_2 = PyErr_NoMemory(); if (unlikely(__pyx_t_2 == ((PyObject *)NULL))) __PYX_ERR(0, 109, __pyx_L1_error)
 
-        /* "yarl/_quoting_c.pyx":106
+        /* "yarl/_quoting_c.pyx":110
  *             if buf == NULL:
  *                 PyErr_NoMemory()
  *                 return -1             # <<<<<<<<<<<<<<
@@ -2244,7 +2283,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
         __pyx_r = -1;
         goto __pyx_L0;
 
-        /* "yarl/_quoting_c.pyx":104
+        /* "yarl/_quoting_c.pyx":108
  *         if writer.buf == BUFFER:
  *             buf = <char*>PyMem_Malloc(size)
  *             if buf == NULL:             # <<<<<<<<<<<<<<
@@ -2253,7 +2292,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
  */
       }
 
-      /* "yarl/_quoting_c.pyx":107
+      /* "yarl/_quoting_c.pyx":111
  *                 PyErr_NoMemory()
  *                 return -1
  *             memcpy(buf, writer.buf, writer.size)             # <<<<<<<<<<<<<<
@@ -2262,7 +2301,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
  */
       (void)(memcpy(__pyx_v_buf, __pyx_v_writer->buf, __pyx_v_writer->size));
 
-      /* "yarl/_quoting_c.pyx":102
+      /* "yarl/_quoting_c.pyx":106
  *         # reallocate
  *         size = writer.size + BUF_SIZE
  *         if writer.buf == BUFFER:             # <<<<<<<<<<<<<<
@@ -2272,7 +2311,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
       goto __pyx_L4;
     }
 
-    /* "yarl/_quoting_c.pyx":109
+    /* "yarl/_quoting_c.pyx":113
  *             memcpy(buf, writer.buf, writer.size)
  *         else:
  *             buf = <char*>PyMem_Realloc(writer.buf, size)             # <<<<<<<<<<<<<<
@@ -2282,7 +2321,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
     /*else*/ {
       __pyx_v_buf = ((char *)PyMem_Realloc(__pyx_v_writer->buf, __pyx_v_size));
 
-      /* "yarl/_quoting_c.pyx":110
+      /* "yarl/_quoting_c.pyx":114
  *         else:
  *             buf = <char*>PyMem_Realloc(writer.buf, size)
  *             if buf == NULL:             # <<<<<<<<<<<<<<
@@ -2292,16 +2331,16 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
       __pyx_t_1 = ((__pyx_v_buf == NULL) != 0);
       if (__pyx_t_1) {
 
-        /* "yarl/_quoting_c.pyx":111
+        /* "yarl/_quoting_c.pyx":115
  *             buf = <char*>PyMem_Realloc(writer.buf, size)
  *             if buf == NULL:
  *                 PyErr_NoMemory()             # <<<<<<<<<<<<<<
  *                 return -1
  *         writer.buf = buf
  */
-        __pyx_t_2 = PyErr_NoMemory(); if (unlikely(__pyx_t_2 == ((PyObject *)NULL))) __PYX_ERR(0, 111, __pyx_L1_error)
+        __pyx_t_2 = PyErr_NoMemory(); if (unlikely(__pyx_t_2 == ((PyObject *)NULL))) __PYX_ERR(0, 115, __pyx_L1_error)
 
-        /* "yarl/_quoting_c.pyx":112
+        /* "yarl/_quoting_c.pyx":116
  *             if buf == NULL:
  *                 PyErr_NoMemory()
  *                 return -1             # <<<<<<<<<<<<<<
@@ -2311,7 +2350,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
         __pyx_r = -1;
         goto __pyx_L0;
 
-        /* "yarl/_quoting_c.pyx":110
+        /* "yarl/_quoting_c.pyx":114
  *         else:
  *             buf = <char*>PyMem_Realloc(writer.buf, size)
  *             if buf == NULL:             # <<<<<<<<<<<<<<
@@ -2322,7 +2361,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
     }
     __pyx_L4:;
 
-    /* "yarl/_quoting_c.pyx":113
+    /* "yarl/_quoting_c.pyx":117
  *                 PyErr_NoMemory()
  *                 return -1
  *         writer.buf = buf             # <<<<<<<<<<<<<<
@@ -2331,7 +2370,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
  */
     __pyx_v_writer->buf = __pyx_v_buf;
 
-    /* "yarl/_quoting_c.pyx":114
+    /* "yarl/_quoting_c.pyx":118
  *                 return -1
  *         writer.buf = buf
  *         writer.size = size             # <<<<<<<<<<<<<<
@@ -2340,7 +2379,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
  */
     __pyx_v_writer->size = __pyx_v_size;
 
-    /* "yarl/_quoting_c.pyx":99
+    /* "yarl/_quoting_c.pyx":103
  *     cdef Py_ssize_t size
  * 
  *     if writer.pos == writer.size:             # <<<<<<<<<<<<<<
@@ -2349,7 +2388,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
  */
   }
 
-  /* "yarl/_quoting_c.pyx":115
+  /* "yarl/_quoting_c.pyx":119
  *         writer.buf = buf
  *         writer.size = size
  *     writer.buf[writer.pos] = <char>ch             # <<<<<<<<<<<<<<
@@ -2358,7 +2397,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
  */
   (__pyx_v_writer->buf[__pyx_v_writer->pos]) = ((char)__pyx_v_ch);
 
-  /* "yarl/_quoting_c.pyx":116
+  /* "yarl/_quoting_c.pyx":120
  *         writer.size = size
  *     writer.buf[writer.pos] = <char>ch
  *     writer.pos += 1             # <<<<<<<<<<<<<<
@@ -2367,7 +2406,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
  */
   __pyx_v_writer->pos = (__pyx_v_writer->pos + 1);
 
-  /* "yarl/_quoting_c.pyx":117
+  /* "yarl/_quoting_c.pyx":121
  *     writer.buf[writer.pos] = <char>ch
  *     writer.pos += 1
  *     writer.changed |= changed             # <<<<<<<<<<<<<<
@@ -2376,7 +2415,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
  */
   __pyx_v_writer->changed = (__pyx_v_writer->changed | __pyx_v_changed);
 
-  /* "yarl/_quoting_c.pyx":118
+  /* "yarl/_quoting_c.pyx":122
  *     writer.pos += 1
  *     writer.changed |= changed
  *     return 0             # <<<<<<<<<<<<<<
@@ -2386,7 +2425,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
   __pyx_r = 0;
   goto __pyx_L0;
 
-  /* "yarl/_quoting_c.pyx":95
+  /* "yarl/_quoting_c.pyx":99
  * 
  * 
  * cdef inline int _write_char(Writer* writer, Py_UCS4 ch, bint changed):             # <<<<<<<<<<<<<<
@@ -2403,7 +2442,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_char(struct __pyx_t_4
   return __pyx_r;
 }
 
-/* "yarl/_quoting_c.pyx":121
+/* "yarl/_quoting_c.pyx":125
  * 
  * 
  * cdef inline int _write_pct(Writer* writer, uint8_t ch, bint changed):             # <<<<<<<<<<<<<<
@@ -2417,7 +2456,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_pct(struct __pyx_t_4y
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("_write_pct", 0);
 
-  /* "yarl/_quoting_c.pyx":122
+  /* "yarl/_quoting_c.pyx":126
  * 
  * cdef inline int _write_pct(Writer* writer, uint8_t ch, bint changed):
  *     if _write_char(writer, '%', changed) < 0:             # <<<<<<<<<<<<<<
@@ -2427,7 +2466,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_pct(struct __pyx_t_4y
   __pyx_t_1 = ((__pyx_f_4yarl_10_quoting_c__write_char(__pyx_v_writer, 37, __pyx_v_changed) < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "yarl/_quoting_c.pyx":123
+    /* "yarl/_quoting_c.pyx":127
  * cdef inline int _write_pct(Writer* writer, uint8_t ch, bint changed):
  *     if _write_char(writer, '%', changed) < 0:
  *         return -1             # <<<<<<<<<<<<<<
@@ -2437,7 +2476,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_pct(struct __pyx_t_4y
     __pyx_r = -1;
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":122
+    /* "yarl/_quoting_c.pyx":126
  * 
  * cdef inline int _write_pct(Writer* writer, uint8_t ch, bint changed):
  *     if _write_char(writer, '%', changed) < 0:             # <<<<<<<<<<<<<<
@@ -2446,7 +2485,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_pct(struct __pyx_t_4y
  */
   }
 
-  /* "yarl/_quoting_c.pyx":124
+  /* "yarl/_quoting_c.pyx":128
  *     if _write_char(writer, '%', changed) < 0:
  *         return -1
  *     if _write_char(writer, _to_hex(<uint8_t>ch >> 4), changed) < 0:             # <<<<<<<<<<<<<<
@@ -2456,7 +2495,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_pct(struct __pyx_t_4y
   __pyx_t_1 = ((__pyx_f_4yarl_10_quoting_c__write_char(__pyx_v_writer, __pyx_f_4yarl_10_quoting_c__to_hex((((uint8_t)__pyx_v_ch) >> 4)), __pyx_v_changed) < 0) != 0);
   if (__pyx_t_1) {
 
-    /* "yarl/_quoting_c.pyx":125
+    /* "yarl/_quoting_c.pyx":129
  *         return -1
  *     if _write_char(writer, _to_hex(<uint8_t>ch >> 4), changed) < 0:
  *         return -1             # <<<<<<<<<<<<<<
@@ -2466,7 +2505,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_pct(struct __pyx_t_4y
     __pyx_r = -1;
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":124
+    /* "yarl/_quoting_c.pyx":128
  *     if _write_char(writer, '%', changed) < 0:
  *         return -1
  *     if _write_char(writer, _to_hex(<uint8_t>ch >> 4), changed) < 0:             # <<<<<<<<<<<<<<
@@ -2475,7 +2514,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_pct(struct __pyx_t_4y
  */
   }
 
-  /* "yarl/_quoting_c.pyx":126
+  /* "yarl/_quoting_c.pyx":130
  *     if _write_char(writer, _to_hex(<uint8_t>ch >> 4), changed) < 0:
  *         return -1
  *     return _write_char(writer, _to_hex(<uint8_t>ch & 0x0f), changed)             # <<<<<<<<<<<<<<
@@ -2485,7 +2524,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_pct(struct __pyx_t_4y
   __pyx_r = __pyx_f_4yarl_10_quoting_c__write_char(__pyx_v_writer, __pyx_f_4yarl_10_quoting_c__to_hex((((uint8_t)__pyx_v_ch) & 0x0f)), __pyx_v_changed);
   goto __pyx_L0;
 
-  /* "yarl/_quoting_c.pyx":121
+  /* "yarl/_quoting_c.pyx":125
  * 
  * 
  * cdef inline int _write_pct(Writer* writer, uint8_t ch, bint changed):             # <<<<<<<<<<<<<<
@@ -2499,239 +2538,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_pct(struct __pyx_t_4y
   return __pyx_r;
 }
 
-/* "yarl/_quoting_c.pyx":129
- * 
- * 
- * cdef inline int _write_percent(Writer* writer):             # <<<<<<<<<<<<<<
- *     if _write_char(writer, '%', True) < 0:
- *         return -1
- */
-
-static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_percent(struct __pyx_t_4yarl_10_quoting_c_Writer *__pyx_v_writer) {
-  int __pyx_r;
-  __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
-  __Pyx_RefNannySetupContext("_write_percent", 0);
-
-  /* "yarl/_quoting_c.pyx":130
- * 
- * cdef inline int _write_percent(Writer* writer):
- *     if _write_char(writer, '%', True) < 0:             # <<<<<<<<<<<<<<
- *         return -1
- *     if _write_char(writer, '2', True) < 0:
- */
-  __pyx_t_1 = ((__pyx_f_4yarl_10_quoting_c__write_char(__pyx_v_writer, 37, 1) < 0) != 0);
-  if (__pyx_t_1) {
-
-    /* "yarl/_quoting_c.pyx":131
- * cdef inline int _write_percent(Writer* writer):
- *     if _write_char(writer, '%', True) < 0:
- *         return -1             # <<<<<<<<<<<<<<
- *     if _write_char(writer, '2', True) < 0:
- *         return -1
- */
-    __pyx_r = -1;
-    goto __pyx_L0;
-
-    /* "yarl/_quoting_c.pyx":130
- * 
- * cdef inline int _write_percent(Writer* writer):
- *     if _write_char(writer, '%', True) < 0:             # <<<<<<<<<<<<<<
- *         return -1
- *     if _write_char(writer, '2', True) < 0:
- */
-  }
-
-  /* "yarl/_quoting_c.pyx":132
- *     if _write_char(writer, '%', True) < 0:
- *         return -1
- *     if _write_char(writer, '2', True) < 0:             # <<<<<<<<<<<<<<
- *         return -1
- *     return _write_char(writer, '5', True)
- */
-  __pyx_t_1 = ((__pyx_f_4yarl_10_quoting_c__write_char(__pyx_v_writer, 50, 1) < 0) != 0);
-  if (__pyx_t_1) {
-
-    /* "yarl/_quoting_c.pyx":133
- *         return -1
- *     if _write_char(writer, '2', True) < 0:
- *         return -1             # <<<<<<<<<<<<<<
- *     return _write_char(writer, '5', True)
- * 
- */
-    __pyx_r = -1;
-    goto __pyx_L0;
-
-    /* "yarl/_quoting_c.pyx":132
- *     if _write_char(writer, '%', True) < 0:
- *         return -1
- *     if _write_char(writer, '2', True) < 0:             # <<<<<<<<<<<<<<
- *         return -1
- *     return _write_char(writer, '5', True)
- */
-  }
-
-  /* "yarl/_quoting_c.pyx":134
- *     if _write_char(writer, '2', True) < 0:
- *         return -1
- *     return _write_char(writer, '5', True)             # <<<<<<<<<<<<<<
- * 
- * 
- */
-  __pyx_r = __pyx_f_4yarl_10_quoting_c__write_char(__pyx_v_writer, 53, 1);
-  goto __pyx_L0;
-
-  /* "yarl/_quoting_c.pyx":129
- * 
- * 
- * cdef inline int _write_percent(Writer* writer):             # <<<<<<<<<<<<<<
- *     if _write_char(writer, '%', True) < 0:
- *         return -1
- */
-
-  /* function exit code */
-  __pyx_L0:;
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "yarl/_quoting_c.pyx":137
- * 
- * 
- * cdef inline int _write_pct_check(Writer* writer, Py_UCS4 ch, Py_UCS4 pct[]):             # <<<<<<<<<<<<<<
- *     cdef Py_UCS4 pct1 = _to_hex(<uint8_t>ch >> 4)
- *     cdef Py_UCS4 pct2 = _to_hex(<uint8_t>ch & 0x0f)
- */
-
-static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_pct_check(struct __pyx_t_4yarl_10_quoting_c_Writer *__pyx_v_writer, Py_UCS4 __pyx_v_ch, Py_UCS4 *__pyx_v_pct) {
-  Py_UCS4 __pyx_v_pct1;
-  Py_UCS4 __pyx_v_pct2;
-  int __pyx_v_changed;
-  int __pyx_r;
-  __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
-  int __pyx_t_2;
-  __Pyx_RefNannySetupContext("_write_pct_check", 0);
-
-  /* "yarl/_quoting_c.pyx":138
- * 
- * cdef inline int _write_pct_check(Writer* writer, Py_UCS4 ch, Py_UCS4 pct[]):
- *     cdef Py_UCS4 pct1 = _to_hex(<uint8_t>ch >> 4)             # <<<<<<<<<<<<<<
- *     cdef Py_UCS4 pct2 = _to_hex(<uint8_t>ch & 0x0f)
- *     cdef bint changed = pct[0] != pct1 or pct[1] != pct2
- */
-  __pyx_v_pct1 = __pyx_f_4yarl_10_quoting_c__to_hex((((uint8_t)__pyx_v_ch) >> 4));
-
-  /* "yarl/_quoting_c.pyx":139
- * cdef inline int _write_pct_check(Writer* writer, Py_UCS4 ch, Py_UCS4 pct[]):
- *     cdef Py_UCS4 pct1 = _to_hex(<uint8_t>ch >> 4)
- *     cdef Py_UCS4 pct2 = _to_hex(<uint8_t>ch & 0x0f)             # <<<<<<<<<<<<<<
- *     cdef bint changed = pct[0] != pct1 or pct[1] != pct2
- * 
- */
-  __pyx_v_pct2 = __pyx_f_4yarl_10_quoting_c__to_hex((((uint8_t)__pyx_v_ch) & 0x0f));
-
-  /* "yarl/_quoting_c.pyx":140
- *     cdef Py_UCS4 pct1 = _to_hex(<uint8_t>ch >> 4)
- *     cdef Py_UCS4 pct2 = _to_hex(<uint8_t>ch & 0x0f)
- *     cdef bint changed = pct[0] != pct1 or pct[1] != pct2             # <<<<<<<<<<<<<<
- * 
- *     if _write_char(writer, '%', changed) < 0:
- */
-  __pyx_t_2 = (((__pyx_v_pct[0]) != __pyx_v_pct1) != 0);
-  if (!__pyx_t_2) {
-  } else {
-    __pyx_t_1 = __pyx_t_2;
-    goto __pyx_L3_bool_binop_done;
-  }
-  __pyx_t_2 = (((__pyx_v_pct[1]) != __pyx_v_pct2) != 0);
-  __pyx_t_1 = __pyx_t_2;
-  __pyx_L3_bool_binop_done:;
-  __pyx_v_changed = __pyx_t_1;
-
-  /* "yarl/_quoting_c.pyx":142
- *     cdef bint changed = pct[0] != pct1 or pct[1] != pct2
- * 
- *     if _write_char(writer, '%', changed) < 0:             # <<<<<<<<<<<<<<
- *         return -1
- *     if _write_char(writer, pct1, changed) < 0:
- */
-  __pyx_t_1 = ((__pyx_f_4yarl_10_quoting_c__write_char(__pyx_v_writer, 37, __pyx_v_changed) < 0) != 0);
-  if (__pyx_t_1) {
-
-    /* "yarl/_quoting_c.pyx":143
- * 
- *     if _write_char(writer, '%', changed) < 0:
- *         return -1             # <<<<<<<<<<<<<<
- *     if _write_char(writer, pct1, changed) < 0:
- *         return -1
- */
-    __pyx_r = -1;
-    goto __pyx_L0;
-
-    /* "yarl/_quoting_c.pyx":142
- *     cdef bint changed = pct[0] != pct1 or pct[1] != pct2
- * 
- *     if _write_char(writer, '%', changed) < 0:             # <<<<<<<<<<<<<<
- *         return -1
- *     if _write_char(writer, pct1, changed) < 0:
- */
-  }
-
-  /* "yarl/_quoting_c.pyx":144
- *     if _write_char(writer, '%', changed) < 0:
- *         return -1
- *     if _write_char(writer, pct1, changed) < 0:             # <<<<<<<<<<<<<<
- *         return -1
- *     return _write_char(writer, pct2, changed)
- */
-  __pyx_t_1 = ((__pyx_f_4yarl_10_quoting_c__write_char(__pyx_v_writer, __pyx_v_pct1, __pyx_v_changed) < 0) != 0);
-  if (__pyx_t_1) {
-
-    /* "yarl/_quoting_c.pyx":145
- *         return -1
- *     if _write_char(writer, pct1, changed) < 0:
- *         return -1             # <<<<<<<<<<<<<<
- *     return _write_char(writer, pct2, changed)
- * 
- */
-    __pyx_r = -1;
-    goto __pyx_L0;
-
-    /* "yarl/_quoting_c.pyx":144
- *     if _write_char(writer, '%', changed) < 0:
- *         return -1
- *     if _write_char(writer, pct1, changed) < 0:             # <<<<<<<<<<<<<<
- *         return -1
- *     return _write_char(writer, pct2, changed)
- */
-  }
-
-  /* "yarl/_quoting_c.pyx":146
- *     if _write_char(writer, pct1, changed) < 0:
- *         return -1
- *     return _write_char(writer, pct2, changed)             # <<<<<<<<<<<<<<
- * 
- * 
- */
-  __pyx_r = __pyx_f_4yarl_10_quoting_c__write_char(__pyx_v_writer, __pyx_v_pct2, __pyx_v_changed);
-  goto __pyx_L0;
-
-  /* "yarl/_quoting_c.pyx":137
- * 
- * 
- * cdef inline int _write_pct_check(Writer* writer, Py_UCS4 ch, Py_UCS4 pct[]):             # <<<<<<<<<<<<<<
- *     cdef Py_UCS4 pct1 = _to_hex(<uint8_t>ch >> 4)
- *     cdef Py_UCS4 pct2 = _to_hex(<uint8_t>ch & 0x0f)
- */
-
-  /* function exit code */
-  __pyx_L0:;
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "yarl/_quoting_c.pyx":149
+/* "yarl/_quoting_c.pyx":133
  * 
  * 
  * cdef inline int _write_utf8(Writer* writer, Py_UCS4 symbol):             # <<<<<<<<<<<<<<
@@ -2747,7 +2554,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
   int __pyx_t_2;
   __Pyx_RefNannySetupContext("_write_utf8", 0);
 
-  /* "yarl/_quoting_c.pyx":150
+  /* "yarl/_quoting_c.pyx":134
  * 
  * cdef inline int _write_utf8(Writer* writer, Py_UCS4 symbol):
  *     cdef uint64_t utf = <uint64_t> symbol             # <<<<<<<<<<<<<<
@@ -2756,7 +2563,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
   __pyx_v_utf = ((uint64_t)__pyx_v_symbol);
 
-  /* "yarl/_quoting_c.pyx":152
+  /* "yarl/_quoting_c.pyx":136
  *     cdef uint64_t utf = <uint64_t> symbol
  * 
  *     if utf < 0x80:             # <<<<<<<<<<<<<<
@@ -2766,7 +2573,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
   __pyx_t_1 = ((__pyx_v_utf < 0x80) != 0);
   if (__pyx_t_1) {
 
-    /* "yarl/_quoting_c.pyx":153
+    /* "yarl/_quoting_c.pyx":137
  * 
  *     if utf < 0x80:
  *         return _write_pct(writer, <uint8_t>utf, True)             # <<<<<<<<<<<<<<
@@ -2776,7 +2583,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
     __pyx_r = __pyx_f_4yarl_10_quoting_c__write_pct(__pyx_v_writer, ((uint8_t)__pyx_v_utf), 1);
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":152
+    /* "yarl/_quoting_c.pyx":136
  *     cdef uint64_t utf = <uint64_t> symbol
  * 
  *     if utf < 0x80:             # <<<<<<<<<<<<<<
@@ -2785,7 +2592,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
   }
 
-  /* "yarl/_quoting_c.pyx":154
+  /* "yarl/_quoting_c.pyx":138
  *     if utf < 0x80:
  *         return _write_pct(writer, <uint8_t>utf, True)
  *     elif utf < 0x800:             # <<<<<<<<<<<<<<
@@ -2795,7 +2602,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
   __pyx_t_1 = ((__pyx_v_utf < 0x800) != 0);
   if (__pyx_t_1) {
 
-    /* "yarl/_quoting_c.pyx":155
+    /* "yarl/_quoting_c.pyx":139
  *         return _write_pct(writer, <uint8_t>utf, True)
  *     elif utf < 0x800:
  *         if _write_pct(writer, <uint8_t>(0xc0 | (utf >> 6)), True) < 0:             # <<<<<<<<<<<<<<
@@ -2805,7 +2612,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
     __pyx_t_1 = ((__pyx_f_4yarl_10_quoting_c__write_pct(__pyx_v_writer, ((uint8_t)(0xc0 | (__pyx_v_utf >> 6))), 1) < 0) != 0);
     if (__pyx_t_1) {
 
-      /* "yarl/_quoting_c.pyx":156
+      /* "yarl/_quoting_c.pyx":140
  *     elif utf < 0x800:
  *         if _write_pct(writer, <uint8_t>(0xc0 | (utf >> 6)), True) < 0:
  *             return -1             # <<<<<<<<<<<<<<
@@ -2815,7 +2622,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
       __pyx_r = -1;
       goto __pyx_L0;
 
-      /* "yarl/_quoting_c.pyx":155
+      /* "yarl/_quoting_c.pyx":139
  *         return _write_pct(writer, <uint8_t>utf, True)
  *     elif utf < 0x800:
  *         if _write_pct(writer, <uint8_t>(0xc0 | (utf >> 6)), True) < 0:             # <<<<<<<<<<<<<<
@@ -2824,7 +2631,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
     }
 
-    /* "yarl/_quoting_c.pyx":157
+    /* "yarl/_quoting_c.pyx":141
  *         if _write_pct(writer, <uint8_t>(0xc0 | (utf >> 6)), True) < 0:
  *             return -1
  *         return _write_pct(writer,  <uint8_t>(0x80 | (utf & 0x3f)), True)             # <<<<<<<<<<<<<<
@@ -2834,7 +2641,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
     __pyx_r = __pyx_f_4yarl_10_quoting_c__write_pct(__pyx_v_writer, ((uint8_t)(0x80 | (__pyx_v_utf & 0x3f))), 1);
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":154
+    /* "yarl/_quoting_c.pyx":138
  *     if utf < 0x80:
  *         return _write_pct(writer, <uint8_t>utf, True)
  *     elif utf < 0x800:             # <<<<<<<<<<<<<<
@@ -2843,7 +2650,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
   }
 
-  /* "yarl/_quoting_c.pyx":158
+  /* "yarl/_quoting_c.pyx":142
  *             return -1
  *         return _write_pct(writer,  <uint8_t>(0x80 | (utf & 0x3f)), True)
  *     elif 0xD800 <= utf <= 0xDFFF:             # <<<<<<<<<<<<<<
@@ -2857,7 +2664,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "yarl/_quoting_c.pyx":160
+    /* "yarl/_quoting_c.pyx":144
  *     elif 0xD800 <= utf <= 0xDFFF:
  *         # surogate pair, ignored
  *         return 0             # <<<<<<<<<<<<<<
@@ -2867,7 +2674,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":158
+    /* "yarl/_quoting_c.pyx":142
  *             return -1
  *         return _write_pct(writer,  <uint8_t>(0x80 | (utf & 0x3f)), True)
  *     elif 0xD800 <= utf <= 0xDFFF:             # <<<<<<<<<<<<<<
@@ -2876,7 +2683,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
   }
 
-  /* "yarl/_quoting_c.pyx":161
+  /* "yarl/_quoting_c.pyx":145
  *         # surogate pair, ignored
  *         return 0
  *     elif utf < 0x10000:             # <<<<<<<<<<<<<<
@@ -2886,7 +2693,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
   __pyx_t_2 = ((__pyx_v_utf < 0x10000) != 0);
   if (__pyx_t_2) {
 
-    /* "yarl/_quoting_c.pyx":162
+    /* "yarl/_quoting_c.pyx":146
  *         return 0
  *     elif utf < 0x10000:
  *         if _write_pct(writer, <uint8_t>(0xe0 | (utf >> 12)), True) < 0:             # <<<<<<<<<<<<<<
@@ -2896,7 +2703,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
     __pyx_t_2 = ((__pyx_f_4yarl_10_quoting_c__write_pct(__pyx_v_writer, ((uint8_t)(0xe0 | (__pyx_v_utf >> 12))), 1) < 0) != 0);
     if (__pyx_t_2) {
 
-      /* "yarl/_quoting_c.pyx":163
+      /* "yarl/_quoting_c.pyx":147
  *     elif utf < 0x10000:
  *         if _write_pct(writer, <uint8_t>(0xe0 | (utf >> 12)), True) < 0:
  *             return -1             # <<<<<<<<<<<<<<
@@ -2906,7 +2713,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
       __pyx_r = -1;
       goto __pyx_L0;
 
-      /* "yarl/_quoting_c.pyx":162
+      /* "yarl/_quoting_c.pyx":146
  *         return 0
  *     elif utf < 0x10000:
  *         if _write_pct(writer, <uint8_t>(0xe0 | (utf >> 12)), True) < 0:             # <<<<<<<<<<<<<<
@@ -2915,7 +2722,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
     }
 
-    /* "yarl/_quoting_c.pyx":165
+    /* "yarl/_quoting_c.pyx":149
  *             return -1
  *         if _write_pct(writer, <uint8_t>(0x80 | ((utf >> 6) & 0x3f)),
  *                        True) < 0:             # <<<<<<<<<<<<<<
@@ -2924,7 +2731,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
     __pyx_t_2 = ((__pyx_f_4yarl_10_quoting_c__write_pct(__pyx_v_writer, ((uint8_t)(0x80 | ((__pyx_v_utf >> 6) & 0x3f))), 1) < 0) != 0);
 
-    /* "yarl/_quoting_c.pyx":164
+    /* "yarl/_quoting_c.pyx":148
  *         if _write_pct(writer, <uint8_t>(0xe0 | (utf >> 12)), True) < 0:
  *             return -1
  *         if _write_pct(writer, <uint8_t>(0x80 | ((utf >> 6) & 0x3f)),             # <<<<<<<<<<<<<<
@@ -2933,7 +2740,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
     if (__pyx_t_2) {
 
-      /* "yarl/_quoting_c.pyx":166
+      /* "yarl/_quoting_c.pyx":150
  *         if _write_pct(writer, <uint8_t>(0x80 | ((utf >> 6) & 0x3f)),
  *                        True) < 0:
  *             return -1             # <<<<<<<<<<<<<<
@@ -2943,7 +2750,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
       __pyx_r = -1;
       goto __pyx_L0;
 
-      /* "yarl/_quoting_c.pyx":164
+      /* "yarl/_quoting_c.pyx":148
  *         if _write_pct(writer, <uint8_t>(0xe0 | (utf >> 12)), True) < 0:
  *             return -1
  *         if _write_pct(writer, <uint8_t>(0x80 | ((utf >> 6) & 0x3f)),             # <<<<<<<<<<<<<<
@@ -2952,7 +2759,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
     }
 
-    /* "yarl/_quoting_c.pyx":167
+    /* "yarl/_quoting_c.pyx":151
  *                        True) < 0:
  *             return -1
  *         return _write_pct(writer, <uint8_t>(0x80 | (utf & 0x3f)), True)             # <<<<<<<<<<<<<<
@@ -2962,7 +2769,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
     __pyx_r = __pyx_f_4yarl_10_quoting_c__write_pct(__pyx_v_writer, ((uint8_t)(0x80 | (__pyx_v_utf & 0x3f))), 1);
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":161
+    /* "yarl/_quoting_c.pyx":145
  *         # surogate pair, ignored
  *         return 0
  *     elif utf < 0x10000:             # <<<<<<<<<<<<<<
@@ -2971,7 +2778,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
   }
 
-  /* "yarl/_quoting_c.pyx":168
+  /* "yarl/_quoting_c.pyx":152
  *             return -1
  *         return _write_pct(writer, <uint8_t>(0x80 | (utf & 0x3f)), True)
  *     elif utf > 0x10FFFF:             # <<<<<<<<<<<<<<
@@ -2981,7 +2788,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
   __pyx_t_2 = ((__pyx_v_utf > 0x10FFFF) != 0);
   if (__pyx_t_2) {
 
-    /* "yarl/_quoting_c.pyx":170
+    /* "yarl/_quoting_c.pyx":154
  *     elif utf > 0x10FFFF:
  *         # symbol is too large
  *         return 0             # <<<<<<<<<<<<<<
@@ -2991,7 +2798,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
     __pyx_r = 0;
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":168
+    /* "yarl/_quoting_c.pyx":152
  *             return -1
  *         return _write_pct(writer, <uint8_t>(0x80 | (utf & 0x3f)), True)
  *     elif utf > 0x10FFFF:             # <<<<<<<<<<<<<<
@@ -3000,7 +2807,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
   }
 
-  /* "yarl/_quoting_c.pyx":172
+  /* "yarl/_quoting_c.pyx":156
  *         return 0
  *     else:
  *         if _write_pct(writer,  <uint8_t>(0xf0 | (utf >> 18)), True) < 0:             # <<<<<<<<<<<<<<
@@ -3011,7 +2818,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
     __pyx_t_2 = ((__pyx_f_4yarl_10_quoting_c__write_pct(__pyx_v_writer, ((uint8_t)(0xf0 | (__pyx_v_utf >> 18))), 1) < 0) != 0);
     if (__pyx_t_2) {
 
-      /* "yarl/_quoting_c.pyx":173
+      /* "yarl/_quoting_c.pyx":157
  *     else:
  *         if _write_pct(writer,  <uint8_t>(0xf0 | (utf >> 18)), True) < 0:
  *             return -1             # <<<<<<<<<<<<<<
@@ -3021,7 +2828,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
       __pyx_r = -1;
       goto __pyx_L0;
 
-      /* "yarl/_quoting_c.pyx":172
+      /* "yarl/_quoting_c.pyx":156
  *         return 0
  *     else:
  *         if _write_pct(writer,  <uint8_t>(0xf0 | (utf >> 18)), True) < 0:             # <<<<<<<<<<<<<<
@@ -3030,7 +2837,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
     }
 
-    /* "yarl/_quoting_c.pyx":175
+    /* "yarl/_quoting_c.pyx":159
  *             return -1
  *         if _write_pct(writer,  <uint8_t>(0x80 | ((utf >> 12) & 0x3f)),
  *                        True) < 0:             # <<<<<<<<<<<<<<
@@ -3039,7 +2846,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
     __pyx_t_2 = ((__pyx_f_4yarl_10_quoting_c__write_pct(__pyx_v_writer, ((uint8_t)(0x80 | ((__pyx_v_utf >> 12) & 0x3f))), 1) < 0) != 0);
 
-    /* "yarl/_quoting_c.pyx":174
+    /* "yarl/_quoting_c.pyx":158
  *         if _write_pct(writer,  <uint8_t>(0xf0 | (utf >> 18)), True) < 0:
  *             return -1
  *         if _write_pct(writer,  <uint8_t>(0x80 | ((utf >> 12) & 0x3f)),             # <<<<<<<<<<<<<<
@@ -3048,7 +2855,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
     if (__pyx_t_2) {
 
-      /* "yarl/_quoting_c.pyx":176
+      /* "yarl/_quoting_c.pyx":160
  *         if _write_pct(writer,  <uint8_t>(0x80 | ((utf >> 12) & 0x3f)),
  *                        True) < 0:
  *            return -1             # <<<<<<<<<<<<<<
@@ -3058,7 +2865,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
       __pyx_r = -1;
       goto __pyx_L0;
 
-      /* "yarl/_quoting_c.pyx":174
+      /* "yarl/_quoting_c.pyx":158
  *         if _write_pct(writer,  <uint8_t>(0xf0 | (utf >> 18)), True) < 0:
  *             return -1
  *         if _write_pct(writer,  <uint8_t>(0x80 | ((utf >> 12) & 0x3f)),             # <<<<<<<<<<<<<<
@@ -3067,7 +2874,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
     }
 
-    /* "yarl/_quoting_c.pyx":178
+    /* "yarl/_quoting_c.pyx":162
  *            return -1
  *         if _write_pct(writer,  <uint8_t>(0x80 | ((utf >> 6) & 0x3f)),
  *                        True) < 0:             # <<<<<<<<<<<<<<
@@ -3076,7 +2883,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
     __pyx_t_2 = ((__pyx_f_4yarl_10_quoting_c__write_pct(__pyx_v_writer, ((uint8_t)(0x80 | ((__pyx_v_utf >> 6) & 0x3f))), 1) < 0) != 0);
 
-    /* "yarl/_quoting_c.pyx":177
+    /* "yarl/_quoting_c.pyx":161
  *                        True) < 0:
  *            return -1
  *         if _write_pct(writer,  <uint8_t>(0x80 | ((utf >> 6) & 0x3f)),             # <<<<<<<<<<<<<<
@@ -3085,7 +2892,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
     if (__pyx_t_2) {
 
-      /* "yarl/_quoting_c.pyx":179
+      /* "yarl/_quoting_c.pyx":163
  *         if _write_pct(writer,  <uint8_t>(0x80 | ((utf >> 6) & 0x3f)),
  *                        True) < 0:
  *             return -1             # <<<<<<<<<<<<<<
@@ -3095,7 +2902,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
       __pyx_r = -1;
       goto __pyx_L0;
 
-      /* "yarl/_quoting_c.pyx":177
+      /* "yarl/_quoting_c.pyx":161
  *                        True) < 0:
  *            return -1
  *         if _write_pct(writer,  <uint8_t>(0x80 | ((utf >> 6) & 0x3f)),             # <<<<<<<<<<<<<<
@@ -3104,7 +2911,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
  */
     }
 
-    /* "yarl/_quoting_c.pyx":180
+    /* "yarl/_quoting_c.pyx":164
  *                        True) < 0:
  *             return -1
  *         return _write_pct(writer, <uint8_t>(0x80 | (utf & 0x3f)), True)             # <<<<<<<<<<<<<<
@@ -3115,7 +2922,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
     goto __pyx_L0;
   }
 
-  /* "yarl/_quoting_c.pyx":149
+  /* "yarl/_quoting_c.pyx":133
  * 
  * 
  * cdef inline int _write_utf8(Writer* writer, Py_UCS4 symbol):             # <<<<<<<<<<<<<<
@@ -3129,7 +2936,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c__write_utf8(struct __pyx_t_4
   return __pyx_r;
 }
 
-/* "yarl/_quoting_c.pyx":193
+/* "yarl/_quoting_c.pyx":177
  *     cdef uint8_t _protected_table[16]
  * 
  *     def __init__(             # <<<<<<<<<<<<<<
@@ -3171,7 +2978,7 @@ static int __pyx_pw_4yarl_10_quoting_c_7_Quoter_1__init__(PyObject *__pyx_v_self
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, 0, "__init__") < 0)) __PYX_ERR(0, 193, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, 0, "__init__") < 0)) __PYX_ERR(0, 177, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 0) {
       goto __pyx_L5_argtuple_error;
@@ -3180,10 +2987,10 @@ static int __pyx_pw_4yarl_10_quoting_c_7_Quoter_1__init__(PyObject *__pyx_v_self
     __pyx_v_safe = ((PyObject*)values[0]);
     __pyx_v_protected = ((PyObject*)values[1]);
     if (values[2]) {
-      __pyx_v_qs = __Pyx_PyObject_IsTrue(values[2]); if (unlikely((__pyx_v_qs == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 194, __pyx_L3_error)
+      __pyx_v_qs = __Pyx_PyObject_IsTrue(values[2]); if (unlikely((__pyx_v_qs == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 178, __pyx_L3_error)
     } else {
 
-      /* "yarl/_quoting_c.pyx":194
+      /* "yarl/_quoting_c.pyx":178
  * 
  *     def __init__(
  *             self, *, str safe='', str protected='', bint qs=False, bint requote=True,             # <<<<<<<<<<<<<<
@@ -3193,24 +3000,24 @@ static int __pyx_pw_4yarl_10_quoting_c_7_Quoter_1__init__(PyObject *__pyx_v_self
       __pyx_v_qs = ((int)0);
     }
     if (values[3]) {
-      __pyx_v_requote = __Pyx_PyObject_IsTrue(values[3]); if (unlikely((__pyx_v_requote == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 194, __pyx_L3_error)
+      __pyx_v_requote = __Pyx_PyObject_IsTrue(values[3]); if (unlikely((__pyx_v_requote == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 178, __pyx_L3_error)
     } else {
       __pyx_v_requote = ((int)1);
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 0, 0, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 193, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 0, 0, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 177, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("yarl._quoting_c._Quoter.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_safe), (&PyUnicode_Type), 1, "safe", 1))) __PYX_ERR(0, 194, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_protected), (&PyUnicode_Type), 1, "protected", 1))) __PYX_ERR(0, 194, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_safe), (&PyUnicode_Type), 1, "safe", 1))) __PYX_ERR(0, 178, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_protected), (&PyUnicode_Type), 1, "protected", 1))) __PYX_ERR(0, 178, __pyx_L1_error)
   __pyx_r = __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(((struct __pyx_obj_4yarl_10_quoting_c__Quoter *)__pyx_v_self), __pyx_v_safe, __pyx_v_protected, __pyx_v_qs, __pyx_v_requote);
 
-  /* "yarl/_quoting_c.pyx":193
+  /* "yarl/_quoting_c.pyx":177
  *     cdef uint8_t _protected_table[16]
  * 
  *     def __init__(             # <<<<<<<<<<<<<<
@@ -3245,7 +3052,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "yarl/_quoting_c.pyx":198
+  /* "yarl/_quoting_c.pyx":182
  *         cdef Py_UCS4 ch
  * 
  *         self._qs = qs             # <<<<<<<<<<<<<<
@@ -3254,7 +3061,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
  */
   __pyx_v_self->_qs = __pyx_v_qs;
 
-  /* "yarl/_quoting_c.pyx":199
+  /* "yarl/_quoting_c.pyx":183
  * 
  *         self._qs = qs
  *         self._requote = requote             # <<<<<<<<<<<<<<
@@ -3263,7 +3070,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
  */
   __pyx_v_self->_requote = __pyx_v_requote;
 
-  /* "yarl/_quoting_c.pyx":201
+  /* "yarl/_quoting_c.pyx":185
  *         self._requote = requote
  * 
  *         if not self._qs:             # <<<<<<<<<<<<<<
@@ -3273,7 +3080,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
   __pyx_t_1 = ((!(__pyx_v_self->_qs != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "yarl/_quoting_c.pyx":202
+    /* "yarl/_quoting_c.pyx":186
  * 
  *         if not self._qs:
  *             memcpy(self._safe_table,             # <<<<<<<<<<<<<<
@@ -3282,7 +3089,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
  */
     (void)(memcpy(__pyx_v_self->_safe_table, __pyx_v_4yarl_10_quoting_c_ALLOWED_NOTQS_TABLE, (sizeof(__pyx_v_self->_safe_table))));
 
-    /* "yarl/_quoting_c.pyx":201
+    /* "yarl/_quoting_c.pyx":185
  *         self._requote = requote
  * 
  *         if not self._qs:             # <<<<<<<<<<<<<<
@@ -3292,7 +3099,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
     goto __pyx_L3;
   }
 
-  /* "yarl/_quoting_c.pyx":206
+  /* "yarl/_quoting_c.pyx":190
  *                    sizeof(self._safe_table))
  *         else:
  *             memcpy(self._safe_table,             # <<<<<<<<<<<<<<
@@ -3301,7 +3108,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
  */
   /*else*/ {
 
-    /* "yarl/_quoting_c.pyx":208
+    /* "yarl/_quoting_c.pyx":192
  *             memcpy(self._safe_table,
  *                    ALLOWED_TABLE,
  *                    sizeof(self._safe_table))             # <<<<<<<<<<<<<<
@@ -3312,7 +3119,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
   }
   __pyx_L3:;
 
-  /* "yarl/_quoting_c.pyx":209
+  /* "yarl/_quoting_c.pyx":193
  *                    ALLOWED_TABLE,
  *                    sizeof(self._safe_table))
  *         for ch in safe:             # <<<<<<<<<<<<<<
@@ -3321,16 +3128,16 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
  */
   if (unlikely(__pyx_v_safe == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' is not iterable");
-    __PYX_ERR(0, 209, __pyx_L1_error)
+    __PYX_ERR(0, 193, __pyx_L1_error)
   }
   __Pyx_INCREF(__pyx_v_safe);
   __pyx_t_2 = __pyx_v_safe;
-  __pyx_t_7 = __Pyx_init_unicode_iteration(__pyx_t_2, (&__pyx_t_4), (&__pyx_t_5), (&__pyx_t_6)); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 209, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_init_unicode_iteration(__pyx_t_2, (&__pyx_t_4), (&__pyx_t_5), (&__pyx_t_6)); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 193, __pyx_L1_error)
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_4; __pyx_t_8++) {
     __pyx_t_3 = __pyx_t_8;
     __pyx_v_ch = __Pyx_PyUnicode_READ(__pyx_t_6, __pyx_t_5, __pyx_t_3);
 
-    /* "yarl/_quoting_c.pyx":210
+    /* "yarl/_quoting_c.pyx":194
  *                    sizeof(self._safe_table))
  *         for ch in safe:
  *             if ord(ch) > 127:             # <<<<<<<<<<<<<<
@@ -3340,20 +3147,20 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
     __pyx_t_1 = ((((long)__pyx_v_ch) > 0x7F) != 0);
     if (unlikely(__pyx_t_1)) {
 
-      /* "yarl/_quoting_c.pyx":211
+      /* "yarl/_quoting_c.pyx":195
  *         for ch in safe:
  *             if ord(ch) > 127:
  *                 raise ValueError("Only safe symbols with ORD < 128 are allowed")             # <<<<<<<<<<<<<<
  *             set_bit(self._safe_table, ch)
  * 
  */
-      __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 211, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 195, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_Raise(__pyx_t_9, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __PYX_ERR(0, 211, __pyx_L1_error)
+      __PYX_ERR(0, 195, __pyx_L1_error)
 
-      /* "yarl/_quoting_c.pyx":210
+      /* "yarl/_quoting_c.pyx":194
  *                    sizeof(self._safe_table))
  *         for ch in safe:
  *             if ord(ch) > 127:             # <<<<<<<<<<<<<<
@@ -3362,7 +3169,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
  */
     }
 
-    /* "yarl/_quoting_c.pyx":212
+    /* "yarl/_quoting_c.pyx":196
  *             if ord(ch) > 127:
  *                 raise ValueError("Only safe symbols with ORD < 128 are allowed")
  *             set_bit(self._safe_table, ch)             # <<<<<<<<<<<<<<
@@ -3373,7 +3180,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "yarl/_quoting_c.pyx":214
+  /* "yarl/_quoting_c.pyx":198
  *             set_bit(self._safe_table, ch)
  * 
  *         memset(self._protected_table, 0, sizeof(self._protected_table))             # <<<<<<<<<<<<<<
@@ -3382,7 +3189,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
  */
   (void)(memset(__pyx_v_self->_protected_table, 0, (sizeof(__pyx_v_self->_protected_table))));
 
-  /* "yarl/_quoting_c.pyx":215
+  /* "yarl/_quoting_c.pyx":199
  * 
  *         memset(self._protected_table, 0, sizeof(self._protected_table))
  *         for ch in protected:             # <<<<<<<<<<<<<<
@@ -3391,16 +3198,16 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
  */
   if (unlikely(__pyx_v_protected == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' is not iterable");
-    __PYX_ERR(0, 215, __pyx_L1_error)
+    __PYX_ERR(0, 199, __pyx_L1_error)
   }
   __Pyx_INCREF(__pyx_v_protected);
   __pyx_t_2 = __pyx_v_protected;
-  __pyx_t_7 = __Pyx_init_unicode_iteration(__pyx_t_2, (&__pyx_t_3), (&__pyx_t_5), (&__pyx_t_6)); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 215, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_init_unicode_iteration(__pyx_t_2, (&__pyx_t_3), (&__pyx_t_5), (&__pyx_t_6)); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 199, __pyx_L1_error)
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_3; __pyx_t_8++) {
     __pyx_t_4 = __pyx_t_8;
     __pyx_v_ch = __Pyx_PyUnicode_READ(__pyx_t_6, __pyx_t_5, __pyx_t_4);
 
-    /* "yarl/_quoting_c.pyx":216
+    /* "yarl/_quoting_c.pyx":200
  *         memset(self._protected_table, 0, sizeof(self._protected_table))
  *         for ch in protected:
  *             if ord(ch) > 127:             # <<<<<<<<<<<<<<
@@ -3410,20 +3217,20 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
     __pyx_t_1 = ((((long)__pyx_v_ch) > 0x7F) != 0);
     if (unlikely(__pyx_t_1)) {
 
-      /* "yarl/_quoting_c.pyx":217
+      /* "yarl/_quoting_c.pyx":201
  *         for ch in protected:
  *             if ord(ch) > 127:
  *                 raise ValueError("Only safe symbols with ORD < 128 are allowed")             # <<<<<<<<<<<<<<
  *             set_bit(self._safe_table, ch)
  *             set_bit(self._protected_table, ch)
  */
-      __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 217, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 201, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_Raise(__pyx_t_9, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __PYX_ERR(0, 217, __pyx_L1_error)
+      __PYX_ERR(0, 201, __pyx_L1_error)
 
-      /* "yarl/_quoting_c.pyx":216
+      /* "yarl/_quoting_c.pyx":200
  *         memset(self._protected_table, 0, sizeof(self._protected_table))
  *         for ch in protected:
  *             if ord(ch) > 127:             # <<<<<<<<<<<<<<
@@ -3432,7 +3239,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
  */
     }
 
-    /* "yarl/_quoting_c.pyx":218
+    /* "yarl/_quoting_c.pyx":202
  *             if ord(ch) > 127:
  *                 raise ValueError("Only safe symbols with ORD < 128 are allowed")
  *             set_bit(self._safe_table, ch)             # <<<<<<<<<<<<<<
@@ -3441,7 +3248,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
  */
     __pyx_f_4yarl_10_quoting_c_set_bit(__pyx_v_self->_safe_table, __pyx_v_ch);
 
-    /* "yarl/_quoting_c.pyx":219
+    /* "yarl/_quoting_c.pyx":203
  *                 raise ValueError("Only safe symbols with ORD < 128 are allowed")
  *             set_bit(self._safe_table, ch)
  *             set_bit(self._protected_table, ch)             # <<<<<<<<<<<<<<
@@ -3452,7 +3259,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "yarl/_quoting_c.pyx":193
+  /* "yarl/_quoting_c.pyx":177
  *     cdef uint8_t _protected_table[16]
  * 
  *     def __init__(             # <<<<<<<<<<<<<<
@@ -3473,7 +3280,7 @@ static int __pyx_pf_4yarl_10_quoting_c_7_Quoter___init__(struct __pyx_obj_4yarl_
   return __pyx_r;
 }
 
-/* "yarl/_quoting_c.pyx":221
+/* "yarl/_quoting_c.pyx":205
  *             set_bit(self._protected_table, ch)
  * 
  *     def __call__(self, val):             # <<<<<<<<<<<<<<
@@ -3510,7 +3317,7 @@ static PyObject *__pyx_pw_4yarl_10_quoting_c_7_Quoter_3__call__(PyObject *__pyx_
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__call__") < 0)) __PYX_ERR(0, 221, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__call__") < 0)) __PYX_ERR(0, 205, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 1) {
       goto __pyx_L5_argtuple_error;
@@ -3521,7 +3328,7 @@ static PyObject *__pyx_pw_4yarl_10_quoting_c_7_Quoter_3__call__(PyObject *__pyx_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__call__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 221, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__call__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 205, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("yarl._quoting_c._Quoter.__call__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3556,7 +3363,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
   __Pyx_RefNannySetupContext("__call__", 0);
   __Pyx_INCREF(__pyx_v_val);
 
-  /* "yarl/_quoting_c.pyx":223
+  /* "yarl/_quoting_c.pyx":207
  *     def __call__(self, val):
  *         cdef Writer writer
  *         if val is None:             # <<<<<<<<<<<<<<
@@ -3567,7 +3374,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "yarl/_quoting_c.pyx":224
+    /* "yarl/_quoting_c.pyx":208
  *         cdef Writer writer
  *         if val is None:
  *             return None             # <<<<<<<<<<<<<<
@@ -3578,7 +3385,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":223
+    /* "yarl/_quoting_c.pyx":207
  *     def __call__(self, val):
  *         cdef Writer writer
  *         if val is None:             # <<<<<<<<<<<<<<
@@ -3587,7 +3394,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
  */
   }
 
-  /* "yarl/_quoting_c.pyx":225
+  /* "yarl/_quoting_c.pyx":209
  *         if val is None:
  *             return None
  *         if type(val) is not str:             # <<<<<<<<<<<<<<
@@ -3598,7 +3405,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
   __pyx_t_1 = (__pyx_t_2 != 0);
   if (__pyx_t_1) {
 
-    /* "yarl/_quoting_c.pyx":226
+    /* "yarl/_quoting_c.pyx":210
  *             return None
  *         if type(val) is not str:
  *             if isinstance(val, str):             # <<<<<<<<<<<<<<
@@ -3609,19 +3416,19 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
     __pyx_t_2 = (__pyx_t_1 != 0);
     if (likely(__pyx_t_2)) {
 
-      /* "yarl/_quoting_c.pyx":228
+      /* "yarl/_quoting_c.pyx":212
  *             if isinstance(val, str):
  *                 # derived from str
  *                 val = str(val)             # <<<<<<<<<<<<<<
  *             else:
  *                 raise TypeError("Argument should be str")
  */
-      __pyx_t_3 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyUnicode_Type)), __pyx_v_val); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 228, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyUnicode_Type)), __pyx_v_val); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF_SET(__pyx_v_val, __pyx_t_3);
       __pyx_t_3 = 0;
 
-      /* "yarl/_quoting_c.pyx":226
+      /* "yarl/_quoting_c.pyx":210
  *             return None
  *         if type(val) is not str:
  *             if isinstance(val, str):             # <<<<<<<<<<<<<<
@@ -3631,7 +3438,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
       goto __pyx_L5;
     }
 
-    /* "yarl/_quoting_c.pyx":230
+    /* "yarl/_quoting_c.pyx":214
  *                 val = str(val)
  *             else:
  *                 raise TypeError("Argument should be str")             # <<<<<<<<<<<<<<
@@ -3639,15 +3446,15 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
  *         try:
  */
     /*else*/ {
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 230, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 214, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __PYX_ERR(0, 230, __pyx_L1_error)
+      __PYX_ERR(0, 214, __pyx_L1_error)
     }
     __pyx_L5:;
 
-    /* "yarl/_quoting_c.pyx":225
+    /* "yarl/_quoting_c.pyx":209
  *         if val is None:
  *             return None
  *         if type(val) is not str:             # <<<<<<<<<<<<<<
@@ -3656,7 +3463,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
  */
   }
 
-  /* "yarl/_quoting_c.pyx":231
+  /* "yarl/_quoting_c.pyx":215
  *             else:
  *                 raise TypeError("Argument should be str")
  *         _init_writer(&writer)             # <<<<<<<<<<<<<<
@@ -3665,7 +3472,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
  */
   __pyx_f_4yarl_10_quoting_c__init_writer((&__pyx_v_writer));
 
-  /* "yarl/_quoting_c.pyx":232
+  /* "yarl/_quoting_c.pyx":216
  *                 raise TypeError("Argument should be str")
  *         _init_writer(&writer)
  *         try:             # <<<<<<<<<<<<<<
@@ -3674,7 +3481,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
  */
   /*try:*/ {
 
-    /* "yarl/_quoting_c.pyx":233
+    /* "yarl/_quoting_c.pyx":217
  *         _init_writer(&writer)
  *         try:
  *             return self._do_quote(<str>val, &writer)             # <<<<<<<<<<<<<<
@@ -3682,14 +3489,14 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
  *             _release_writer(&writer)
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_3 = ((struct __pyx_vtabstruct_4yarl_10_quoting_c__Quoter *)__pyx_v_self->__pyx_vtab)->_do_quote(__pyx_v_self, ((PyObject*)__pyx_v_val), (&__pyx_v_writer)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 233, __pyx_L7_error)
+    __pyx_t_3 = ((struct __pyx_vtabstruct_4yarl_10_quoting_c__Quoter *)__pyx_v_self->__pyx_vtab)->_do_quote(__pyx_v_self, ((PyObject*)__pyx_v_val), (&__pyx_v_writer)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 217, __pyx_L7_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_r = __pyx_t_3;
     __pyx_t_3 = 0;
     goto __pyx_L6_return;
   }
 
-  /* "yarl/_quoting_c.pyx":235
+  /* "yarl/_quoting_c.pyx":219
  *             return self._do_quote(<str>val, &writer)
  *         finally:
  *             _release_writer(&writer)             # <<<<<<<<<<<<<<
@@ -3739,7 +3546,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
     }
   }
 
-  /* "yarl/_quoting_c.pyx":221
+  /* "yarl/_quoting_c.pyx":205
  *             set_bit(self._protected_table, ch)
  * 
  *     def __call__(self, val):             # <<<<<<<<<<<<<<
@@ -3759,280 +3566,183 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_2__call__(struct __pyx_obj
   return __pyx_r;
 }
 
-/* "yarl/_quoting_c.pyx":237
+/* "yarl/_quoting_c.pyx":221
  *             _release_writer(&writer)
  * 
  *     cdef str _do_quote(self, str val, Writer *writer):             # <<<<<<<<<<<<<<
  *         cdef Py_UCS4 ch
- *         cdef int has_pct = 0
+ *         cdef int changed
  */
 
 static PyObject *__pyx_f_4yarl_10_quoting_c_7_Quoter__do_quote(struct __pyx_obj_4yarl_10_quoting_c__Quoter *__pyx_v_self, PyObject *__pyx_v_val, struct __pyx_t_4yarl_10_quoting_c_Writer *__pyx_v_writer) {
   Py_UCS4 __pyx_v_ch;
-  int __pyx_v_has_pct;
-  Py_UCS4 __pyx_v_pct[2];
-  CYTHON_UNUSED int __pyx_v_idx;
+  int __pyx_v_changed;
+  int __pyx_v_idx;
+  int __pyx_v_length;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  Py_ssize_t __pyx_t_2;
-  Py_ssize_t __pyx_t_3;
-  void *__pyx_t_4;
-  int __pyx_t_5;
-  int __pyx_t_6;
-  Py_ssize_t __pyx_t_7;
+  Py_ssize_t __pyx_t_1;
+  int __pyx_t_2;
+  Py_UCS4 __pyx_t_3;
+  int __pyx_t_4;
+  long __pyx_t_5;
+  Py_UCS4 __pyx_t_6;
+  int __pyx_t_7;
   int __pyx_t_8;
-  int __pyx_t_9;
-  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_9 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_do_quote", 0);
 
-  /* "yarl/_quoting_c.pyx":239
- *     cdef str _do_quote(self, str val, Writer *writer):
+  /* "yarl/_quoting_c.pyx":224
  *         cdef Py_UCS4 ch
- *         cdef int has_pct = 0             # <<<<<<<<<<<<<<
- *         cdef Py_UCS4 pct[2]
- *         cdef int idx = 0
- */
-  __pyx_v_has_pct = 0;
-
-  /* "yarl/_quoting_c.pyx":241
- *         cdef int has_pct = 0
- *         cdef Py_UCS4 pct[2]
+ *         cdef int changed
  *         cdef int idx = 0             # <<<<<<<<<<<<<<
+ *         cdef int length = len(val)
  * 
- *         for ch in val:
  */
   __pyx_v_idx = 0;
 
-  /* "yarl/_quoting_c.pyx":243
+  /* "yarl/_quoting_c.pyx":225
+ *         cdef int changed
  *         cdef int idx = 0
+ *         cdef int length = len(val)             # <<<<<<<<<<<<<<
  * 
- *         for ch in val:             # <<<<<<<<<<<<<<
- *             if has_pct:
- *                 pct[has_pct-1] = ch
+ *         while idx < length:
  */
   if (unlikely(__pyx_v_val == Py_None)) {
-    PyErr_SetString(PyExc_TypeError, "'NoneType' is not iterable");
-    __PYX_ERR(0, 243, __pyx_L1_error)
+    PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
+    __PYX_ERR(0, 225, __pyx_L1_error)
   }
-  __Pyx_INCREF(__pyx_v_val);
-  __pyx_t_1 = __pyx_v_val;
-  __pyx_t_6 = __Pyx_init_unicode_iteration(__pyx_t_1, (&__pyx_t_3), (&__pyx_t_4), (&__pyx_t_5)); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 243, __pyx_L1_error)
-  for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_3; __pyx_t_7++) {
-    __pyx_t_2 = __pyx_t_7;
-    __pyx_v_ch = __Pyx_PyUnicode_READ(__pyx_t_5, __pyx_t_4, __pyx_t_2);
+  __pyx_t_1 = __Pyx_PyUnicode_GET_LENGTH(__pyx_v_val); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 225, __pyx_L1_error)
+  __pyx_v_length = __pyx_t_1;
 
-    /* "yarl/_quoting_c.pyx":244
+  /* "yarl/_quoting_c.pyx":227
+ *         cdef int length = len(val)
  * 
- *         for ch in val:
- *             if has_pct:             # <<<<<<<<<<<<<<
- *                 pct[has_pct-1] = ch
- *                 has_pct += 1
+ *         while idx < length:             # <<<<<<<<<<<<<<
+ *             ch = val[idx]
+ *             idx += 1
  */
-    __pyx_t_8 = (__pyx_v_has_pct != 0);
-    if (__pyx_t_8) {
+  while (1) {
+    __pyx_t_2 = ((__pyx_v_idx < __pyx_v_length) != 0);
+    if (!__pyx_t_2) break;
 
-      /* "yarl/_quoting_c.pyx":245
- *         for ch in val:
- *             if has_pct:
- *                 pct[has_pct-1] = ch             # <<<<<<<<<<<<<<
- *                 has_pct += 1
- *                 if has_pct == 3:
- */
-      (__pyx_v_pct[(__pyx_v_has_pct - 1)]) = __pyx_v_ch;
-
-      /* "yarl/_quoting_c.pyx":246
- *             if has_pct:
- *                 pct[has_pct-1] = ch
- *                 has_pct += 1             # <<<<<<<<<<<<<<
- *                 if has_pct == 3:
- *                     ch = _restore_ch(pct[0], pct[1])
- */
-      __pyx_v_has_pct = (__pyx_v_has_pct + 1);
-
-      /* "yarl/_quoting_c.pyx":247
- *                 pct[has_pct-1] = ch
- *                 has_pct += 1
- *                 if has_pct == 3:             # <<<<<<<<<<<<<<
- *                     ch = _restore_ch(pct[0], pct[1])
- *                     has_pct = 0
- */
-      __pyx_t_8 = ((__pyx_v_has_pct == 3) != 0);
-      if (__pyx_t_8) {
-
-        /* "yarl/_quoting_c.pyx":248
- *                 has_pct += 1
- *                 if has_pct == 3:
- *                     ch = _restore_ch(pct[0], pct[1])             # <<<<<<<<<<<<<<
- *                     has_pct = 0
+    /* "yarl/_quoting_c.pyx":228
  * 
+ *         while idx < length:
+ *             ch = val[idx]             # <<<<<<<<<<<<<<
+ *             idx += 1
+ *             if ch == '%' and self._requote and idx <= length - 2:
  */
-        __pyx_v_ch = __pyx_f_4yarl_10_quoting_c__restore_ch((__pyx_v_pct[0]), (__pyx_v_pct[1]));
+    __pyx_t_3 = __Pyx_GetItemInt_Unicode(__pyx_v_val, __pyx_v_idx, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(__pyx_t_3 == (Py_UCS4)-1)) __PYX_ERR(0, 228, __pyx_L1_error)
+    __pyx_v_ch = __pyx_t_3;
 
-        /* "yarl/_quoting_c.pyx":249
- *                 if has_pct == 3:
- *                     ch = _restore_ch(pct[0], pct[1])
- *                     has_pct = 0             # <<<<<<<<<<<<<<
- * 
- *                     if ch == <Py_UCS4>-1:
+    /* "yarl/_quoting_c.pyx":229
+ *         while idx < length:
+ *             ch = val[idx]
+ *             idx += 1             # <<<<<<<<<<<<<<
+ *             if ch == '%' and self._requote and idx <= length - 2:
+ *                 ch = _restore_ch(val[idx], val[idx + 1])
  */
-        __pyx_v_has_pct = 0;
+    __pyx_v_idx = (__pyx_v_idx + 1);
 
-        /* "yarl/_quoting_c.pyx":251
- *                     has_pct = 0
- * 
- *                     if ch == <Py_UCS4>-1:             # <<<<<<<<<<<<<<
- *                         if _write_percent(writer) < 0:
- *                             raise
+    /* "yarl/_quoting_c.pyx":230
+ *             ch = val[idx]
+ *             idx += 1
+ *             if ch == '%' and self._requote and idx <= length - 2:             # <<<<<<<<<<<<<<
+ *                 ch = _restore_ch(val[idx], val[idx + 1])
+ *                 if ch != <Py_UCS4>-1:
  */
-        __pyx_t_8 = ((__pyx_v_ch == ((Py_UCS4)-1L)) != 0);
-        if (__pyx_t_8) {
+    __pyx_t_4 = ((__pyx_v_ch == 37) != 0);
+    if (__pyx_t_4) {
+    } else {
+      __pyx_t_2 = __pyx_t_4;
+      goto __pyx_L6_bool_binop_done;
+    }
+    __pyx_t_4 = (__pyx_v_self->_requote != 0);
+    if (__pyx_t_4) {
+    } else {
+      __pyx_t_2 = __pyx_t_4;
+      goto __pyx_L6_bool_binop_done;
+    }
+    __pyx_t_4 = ((__pyx_v_idx <= (__pyx_v_length - 2)) != 0);
+    __pyx_t_2 = __pyx_t_4;
+    __pyx_L6_bool_binop_done:;
+    if (__pyx_t_2) {
 
-          /* "yarl/_quoting_c.pyx":252
- * 
- *                     if ch == <Py_UCS4>-1:
- *                         if _write_percent(writer) < 0:             # <<<<<<<<<<<<<<
- *                             raise
- *                         if self._write(writer, pct[0]) < 0:
+      /* "yarl/_quoting_c.pyx":231
+ *             idx += 1
+ *             if ch == '%' and self._requote and idx <= length - 2:
+ *                 ch = _restore_ch(val[idx], val[idx + 1])             # <<<<<<<<<<<<<<
+ *                 if ch != <Py_UCS4>-1:
+ *                     idx += 2
  */
-          __pyx_t_8 = ((__pyx_f_4yarl_10_quoting_c__write_percent(__pyx_v_writer) < 0) != 0);
-          if (unlikely(__pyx_t_8)) {
+      __pyx_t_3 = __Pyx_GetItemInt_Unicode(__pyx_v_val, __pyx_v_idx, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(__pyx_t_3 == (Py_UCS4)-1)) __PYX_ERR(0, 231, __pyx_L1_error)
+      __pyx_t_5 = (__pyx_v_idx + 1);
+      __pyx_t_6 = __Pyx_GetItemInt_Unicode(__pyx_v_val, __pyx_t_5, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(__pyx_t_6 == (Py_UCS4)-1)) __PYX_ERR(0, 231, __pyx_L1_error)
+      __pyx_v_ch = __pyx_f_4yarl_10_quoting_c__restore_ch(__pyx_t_3, __pyx_t_6);
 
-            /* "yarl/_quoting_c.pyx":253
- *                     if ch == <Py_UCS4>-1:
- *                         if _write_percent(writer) < 0:
- *                             raise             # <<<<<<<<<<<<<<
- *                         if self._write(writer, pct[0]) < 0:
- *                             raise
- */
-            __Pyx_ReraiseException(); __PYX_ERR(0, 253, __pyx_L1_error)
-
-            /* "yarl/_quoting_c.pyx":252
- * 
- *                     if ch == <Py_UCS4>-1:
- *                         if _write_percent(writer) < 0:             # <<<<<<<<<<<<<<
- *                             raise
- *                         if self._write(writer, pct[0]) < 0:
- */
-          }
-
-          /* "yarl/_quoting_c.pyx":254
- *                         if _write_percent(writer) < 0:
- *                             raise
- *                         if self._write(writer, pct[0]) < 0:             # <<<<<<<<<<<<<<
- *                             raise
- *                         if self._write(writer, pct[1]) < 0:
- */
-          __pyx_t_8 = ((__pyx_f_4yarl_10_quoting_c_7_Quoter__write(__pyx_v_self, __pyx_v_writer, (__pyx_v_pct[0])) < 0) != 0);
-          if (unlikely(__pyx_t_8)) {
-
-            /* "yarl/_quoting_c.pyx":255
- *                             raise
- *                         if self._write(writer, pct[0]) < 0:
- *                             raise             # <<<<<<<<<<<<<<
- *                         if self._write(writer, pct[1]) < 0:
- *                             raise
- */
-            __Pyx_ReraiseException(); __PYX_ERR(0, 255, __pyx_L1_error)
-
-            /* "yarl/_quoting_c.pyx":254
- *                         if _write_percent(writer) < 0:
- *                             raise
- *                         if self._write(writer, pct[0]) < 0:             # <<<<<<<<<<<<<<
- *                             raise
- *                         if self._write(writer, pct[1]) < 0:
- */
-          }
-
-          /* "yarl/_quoting_c.pyx":256
- *                         if self._write(writer, pct[0]) < 0:
- *                             raise
- *                         if self._write(writer, pct[1]) < 0:             # <<<<<<<<<<<<<<
- *                             raise
- *                         continue
- */
-          __pyx_t_8 = ((__pyx_f_4yarl_10_quoting_c_7_Quoter__write(__pyx_v_self, __pyx_v_writer, (__pyx_v_pct[1])) < 0) != 0);
-          if (unlikely(__pyx_t_8)) {
-
-            /* "yarl/_quoting_c.pyx":257
- *                             raise
- *                         if self._write(writer, pct[1]) < 0:
- *                             raise             # <<<<<<<<<<<<<<
- *                         continue
- * 
- */
-            __Pyx_ReraiseException(); __PYX_ERR(0, 257, __pyx_L1_error)
-
-            /* "yarl/_quoting_c.pyx":256
- *                         if self._write(writer, pct[0]) < 0:
- *                             raise
- *                         if self._write(writer, pct[1]) < 0:             # <<<<<<<<<<<<<<
- *                             raise
- *                         continue
- */
-          }
-
-          /* "yarl/_quoting_c.pyx":258
- *                         if self._write(writer, pct[1]) < 0:
- *                             raise
- *                         continue             # <<<<<<<<<<<<<<
- * 
+      /* "yarl/_quoting_c.pyx":232
+ *             if ch == '%' and self._requote and idx <= length - 2:
+ *                 ch = _restore_ch(val[idx], val[idx + 1])
+ *                 if ch != <Py_UCS4>-1:             # <<<<<<<<<<<<<<
+ *                     idx += 2
  *                     if ch < 128:
  */
-          goto __pyx_L3_continue;
+      __pyx_t_2 = ((__pyx_v_ch != ((Py_UCS4)-1L)) != 0);
+      if (__pyx_t_2) {
 
-          /* "yarl/_quoting_c.pyx":251
- *                     has_pct = 0
- * 
- *                     if ch == <Py_UCS4>-1:             # <<<<<<<<<<<<<<
- *                         if _write_percent(writer) < 0:
- *                             raise
+        /* "yarl/_quoting_c.pyx":233
+ *                 ch = _restore_ch(val[idx], val[idx + 1])
+ *                 if ch != <Py_UCS4>-1:
+ *                     idx += 2             # <<<<<<<<<<<<<<
+ *                     if ch < 128:
+ *                         if bit_at(self._protected_table, ch):
  */
-        }
+        __pyx_v_idx = (__pyx_v_idx + 2);
 
-        /* "yarl/_quoting_c.pyx":260
- *                         continue
- * 
+        /* "yarl/_quoting_c.pyx":234
+ *                 if ch != <Py_UCS4>-1:
+ *                     idx += 2
  *                     if ch < 128:             # <<<<<<<<<<<<<<
  *                         if bit_at(self._protected_table, ch):
  *                             if _write_pct(writer, ch, True) < 0:
  */
-        __pyx_t_8 = ((__pyx_v_ch < 0x80) != 0);
-        if (__pyx_t_8) {
+        __pyx_t_2 = ((__pyx_v_ch < 0x80) != 0);
+        if (__pyx_t_2) {
 
-          /* "yarl/_quoting_c.pyx":261
- * 
+          /* "yarl/_quoting_c.pyx":235
+ *                     idx += 2
  *                     if ch < 128:
  *                         if bit_at(self._protected_table, ch):             # <<<<<<<<<<<<<<
  *                             if _write_pct(writer, ch, True) < 0:
  *                                 raise
  */
-          __pyx_t_8 = (__pyx_f_4yarl_10_quoting_c_bit_at(__pyx_v_self->_protected_table, __pyx_v_ch) != 0);
-          if (__pyx_t_8) {
+          __pyx_t_2 = (__pyx_f_4yarl_10_quoting_c_bit_at(__pyx_v_self->_protected_table, __pyx_v_ch) != 0);
+          if (__pyx_t_2) {
 
-            /* "yarl/_quoting_c.pyx":262
+            /* "yarl/_quoting_c.pyx":236
  *                     if ch < 128:
  *                         if bit_at(self._protected_table, ch):
  *                             if _write_pct(writer, ch, True) < 0:             # <<<<<<<<<<<<<<
  *                                 raise
  *                             continue
  */
-            __pyx_t_8 = ((__pyx_f_4yarl_10_quoting_c__write_pct(__pyx_v_writer, __pyx_v_ch, 1) < 0) != 0);
-            if (unlikely(__pyx_t_8)) {
+            __pyx_t_2 = ((__pyx_f_4yarl_10_quoting_c__write_pct(__pyx_v_writer, __pyx_v_ch, 1) < 0) != 0);
+            if (unlikely(__pyx_t_2)) {
 
-              /* "yarl/_quoting_c.pyx":263
+              /* "yarl/_quoting_c.pyx":237
  *                         if bit_at(self._protected_table, ch):
  *                             if _write_pct(writer, ch, True) < 0:
  *                                 raise             # <<<<<<<<<<<<<<
  *                             continue
  * 
  */
-              __Pyx_ReraiseException(); __PYX_ERR(0, 263, __pyx_L1_error)
+              __Pyx_ReraiseException(); __PYX_ERR(0, 237, __pyx_L1_error)
 
-              /* "yarl/_quoting_c.pyx":262
+              /* "yarl/_quoting_c.pyx":236
  *                     if ch < 128:
  *                         if bit_at(self._protected_table, ch):
  *                             if _write_pct(writer, ch, True) < 0:             # <<<<<<<<<<<<<<
@@ -4041,7 +3751,7 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_7_Quoter__do_quote(struct __pyx_obj_
  */
             }
 
-            /* "yarl/_quoting_c.pyx":264
+            /* "yarl/_quoting_c.pyx":238
  *                             if _write_pct(writer, ch, True) < 0:
  *                                 raise
  *                             continue             # <<<<<<<<<<<<<<
@@ -4050,8 +3760,8 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_7_Quoter__do_quote(struct __pyx_obj_
  */
             goto __pyx_L3_continue;
 
-            /* "yarl/_quoting_c.pyx":261
- * 
+            /* "yarl/_quoting_c.pyx":235
+ *                     idx += 2
  *                     if ch < 128:
  *                         if bit_at(self._protected_table, ch):             # <<<<<<<<<<<<<<
  *                             if _write_pct(writer, ch, True) < 0:
@@ -4059,36 +3769,36 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_7_Quoter__do_quote(struct __pyx_obj_
  */
           }
 
-          /* "yarl/_quoting_c.pyx":266
+          /* "yarl/_quoting_c.pyx":240
  *                             continue
  * 
  *                         if bit_at(self._safe_table, ch):             # <<<<<<<<<<<<<<
  *                             if _write_char(writer, ch, True) < 0:
  *                                 raise
  */
-          __pyx_t_8 = (__pyx_f_4yarl_10_quoting_c_bit_at(__pyx_v_self->_safe_table, __pyx_v_ch) != 0);
-          if (__pyx_t_8) {
+          __pyx_t_2 = (__pyx_f_4yarl_10_quoting_c_bit_at(__pyx_v_self->_safe_table, __pyx_v_ch) != 0);
+          if (__pyx_t_2) {
 
-            /* "yarl/_quoting_c.pyx":267
+            /* "yarl/_quoting_c.pyx":241
  * 
  *                         if bit_at(self._safe_table, ch):
  *                             if _write_char(writer, ch, True) < 0:             # <<<<<<<<<<<<<<
  *                                 raise
  *                             continue
  */
-            __pyx_t_8 = ((__pyx_f_4yarl_10_quoting_c__write_char(__pyx_v_writer, __pyx_v_ch, 1) < 0) != 0);
-            if (unlikely(__pyx_t_8)) {
+            __pyx_t_2 = ((__pyx_f_4yarl_10_quoting_c__write_char(__pyx_v_writer, __pyx_v_ch, 1) < 0) != 0);
+            if (unlikely(__pyx_t_2)) {
 
-              /* "yarl/_quoting_c.pyx":268
+              /* "yarl/_quoting_c.pyx":242
  *                         if bit_at(self._safe_table, ch):
  *                             if _write_char(writer, ch, True) < 0:
  *                                 raise             # <<<<<<<<<<<<<<
  *                             continue
  * 
  */
-              __Pyx_ReraiseException(); __PYX_ERR(0, 268, __pyx_L1_error)
+              __Pyx_ReraiseException(); __PYX_ERR(0, 242, __pyx_L1_error)
 
-              /* "yarl/_quoting_c.pyx":267
+              /* "yarl/_quoting_c.pyx":241
  * 
  *                         if bit_at(self._safe_table, ch):
  *                             if _write_char(writer, ch, True) < 0:             # <<<<<<<<<<<<<<
@@ -4097,16 +3807,16 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_7_Quoter__do_quote(struct __pyx_obj_
  */
             }
 
-            /* "yarl/_quoting_c.pyx":269
+            /* "yarl/_quoting_c.pyx":243
  *                             if _write_char(writer, ch, True) < 0:
  *                                 raise
  *                             continue             # <<<<<<<<<<<<<<
  * 
- *                     if _write_pct_check(writer, ch, pct) < 0:
+ *                     changed = (_is_lower_hex(val[idx - 2]) or
  */
             goto __pyx_L3_continue;
 
-            /* "yarl/_quoting_c.pyx":266
+            /* "yarl/_quoting_c.pyx":240
  *                             continue
  * 
  *                         if bit_at(self._safe_table, ch):             # <<<<<<<<<<<<<<
@@ -4115,136 +3825,132 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_7_Quoter__do_quote(struct __pyx_obj_
  */
           }
 
-          /* "yarl/_quoting_c.pyx":260
- *                         continue
- * 
+          /* "yarl/_quoting_c.pyx":234
+ *                 if ch != <Py_UCS4>-1:
+ *                     idx += 2
  *                     if ch < 128:             # <<<<<<<<<<<<<<
  *                         if bit_at(self._protected_table, ch):
  *                             if _write_pct(writer, ch, True) < 0:
  */
         }
 
-        /* "yarl/_quoting_c.pyx":271
+        /* "yarl/_quoting_c.pyx":245
  *                             continue
  * 
- *                     if _write_pct_check(writer, ch, pct) < 0:             # <<<<<<<<<<<<<<
- *                         raise
- *                 continue
+ *                     changed = (_is_lower_hex(val[idx - 2]) or             # <<<<<<<<<<<<<<
+ *                                _is_lower_hex(val[idx - 1]))
+ *                     if _write_pct(writer, ch, changed) < 0:
  */
-        __pyx_t_8 = ((__pyx_f_4yarl_10_quoting_c__write_pct_check(__pyx_v_writer, __pyx_v_ch, __pyx_v_pct) < 0) != 0);
-        if (unlikely(__pyx_t_8)) {
-
-          /* "yarl/_quoting_c.pyx":272
- * 
- *                     if _write_pct_check(writer, ch, pct) < 0:
- *                         raise             # <<<<<<<<<<<<<<
- *                 continue
- * 
- */
-          __Pyx_ReraiseException(); __PYX_ERR(0, 272, __pyx_L1_error)
-
-          /* "yarl/_quoting_c.pyx":271
- *                             continue
- * 
- *                     if _write_pct_check(writer, ch, pct) < 0:             # <<<<<<<<<<<<<<
- *                         raise
- *                 continue
- */
+        __pyx_t_5 = (__pyx_v_idx - 2);
+        __pyx_t_6 = __Pyx_GetItemInt_Unicode(__pyx_v_val, __pyx_t_5, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(__pyx_t_6 == (Py_UCS4)-1)) __PYX_ERR(0, 245, __pyx_L1_error)
+        __pyx_t_8 = __pyx_f_4yarl_10_quoting_c__is_lower_hex(__pyx_t_6);
+        if (!__pyx_t_8) {
+        } else {
+          __pyx_t_7 = __pyx_t_8;
+          goto __pyx_L15_bool_binop_done;
         }
+
+        /* "yarl/_quoting_c.pyx":246
+ * 
+ *                     changed = (_is_lower_hex(val[idx - 2]) or
+ *                                _is_lower_hex(val[idx - 1]))             # <<<<<<<<<<<<<<
+ *                     if _write_pct(writer, ch, changed) < 0:
+ *                         raise
+ */
+        __pyx_t_5 = (__pyx_v_idx - 1);
+        __pyx_t_6 = __Pyx_GetItemInt_Unicode(__pyx_v_val, __pyx_t_5, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(__pyx_t_6 == (Py_UCS4)-1)) __PYX_ERR(0, 246, __pyx_L1_error)
+        __pyx_t_8 = __pyx_f_4yarl_10_quoting_c__is_lower_hex(__pyx_t_6);
+        __pyx_t_7 = __pyx_t_8;
+        __pyx_L15_bool_binop_done:;
+        __pyx_v_changed = __pyx_t_7;
 
         /* "yarl/_quoting_c.pyx":247
- *                 pct[has_pct-1] = ch
- *                 has_pct += 1
- *                 if has_pct == 3:             # <<<<<<<<<<<<<<
- *                     ch = _restore_ch(pct[0], pct[1])
- *                     has_pct = 0
+ *                     changed = (_is_lower_hex(val[idx - 2]) or
+ *                                _is_lower_hex(val[idx - 1]))
+ *                     if _write_pct(writer, ch, changed) < 0:             # <<<<<<<<<<<<<<
+ *                         raise
+ *                     continue
+ */
+        __pyx_t_2 = ((__pyx_f_4yarl_10_quoting_c__write_pct(__pyx_v_writer, __pyx_v_ch, __pyx_v_changed) < 0) != 0);
+        if (unlikely(__pyx_t_2)) {
+
+          /* "yarl/_quoting_c.pyx":248
+ *                                _is_lower_hex(val[idx - 1]))
+ *                     if _write_pct(writer, ch, changed) < 0:
+ *                         raise             # <<<<<<<<<<<<<<
+ *                     continue
+ *                 else:
+ */
+          __Pyx_ReraiseException(); __PYX_ERR(0, 248, __pyx_L1_error)
+
+          /* "yarl/_quoting_c.pyx":247
+ *                     changed = (_is_lower_hex(val[idx - 2]) or
+ *                                _is_lower_hex(val[idx - 1]))
+ *                     if _write_pct(writer, ch, changed) < 0:             # <<<<<<<<<<<<<<
+ *                         raise
+ *                     continue
+ */
+        }
+
+        /* "yarl/_quoting_c.pyx":249
+ *                     if _write_pct(writer, ch, changed) < 0:
+ *                         raise
+ *                     continue             # <<<<<<<<<<<<<<
+ *                 else:
+ *                     ch = '%'
+ */
+        goto __pyx_L3_continue;
+
+        /* "yarl/_quoting_c.pyx":232
+ *             if ch == '%' and self._requote and idx <= length - 2:
+ *                 ch = _restore_ch(val[idx], val[idx + 1])
+ *                 if ch != <Py_UCS4>-1:             # <<<<<<<<<<<<<<
+ *                     idx += 2
+ *                     if ch < 128:
  */
       }
 
-      /* "yarl/_quoting_c.pyx":273
- *                     if _write_pct_check(writer, ch, pct) < 0:
- *                         raise
- *                 continue             # <<<<<<<<<<<<<<
- * 
- *             elif ch == '%' and self._requote:
- */
-      goto __pyx_L3_continue;
-
-      /* "yarl/_quoting_c.pyx":244
- * 
- *         for ch in val:
- *             if has_pct:             # <<<<<<<<<<<<<<
- *                 pct[has_pct-1] = ch
- *                 has_pct += 1
- */
-    }
-
-    /* "yarl/_quoting_c.pyx":275
- *                 continue
- * 
- *             elif ch == '%' and self._requote:             # <<<<<<<<<<<<<<
- *                 has_pct = 1
- *                 continue
- */
-    __pyx_t_9 = ((__pyx_v_ch == 37) != 0);
-    if (__pyx_t_9) {
-    } else {
-      __pyx_t_8 = __pyx_t_9;
-      goto __pyx_L17_bool_binop_done;
-    }
-    __pyx_t_9 = (__pyx_v_self->_requote != 0);
-    __pyx_t_8 = __pyx_t_9;
-    __pyx_L17_bool_binop_done:;
-    if (__pyx_t_8) {
-
-      /* "yarl/_quoting_c.pyx":276
- * 
- *             elif ch == '%' and self._requote:
- *                 has_pct = 1             # <<<<<<<<<<<<<<
- *                 continue
- * 
- */
-      __pyx_v_has_pct = 1;
-
-      /* "yarl/_quoting_c.pyx":277
- *             elif ch == '%' and self._requote:
- *                 has_pct = 1
- *                 continue             # <<<<<<<<<<<<<<
+      /* "yarl/_quoting_c.pyx":251
+ *                     continue
+ *                 else:
+ *                     ch = '%'             # <<<<<<<<<<<<<<
  * 
  *             if self._write(writer, ch) < 0:
  */
-      goto __pyx_L3_continue;
+      /*else*/ {
+        __pyx_v_ch = 37;
+      }
 
-      /* "yarl/_quoting_c.pyx":275
- *                 continue
- * 
- *             elif ch == '%' and self._requote:             # <<<<<<<<<<<<<<
- *                 has_pct = 1
- *                 continue
+      /* "yarl/_quoting_c.pyx":230
+ *             ch = val[idx]
+ *             idx += 1
+ *             if ch == '%' and self._requote and idx <= length - 2:             # <<<<<<<<<<<<<<
+ *                 ch = _restore_ch(val[idx], val[idx + 1])
+ *                 if ch != <Py_UCS4>-1:
  */
     }
 
-    /* "yarl/_quoting_c.pyx":279
- *                 continue
+    /* "yarl/_quoting_c.pyx":253
+ *                     ch = '%'
  * 
  *             if self._write(writer, ch) < 0:             # <<<<<<<<<<<<<<
  *                 raise
  * 
  */
-    __pyx_t_8 = ((__pyx_f_4yarl_10_quoting_c_7_Quoter__write(__pyx_v_self, __pyx_v_writer, __pyx_v_ch) < 0) != 0);
-    if (unlikely(__pyx_t_8)) {
+    __pyx_t_2 = ((__pyx_f_4yarl_10_quoting_c_7_Quoter__write(__pyx_v_self, __pyx_v_writer, __pyx_v_ch) < 0) != 0);
+    if (unlikely(__pyx_t_2)) {
 
-      /* "yarl/_quoting_c.pyx":280
+      /* "yarl/_quoting_c.pyx":254
  * 
  *             if self._write(writer, ch) < 0:
  *                 raise             # <<<<<<<<<<<<<<
  * 
- *         if has_pct:
+ *         if not writer.changed:
  */
-      __Pyx_ReraiseException(); __PYX_ERR(0, 280, __pyx_L1_error)
+      __Pyx_ReraiseException(); __PYX_ERR(0, 254, __pyx_L1_error)
 
-      /* "yarl/_quoting_c.pyx":279
- *                 continue
+      /* "yarl/_quoting_c.pyx":253
+ *                     ch = '%'
  * 
  *             if self._write(writer, ch) < 0:             # <<<<<<<<<<<<<<
  *                 raise
@@ -4253,113 +3959,18 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_7_Quoter__do_quote(struct __pyx_obj_
     }
     __pyx_L3_continue:;
   }
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "yarl/_quoting_c.pyx":282
+  /* "yarl/_quoting_c.pyx":256
  *                 raise
- * 
- *         if has_pct:             # <<<<<<<<<<<<<<
- *             if _write_percent(writer) < 0:
- *                 raise
- */
-  __pyx_t_8 = (__pyx_v_has_pct != 0);
-  if (__pyx_t_8) {
-
-    /* "yarl/_quoting_c.pyx":283
- * 
- *         if has_pct:
- *             if _write_percent(writer) < 0:             # <<<<<<<<<<<<<<
- *                 raise
- *             if has_pct > 1:  # the value is 2
- */
-    __pyx_t_8 = ((__pyx_f_4yarl_10_quoting_c__write_percent(__pyx_v_writer) < 0) != 0);
-    if (unlikely(__pyx_t_8)) {
-
-      /* "yarl/_quoting_c.pyx":284
- *         if has_pct:
- *             if _write_percent(writer) < 0:
- *                 raise             # <<<<<<<<<<<<<<
- *             if has_pct > 1:  # the value is 2
- *                 if self._write(writer, ch) < 0:
- */
-      __Pyx_ReraiseException(); __PYX_ERR(0, 284, __pyx_L1_error)
-
-      /* "yarl/_quoting_c.pyx":283
- * 
- *         if has_pct:
- *             if _write_percent(writer) < 0:             # <<<<<<<<<<<<<<
- *                 raise
- *             if has_pct > 1:  # the value is 2
- */
-    }
-
-    /* "yarl/_quoting_c.pyx":285
- *             if _write_percent(writer) < 0:
- *                 raise
- *             if has_pct > 1:  # the value is 2             # <<<<<<<<<<<<<<
- *                 if self._write(writer, ch) < 0:
- *                     raise
- */
-    __pyx_t_8 = ((__pyx_v_has_pct > 1) != 0);
-    if (__pyx_t_8) {
-
-      /* "yarl/_quoting_c.pyx":286
- *                 raise
- *             if has_pct > 1:  # the value is 2
- *                 if self._write(writer, ch) < 0:             # <<<<<<<<<<<<<<
- *                     raise
- * 
- */
-      __pyx_t_8 = ((__pyx_f_4yarl_10_quoting_c_7_Quoter__write(__pyx_v_self, __pyx_v_writer, __pyx_v_ch) < 0) != 0);
-      if (unlikely(__pyx_t_8)) {
-
-        /* "yarl/_quoting_c.pyx":287
- *             if has_pct > 1:  # the value is 2
- *                 if self._write(writer, ch) < 0:
- *                     raise             # <<<<<<<<<<<<<<
- * 
- *         if not writer.changed:
- */
-        __Pyx_ReraiseException(); __PYX_ERR(0, 287, __pyx_L1_error)
-
-        /* "yarl/_quoting_c.pyx":286
- *                 raise
- *             if has_pct > 1:  # the value is 2
- *                 if self._write(writer, ch) < 0:             # <<<<<<<<<<<<<<
- *                     raise
- * 
- */
-      }
-
-      /* "yarl/_quoting_c.pyx":285
- *             if _write_percent(writer) < 0:
- *                 raise
- *             if has_pct > 1:  # the value is 2             # <<<<<<<<<<<<<<
- *                 if self._write(writer, ch) < 0:
- *                     raise
- */
-    }
-
-    /* "yarl/_quoting_c.pyx":282
- *                 raise
- * 
- *         if has_pct:             # <<<<<<<<<<<<<<
- *             if _write_percent(writer) < 0:
- *                 raise
- */
-  }
-
-  /* "yarl/_quoting_c.pyx":289
- *                     raise
  * 
  *         if not writer.changed:             # <<<<<<<<<<<<<<
  *             return val
  *         else:
  */
-  __pyx_t_8 = ((!(__pyx_v_writer->changed != 0)) != 0);
-  if (__pyx_t_8) {
+  __pyx_t_2 = ((!(__pyx_v_writer->changed != 0)) != 0);
+  if (__pyx_t_2) {
 
-    /* "yarl/_quoting_c.pyx":290
+    /* "yarl/_quoting_c.pyx":257
  * 
  *         if not writer.changed:
  *             return val             # <<<<<<<<<<<<<<
@@ -4371,8 +3982,8 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_7_Quoter__do_quote(struct __pyx_obj_
     __pyx_r = __pyx_v_val;
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":289
- *                     raise
+    /* "yarl/_quoting_c.pyx":256
+ *                 raise
  * 
  *         if not writer.changed:             # <<<<<<<<<<<<<<
  *             return val
@@ -4380,7 +3991,7 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_7_Quoter__do_quote(struct __pyx_obj_
  */
   }
 
-  /* "yarl/_quoting_c.pyx":292
+  /* "yarl/_quoting_c.pyx":259
  *             return val
  *         else:
  *             return PyUnicode_DecodeASCII(writer.buf, writer.pos, "strict")             # <<<<<<<<<<<<<<
@@ -4389,25 +4000,24 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_7_Quoter__do_quote(struct __pyx_obj_
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_10 = PyUnicode_DecodeASCII(__pyx_v_writer->buf, __pyx_v_writer->pos, ((char *)"strict")); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 292, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
-    __pyx_r = ((PyObject*)__pyx_t_10);
-    __pyx_t_10 = 0;
+    __pyx_t_9 = PyUnicode_DecodeASCII(__pyx_v_writer->buf, __pyx_v_writer->pos, ((char *)"strict")); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 259, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_r = ((PyObject*)__pyx_t_9);
+    __pyx_t_9 = 0;
     goto __pyx_L0;
   }
 
-  /* "yarl/_quoting_c.pyx":237
+  /* "yarl/_quoting_c.pyx":221
  *             _release_writer(&writer)
  * 
  *     cdef str _do_quote(self, str val, Writer *writer):             # <<<<<<<<<<<<<<
  *         cdef Py_UCS4 ch
- *         cdef int has_pct = 0
+ *         cdef int changed
  */
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_9);
   __Pyx_AddTraceback("yarl._quoting_c._Quoter._do_quote", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -4416,7 +4026,7 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_7_Quoter__do_quote(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "yarl/_quoting_c.pyx":294
+/* "yarl/_quoting_c.pyx":261
  *             return PyUnicode_DecodeASCII(writer.buf, writer.pos, "strict")
  * 
  *     cdef inline int _write(self, Writer *writer, Py_UCS4 ch):             # <<<<<<<<<<<<<<
@@ -4431,7 +4041,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_7_Quoter__write(struct __pyx
   int __pyx_t_2;
   __Pyx_RefNannySetupContext("_write", 0);
 
-  /* "yarl/_quoting_c.pyx":295
+  /* "yarl/_quoting_c.pyx":262
  * 
  *     cdef inline int _write(self, Writer *writer, Py_UCS4 ch):
  *         if self._qs:             # <<<<<<<<<<<<<<
@@ -4441,7 +4051,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_7_Quoter__write(struct __pyx
   __pyx_t_1 = (__pyx_v_self->_qs != 0);
   if (__pyx_t_1) {
 
-    /* "yarl/_quoting_c.pyx":296
+    /* "yarl/_quoting_c.pyx":263
  *     cdef inline int _write(self, Writer *writer, Py_UCS4 ch):
  *         if self._qs:
  *             if ch == ' ':             # <<<<<<<<<<<<<<
@@ -4451,7 +4061,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_7_Quoter__write(struct __pyx
     __pyx_t_1 = ((__pyx_v_ch == 32) != 0);
     if (__pyx_t_1) {
 
-      /* "yarl/_quoting_c.pyx":297
+      /* "yarl/_quoting_c.pyx":264
  *         if self._qs:
  *             if ch == ' ':
  *                 return _write_char(writer, '+', True)             # <<<<<<<<<<<<<<
@@ -4461,7 +4071,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_7_Quoter__write(struct __pyx
       __pyx_r = __pyx_f_4yarl_10_quoting_c__write_char(__pyx_v_writer, 43, 1);
       goto __pyx_L0;
 
-      /* "yarl/_quoting_c.pyx":296
+      /* "yarl/_quoting_c.pyx":263
  *     cdef inline int _write(self, Writer *writer, Py_UCS4 ch):
  *         if self._qs:
  *             if ch == ' ':             # <<<<<<<<<<<<<<
@@ -4470,7 +4080,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_7_Quoter__write(struct __pyx
  */
     }
 
-    /* "yarl/_quoting_c.pyx":295
+    /* "yarl/_quoting_c.pyx":262
  * 
  *     cdef inline int _write(self, Writer *writer, Py_UCS4 ch):
  *         if self._qs:             # <<<<<<<<<<<<<<
@@ -4479,7 +4089,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_7_Quoter__write(struct __pyx
  */
   }
 
-  /* "yarl/_quoting_c.pyx":299
+  /* "yarl/_quoting_c.pyx":266
  *                 return _write_char(writer, '+', True)
  * 
  *         if ch < 128 and bit_at(self._safe_table, ch):             # <<<<<<<<<<<<<<
@@ -4497,7 +4107,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_7_Quoter__write(struct __pyx
   __pyx_L6_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "yarl/_quoting_c.pyx":300
+    /* "yarl/_quoting_c.pyx":267
  * 
  *         if ch < 128 and bit_at(self._safe_table, ch):
  *             return _write_char(writer, ch, False)             # <<<<<<<<<<<<<<
@@ -4507,7 +4117,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_7_Quoter__write(struct __pyx
     __pyx_r = __pyx_f_4yarl_10_quoting_c__write_char(__pyx_v_writer, __pyx_v_ch, 0);
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":299
+    /* "yarl/_quoting_c.pyx":266
  *                 return _write_char(writer, '+', True)
  * 
  *         if ch < 128 and bit_at(self._safe_table, ch):             # <<<<<<<<<<<<<<
@@ -4516,7 +4126,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_7_Quoter__write(struct __pyx
  */
   }
 
-  /* "yarl/_quoting_c.pyx":302
+  /* "yarl/_quoting_c.pyx":269
  *             return _write_char(writer, ch, False)
  * 
  *         return _write_utf8(writer, ch)             # <<<<<<<<<<<<<<
@@ -4526,7 +4136,7 @@ static CYTHON_INLINE int __pyx_f_4yarl_10_quoting_c_7_Quoter__write(struct __pyx
   __pyx_r = __pyx_f_4yarl_10_quoting_c__write_utf8(__pyx_v_writer, __pyx_v_ch);
   goto __pyx_L0;
 
-  /* "yarl/_quoting_c.pyx":294
+  /* "yarl/_quoting_c.pyx":261
  *             return PyUnicode_DecodeASCII(writer.buf, writer.pos, "strict")
  * 
  *     cdef inline int _write(self, Writer *writer, Py_UCS4 ch):             # <<<<<<<<<<<<<<
@@ -4853,7 +4463,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_7_Quoter_6__setstate_cython__(struc
   return __pyx_r;
 }
 
-/* "yarl/_quoting_c.pyx":311
+/* "yarl/_quoting_c.pyx":278
  *     cdef _Quoter _qs_quoter
  * 
  *     def __init__(self, *, unsafe='', qs=False):             # <<<<<<<<<<<<<<
@@ -4893,7 +4503,7 @@ static int __pyx_pw_4yarl_10_quoting_c_9_Unquoter_1__init__(PyObject *__pyx_v_se
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, 0, "__init__") < 0)) __PYX_ERR(0, 311, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, 0, "__init__") < 0)) __PYX_ERR(0, 278, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 0) {
       goto __pyx_L5_argtuple_error;
@@ -4904,7 +4514,7 @@ static int __pyx_pw_4yarl_10_quoting_c_9_Unquoter_1__init__(PyObject *__pyx_v_se
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 0, 0, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 311, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 0, 0, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 278, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("yarl._quoting_c._Unquoter.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4928,14 +4538,14 @@ static int __pyx_pf_4yarl_10_quoting_c_9_Unquoter___init__(struct __pyx_obj_4yar
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "yarl/_quoting_c.pyx":312
+  /* "yarl/_quoting_c.pyx":279
  * 
  *     def __init__(self, *, unsafe='', qs=False):
  *         self._unsafe = unsafe             # <<<<<<<<<<<<<<
  *         self._qs = qs
  *         self._quoter = _Quoter()
  */
-  if (!(likely(PyUnicode_CheckExact(__pyx_v_unsafe))||((__pyx_v_unsafe) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_v_unsafe)->tp_name), 0))) __PYX_ERR(0, 312, __pyx_L1_error)
+  if (!(likely(PyUnicode_CheckExact(__pyx_v_unsafe))||((__pyx_v_unsafe) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_v_unsafe)->tp_name), 0))) __PYX_ERR(0, 279, __pyx_L1_error)
   __pyx_t_1 = __pyx_v_unsafe;
   __Pyx_INCREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
@@ -4944,24 +4554,24 @@ static int __pyx_pf_4yarl_10_quoting_c_9_Unquoter___init__(struct __pyx_obj_4yar
   __pyx_v_self->_unsafe = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "yarl/_quoting_c.pyx":313
+  /* "yarl/_quoting_c.pyx":280
  *     def __init__(self, *, unsafe='', qs=False):
  *         self._unsafe = unsafe
  *         self._qs = qs             # <<<<<<<<<<<<<<
  *         self._quoter = _Quoter()
  *         self._qs_quoter = _Quoter(qs=True)
  */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_qs); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 313, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_qs); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 280, __pyx_L1_error)
   __pyx_v_self->_qs = __pyx_t_2;
 
-  /* "yarl/_quoting_c.pyx":314
+  /* "yarl/_quoting_c.pyx":281
  *         self._unsafe = unsafe
  *         self._qs = qs
  *         self._quoter = _Quoter()             # <<<<<<<<<<<<<<
  *         self._qs_quoter = _Quoter(qs=True)
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_4yarl_10_quoting_c__Quoter)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 314, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_4yarl_10_quoting_c__Quoter)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 281, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->_quoter);
@@ -4969,17 +4579,17 @@ static int __pyx_pf_4yarl_10_quoting_c_9_Unquoter___init__(struct __pyx_obj_4yar
   __pyx_v_self->_quoter = ((struct __pyx_obj_4yarl_10_quoting_c__Quoter *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "yarl/_quoting_c.pyx":315
+  /* "yarl/_quoting_c.pyx":282
  *         self._qs = qs
  *         self._quoter = _Quoter()
  *         self._qs_quoter = _Quoter(qs=True)             # <<<<<<<<<<<<<<
  * 
  *     def __call__(self, val):
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 315, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 282, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_qs, Py_True) < 0) __PYX_ERR(0, 315, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_4yarl_10_quoting_c__Quoter), __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 315, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_qs, Py_True) < 0) __PYX_ERR(0, 282, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_4yarl_10_quoting_c__Quoter), __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 282, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_GIVEREF(__pyx_t_3);
@@ -4988,7 +4598,7 @@ static int __pyx_pf_4yarl_10_quoting_c_9_Unquoter___init__(struct __pyx_obj_4yar
   __pyx_v_self->_qs_quoter = ((struct __pyx_obj_4yarl_10_quoting_c__Quoter *)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "yarl/_quoting_c.pyx":311
+  /* "yarl/_quoting_c.pyx":278
  *     cdef _Quoter _qs_quoter
  * 
  *     def __init__(self, *, unsafe='', qs=False):             # <<<<<<<<<<<<<<
@@ -5009,7 +4619,7 @@ static int __pyx_pf_4yarl_10_quoting_c_9_Unquoter___init__(struct __pyx_obj_4yar
   return __pyx_r;
 }
 
-/* "yarl/_quoting_c.pyx":317
+/* "yarl/_quoting_c.pyx":284
  *         self._qs_quoter = _Quoter(qs=True)
  * 
  *     def __call__(self, val):             # <<<<<<<<<<<<<<
@@ -5046,7 +4656,7 @@ static PyObject *__pyx_pw_4yarl_10_quoting_c_9_Unquoter_3__call__(PyObject *__py
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__call__") < 0)) __PYX_ERR(0, 317, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__call__") < 0)) __PYX_ERR(0, 284, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 1) {
       goto __pyx_L5_argtuple_error;
@@ -5057,7 +4667,7 @@ static PyObject *__pyx_pw_4yarl_10_quoting_c_9_Unquoter_3__call__(PyObject *__py
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__call__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 317, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__call__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 284, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("yarl._quoting_c._Unquoter.__call__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -5082,7 +4692,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_9_Unquoter_2__call__(struct __pyx_o
   __Pyx_RefNannySetupContext("__call__", 0);
   __Pyx_INCREF(__pyx_v_val);
 
-  /* "yarl/_quoting_c.pyx":318
+  /* "yarl/_quoting_c.pyx":285
  * 
  *     def __call__(self, val):
  *         if val is None:             # <<<<<<<<<<<<<<
@@ -5093,7 +4703,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_9_Unquoter_2__call__(struct __pyx_o
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "yarl/_quoting_c.pyx":319
+    /* "yarl/_quoting_c.pyx":286
  *     def __call__(self, val):
  *         if val is None:
  *             return None             # <<<<<<<<<<<<<<
@@ -5104,7 +4714,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_9_Unquoter_2__call__(struct __pyx_o
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":318
+    /* "yarl/_quoting_c.pyx":285
  * 
  *     def __call__(self, val):
  *         if val is None:             # <<<<<<<<<<<<<<
@@ -5113,7 +4723,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_9_Unquoter_2__call__(struct __pyx_o
  */
   }
 
-  /* "yarl/_quoting_c.pyx":320
+  /* "yarl/_quoting_c.pyx":287
  *         if val is None:
  *             return None
  *         if type(val) is not str:             # <<<<<<<<<<<<<<
@@ -5124,7 +4734,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_9_Unquoter_2__call__(struct __pyx_o
   __pyx_t_1 = (__pyx_t_2 != 0);
   if (__pyx_t_1) {
 
-    /* "yarl/_quoting_c.pyx":321
+    /* "yarl/_quoting_c.pyx":288
  *             return None
  *         if type(val) is not str:
  *             if isinstance(val, str):             # <<<<<<<<<<<<<<
@@ -5135,19 +4745,19 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_9_Unquoter_2__call__(struct __pyx_o
     __pyx_t_2 = (__pyx_t_1 != 0);
     if (likely(__pyx_t_2)) {
 
-      /* "yarl/_quoting_c.pyx":323
+      /* "yarl/_quoting_c.pyx":290
  *             if isinstance(val, str):
  *                 # derived from str
  *                 val = str(val)             # <<<<<<<<<<<<<<
  *             else:
  *                 raise TypeError("Argument should be str")
  */
-      __pyx_t_3 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyUnicode_Type)), __pyx_v_val); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 323, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyUnicode_Type)), __pyx_v_val); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 290, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF_SET(__pyx_v_val, __pyx_t_3);
       __pyx_t_3 = 0;
 
-      /* "yarl/_quoting_c.pyx":321
+      /* "yarl/_quoting_c.pyx":288
  *             return None
  *         if type(val) is not str:
  *             if isinstance(val, str):             # <<<<<<<<<<<<<<
@@ -5157,7 +4767,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_9_Unquoter_2__call__(struct __pyx_o
       goto __pyx_L5;
     }
 
-    /* "yarl/_quoting_c.pyx":325
+    /* "yarl/_quoting_c.pyx":292
  *                 val = str(val)
  *             else:
  *                 raise TypeError("Argument should be str")             # <<<<<<<<<<<<<<
@@ -5165,15 +4775,15 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_9_Unquoter_2__call__(struct __pyx_o
  * 
  */
     /*else*/ {
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 325, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 292, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __PYX_ERR(0, 325, __pyx_L1_error)
+      __PYX_ERR(0, 292, __pyx_L1_error)
     }
     __pyx_L5:;
 
-    /* "yarl/_quoting_c.pyx":320
+    /* "yarl/_quoting_c.pyx":287
  *         if val is None:
  *             return None
  *         if type(val) is not str:             # <<<<<<<<<<<<<<
@@ -5182,7 +4792,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_9_Unquoter_2__call__(struct __pyx_o
  */
   }
 
-  /* "yarl/_quoting_c.pyx":326
+  /* "yarl/_quoting_c.pyx":293
  *             else:
  *                 raise TypeError("Argument should be str")
  *         return self._do_unquote(<str>val)             # <<<<<<<<<<<<<<
@@ -5190,13 +4800,13 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_9_Unquoter_2__call__(struct __pyx_o
  *     cdef str _do_unquote(self, str val):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_3 = ((struct __pyx_vtabstruct_4yarl_10_quoting_c__Unquoter *)__pyx_v_self->__pyx_vtab)->_do_unquote(__pyx_v_self, ((PyObject*)__pyx_v_val)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 326, __pyx_L1_error)
+  __pyx_t_3 = ((struct __pyx_vtabstruct_4yarl_10_quoting_c__Unquoter *)__pyx_v_self->__pyx_vtab)->_do_unquote(__pyx_v_self, ((PyObject*)__pyx_v_val)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 293, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_r = __pyx_t_3;
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "yarl/_quoting_c.pyx":317
+  /* "yarl/_quoting_c.pyx":284
  *         self._qs_quoter = _Quoter(qs=True)
  * 
  *     def __call__(self, val):             # <<<<<<<<<<<<<<
@@ -5216,7 +4826,7 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_9_Unquoter_2__call__(struct __pyx_o
   return __pyx_r;
 }
 
-/* "yarl/_quoting_c.pyx":328
+/* "yarl/_quoting_c.pyx":295
  *         return self._do_unquote(<str>val)
  * 
  *     cdef str _do_unquote(self, str val):             # <<<<<<<<<<<<<<
@@ -5225,89 +4835,76 @@ static PyObject *__pyx_pf_4yarl_10_quoting_c_9_Unquoter_2__call__(struct __pyx_o
  */
 
 static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_obj_4yarl_10_quoting_c__Unquoter *__pyx_v_self, PyObject *__pyx_v_val) {
-  PyObject *__pyx_v_pct = 0;
   PyObject *__pyx_v_last_pct = 0;
   PyObject *__pyx_v_pcts = 0;
   PyObject *__pyx_v_ret = 0;
   PyObject *__pyx_v_unquoted = 0;
-  PyObject *__pyx_v_ch = NULL;
+  Py_UCS4 __pyx_v_ch;
+  int __pyx_v_idx;
+  int __pyx_v_length;
   PyObject *__pyx_v_h = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   Py_ssize_t __pyx_t_1;
   int __pyx_t_2;
   PyObject *__pyx_t_3 = NULL;
-  PyObject *__pyx_t_4 = NULL;
-  Py_ssize_t __pyx_t_5;
-  void *__pyx_t_6;
-  int __pyx_t_7;
+  Py_UCS4 __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  PyObject *__pyx_t_7 = NULL;
   int __pyx_t_8;
-  Py_ssize_t __pyx_t_9;
-  Py_ssize_t __pyx_t_10;
+  int __pyx_t_9;
+  PyObject *__pyx_t_10 = NULL;
   PyObject *__pyx_t_11 = NULL;
-  PyObject *__pyx_t_12 = NULL;
+  int __pyx_t_12;
   int __pyx_t_13;
-  PyObject *__pyx_t_14 = NULL;
-  PyObject *__pyx_t_15 = NULL;
-  PyObject *__pyx_t_16 = NULL;
-  int __pyx_t_17;
-  int __pyx_t_18;
-  long __pyx_t_19;
-  PyObject *(*__pyx_t_20)(PyObject *);
+  long __pyx_t_14;
+  Py_UCS4 __pyx_t_15;
+  PyObject *(*__pyx_t_16)(PyObject *);
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_do_unquote", 0);
 
-  /* "yarl/_quoting_c.pyx":329
+  /* "yarl/_quoting_c.pyx":296
  * 
  *     cdef str _do_unquote(self, str val):
  *         if len(val) == 0:             # <<<<<<<<<<<<<<
  *             return val
- *         cdef str pct = ''
+ *         cdef str last_pct = ''
  */
   if (unlikely(__pyx_v_val == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 329, __pyx_L1_error)
+    __PYX_ERR(0, 296, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyUnicode_GET_LENGTH(__pyx_v_val); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 329, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyUnicode_GET_LENGTH(__pyx_v_val); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 296, __pyx_L1_error)
   __pyx_t_2 = ((__pyx_t_1 == 0) != 0);
   if (__pyx_t_2) {
 
-    /* "yarl/_quoting_c.pyx":330
+    /* "yarl/_quoting_c.pyx":297
  *     cdef str _do_unquote(self, str val):
  *         if len(val) == 0:
  *             return val             # <<<<<<<<<<<<<<
- *         cdef str pct = ''
  *         cdef str last_pct = ''
+ *         cdef bytearray pcts = bytearray()
  */
     __Pyx_XDECREF(__pyx_r);
     __Pyx_INCREF(__pyx_v_val);
     __pyx_r = __pyx_v_val;
     goto __pyx_L0;
 
-    /* "yarl/_quoting_c.pyx":329
+    /* "yarl/_quoting_c.pyx":296
  * 
  *     cdef str _do_unquote(self, str val):
  *         if len(val) == 0:             # <<<<<<<<<<<<<<
  *             return val
- *         cdef str pct = ''
+ *         cdef str last_pct = ''
  */
   }
 
-  /* "yarl/_quoting_c.pyx":331
+  /* "yarl/_quoting_c.pyx":298
  *         if len(val) == 0:
  *             return val
- *         cdef str pct = ''             # <<<<<<<<<<<<<<
- *         cdef str last_pct = ''
- *         cdef bytearray pcts = bytearray()
- */
-  __Pyx_INCREF(__pyx_kp_u_);
-  __pyx_v_pct = __pyx_kp_u_;
-
-  /* "yarl/_quoting_c.pyx":332
- *             return val
- *         cdef str pct = ''
  *         cdef str last_pct = ''             # <<<<<<<<<<<<<<
  *         cdef bytearray pcts = bytearray()
  *         cdef list ret = []
@@ -5315,167 +4912,95 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
   __Pyx_INCREF(__pyx_kp_u_);
   __pyx_v_last_pct = __pyx_kp_u_;
 
-  /* "yarl/_quoting_c.pyx":333
- *         cdef str pct = ''
+  /* "yarl/_quoting_c.pyx":299
+ *             return val
  *         cdef str last_pct = ''
  *         cdef bytearray pcts = bytearray()             # <<<<<<<<<<<<<<
  *         cdef list ret = []
  *         cdef str unquoted
  */
-  __pyx_t_3 = __Pyx_PyObject_CallNoArg(((PyObject *)(&PyByteArray_Type))); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 333, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_CallNoArg(((PyObject *)(&PyByteArray_Type))); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 299, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_v_pcts = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "yarl/_quoting_c.pyx":334
+  /* "yarl/_quoting_c.pyx":300
  *         cdef str last_pct = ''
  *         cdef bytearray pcts = bytearray()
  *         cdef list ret = []             # <<<<<<<<<<<<<<
  *         cdef str unquoted
- *         for ch in val:
+ *         cdef Py_UCS4 ch = 0
  */
-  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 334, __pyx_L1_error)
+  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 300, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_v_ret = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "yarl/_quoting_c.pyx":336
+  /* "yarl/_quoting_c.pyx":302
  *         cdef list ret = []
  *         cdef str unquoted
- *         for ch in val:             # <<<<<<<<<<<<<<
- *             if pct:
- *                 pct += ch
+ *         cdef Py_UCS4 ch = 0             # <<<<<<<<<<<<<<
+ *         cdef int idx = 0
+ *         cdef int length = len(val)
+ */
+  __pyx_v_ch = 0;
+
+  /* "yarl/_quoting_c.pyx":303
+ *         cdef str unquoted
+ *         cdef Py_UCS4 ch = 0
+ *         cdef int idx = 0             # <<<<<<<<<<<<<<
+ *         cdef int length = len(val)
+ * 
+ */
+  __pyx_v_idx = 0;
+
+  /* "yarl/_quoting_c.pyx":304
+ *         cdef Py_UCS4 ch = 0
+ *         cdef int idx = 0
+ *         cdef int length = len(val)             # <<<<<<<<<<<<<<
+ * 
+ *         while idx < length:
  */
   if (unlikely(__pyx_v_val == Py_None)) {
-    PyErr_SetString(PyExc_TypeError, "'NoneType' is not iterable");
-    __PYX_ERR(0, 336, __pyx_L1_error)
+    PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
+    __PYX_ERR(0, 304, __pyx_L1_error)
   }
-  __Pyx_INCREF(__pyx_v_val);
-  __pyx_t_4 = __pyx_v_val;
-  __pyx_t_8 = __Pyx_init_unicode_iteration(__pyx_t_4, (&__pyx_t_5), (&__pyx_t_6), (&__pyx_t_7)); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 336, __pyx_L1_error)
-  for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_5; __pyx_t_9++) {
-    __pyx_t_1 = __pyx_t_9;
-    __pyx_t_3 = PyUnicode_FromOrdinal(__Pyx_PyUnicode_READ(__pyx_t_7, __pyx_t_6, __pyx_t_1)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 336, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_XDECREF_SET(__pyx_v_ch, __pyx_t_3);
-    __pyx_t_3 = 0;
+  __pyx_t_1 = __Pyx_PyUnicode_GET_LENGTH(__pyx_v_val); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 304, __pyx_L1_error)
+  __pyx_v_length = __pyx_t_1;
 
-    /* "yarl/_quoting_c.pyx":337
- *         cdef str unquoted
- *         for ch in val:
- *             if pct:             # <<<<<<<<<<<<<<
- *                 pct += ch
- *                 if len(pct) == 3:  # pragma: no branch   # peephole optimizer
+  /* "yarl/_quoting_c.pyx":306
+ *         cdef int length = len(val)
+ * 
+ *         while idx < length:             # <<<<<<<<<<<<<<
+ *             ch = val[idx]
+ *             idx += 1
  */
-    __pyx_t_2 = (__pyx_v_pct != Py_None)&&(__Pyx_PyUnicode_IS_TRUE(__pyx_v_pct) != 0);
-    if (__pyx_t_2) {
+  while (1) {
+    __pyx_t_2 = ((__pyx_v_idx < __pyx_v_length) != 0);
+    if (!__pyx_t_2) break;
 
-      /* "yarl/_quoting_c.pyx":338
- *         for ch in val:
- *             if pct:
- *                 pct += ch             # <<<<<<<<<<<<<<
- *                 if len(pct) == 3:  # pragma: no branch   # peephole optimizer
- *                     pcts.append(int(pct[1:], base=16))
- */
-      __pyx_t_3 = PyNumber_InPlaceAdd(__pyx_v_pct, __pyx_v_ch); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 338, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      if (!(likely(PyUnicode_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 338, __pyx_L1_error)
-      __Pyx_DECREF_SET(__pyx_v_pct, ((PyObject*)__pyx_t_3));
-      __pyx_t_3 = 0;
-
-      /* "yarl/_quoting_c.pyx":339
- *             if pct:
- *                 pct += ch
- *                 if len(pct) == 3:  # pragma: no branch   # peephole optimizer             # <<<<<<<<<<<<<<
- *                     pcts.append(int(pct[1:], base=16))
- *                     last_pct = pct
- */
-      if (unlikely(__pyx_v_pct == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-        __PYX_ERR(0, 339, __pyx_L1_error)
-      }
-      __pyx_t_10 = __Pyx_PyUnicode_GET_LENGTH(__pyx_v_pct); if (unlikely(__pyx_t_10 == ((Py_ssize_t)-1))) __PYX_ERR(0, 339, __pyx_L1_error)
-      __pyx_t_2 = ((__pyx_t_10 == 3) != 0);
-      if (__pyx_t_2) {
-
-        /* "yarl/_quoting_c.pyx":340
- *                 pct += ch
- *                 if len(pct) == 3:  # pragma: no branch   # peephole optimizer
- *                     pcts.append(int(pct[1:], base=16))             # <<<<<<<<<<<<<<
- *                     last_pct = pct
- *                     pct = ''
- */
-        if (unlikely(__pyx_v_pct == Py_None)) {
-          PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-          __PYX_ERR(0, 340, __pyx_L1_error)
-        }
-        __pyx_t_3 = __Pyx_PyUnicode_Substring(__pyx_v_pct, 1, PY_SSIZE_T_MAX); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 340, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_11 = PyTuple_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 340, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_11);
-        __Pyx_GIVEREF(__pyx_t_3);
-        PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_3);
-        __pyx_t_3 = 0;
-        __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 340, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_base, __pyx_int_16) < 0) __PYX_ERR(0, 340, __pyx_L1_error)
-        __pyx_t_12 = __Pyx_PyObject_Call(((PyObject *)(&PyInt_Type)), __pyx_t_11, __pyx_t_3); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 340, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_12);
-        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __pyx_t_13 = __Pyx_PyByteArray_AppendObject(__pyx_v_pcts, __pyx_t_12); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 340, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-
-        /* "yarl/_quoting_c.pyx":341
- *                 if len(pct) == 3:  # pragma: no branch   # peephole optimizer
- *                     pcts.append(int(pct[1:], base=16))
- *                     last_pct = pct             # <<<<<<<<<<<<<<
- *                     pct = ''
- *                 continue
- */
-        __Pyx_INCREF(__pyx_v_pct);
-        __Pyx_DECREF_SET(__pyx_v_last_pct, __pyx_v_pct);
-
-        /* "yarl/_quoting_c.pyx":342
- *                     pcts.append(int(pct[1:], base=16))
- *                     last_pct = pct
- *                     pct = ''             # <<<<<<<<<<<<<<
- *                 continue
+    /* "yarl/_quoting_c.pyx":307
+ * 
+ *         while idx < length:
+ *             ch = val[idx]             # <<<<<<<<<<<<<<
+ *             idx += 1
  *             if pcts:
  */
-        __Pyx_INCREF(__pyx_kp_u_);
-        __Pyx_DECREF_SET(__pyx_v_pct, __pyx_kp_u_);
+    __pyx_t_4 = __Pyx_GetItemInt_Unicode(__pyx_v_val, __pyx_v_idx, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(__pyx_t_4 == (Py_UCS4)-1)) __PYX_ERR(0, 307, __pyx_L1_error)
+    __pyx_v_ch = __pyx_t_4;
 
-        /* "yarl/_quoting_c.pyx":339
- *             if pct:
- *                 pct += ch
- *                 if len(pct) == 3:  # pragma: no branch   # peephole optimizer             # <<<<<<<<<<<<<<
- *                     pcts.append(int(pct[1:], base=16))
- *                     last_pct = pct
- */
-      }
-
-      /* "yarl/_quoting_c.pyx":343
- *                     last_pct = pct
- *                     pct = ''
- *                 continue             # <<<<<<<<<<<<<<
+    /* "yarl/_quoting_c.pyx":308
+ *         while idx < length:
+ *             ch = val[idx]
+ *             idx += 1             # <<<<<<<<<<<<<<
  *             if pcts:
  *                 try:
  */
-      goto __pyx_L4_continue;
+    __pyx_v_idx = (__pyx_v_idx + 1);
 
-      /* "yarl/_quoting_c.pyx":337
- *         cdef str unquoted
- *         for ch in val:
- *             if pct:             # <<<<<<<<<<<<<<
- *                 pct += ch
- *                 if len(pct) == 3:  # pragma: no branch   # peephole optimizer
- */
-    }
-
-    /* "yarl/_quoting_c.pyx":344
- *                     pct = ''
- *                 continue
+    /* "yarl/_quoting_c.pyx":309
+ *             ch = val[idx]
+ *             idx += 1
  *             if pcts:             # <<<<<<<<<<<<<<
  *                 try:
  *                     unquoted = pcts.decode('utf8')
@@ -5483,8 +5008,8 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
     __pyx_t_2 = (PyByteArray_GET_SIZE(__pyx_v_pcts) != 0);
     if (__pyx_t_2) {
 
-      /* "yarl/_quoting_c.pyx":345
- *                 continue
+      /* "yarl/_quoting_c.pyx":310
+ *             idx += 1
  *             if pcts:
  *                 try:             # <<<<<<<<<<<<<<
  *                     unquoted = pcts.decode('utf8')
@@ -5493,26 +5018,26 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
       {
         __Pyx_PyThreadState_declare
         __Pyx_PyThreadState_assign
-        __Pyx_ExceptionSave(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16);
-        __Pyx_XGOTREF(__pyx_t_14);
-        __Pyx_XGOTREF(__pyx_t_15);
-        __Pyx_XGOTREF(__pyx_t_16);
+        __Pyx_ExceptionSave(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7);
+        __Pyx_XGOTREF(__pyx_t_5);
+        __Pyx_XGOTREF(__pyx_t_6);
+        __Pyx_XGOTREF(__pyx_t_7);
         /*try:*/ {
 
-          /* "yarl/_quoting_c.pyx":346
+          /* "yarl/_quoting_c.pyx":311
  *             if pcts:
  *                 try:
  *                     unquoted = pcts.decode('utf8')             # <<<<<<<<<<<<<<
  *                 except UnicodeDecodeError:
  *                     pass
  */
-          __pyx_t_12 = __Pyx_decode_bytearray(__pyx_v_pcts, 0, PY_SSIZE_T_MAX, NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 346, __pyx_L9_error)
-          __Pyx_GOTREF(__pyx_t_12);
-          __Pyx_XDECREF_SET(__pyx_v_unquoted, ((PyObject*)__pyx_t_12));
-          __pyx_t_12 = 0;
+          __pyx_t_3 = __Pyx_decode_bytearray(__pyx_v_pcts, 0, PY_SSIZE_T_MAX, NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 311, __pyx_L7_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          __Pyx_XDECREF_SET(__pyx_v_unquoted, ((PyObject*)__pyx_t_3));
+          __pyx_t_3 = 0;
 
-          /* "yarl/_quoting_c.pyx":345
- *                 continue
+          /* "yarl/_quoting_c.pyx":310
+ *             idx += 1
  *             if pcts:
  *                 try:             # <<<<<<<<<<<<<<
  *                     unquoted = pcts.decode('utf8')
@@ -5520,7 +5045,7 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  */
         }
 
-        /* "yarl/_quoting_c.pyx":350
+        /* "yarl/_quoting_c.pyx":315
  *                     pass
  *                 else:
  *                     if self._qs and unquoted in '+=&;':             # <<<<<<<<<<<<<<
@@ -5528,19 +5053,19 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  *                     elif unquoted in self._unsafe:
  */
         /*else:*/ {
-          __pyx_t_17 = (__pyx_v_self->_qs != 0);
-          if (__pyx_t_17) {
+          __pyx_t_8 = (__pyx_v_self->_qs != 0);
+          if (__pyx_t_8) {
           } else {
-            __pyx_t_2 = __pyx_t_17;
-            goto __pyx_L18_bool_binop_done;
+            __pyx_t_2 = __pyx_t_8;
+            goto __pyx_L16_bool_binop_done;
           }
-          __pyx_t_17 = (__Pyx_PyUnicode_ContainsTF(__pyx_v_unquoted, __pyx_kp_u__4, Py_EQ)); if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 350, __pyx_L11_except_error)
-          __pyx_t_18 = (__pyx_t_17 != 0);
-          __pyx_t_2 = __pyx_t_18;
-          __pyx_L18_bool_binop_done:;
+          __pyx_t_8 = (__Pyx_PyUnicode_ContainsTF(__pyx_v_unquoted, __pyx_kp_u__4, Py_EQ)); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 315, __pyx_L9_except_error)
+          __pyx_t_9 = (__pyx_t_8 != 0);
+          __pyx_t_2 = __pyx_t_9;
+          __pyx_L16_bool_binop_done:;
           if (__pyx_t_2) {
 
-            /* "yarl/_quoting_c.pyx":351
+            /* "yarl/_quoting_c.pyx":316
  *                 else:
  *                     if self._qs and unquoted in '+=&;':
  *                         ret.append(self._qs_quoter(unquoted))             # <<<<<<<<<<<<<<
@@ -5548,35 +5073,35 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  *                         ret.append(self._quoter(unquoted))
  */
             __Pyx_INCREF(((PyObject *)__pyx_v_self->_qs_quoter));
-            __pyx_t_3 = ((PyObject *)__pyx_v_self->_qs_quoter); __pyx_t_11 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-              __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_3);
+            __pyx_t_10 = ((PyObject *)__pyx_v_self->_qs_quoter); __pyx_t_11 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_10))) {
+              __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_10);
               if (likely(__pyx_t_11)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
                 __Pyx_INCREF(__pyx_t_11);
                 __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_3, function);
+                __Pyx_DECREF_SET(__pyx_t_10, function);
               }
             }
-            __pyx_t_12 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_11, __pyx_v_unquoted) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_unquoted);
+            __pyx_t_3 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_10, __pyx_t_11, __pyx_v_unquoted) : __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_v_unquoted);
             __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-            if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 351, __pyx_L11_except_error)
-            __Pyx_GOTREF(__pyx_t_12);
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 316, __pyx_L9_except_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_t_3); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 316, __pyx_L9_except_error)
             __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_t_12); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 351, __pyx_L11_except_error)
-            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
 
-            /* "yarl/_quoting_c.pyx":350
+            /* "yarl/_quoting_c.pyx":315
  *                     pass
  *                 else:
  *                     if self._qs and unquoted in '+=&;':             # <<<<<<<<<<<<<<
  *                         ret.append(self._qs_quoter(unquoted))
  *                     elif unquoted in self._unsafe:
  */
-            goto __pyx_L17;
+            goto __pyx_L15;
           }
 
-          /* "yarl/_quoting_c.pyx":352
+          /* "yarl/_quoting_c.pyx":317
  *                     if self._qs and unquoted in '+=&;':
  *                         ret.append(self._qs_quoter(unquoted))
  *                     elif unquoted in self._unsafe:             # <<<<<<<<<<<<<<
@@ -5585,13 +5110,13 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  */
           if (unlikely(__pyx_v_self->_unsafe == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-            __PYX_ERR(0, 352, __pyx_L11_except_error)
+            __PYX_ERR(0, 317, __pyx_L9_except_error)
           }
-          __pyx_t_2 = (__Pyx_PyUnicode_ContainsTF(__pyx_v_unquoted, __pyx_v_self->_unsafe, Py_EQ)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 352, __pyx_L11_except_error)
-          __pyx_t_18 = (__pyx_t_2 != 0);
-          if (__pyx_t_18) {
+          __pyx_t_2 = (__Pyx_PyUnicode_ContainsTF(__pyx_v_unquoted, __pyx_v_self->_unsafe, Py_EQ)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 317, __pyx_L9_except_error)
+          __pyx_t_9 = (__pyx_t_2 != 0);
+          if (__pyx_t_9) {
 
-            /* "yarl/_quoting_c.pyx":353
+            /* "yarl/_quoting_c.pyx":318
  *                         ret.append(self._qs_quoter(unquoted))
  *                     elif unquoted in self._unsafe:
  *                         ret.append(self._quoter(unquoted))             # <<<<<<<<<<<<<<
@@ -5599,35 +5124,35 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  *                         ret.append(unquoted)
  */
             __Pyx_INCREF(((PyObject *)__pyx_v_self->_quoter));
-            __pyx_t_3 = ((PyObject *)__pyx_v_self->_quoter); __pyx_t_11 = NULL;
-            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-              __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_3);
+            __pyx_t_10 = ((PyObject *)__pyx_v_self->_quoter); __pyx_t_11 = NULL;
+            if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_10))) {
+              __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_10);
               if (likely(__pyx_t_11)) {
-                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
                 __Pyx_INCREF(__pyx_t_11);
                 __Pyx_INCREF(function);
-                __Pyx_DECREF_SET(__pyx_t_3, function);
+                __Pyx_DECREF_SET(__pyx_t_10, function);
               }
             }
-            __pyx_t_12 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_11, __pyx_v_unquoted) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_unquoted);
+            __pyx_t_3 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_10, __pyx_t_11, __pyx_v_unquoted) : __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_v_unquoted);
             __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-            if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 353, __pyx_L11_except_error)
-            __Pyx_GOTREF(__pyx_t_12);
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 318, __pyx_L9_except_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+            __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_t_3); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 318, __pyx_L9_except_error)
             __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-            __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_t_12); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 353, __pyx_L11_except_error)
-            __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
 
-            /* "yarl/_quoting_c.pyx":352
+            /* "yarl/_quoting_c.pyx":317
  *                     if self._qs and unquoted in '+=&;':
  *                         ret.append(self._qs_quoter(unquoted))
  *                     elif unquoted in self._unsafe:             # <<<<<<<<<<<<<<
  *                         ret.append(self._quoter(unquoted))
  *                     else:
  */
-            goto __pyx_L17;
+            goto __pyx_L15;
           }
 
-          /* "yarl/_quoting_c.pyx":355
+          /* "yarl/_quoting_c.pyx":320
  *                         ret.append(self._quoter(unquoted))
  *                     else:
  *                         ret.append(unquoted)             # <<<<<<<<<<<<<<
@@ -5635,133 +5160,202 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  * 
  */
           /*else*/ {
-            __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_unquoted); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 355, __pyx_L11_except_error)
+            __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_unquoted); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 320, __pyx_L9_except_error)
           }
-          __pyx_L17:;
+          __pyx_L15:;
 
-          /* "yarl/_quoting_c.pyx":356
+          /* "yarl/_quoting_c.pyx":321
  *                     else:
  *                         ret.append(unquoted)
  *                     del pcts[:]             # <<<<<<<<<<<<<<
  * 
- *             if ch == '%':
+ *             if ch == '%' and idx <= length - 2:
  */
-          if (__Pyx_PyObject_DelSlice(__pyx_v_pcts, 0, 0, NULL, NULL, NULL, 0, 0, 1) < 0) __PYX_ERR(0, 356, __pyx_L11_except_error)
+          if (__Pyx_PyObject_DelSlice(__pyx_v_pcts, 0, 0, NULL, NULL, NULL, 0, 0, 1) < 0) __PYX_ERR(0, 321, __pyx_L9_except_error)
         }
-        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
-        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-        __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
-        goto __pyx_L16_try_end;
-        __pyx_L9_error:;
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
+        __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+        goto __pyx_L14_try_end;
+        __pyx_L7_error:;
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-        /* "yarl/_quoting_c.pyx":347
+        /* "yarl/_quoting_c.pyx":312
  *                 try:
  *                     unquoted = pcts.decode('utf8')
  *                 except UnicodeDecodeError:             # <<<<<<<<<<<<<<
  *                     pass
  *                 else:
  */
-        __pyx_t_8 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_UnicodeDecodeError);
-        if (__pyx_t_8) {
+        __pyx_t_13 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_UnicodeDecodeError);
+        if (__pyx_t_13) {
           __Pyx_ErrRestore(0,0,0);
-          goto __pyx_L10_exception_handled;
+          goto __pyx_L8_exception_handled;
         }
-        goto __pyx_L11_except_error;
-        __pyx_L11_except_error:;
+        goto __pyx_L9_except_error;
+        __pyx_L9_except_error:;
 
-        /* "yarl/_quoting_c.pyx":345
- *                 continue
+        /* "yarl/_quoting_c.pyx":310
+ *             idx += 1
  *             if pcts:
  *                 try:             # <<<<<<<<<<<<<<
  *                     unquoted = pcts.decode('utf8')
  *                 except UnicodeDecodeError:
  */
-        __Pyx_XGIVEREF(__pyx_t_14);
-        __Pyx_XGIVEREF(__pyx_t_15);
-        __Pyx_XGIVEREF(__pyx_t_16);
-        __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
+        __Pyx_XGIVEREF(__pyx_t_5);
+        __Pyx_XGIVEREF(__pyx_t_6);
+        __Pyx_XGIVEREF(__pyx_t_7);
+        __Pyx_ExceptionReset(__pyx_t_5, __pyx_t_6, __pyx_t_7);
         goto __pyx_L1_error;
-        __pyx_L10_exception_handled:;
-        __Pyx_XGIVEREF(__pyx_t_14);
-        __Pyx_XGIVEREF(__pyx_t_15);
-        __Pyx_XGIVEREF(__pyx_t_16);
-        __Pyx_ExceptionReset(__pyx_t_14, __pyx_t_15, __pyx_t_16);
-        __pyx_L16_try_end:;
+        __pyx_L8_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_5);
+        __Pyx_XGIVEREF(__pyx_t_6);
+        __Pyx_XGIVEREF(__pyx_t_7);
+        __Pyx_ExceptionReset(__pyx_t_5, __pyx_t_6, __pyx_t_7);
+        __pyx_L14_try_end:;
       }
 
-      /* "yarl/_quoting_c.pyx":344
- *                     pct = ''
- *                 continue
+      /* "yarl/_quoting_c.pyx":309
+ *             ch = val[idx]
+ *             idx += 1
  *             if pcts:             # <<<<<<<<<<<<<<
  *                 try:
  *                     unquoted = pcts.decode('utf8')
  */
     }
 
-    /* "yarl/_quoting_c.pyx":358
+    /* "yarl/_quoting_c.pyx":323
  *                     del pcts[:]
  * 
- *             if ch == '%':             # <<<<<<<<<<<<<<
- *                 pct = ch
- *                 continue
+ *             if ch == '%' and idx <= length - 2:             # <<<<<<<<<<<<<<
+ *                 ch = _restore_ch(val[idx], val[idx + 1])
+ *                 if ch != <Py_UCS4>-1:
  */
-    __pyx_t_18 = (__Pyx_PyUnicode_Equals(__pyx_v_ch, __pyx_kp_u__5, Py_EQ)); if (unlikely(__pyx_t_18 < 0)) __PYX_ERR(0, 358, __pyx_L1_error)
-    if (__pyx_t_18) {
+    __pyx_t_2 = ((__pyx_v_ch == 37) != 0);
+    if (__pyx_t_2) {
+    } else {
+      __pyx_t_9 = __pyx_t_2;
+      goto __pyx_L19_bool_binop_done;
+    }
+    __pyx_t_2 = ((__pyx_v_idx <= (__pyx_v_length - 2)) != 0);
+    __pyx_t_9 = __pyx_t_2;
+    __pyx_L19_bool_binop_done:;
+    if (__pyx_t_9) {
 
-      /* "yarl/_quoting_c.pyx":359
+      /* "yarl/_quoting_c.pyx":324
  * 
- *             if ch == '%':
- *                 pct = ch             # <<<<<<<<<<<<<<
- *                 continue
- * 
+ *             if ch == '%' and idx <= length - 2:
+ *                 ch = _restore_ch(val[idx], val[idx + 1])             # <<<<<<<<<<<<<<
+ *                 if ch != <Py_UCS4>-1:
+ *                     pcts.append(ch)
  */
-      if (!(likely(PyUnicode_CheckExact(__pyx_v_ch))||((__pyx_v_ch) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_v_ch)->tp_name), 0))) __PYX_ERR(0, 359, __pyx_L1_error)
-      __pyx_t_12 = __pyx_v_ch;
-      __Pyx_INCREF(__pyx_t_12);
-      __Pyx_DECREF_SET(__pyx_v_pct, ((PyObject*)__pyx_t_12));
-      __pyx_t_12 = 0;
+      __pyx_t_4 = __Pyx_GetItemInt_Unicode(__pyx_v_val, __pyx_v_idx, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(__pyx_t_4 == (Py_UCS4)-1)) __PYX_ERR(0, 324, __pyx_L1_error)
+      __pyx_t_14 = (__pyx_v_idx + 1);
+      __pyx_t_15 = __Pyx_GetItemInt_Unicode(__pyx_v_val, __pyx_t_14, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(__pyx_t_15 == (Py_UCS4)-1)) __PYX_ERR(0, 324, __pyx_L1_error)
+      __pyx_v_ch = __pyx_f_4yarl_10_quoting_c__restore_ch(__pyx_t_4, __pyx_t_15);
 
-      /* "yarl/_quoting_c.pyx":360
- *             if ch == '%':
- *                 pct = ch
- *                 continue             # <<<<<<<<<<<<<<
+      /* "yarl/_quoting_c.pyx":325
+ *             if ch == '%' and idx <= length - 2:
+ *                 ch = _restore_ch(val[idx], val[idx + 1])
+ *                 if ch != <Py_UCS4>-1:             # <<<<<<<<<<<<<<
+ *                     pcts.append(ch)
+ *                     last_pct = val[idx - 1 : idx + 2]
+ */
+      __pyx_t_9 = ((__pyx_v_ch != ((Py_UCS4)-1L)) != 0);
+      if (__pyx_t_9) {
+
+        /* "yarl/_quoting_c.pyx":326
+ *                 ch = _restore_ch(val[idx], val[idx + 1])
+ *                 if ch != <Py_UCS4>-1:
+ *                     pcts.append(ch)             # <<<<<<<<<<<<<<
+ *                     last_pct = val[idx - 1 : idx + 2]
+ *                     idx += 2
+ */
+        __pyx_t_12 = __Pyx_PyByteArray_Append(__pyx_v_pcts, __pyx_v_ch); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 326, __pyx_L1_error)
+
+        /* "yarl/_quoting_c.pyx":327
+ *                 if ch != <Py_UCS4>-1:
+ *                     pcts.append(ch)
+ *                     last_pct = val[idx - 1 : idx + 2]             # <<<<<<<<<<<<<<
+ *                     idx += 2
+ *                     continue
+ */
+        if (unlikely(__pyx_v_val == Py_None)) {
+          PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+          __PYX_ERR(0, 327, __pyx_L1_error)
+        }
+        __pyx_t_3 = __Pyx_PyUnicode_Substring(__pyx_v_val, (__pyx_v_idx - 1), (__pyx_v_idx + 2)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 327, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __Pyx_DECREF_SET(__pyx_v_last_pct, ((PyObject*)__pyx_t_3));
+        __pyx_t_3 = 0;
+
+        /* "yarl/_quoting_c.pyx":328
+ *                     pcts.append(ch)
+ *                     last_pct = val[idx - 1 : idx + 2]
+ *                     idx += 2             # <<<<<<<<<<<<<<
+ *                     continue
+ *                 else:
+ */
+        __pyx_v_idx = (__pyx_v_idx + 2);
+
+        /* "yarl/_quoting_c.pyx":329
+ *                     last_pct = val[idx - 1 : idx + 2]
+ *                     idx += 2
+ *                     continue             # <<<<<<<<<<<<<<
+ *                 else:
+ *                     ch = '%'
+ */
+        goto __pyx_L4_continue;
+
+        /* "yarl/_quoting_c.pyx":325
+ *             if ch == '%' and idx <= length - 2:
+ *                 ch = _restore_ch(val[idx], val[idx + 1])
+ *                 if ch != <Py_UCS4>-1:             # <<<<<<<<<<<<<<
+ *                     pcts.append(ch)
+ *                     last_pct = val[idx - 1 : idx + 2]
+ */
+      }
+
+      /* "yarl/_quoting_c.pyx":331
+ *                     continue
+ *                 else:
+ *                     ch = '%'             # <<<<<<<<<<<<<<
  * 
  *             if pcts:
  */
-      goto __pyx_L4_continue;
+      /*else*/ {
+        __pyx_v_ch = 37;
+      }
 
-      /* "yarl/_quoting_c.pyx":358
+      /* "yarl/_quoting_c.pyx":323
  *                     del pcts[:]
  * 
- *             if ch == '%':             # <<<<<<<<<<<<<<
- *                 pct = ch
- *                 continue
+ *             if ch == '%' and idx <= length - 2:             # <<<<<<<<<<<<<<
+ *                 ch = _restore_ch(val[idx], val[idx + 1])
+ *                 if ch != <Py_UCS4>-1:
  */
     }
 
-    /* "yarl/_quoting_c.pyx":362
- *                 continue
+    /* "yarl/_quoting_c.pyx":333
+ *                     ch = '%'
  * 
  *             if pcts:             # <<<<<<<<<<<<<<
  *                 ret.append(last_pct)  # %F8ab
  *                 last_pct = ''
  */
-    __pyx_t_18 = (PyByteArray_GET_SIZE(__pyx_v_pcts) != 0);
-    if (__pyx_t_18) {
+    __pyx_t_9 = (PyByteArray_GET_SIZE(__pyx_v_pcts) != 0);
+    if (__pyx_t_9) {
 
-      /* "yarl/_quoting_c.pyx":363
+      /* "yarl/_quoting_c.pyx":334
  * 
  *             if pcts:
  *                 ret.append(last_pct)  # %F8ab             # <<<<<<<<<<<<<<
  *                 last_pct = ''
  * 
  */
-      __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_last_pct); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 363, __pyx_L1_error)
+      __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_last_pct); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 334, __pyx_L1_error)
 
-      /* "yarl/_quoting_c.pyx":364
+      /* "yarl/_quoting_c.pyx":335
  *             if pcts:
  *                 ret.append(last_pct)  # %F8ab
  *                 last_pct = ''             # <<<<<<<<<<<<<<
@@ -5771,8 +5365,8 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
       __Pyx_INCREF(__pyx_kp_u_);
       __Pyx_DECREF_SET(__pyx_v_last_pct, __pyx_kp_u_);
 
-      /* "yarl/_quoting_c.pyx":362
- *                 continue
+      /* "yarl/_quoting_c.pyx":333
+ *                     ch = '%'
  * 
  *             if pcts:             # <<<<<<<<<<<<<<
  *                 ret.append(last_pct)  # %F8ab
@@ -5780,17 +5374,17 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  */
     }
 
-    /* "yarl/_quoting_c.pyx":366
+    /* "yarl/_quoting_c.pyx":337
  *                 last_pct = ''
  * 
  *             if ch == '+':             # <<<<<<<<<<<<<<
  *                 if not self._qs or ch in self._unsafe:
  *                     ret.append('+')
  */
-    __pyx_t_18 = (__Pyx_PyUnicode_Equals(__pyx_v_ch, __pyx_kp_u__6, Py_EQ)); if (unlikely(__pyx_t_18 < 0)) __PYX_ERR(0, 366, __pyx_L1_error)
-    if (__pyx_t_18) {
+    __pyx_t_9 = ((__pyx_v_ch == 43) != 0);
+    if (__pyx_t_9) {
 
-      /* "yarl/_quoting_c.pyx":367
+      /* "yarl/_quoting_c.pyx":338
  * 
  *             if ch == '+':
  *                 if not self._qs or ch in self._unsafe:             # <<<<<<<<<<<<<<
@@ -5800,39 +5394,38 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
       __pyx_t_2 = ((!(__pyx_v_self->_qs != 0)) != 0);
       if (!__pyx_t_2) {
       } else {
-        __pyx_t_18 = __pyx_t_2;
-        goto __pyx_L24_bool_binop_done;
+        __pyx_t_9 = __pyx_t_2;
+        goto __pyx_L25_bool_binop_done;
       }
       if (unlikely(__pyx_v_self->_unsafe == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-        __PYX_ERR(0, 367, __pyx_L1_error)
+        PyErr_SetString(PyExc_TypeError, "argument of type 'NoneType' is not iterable");
+        __PYX_ERR(0, 338, __pyx_L1_error)
       }
-      __pyx_t_2 = (__Pyx_PyUnicode_ContainsTF(__pyx_v_ch, __pyx_v_self->_unsafe, Py_EQ)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 367, __pyx_L1_error)
-      __pyx_t_17 = (__pyx_t_2 != 0);
-      __pyx_t_18 = __pyx_t_17;
-      __pyx_L24_bool_binop_done:;
-      if (__pyx_t_18) {
+      __pyx_t_2 = ((__Pyx_UnicodeContainsUCS4(__pyx_v_self->_unsafe, __pyx_v_ch)) != 0);
+      __pyx_t_9 = __pyx_t_2;
+      __pyx_L25_bool_binop_done:;
+      if (__pyx_t_9) {
 
-        /* "yarl/_quoting_c.pyx":368
+        /* "yarl/_quoting_c.pyx":339
  *             if ch == '+':
  *                 if not self._qs or ch in self._unsafe:
  *                     ret.append('+')             # <<<<<<<<<<<<<<
  *                 else:
  *                     ret.append(' ')
  */
-        __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_kp_u__6); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 368, __pyx_L1_error)
+        __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_kp_u__5); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 339, __pyx_L1_error)
 
-        /* "yarl/_quoting_c.pyx":367
+        /* "yarl/_quoting_c.pyx":338
  * 
  *             if ch == '+':
  *                 if not self._qs or ch in self._unsafe:             # <<<<<<<<<<<<<<
  *                     ret.append('+')
  *                 else:
  */
-        goto __pyx_L23;
+        goto __pyx_L24;
       }
 
-      /* "yarl/_quoting_c.pyx":370
+      /* "yarl/_quoting_c.pyx":341
  *                     ret.append('+')
  *                 else:
  *                     ret.append(' ')             # <<<<<<<<<<<<<<
@@ -5840,11 +5433,11 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  * 
  */
       /*else*/ {
-        __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_kp_u__7); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 370, __pyx_L1_error)
+        __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_kp_u__6); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 341, __pyx_L1_error)
       }
-      __pyx_L23:;
+      __pyx_L24:;
 
-      /* "yarl/_quoting_c.pyx":371
+      /* "yarl/_quoting_c.pyx":342
  *                 else:
  *                     ret.append(' ')
  *                 continue             # <<<<<<<<<<<<<<
@@ -5853,7 +5446,7 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  */
       goto __pyx_L4_continue;
 
-      /* "yarl/_quoting_c.pyx":366
+      /* "yarl/_quoting_c.pyx":337
  *                 last_pct = ''
  * 
  *             if ch == '+':             # <<<<<<<<<<<<<<
@@ -5862,7 +5455,7 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  */
     }
 
-    /* "yarl/_quoting_c.pyx":373
+    /* "yarl/_quoting_c.pyx":344
  *                 continue
  * 
  *             if ch in self._unsafe:             # <<<<<<<<<<<<<<
@@ -5870,60 +5463,58 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  *                 h = hex(ord(ch)).upper()[2:]
  */
     if (unlikely(__pyx_v_self->_unsafe == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-      __PYX_ERR(0, 373, __pyx_L1_error)
+      PyErr_SetString(PyExc_TypeError, "argument of type 'NoneType' is not iterable");
+      __PYX_ERR(0, 344, __pyx_L1_error)
     }
-    __pyx_t_18 = (__Pyx_PyUnicode_ContainsTF(__pyx_v_ch, __pyx_v_self->_unsafe, Py_EQ)); if (unlikely(__pyx_t_18 < 0)) __PYX_ERR(0, 373, __pyx_L1_error)
-    __pyx_t_17 = (__pyx_t_18 != 0);
-    if (__pyx_t_17) {
+    __pyx_t_9 = ((__Pyx_UnicodeContainsUCS4(__pyx_v_self->_unsafe, __pyx_v_ch)) != 0);
+    if (__pyx_t_9) {
 
-      /* "yarl/_quoting_c.pyx":374
+      /* "yarl/_quoting_c.pyx":345
  * 
  *             if ch in self._unsafe:
  *                 ret.append('%')             # <<<<<<<<<<<<<<
  *                 h = hex(ord(ch)).upper()[2:]
  *                 for ch in h:
  */
-      __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_kp_u__5); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 374, __pyx_L1_error)
+      __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_kp_u__7); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 345, __pyx_L1_error)
 
-      /* "yarl/_quoting_c.pyx":375
+      /* "yarl/_quoting_c.pyx":346
  *             if ch in self._unsafe:
  *                 ret.append('%')
  *                 h = hex(ord(ch)).upper()[2:]             # <<<<<<<<<<<<<<
  *                 for ch in h:
  *                     ret.append(ch)
  */
-      __pyx_t_19 = __Pyx_PyObject_Ord(__pyx_v_ch); if (unlikely(__pyx_t_19 == ((long)(long)(Py_UCS4)-1))) __PYX_ERR(0, 375, __pyx_L1_error)
-      __pyx_t_3 = __Pyx_PyInt_From_long(__pyx_t_19); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 375, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_11 = __Pyx_PyObject_CallOneArg(__pyx_builtin_hex, __pyx_t_3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 375, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyInt_From_long(((long)__pyx_v_ch)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 346, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
+      __pyx_t_11 = __Pyx_PyObject_CallOneArg(__pyx_builtin_hex, __pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 346, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_upper); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 375, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_upper); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 346, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __pyx_t_11 = NULL;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-        __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_3);
+      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_10))) {
+        __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_10);
         if (likely(__pyx_t_11)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
           __Pyx_INCREF(__pyx_t_11);
           __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_3, function);
+          __Pyx_DECREF_SET(__pyx_t_10, function);
         }
       }
-      __pyx_t_12 = (__pyx_t_11) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_11) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
+      __pyx_t_3 = (__pyx_t_11) ? __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_t_11) : __Pyx_PyObject_CallNoArg(__pyx_t_10);
       __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-      if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 375, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_12);
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = __Pyx_PyObject_GetSlice(__pyx_t_12, 2, 0, NULL, NULL, &__pyx_slice__8, 1, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 375, __pyx_L1_error)
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 346, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-      __Pyx_XDECREF_SET(__pyx_v_h, __pyx_t_3);
-      __pyx_t_3 = 0;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __pyx_t_10 = __Pyx_PyObject_GetSlice(__pyx_t_3, 2, 0, NULL, NULL, &__pyx_slice__8, 1, 0, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 346, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_h, __pyx_t_10);
+      __pyx_t_10 = 0;
 
-      /* "yarl/_quoting_c.pyx":376
+      /* "yarl/_quoting_c.pyx":347
  *                 ret.append('%')
  *                 h = hex(ord(ch)).upper()[2:]
  *                 for ch in h:             # <<<<<<<<<<<<<<
@@ -5931,57 +5522,61 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  *                 continue
  */
       if (likely(PyList_CheckExact(__pyx_v_h)) || PyTuple_CheckExact(__pyx_v_h)) {
-        __pyx_t_3 = __pyx_v_h; __Pyx_INCREF(__pyx_t_3); __pyx_t_10 = 0;
-        __pyx_t_20 = NULL;
+        __pyx_t_10 = __pyx_v_h; __Pyx_INCREF(__pyx_t_10); __pyx_t_1 = 0;
+        __pyx_t_16 = NULL;
       } else {
-        __pyx_t_10 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_v_h); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 376, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __pyx_t_20 = Py_TYPE(__pyx_t_3)->tp_iternext; if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 376, __pyx_L1_error)
+        __pyx_t_1 = -1; __pyx_t_10 = PyObject_GetIter(__pyx_v_h); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 347, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_10);
+        __pyx_t_16 = Py_TYPE(__pyx_t_10)->tp_iternext; if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 347, __pyx_L1_error)
       }
       for (;;) {
-        if (likely(!__pyx_t_20)) {
-          if (likely(PyList_CheckExact(__pyx_t_3))) {
-            if (__pyx_t_10 >= PyList_GET_SIZE(__pyx_t_3)) break;
+        if (likely(!__pyx_t_16)) {
+          if (likely(PyList_CheckExact(__pyx_t_10))) {
+            if (__pyx_t_1 >= PyList_GET_SIZE(__pyx_t_10)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_12 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_10); __Pyx_INCREF(__pyx_t_12); __pyx_t_10++; if (unlikely(0 < 0)) __PYX_ERR(0, 376, __pyx_L1_error)
+            __pyx_t_3 = PyList_GET_ITEM(__pyx_t_10, __pyx_t_1); __Pyx_INCREF(__pyx_t_3); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 347, __pyx_L1_error)
             #else
-            __pyx_t_12 = PySequence_ITEM(__pyx_t_3, __pyx_t_10); __pyx_t_10++; if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 376, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_12);
+            __pyx_t_3 = PySequence_ITEM(__pyx_t_10, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 347, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_3);
             #endif
           } else {
-            if (__pyx_t_10 >= PyTuple_GET_SIZE(__pyx_t_3)) break;
+            if (__pyx_t_1 >= PyTuple_GET_SIZE(__pyx_t_10)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_12 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_10); __Pyx_INCREF(__pyx_t_12); __pyx_t_10++; if (unlikely(0 < 0)) __PYX_ERR(0, 376, __pyx_L1_error)
+            __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_10, __pyx_t_1); __Pyx_INCREF(__pyx_t_3); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 347, __pyx_L1_error)
             #else
-            __pyx_t_12 = PySequence_ITEM(__pyx_t_3, __pyx_t_10); __pyx_t_10++; if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 376, __pyx_L1_error)
-            __Pyx_GOTREF(__pyx_t_12);
+            __pyx_t_3 = PySequence_ITEM(__pyx_t_10, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 347, __pyx_L1_error)
+            __Pyx_GOTREF(__pyx_t_3);
             #endif
           }
         } else {
-          __pyx_t_12 = __pyx_t_20(__pyx_t_3);
-          if (unlikely(!__pyx_t_12)) {
+          __pyx_t_3 = __pyx_t_16(__pyx_t_10);
+          if (unlikely(!__pyx_t_3)) {
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
               if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-              else __PYX_ERR(0, 376, __pyx_L1_error)
+              else __PYX_ERR(0, 347, __pyx_L1_error)
             }
             break;
           }
-          __Pyx_GOTREF(__pyx_t_12);
+          __Pyx_GOTREF(__pyx_t_3);
         }
-        __Pyx_DECREF_SET(__pyx_v_ch, __pyx_t_12);
-        __pyx_t_12 = 0;
+        __pyx_t_15 = __Pyx_PyObject_AsPy_UCS4(__pyx_t_3); if (unlikely((__pyx_t_15 == (Py_UCS4)-1) && PyErr_Occurred())) __PYX_ERR(0, 347, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __pyx_v_ch = __pyx_t_15;
 
-        /* "yarl/_quoting_c.pyx":377
+        /* "yarl/_quoting_c.pyx":348
  *                 h = hex(ord(ch)).upper()[2:]
  *                 for ch in h:
  *                     ret.append(ch)             # <<<<<<<<<<<<<<
  *                 continue
  * 
  */
-        __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_ch); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 377, __pyx_L1_error)
+        __pyx_t_3 = PyUnicode_FromOrdinal(__pyx_v_ch); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 348, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_t_3); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 348, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-        /* "yarl/_quoting_c.pyx":376
+        /* "yarl/_quoting_c.pyx":347
  *                 ret.append('%')
  *                 h = hex(ord(ch)).upper()[2:]
  *                 for ch in h:             # <<<<<<<<<<<<<<
@@ -5989,9 +5584,9 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  *                 continue
  */
       }
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-      /* "yarl/_quoting_c.pyx":378
+      /* "yarl/_quoting_c.pyx":349
  *                 for ch in h:
  *                     ret.append(ch)
  *                 continue             # <<<<<<<<<<<<<<
@@ -6000,7 +5595,7 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  */
       goto __pyx_L4_continue;
 
-      /* "yarl/_quoting_c.pyx":373
+      /* "yarl/_quoting_c.pyx":344
  *                 continue
  * 
  *             if ch in self._unsafe:             # <<<<<<<<<<<<<<
@@ -6009,29 +5604,31 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  */
     }
 
-    /* "yarl/_quoting_c.pyx":380
+    /* "yarl/_quoting_c.pyx":351
  *                 continue
  * 
  *             ret.append(ch)             # <<<<<<<<<<<<<<
  * 
  *         if pcts:
  */
-    __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_ch); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 380, __pyx_L1_error)
+    __pyx_t_10 = PyUnicode_FromOrdinal(__pyx_v_ch); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 351, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_10);
+    __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_t_10); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 351, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     __pyx_L4_continue:;
   }
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "yarl/_quoting_c.pyx":382
+  /* "yarl/_quoting_c.pyx":353
  *             ret.append(ch)
  * 
  *         if pcts:             # <<<<<<<<<<<<<<
  *             try:
  *                 unquoted = pcts.decode('utf8')
  */
-  __pyx_t_17 = (PyByteArray_GET_SIZE(__pyx_v_pcts) != 0);
-  if (__pyx_t_17) {
+  __pyx_t_9 = (PyByteArray_GET_SIZE(__pyx_v_pcts) != 0);
+  if (__pyx_t_9) {
 
-    /* "yarl/_quoting_c.pyx":383
+    /* "yarl/_quoting_c.pyx":354
  * 
  *         if pcts:
  *             try:             # <<<<<<<<<<<<<<
@@ -6041,25 +5638,25 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
     {
       __Pyx_PyThreadState_declare
       __Pyx_PyThreadState_assign
-      __Pyx_ExceptionSave(&__pyx_t_16, &__pyx_t_15, &__pyx_t_14);
-      __Pyx_XGOTREF(__pyx_t_16);
-      __Pyx_XGOTREF(__pyx_t_15);
-      __Pyx_XGOTREF(__pyx_t_14);
+      __Pyx_ExceptionSave(&__pyx_t_7, &__pyx_t_6, &__pyx_t_5);
+      __Pyx_XGOTREF(__pyx_t_7);
+      __Pyx_XGOTREF(__pyx_t_6);
+      __Pyx_XGOTREF(__pyx_t_5);
       /*try:*/ {
 
-        /* "yarl/_quoting_c.pyx":384
+        /* "yarl/_quoting_c.pyx":355
  *         if pcts:
  *             try:
  *                 unquoted = pcts.decode('utf8')             # <<<<<<<<<<<<<<
  *             except UnicodeDecodeError:
  *                 ret.append(last_pct)  # %F8
  */
-        __pyx_t_3 = __Pyx_decode_bytearray(__pyx_v_pcts, 0, PY_SSIZE_T_MAX, NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 384, __pyx_L30_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_XDECREF_SET(__pyx_v_unquoted, ((PyObject*)__pyx_t_3));
-        __pyx_t_3 = 0;
+        __pyx_t_10 = __Pyx_decode_bytearray(__pyx_v_pcts, 0, PY_SSIZE_T_MAX, NULL, NULL, PyUnicode_DecodeUTF8); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 355, __pyx_L31_error)
+        __Pyx_GOTREF(__pyx_t_10);
+        __Pyx_XDECREF_SET(__pyx_v_unquoted, ((PyObject*)__pyx_t_10));
+        __pyx_t_10 = 0;
 
-        /* "yarl/_quoting_c.pyx":383
+        /* "yarl/_quoting_c.pyx":354
  * 
  *         if pcts:
  *             try:             # <<<<<<<<<<<<<<
@@ -6068,7 +5665,7 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  */
       }
 
-      /* "yarl/_quoting_c.pyx":388
+      /* "yarl/_quoting_c.pyx":359
  *                 ret.append(last_pct)  # %F8
  *             else:
  *                 if self._qs and unquoted in '+=&;':             # <<<<<<<<<<<<<<
@@ -6076,19 +5673,19 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  *                 elif unquoted in self._unsafe:
  */
       /*else:*/ {
-        __pyx_t_18 = (__pyx_v_self->_qs != 0);
-        if (__pyx_t_18) {
+        __pyx_t_2 = (__pyx_v_self->_qs != 0);
+        if (__pyx_t_2) {
         } else {
-          __pyx_t_17 = __pyx_t_18;
-          goto __pyx_L37_bool_binop_done;
+          __pyx_t_9 = __pyx_t_2;
+          goto __pyx_L38_bool_binop_done;
         }
-        __pyx_t_18 = (__Pyx_PyUnicode_ContainsTF(__pyx_v_unquoted, __pyx_kp_u__4, Py_EQ)); if (unlikely(__pyx_t_18 < 0)) __PYX_ERR(0, 388, __pyx_L32_except_error)
-        __pyx_t_2 = (__pyx_t_18 != 0);
-        __pyx_t_17 = __pyx_t_2;
-        __pyx_L37_bool_binop_done:;
-        if (__pyx_t_17) {
+        __pyx_t_2 = (__Pyx_PyUnicode_ContainsTF(__pyx_v_unquoted, __pyx_kp_u__4, Py_EQ)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 359, __pyx_L33_except_error)
+        __pyx_t_8 = (__pyx_t_2 != 0);
+        __pyx_t_9 = __pyx_t_8;
+        __pyx_L38_bool_binop_done:;
+        if (__pyx_t_9) {
 
-          /* "yarl/_quoting_c.pyx":389
+          /* "yarl/_quoting_c.pyx":360
  *             else:
  *                 if self._qs and unquoted in '+=&;':
  *                     ret.append(self._qs_quoter(unquoted))             # <<<<<<<<<<<<<<
@@ -6096,35 +5693,35 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  *                     ret.append(self._quoter(unquoted))
  */
           __Pyx_INCREF(((PyObject *)__pyx_v_self->_qs_quoter));
-          __pyx_t_12 = ((PyObject *)__pyx_v_self->_qs_quoter); __pyx_t_11 = NULL;
-          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_12))) {
-            __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_12);
+          __pyx_t_3 = ((PyObject *)__pyx_v_self->_qs_quoter); __pyx_t_11 = NULL;
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
+            __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_3);
             if (likely(__pyx_t_11)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
               __Pyx_INCREF(__pyx_t_11);
               __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_12, function);
+              __Pyx_DECREF_SET(__pyx_t_3, function);
             }
           }
-          __pyx_t_3 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_11, __pyx_v_unquoted) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_v_unquoted);
+          __pyx_t_10 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_11, __pyx_v_unquoted) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_unquoted);
           __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-          if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 389, __pyx_L32_except_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-          __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_t_3); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 389, __pyx_L32_except_error)
+          if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 360, __pyx_L33_except_error)
+          __Pyx_GOTREF(__pyx_t_10);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_t_10); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 360, __pyx_L33_except_error)
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-          /* "yarl/_quoting_c.pyx":388
+          /* "yarl/_quoting_c.pyx":359
  *                 ret.append(last_pct)  # %F8
  *             else:
  *                 if self._qs and unquoted in '+=&;':             # <<<<<<<<<<<<<<
  *                     ret.append(self._qs_quoter(unquoted))
  *                 elif unquoted in self._unsafe:
  */
-          goto __pyx_L36;
+          goto __pyx_L37;
         }
 
-        /* "yarl/_quoting_c.pyx":390
+        /* "yarl/_quoting_c.pyx":361
  *                 if self._qs and unquoted in '+=&;':
  *                     ret.append(self._qs_quoter(unquoted))
  *                 elif unquoted in self._unsafe:             # <<<<<<<<<<<<<<
@@ -6133,13 +5730,13 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  */
         if (unlikely(__pyx_v_self->_unsafe == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-          __PYX_ERR(0, 390, __pyx_L32_except_error)
+          __PYX_ERR(0, 361, __pyx_L33_except_error)
         }
-        __pyx_t_17 = (__Pyx_PyUnicode_ContainsTF(__pyx_v_unquoted, __pyx_v_self->_unsafe, Py_EQ)); if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 390, __pyx_L32_except_error)
-        __pyx_t_2 = (__pyx_t_17 != 0);
-        if (__pyx_t_2) {
+        __pyx_t_9 = (__Pyx_PyUnicode_ContainsTF(__pyx_v_unquoted, __pyx_v_self->_unsafe, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 361, __pyx_L33_except_error)
+        __pyx_t_8 = (__pyx_t_9 != 0);
+        if (__pyx_t_8) {
 
-          /* "yarl/_quoting_c.pyx":391
+          /* "yarl/_quoting_c.pyx":362
  *                     ret.append(self._qs_quoter(unquoted))
  *                 elif unquoted in self._unsafe:
  *                     ret.append(self._quoter(unquoted))             # <<<<<<<<<<<<<<
@@ -6147,107 +5744,106 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  *                     ret.append(unquoted)
  */
           __Pyx_INCREF(((PyObject *)__pyx_v_self->_quoter));
-          __pyx_t_12 = ((PyObject *)__pyx_v_self->_quoter); __pyx_t_11 = NULL;
-          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_12))) {
-            __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_12);
+          __pyx_t_3 = ((PyObject *)__pyx_v_self->_quoter); __pyx_t_11 = NULL;
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
+            __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_3);
             if (likely(__pyx_t_11)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_12);
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
               __Pyx_INCREF(__pyx_t_11);
               __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_12, function);
+              __Pyx_DECREF_SET(__pyx_t_3, function);
             }
           }
-          __pyx_t_3 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_12, __pyx_t_11, __pyx_v_unquoted) : __Pyx_PyObject_CallOneArg(__pyx_t_12, __pyx_v_unquoted);
+          __pyx_t_10 = (__pyx_t_11) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_11, __pyx_v_unquoted) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_unquoted);
           __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-          if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 391, __pyx_L32_except_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-          __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_t_3); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 391, __pyx_L32_except_error)
+          if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 362, __pyx_L33_except_error)
+          __Pyx_GOTREF(__pyx_t_10);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_t_10); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 362, __pyx_L33_except_error)
+          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-          /* "yarl/_quoting_c.pyx":390
+          /* "yarl/_quoting_c.pyx":361
  *                 if self._qs and unquoted in '+=&;':
  *                     ret.append(self._qs_quoter(unquoted))
  *                 elif unquoted in self._unsafe:             # <<<<<<<<<<<<<<
  *                     ret.append(self._quoter(unquoted))
  *                 else:
  */
-          goto __pyx_L36;
+          goto __pyx_L37;
         }
 
-        /* "yarl/_quoting_c.pyx":393
+        /* "yarl/_quoting_c.pyx":364
  *                     ret.append(self._quoter(unquoted))
  *                 else:
  *                     ret.append(unquoted)             # <<<<<<<<<<<<<<
  *         return ''.join(ret)
  */
         /*else*/ {
-          __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_unquoted); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 393, __pyx_L32_except_error)
+          __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_unquoted); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 364, __pyx_L33_except_error)
         }
-        __pyx_L36:;
+        __pyx_L37:;
       }
-      __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
-      __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-      __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
-      goto __pyx_L35_try_end;
-      __pyx_L30_error:;
+      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+      goto __pyx_L36_try_end;
+      __pyx_L31_error:;
+      __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
       __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-      /* "yarl/_quoting_c.pyx":385
+      /* "yarl/_quoting_c.pyx":356
  *             try:
  *                 unquoted = pcts.decode('utf8')
  *             except UnicodeDecodeError:             # <<<<<<<<<<<<<<
  *                 ret.append(last_pct)  # %F8
  *             else:
  */
-      __pyx_t_7 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_UnicodeDecodeError);
-      if (__pyx_t_7) {
+      __pyx_t_13 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_UnicodeDecodeError);
+      if (__pyx_t_13) {
         __Pyx_AddTraceback("yarl._quoting_c._Unquoter._do_unquote", __pyx_clineno, __pyx_lineno, __pyx_filename);
-        if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_12, &__pyx_t_11) < 0) __PYX_ERR(0, 385, __pyx_L32_except_error)
+        if (__Pyx_GetException(&__pyx_t_10, &__pyx_t_3, &__pyx_t_11) < 0) __PYX_ERR(0, 356, __pyx_L33_except_error)
+        __Pyx_GOTREF(__pyx_t_10);
         __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_GOTREF(__pyx_t_12);
         __Pyx_GOTREF(__pyx_t_11);
 
-        /* "yarl/_quoting_c.pyx":386
+        /* "yarl/_quoting_c.pyx":357
  *                 unquoted = pcts.decode('utf8')
  *             except UnicodeDecodeError:
  *                 ret.append(last_pct)  # %F8             # <<<<<<<<<<<<<<
  *             else:
  *                 if self._qs and unquoted in '+=&;':
  */
-        __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_last_pct); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 386, __pyx_L32_except_error)
+        __pyx_t_12 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_last_pct); if (unlikely(__pyx_t_12 == ((int)-1))) __PYX_ERR(0, 357, __pyx_L33_except_error)
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
         __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        goto __pyx_L31_exception_handled;
+        goto __pyx_L32_exception_handled;
       }
-      goto __pyx_L32_except_error;
-      __pyx_L32_except_error:;
+      goto __pyx_L33_except_error;
+      __pyx_L33_except_error:;
 
-      /* "yarl/_quoting_c.pyx":383
+      /* "yarl/_quoting_c.pyx":354
  * 
  *         if pcts:
  *             try:             # <<<<<<<<<<<<<<
  *                 unquoted = pcts.decode('utf8')
  *             except UnicodeDecodeError:
  */
-      __Pyx_XGIVEREF(__pyx_t_16);
-      __Pyx_XGIVEREF(__pyx_t_15);
-      __Pyx_XGIVEREF(__pyx_t_14);
-      __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
+      __Pyx_XGIVEREF(__pyx_t_7);
+      __Pyx_XGIVEREF(__pyx_t_6);
+      __Pyx_XGIVEREF(__pyx_t_5);
+      __Pyx_ExceptionReset(__pyx_t_7, __pyx_t_6, __pyx_t_5);
       goto __pyx_L1_error;
-      __pyx_L31_exception_handled:;
-      __Pyx_XGIVEREF(__pyx_t_16);
-      __Pyx_XGIVEREF(__pyx_t_15);
-      __Pyx_XGIVEREF(__pyx_t_14);
-      __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
-      __pyx_L35_try_end:;
+      __pyx_L32_exception_handled:;
+      __Pyx_XGIVEREF(__pyx_t_7);
+      __Pyx_XGIVEREF(__pyx_t_6);
+      __Pyx_XGIVEREF(__pyx_t_5);
+      __Pyx_ExceptionReset(__pyx_t_7, __pyx_t_6, __pyx_t_5);
+      __pyx_L36_try_end:;
     }
 
-    /* "yarl/_quoting_c.pyx":382
+    /* "yarl/_quoting_c.pyx":353
  *             ret.append(ch)
  * 
  *         if pcts:             # <<<<<<<<<<<<<<
@@ -6256,19 +5852,19 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
  */
   }
 
-  /* "yarl/_quoting_c.pyx":394
+  /* "yarl/_quoting_c.pyx":365
  *                 else:
  *                     ret.append(unquoted)
  *         return ''.join(ret)             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_11 = PyUnicode_Join(__pyx_kp_u_, __pyx_v_ret); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 394, __pyx_L1_error)
+  __pyx_t_11 = PyUnicode_Join(__pyx_kp_u_, __pyx_v_ret); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 365, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
   __pyx_r = ((PyObject*)__pyx_t_11);
   __pyx_t_11 = 0;
   goto __pyx_L0;
 
-  /* "yarl/_quoting_c.pyx":328
+  /* "yarl/_quoting_c.pyx":295
  *         return self._do_unquote(<str>val)
  * 
  *     cdef str _do_unquote(self, str val):             # <<<<<<<<<<<<<<
@@ -6279,18 +5875,15 @@ static PyObject *__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote(struct __pyx_
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_10);
   __Pyx_XDECREF(__pyx_t_11);
-  __Pyx_XDECREF(__pyx_t_12);
   __Pyx_AddTraceback("yarl._quoting_c._Unquoter._do_unquote", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_pct);
   __Pyx_XDECREF(__pyx_v_last_pct);
   __Pyx_XDECREF(__pyx_v_pcts);
   __Pyx_XDECREF(__pyx_v_ret);
   __Pyx_XDECREF(__pyx_v_unquoted);
-  __Pyx_XDECREF(__pyx_v_ch);
   __Pyx_XDECREF(__pyx_v_h);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -8102,7 +7695,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_u__9, __pyx_k__9, sizeof(__pyx_k__9), 0, 1, 0, 0},
   {&__pyx_n_s_append, __pyx_k_append, sizeof(__pyx_k_append), 0, 0, 1, 1},
   {&__pyx_n_s_ascii_letters, __pyx_k_ascii_letters, sizeof(__pyx_k_ascii_letters), 0, 0, 1, 1},
-  {&__pyx_n_s_base, __pyx_k_base, sizeof(__pyx_k_base), 0, 0, 1, 1},
   {&__pyx_n_s_chr, __pyx_k_chr, sizeof(__pyx_k_chr), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_dict, __pyx_k_dict, sizeof(__pyx_k_dict), 0, 0, 1, 1},
@@ -8145,12 +7737,12 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 67, __pyx_L1_error)
-  __pyx_builtin_chr = __Pyx_GetBuiltinName(__pyx_n_s_chr); if (!__pyx_builtin_chr) __PYX_ERR(0, 68, __pyx_L1_error)
-  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 211, __pyx_L1_error)
-  __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) __PYX_ERR(0, 230, __pyx_L1_error)
-  __pyx_builtin_UnicodeDecodeError = __Pyx_GetBuiltinName(__pyx_n_s_UnicodeDecodeError); if (!__pyx_builtin_UnicodeDecodeError) __PYX_ERR(0, 347, __pyx_L1_error)
-  __pyx_builtin_hex = __Pyx_GetBuiltinName(__pyx_n_s_hex); if (!__pyx_builtin_hex) __PYX_ERR(0, 375, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 71, __pyx_L1_error)
+  __pyx_builtin_chr = __Pyx_GetBuiltinName(__pyx_n_s_chr); if (!__pyx_builtin_chr) __PYX_ERR(0, 72, __pyx_L1_error)
+  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 195, __pyx_L1_error)
+  __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) __PYX_ERR(0, 214, __pyx_L1_error)
+  __pyx_builtin_UnicodeDecodeError = __Pyx_GetBuiltinName(__pyx_n_s_UnicodeDecodeError); if (!__pyx_builtin_UnicodeDecodeError) __PYX_ERR(0, 312, __pyx_L1_error)
+  __pyx_builtin_hex = __Pyx_GetBuiltinName(__pyx_n_s_hex); if (!__pyx_builtin_hex) __PYX_ERR(0, 346, __pyx_L1_error)
   __pyx_builtin_OverflowError = __Pyx_GetBuiltinName(__pyx_n_s_OverflowError); if (!__pyx_builtin_OverflowError) __PYX_ERR(1, 81, __pyx_L1_error)
   __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(1, 84, __pyx_L1_error)
   __pyx_builtin_IndexError = __Pyx_GetBuiltinName(__pyx_n_s_IndexError); if (!__pyx_builtin_IndexError) __PYX_ERR(1, 94, __pyx_L1_error)
@@ -8163,36 +7755,36 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "yarl/_quoting_c.pyx":211
+  /* "yarl/_quoting_c.pyx":195
  *         for ch in safe:
  *             if ord(ch) > 127:
  *                 raise ValueError("Only safe symbols with ORD < 128 are allowed")             # <<<<<<<<<<<<<<
  *             set_bit(self._safe_table, ch)
  * 
  */
-  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_u_Only_safe_symbols_with_ORD_128_a); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 211, __pyx_L1_error)
+  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_u_Only_safe_symbols_with_ORD_128_a); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 195, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
 
-  /* "yarl/_quoting_c.pyx":230
+  /* "yarl/_quoting_c.pyx":214
  *                 val = str(val)
  *             else:
  *                 raise TypeError("Argument should be str")             # <<<<<<<<<<<<<<
  *         _init_writer(&writer)
  *         try:
  */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_Argument_should_be_str); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 230, __pyx_L1_error)
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_Argument_should_be_str); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 214, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
 
-  /* "yarl/_quoting_c.pyx":375
+  /* "yarl/_quoting_c.pyx":346
  *             if ch in self._unsafe:
  *                 ret.append('%')
  *                 h = hex(ord(ch)).upper()[2:]             # <<<<<<<<<<<<<<
  *                 for ch in h:
  *                     ret.append(ch)
  */
-  __pyx_slice__8 = PySlice_New(__pyx_int_2, Py_None, Py_None); if (unlikely(!__pyx_slice__8)) __PYX_ERR(0, 375, __pyx_L1_error)
+  __pyx_slice__8 = PySlice_New(__pyx_int_2, Py_None, Py_None); if (unlikely(!__pyx_slice__8)) __PYX_ERR(0, 346, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__8);
   __Pyx_GIVEREF(__pyx_slice__8);
 
@@ -8219,7 +7811,6 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   __pyx_int_2 = PyInt_FromLong(2); if (unlikely(!__pyx_int_2)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_int_16 = PyInt_FromLong(16); if (unlikely(!__pyx_int_16)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_41310077 = PyInt_FromLong(41310077L); if (unlikely(!__pyx_int_41310077)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_244432181 = PyInt_FromLong(244432181L); if (unlikely(!__pyx_int_244432181)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
@@ -8276,29 +7867,29 @@ static int __Pyx_modinit_type_init_code(void) {
   __pyx_vtabptr_4yarl_10_quoting_c__Quoter = &__pyx_vtable_4yarl_10_quoting_c__Quoter;
   __pyx_vtable_4yarl_10_quoting_c__Quoter._do_quote = (PyObject *(*)(struct __pyx_obj_4yarl_10_quoting_c__Quoter *, PyObject *, struct __pyx_t_4yarl_10_quoting_c_Writer *))__pyx_f_4yarl_10_quoting_c_7_Quoter__do_quote;
   __pyx_vtable_4yarl_10_quoting_c__Quoter._write = (int (*)(struct __pyx_obj_4yarl_10_quoting_c__Quoter *, struct __pyx_t_4yarl_10_quoting_c_Writer *, Py_UCS4))__pyx_f_4yarl_10_quoting_c_7_Quoter__write;
-  if (PyType_Ready(&__pyx_type_4yarl_10_quoting_c__Quoter) < 0) __PYX_ERR(0, 186, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_4yarl_10_quoting_c__Quoter) < 0) __PYX_ERR(0, 170, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_4yarl_10_quoting_c__Quoter.tp_print = 0;
   #endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_4yarl_10_quoting_c__Quoter.tp_dictoffset && __pyx_type_4yarl_10_quoting_c__Quoter.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_4yarl_10_quoting_c__Quoter.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
-  if (__Pyx_SetVtable(__pyx_type_4yarl_10_quoting_c__Quoter.tp_dict, __pyx_vtabptr_4yarl_10_quoting_c__Quoter) < 0) __PYX_ERR(0, 186, __pyx_L1_error)
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Quoter, (PyObject *)&__pyx_type_4yarl_10_quoting_c__Quoter) < 0) __PYX_ERR(0, 186, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_4yarl_10_quoting_c__Quoter) < 0) __PYX_ERR(0, 186, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_4yarl_10_quoting_c__Quoter.tp_dict, __pyx_vtabptr_4yarl_10_quoting_c__Quoter) < 0) __PYX_ERR(0, 170, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Quoter, (PyObject *)&__pyx_type_4yarl_10_quoting_c__Quoter) < 0) __PYX_ERR(0, 170, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_4yarl_10_quoting_c__Quoter) < 0) __PYX_ERR(0, 170, __pyx_L1_error)
   __pyx_ptype_4yarl_10_quoting_c__Quoter = &__pyx_type_4yarl_10_quoting_c__Quoter;
   __pyx_vtabptr_4yarl_10_quoting_c__Unquoter = &__pyx_vtable_4yarl_10_quoting_c__Unquoter;
   __pyx_vtable_4yarl_10_quoting_c__Unquoter._do_unquote = (PyObject *(*)(struct __pyx_obj_4yarl_10_quoting_c__Unquoter *, PyObject *))__pyx_f_4yarl_10_quoting_c_9_Unquoter__do_unquote;
-  if (PyType_Ready(&__pyx_type_4yarl_10_quoting_c__Unquoter) < 0) __PYX_ERR(0, 305, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_4yarl_10_quoting_c__Unquoter) < 0) __PYX_ERR(0, 272, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_4yarl_10_quoting_c__Unquoter.tp_print = 0;
   #endif
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_4yarl_10_quoting_c__Unquoter.tp_dictoffset && __pyx_type_4yarl_10_quoting_c__Unquoter.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_4yarl_10_quoting_c__Unquoter.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
-  if (__Pyx_SetVtable(__pyx_type_4yarl_10_quoting_c__Unquoter.tp_dict, __pyx_vtabptr_4yarl_10_quoting_c__Unquoter) < 0) __PYX_ERR(0, 305, __pyx_L1_error)
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Unquoter, (PyObject *)&__pyx_type_4yarl_10_quoting_c__Unquoter) < 0) __PYX_ERR(0, 305, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_4yarl_10_quoting_c__Unquoter) < 0) __PYX_ERR(0, 305, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_4yarl_10_quoting_c__Unquoter.tp_dict, __pyx_vtabptr_4yarl_10_quoting_c__Unquoter) < 0) __PYX_ERR(0, 272, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Unquoter, (PyObject *)&__pyx_type_4yarl_10_quoting_c__Unquoter) < 0) __PYX_ERR(0, 272, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_4yarl_10_quoting_c__Unquoter) < 0) __PYX_ERR(0, 272, __pyx_L1_error)
   __pyx_ptype_4yarl_10_quoting_c__Unquoter = &__pyx_type_4yarl_10_quoting_c__Unquoter;
   __Pyx_RefNannyFinishContext();
   return 0;
@@ -8688,7 +8279,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF_SET(__pyx_v_4yarl_10_quoting_c_QS, __pyx_kp_u__13);
   __Pyx_GIVEREF(__pyx_kp_u__13);
 
-  /* "yarl/_quoting_c.pyx":64
+  /* "yarl/_quoting_c.pyx":68
  * 
  * 
  * memset(ALLOWED_TABLE, 0, sizeof(ALLOWED_TABLE))             # <<<<<<<<<<<<<<
@@ -8697,7 +8288,7 @@ if (!__Pyx_RefNanny) {
  */
   (void)(memset(__pyx_v_4yarl_10_quoting_c_ALLOWED_TABLE, 0, (sizeof(__pyx_v_4yarl_10_quoting_c_ALLOWED_TABLE))));
 
-  /* "yarl/_quoting_c.pyx":65
+  /* "yarl/_quoting_c.pyx":69
  * 
  * memset(ALLOWED_TABLE, 0, sizeof(ALLOWED_TABLE))
  * memset(ALLOWED_NOTQS_TABLE, 0, sizeof(ALLOWED_NOTQS_TABLE))             # <<<<<<<<<<<<<<
@@ -8706,7 +8297,7 @@ if (!__Pyx_RefNanny) {
  */
   (void)(memset(__pyx_v_4yarl_10_quoting_c_ALLOWED_NOTQS_TABLE, 0, (sizeof(__pyx_v_4yarl_10_quoting_c_ALLOWED_NOTQS_TABLE))));
 
-  /* "yarl/_quoting_c.pyx":67
+  /* "yarl/_quoting_c.pyx":71
  * memset(ALLOWED_NOTQS_TABLE, 0, sizeof(ALLOWED_NOTQS_TABLE))
  * 
  * for i in range(128):             # <<<<<<<<<<<<<<
@@ -8714,59 +8305,59 @@ if (!__Pyx_RefNanny) {
  *         set_bit(ALLOWED_TABLE, i)
  */
   for (__pyx_t_4 = 0; __pyx_t_4 < 0x80; __pyx_t_4+=1) {
-    __pyx_t_1 = __Pyx_PyInt_From_long(__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 67, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyInt_From_long(__pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (PyDict_SetItem(__pyx_d, __pyx_n_s_i, __pyx_t_1) < 0) __PYX_ERR(0, 67, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_d, __pyx_n_s_i, __pyx_t_1) < 0) __PYX_ERR(0, 71, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "yarl/_quoting_c.pyx":68
+    /* "yarl/_quoting_c.pyx":72
  * 
  * for i in range(128):
  *     if chr(i) in ALLOWED:             # <<<<<<<<<<<<<<
  *         set_bit(ALLOWED_TABLE, i)
  *         set_bit(ALLOWED_NOTQS_TABLE, i)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_i); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 68, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_i); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_chr, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 68, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_chr, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 72, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (unlikely(__pyx_v_4yarl_10_quoting_c_ALLOWED == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-      __PYX_ERR(0, 68, __pyx_L1_error)
+      __PYX_ERR(0, 72, __pyx_L1_error)
     }
-    __pyx_t_5 = (__Pyx_PyUnicode_ContainsTF(__pyx_t_3, __pyx_v_4yarl_10_quoting_c_ALLOWED, Py_EQ)); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 68, __pyx_L1_error)
+    __pyx_t_5 = (__Pyx_PyUnicode_ContainsTF(__pyx_t_3, __pyx_v_4yarl_10_quoting_c_ALLOWED, Py_EQ)); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 72, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_6 = (__pyx_t_5 != 0);
     if (__pyx_t_6) {
 
-      /* "yarl/_quoting_c.pyx":69
+      /* "yarl/_quoting_c.pyx":73
  * for i in range(128):
  *     if chr(i) in ALLOWED:
  *         set_bit(ALLOWED_TABLE, i)             # <<<<<<<<<<<<<<
  *         set_bit(ALLOWED_NOTQS_TABLE, i)
  *     if chr(i) in QS:
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 69, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 73, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_7 = __Pyx_PyInt_As_uint64_t(__pyx_t_3); if (unlikely((__pyx_t_7 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 69, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyInt_As_uint64_t(__pyx_t_3); if (unlikely((__pyx_t_7 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 73, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_f_4yarl_10_quoting_c_set_bit(__pyx_v_4yarl_10_quoting_c_ALLOWED_TABLE, __pyx_t_7);
 
-      /* "yarl/_quoting_c.pyx":70
+      /* "yarl/_quoting_c.pyx":74
  *     if chr(i) in ALLOWED:
  *         set_bit(ALLOWED_TABLE, i)
  *         set_bit(ALLOWED_NOTQS_TABLE, i)             # <<<<<<<<<<<<<<
  *     if chr(i) in QS:
  *         set_bit(ALLOWED_NOTQS_TABLE, i)
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 70, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 74, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_7 = __Pyx_PyInt_As_uint64_t(__pyx_t_3); if (unlikely((__pyx_t_7 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 70, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyInt_As_uint64_t(__pyx_t_3); if (unlikely((__pyx_t_7 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 74, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_f_4yarl_10_quoting_c_set_bit(__pyx_v_4yarl_10_quoting_c_ALLOWED_NOTQS_TABLE, __pyx_t_7);
 
-      /* "yarl/_quoting_c.pyx":68
+      /* "yarl/_quoting_c.pyx":72
  * 
  * for i in range(128):
  *     if chr(i) in ALLOWED:             # <<<<<<<<<<<<<<
@@ -8775,41 +8366,41 @@ if (!__Pyx_RefNanny) {
  */
     }
 
-    /* "yarl/_quoting_c.pyx":71
+    /* "yarl/_quoting_c.pyx":75
  *         set_bit(ALLOWED_TABLE, i)
  *         set_bit(ALLOWED_NOTQS_TABLE, i)
  *     if chr(i) in QS:             # <<<<<<<<<<<<<<
  *         set_bit(ALLOWED_NOTQS_TABLE, i)
  * 
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 71, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 75, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_chr, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_chr, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 75, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     if (unlikely(__pyx_v_4yarl_10_quoting_c_QS == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-      __PYX_ERR(0, 71, __pyx_L1_error)
+      __PYX_ERR(0, 75, __pyx_L1_error)
     }
-    __pyx_t_6 = (__Pyx_PyUnicode_ContainsTF(__pyx_t_1, __pyx_v_4yarl_10_quoting_c_QS, Py_EQ)); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 71, __pyx_L1_error)
+    __pyx_t_6 = (__Pyx_PyUnicode_ContainsTF(__pyx_t_1, __pyx_v_4yarl_10_quoting_c_QS, Py_EQ)); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 75, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_5 = (__pyx_t_6 != 0);
     if (__pyx_t_5) {
 
-      /* "yarl/_quoting_c.pyx":72
+      /* "yarl/_quoting_c.pyx":76
  *         set_bit(ALLOWED_NOTQS_TABLE, i)
  *     if chr(i) in QS:
  *         set_bit(ALLOWED_NOTQS_TABLE, i)             # <<<<<<<<<<<<<<
  * 
  * # ----------------- writer ---------------------------
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_i); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_i); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_7 = __Pyx_PyInt_As_uint64_t(__pyx_t_1); if (unlikely((__pyx_t_7 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyInt_As_uint64_t(__pyx_t_1); if (unlikely((__pyx_t_7 == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 76, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __pyx_f_4yarl_10_quoting_c_set_bit(__pyx_v_4yarl_10_quoting_c_ALLOWED_NOTQS_TABLE, __pyx_t_7);
 
-      /* "yarl/_quoting_c.pyx":71
+      /* "yarl/_quoting_c.pyx":75
  *         set_bit(ALLOWED_TABLE, i)
  *         set_bit(ALLOWED_NOTQS_TABLE, i)
  *     if chr(i) in QS:             # <<<<<<<<<<<<<<
@@ -9722,6 +9313,25 @@ static CYTHON_INLINE void __Pyx__ExceptionReset(PyThreadState *tstate, PyObject 
 }
 #endif
 
+/* GetItemIntUnicode */
+static CYTHON_INLINE Py_UCS4 __Pyx_GetItemInt_Unicode_Fast(PyObject* ustring, Py_ssize_t i,
+                                                           int wraparound, int boundscheck) {
+    Py_ssize_t length;
+    if (unlikely(__Pyx_PyUnicode_READY(ustring) < 0)) return (Py_UCS4)-1;
+    if (wraparound | boundscheck) {
+        length = __Pyx_PyUnicode_GET_LENGTH(ustring);
+        if (wraparound & unlikely(i < 0)) i += length;
+        if ((!boundscheck) || likely(__Pyx_is_valid_index(i, length))) {
+            return __Pyx_PyUnicode_READ_CHAR(ustring, i);
+        } else {
+            PyErr_SetString(PyExc_IndexError, "string index out of range");
+            return (Py_UCS4)-1;
+        }
+    } else {
+        return __Pyx_PyUnicode_READ_CHAR(ustring, i);
+    }
+}
+
 /* ReRaiseException */
 static CYTHON_INLINE void __Pyx_ReraiseException(void) {
     PyObject *type = NULL, *value = NULL, *tb = NULL;
@@ -9894,6 +9504,33 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
 }
 #endif
 
+/* decode_c_bytes */
+static CYTHON_INLINE PyObject* __Pyx_decode_c_bytes(
+         const char* cstring, Py_ssize_t length, Py_ssize_t start, Py_ssize_t stop,
+         const char* encoding, const char* errors,
+         PyObject* (*decode_func)(const char *s, Py_ssize_t size, const char *errors)) {
+    if (unlikely((start < 0) | (stop < 0))) {
+        if (start < 0) {
+            start += length;
+            if (start < 0)
+                start = 0;
+        }
+        if (stop < 0)
+            stop += length;
+    }
+    if (stop > length)
+        stop = length;
+    if (unlikely(stop <= start))
+        return __Pyx_NewRef(__pyx_empty_unicode);
+    length = stop - start;
+    cstring += start;
+    if (decode_func) {
+        return decode_func(cstring, length, errors);
+    } else {
+        return PyUnicode_Decode(cstring, length, encoding, errors);
+    }
+}
+
 /* PyObjectCall2Args */
 static CYTHON_UNUSED PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2) {
     PyObject *args, *result = NULL;
@@ -9921,6 +9558,104 @@ static CYTHON_UNUSED PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyOb
     Py_DECREF(function);
 done:
     return result;
+}
+
+/* SliceObject */
+static CYTHON_INLINE int __Pyx_PyObject_SetSlice(PyObject* obj, PyObject* value,
+        Py_ssize_t cstart, Py_ssize_t cstop,
+        PyObject** _py_start, PyObject** _py_stop, PyObject** _py_slice,
+        int has_cstart, int has_cstop, CYTHON_UNUSED int wraparound) {
+#if CYTHON_USE_TYPE_SLOTS
+    PyMappingMethods* mp;
+#if PY_MAJOR_VERSION < 3
+    PySequenceMethods* ms = Py_TYPE(obj)->tp_as_sequence;
+    if (likely(ms && ms->sq_ass_slice)) {
+        if (!has_cstart) {
+            if (_py_start && (*_py_start != Py_None)) {
+                cstart = __Pyx_PyIndex_AsSsize_t(*_py_start);
+                if ((cstart == (Py_ssize_t)-1) && PyErr_Occurred()) goto bad;
+            } else
+                cstart = 0;
+        }
+        if (!has_cstop) {
+            if (_py_stop && (*_py_stop != Py_None)) {
+                cstop = __Pyx_PyIndex_AsSsize_t(*_py_stop);
+                if ((cstop == (Py_ssize_t)-1) && PyErr_Occurred()) goto bad;
+            } else
+                cstop = PY_SSIZE_T_MAX;
+        }
+        if (wraparound && unlikely((cstart < 0) | (cstop < 0)) && likely(ms->sq_length)) {
+            Py_ssize_t l = ms->sq_length(obj);
+            if (likely(l >= 0)) {
+                if (cstop < 0) {
+                    cstop += l;
+                    if (cstop < 0) cstop = 0;
+                }
+                if (cstart < 0) {
+                    cstart += l;
+                    if (cstart < 0) cstart = 0;
+                }
+            } else {
+                if (!PyErr_ExceptionMatches(PyExc_OverflowError))
+                    goto bad;
+                PyErr_Clear();
+            }
+        }
+        return ms->sq_ass_slice(obj, cstart, cstop, value);
+    }
+#endif
+    mp = Py_TYPE(obj)->tp_as_mapping;
+    if (likely(mp && mp->mp_ass_subscript))
+#endif
+    {
+        int result;
+        PyObject *py_slice, *py_start, *py_stop;
+        if (_py_slice) {
+            py_slice = *_py_slice;
+        } else {
+            PyObject* owned_start = NULL;
+            PyObject* owned_stop = NULL;
+            if (_py_start) {
+                py_start = *_py_start;
+            } else {
+                if (has_cstart) {
+                    owned_start = py_start = PyInt_FromSsize_t(cstart);
+                    if (unlikely(!py_start)) goto bad;
+                } else
+                    py_start = Py_None;
+            }
+            if (_py_stop) {
+                py_stop = *_py_stop;
+            } else {
+                if (has_cstop) {
+                    owned_stop = py_stop = PyInt_FromSsize_t(cstop);
+                    if (unlikely(!py_stop)) {
+                        Py_XDECREF(owned_start);
+                        goto bad;
+                    }
+                } else
+                    py_stop = Py_None;
+            }
+            py_slice = PySlice_New(py_start, py_stop, Py_None);
+            Py_XDECREF(owned_start);
+            Py_XDECREF(owned_stop);
+            if (unlikely(!py_slice)) goto bad;
+        }
+#if CYTHON_USE_TYPE_SLOTS
+        result = mp->mp_ass_subscript(obj, py_slice, value);
+#else
+        result = value ? PyObject_SetItem(obj, py_slice, value) : PyObject_DelItem(obj, py_slice);
+#endif
+        if (!_py_slice) {
+            Py_DECREF(py_slice);
+        }
+        return result;
+    }
+    PyErr_Format(PyExc_TypeError,
+        "'%.200s' object does not support slice %.10s",
+        Py_TYPE(obj)->tp_name, value ? "assignment" : "deletion");
+bad:
+    return -1;
 }
 
 /* PyObjectGetMethod */
@@ -10065,42 +9800,6 @@ static CYTHON_INLINE int __Pyx_PyByteArray_Append(PyObject* bytearray, int value
     return 0;
 }
 
-/* ByteArrayAppendObject */
-static CYTHON_INLINE int __Pyx_PyByteArray_AppendObject(PyObject* bytearray, PyObject* value) {
-    Py_ssize_t ival;
-#if PY_MAJOR_VERSION < 3
-    if (unlikely(PyString_Check(value))) {
-        if (unlikely(PyString_GET_SIZE(value) != 1)) {
-            PyErr_SetString(PyExc_ValueError, "string must be of size 1");
-            return -1;
-        }
-        ival = (unsigned char) (PyString_AS_STRING(value)[0]);
-    } else
-#endif
-#if CYTHON_USE_PYLONG_INTERNALS
-    if (likely(PyLong_CheckExact(value)) && likely(Py_SIZE(value) == 1 || Py_SIZE(value) == 0)) {
-        if (Py_SIZE(value) == 0) {
-            ival = 0;
-        } else {
-            ival = ((PyLongObject*)value)->ob_digit[0];
-            if (unlikely(ival > 255)) goto bad_range;
-        }
-    } else
-#endif
-    {
-        ival = __Pyx_PyIndex_AsSsize_t(value);
-        if (unlikely(!__Pyx_is_valid_index(ival, 256))) {
-            if (ival == -1 && PyErr_Occurred())
-                return -1;
-            goto bad_range;
-        }
-    }
-    return __Pyx_PyByteArray_Append(bytearray, ival);
-bad_range:
-    PyErr_SetString(PyExc_ValueError, "byte must be in range(0, 256)");
-    return -1;
-}
-
 /* PyUnicode_Substring */
 static CYTHON_INLINE PyObject* __Pyx_PyUnicode_Substring(
             PyObject* text, Py_ssize_t start, Py_ssize_t stop) {
@@ -10124,340 +9823,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyUnicode_Substring(
 #else
     return PyUnicode_FromUnicode(PyUnicode_AS_UNICODE(text)+start, stop-start);
 #endif
-}
-
-/* decode_c_bytes */
-static CYTHON_INLINE PyObject* __Pyx_decode_c_bytes(
-         const char* cstring, Py_ssize_t length, Py_ssize_t start, Py_ssize_t stop,
-         const char* encoding, const char* errors,
-         PyObject* (*decode_func)(const char *s, Py_ssize_t size, const char *errors)) {
-    if (unlikely((start < 0) | (stop < 0))) {
-        if (start < 0) {
-            start += length;
-            if (start < 0)
-                start = 0;
-        }
-        if (stop < 0)
-            stop += length;
-    }
-    if (stop > length)
-        stop = length;
-    if (unlikely(stop <= start))
-        return __Pyx_NewRef(__pyx_empty_unicode);
-    length = stop - start;
-    cstring += start;
-    if (decode_func) {
-        return decode_func(cstring, length, errors);
-    } else {
-        return PyUnicode_Decode(cstring, length, encoding, errors);
-    }
-}
-
-/* SliceObject */
-static CYTHON_INLINE int __Pyx_PyObject_SetSlice(PyObject* obj, PyObject* value,
-        Py_ssize_t cstart, Py_ssize_t cstop,
-        PyObject** _py_start, PyObject** _py_stop, PyObject** _py_slice,
-        int has_cstart, int has_cstop, CYTHON_UNUSED int wraparound) {
-#if CYTHON_USE_TYPE_SLOTS
-    PyMappingMethods* mp;
-#if PY_MAJOR_VERSION < 3
-    PySequenceMethods* ms = Py_TYPE(obj)->tp_as_sequence;
-    if (likely(ms && ms->sq_ass_slice)) {
-        if (!has_cstart) {
-            if (_py_start && (*_py_start != Py_None)) {
-                cstart = __Pyx_PyIndex_AsSsize_t(*_py_start);
-                if ((cstart == (Py_ssize_t)-1) && PyErr_Occurred()) goto bad;
-            } else
-                cstart = 0;
-        }
-        if (!has_cstop) {
-            if (_py_stop && (*_py_stop != Py_None)) {
-                cstop = __Pyx_PyIndex_AsSsize_t(*_py_stop);
-                if ((cstop == (Py_ssize_t)-1) && PyErr_Occurred()) goto bad;
-            } else
-                cstop = PY_SSIZE_T_MAX;
-        }
-        if (wraparound && unlikely((cstart < 0) | (cstop < 0)) && likely(ms->sq_length)) {
-            Py_ssize_t l = ms->sq_length(obj);
-            if (likely(l >= 0)) {
-                if (cstop < 0) {
-                    cstop += l;
-                    if (cstop < 0) cstop = 0;
-                }
-                if (cstart < 0) {
-                    cstart += l;
-                    if (cstart < 0) cstart = 0;
-                }
-            } else {
-                if (!PyErr_ExceptionMatches(PyExc_OverflowError))
-                    goto bad;
-                PyErr_Clear();
-            }
-        }
-        return ms->sq_ass_slice(obj, cstart, cstop, value);
-    }
-#endif
-    mp = Py_TYPE(obj)->tp_as_mapping;
-    if (likely(mp && mp->mp_ass_subscript))
-#endif
-    {
-        int result;
-        PyObject *py_slice, *py_start, *py_stop;
-        if (_py_slice) {
-            py_slice = *_py_slice;
-        } else {
-            PyObject* owned_start = NULL;
-            PyObject* owned_stop = NULL;
-            if (_py_start) {
-                py_start = *_py_start;
-            } else {
-                if (has_cstart) {
-                    owned_start = py_start = PyInt_FromSsize_t(cstart);
-                    if (unlikely(!py_start)) goto bad;
-                } else
-                    py_start = Py_None;
-            }
-            if (_py_stop) {
-                py_stop = *_py_stop;
-            } else {
-                if (has_cstop) {
-                    owned_stop = py_stop = PyInt_FromSsize_t(cstop);
-                    if (unlikely(!py_stop)) {
-                        Py_XDECREF(owned_start);
-                        goto bad;
-                    }
-                } else
-                    py_stop = Py_None;
-            }
-            py_slice = PySlice_New(py_start, py_stop, Py_None);
-            Py_XDECREF(owned_start);
-            Py_XDECREF(owned_stop);
-            if (unlikely(!py_slice)) goto bad;
-        }
-#if CYTHON_USE_TYPE_SLOTS
-        result = mp->mp_ass_subscript(obj, py_slice, value);
-#else
-        result = value ? PyObject_SetItem(obj, py_slice, value) : PyObject_DelItem(obj, py_slice);
-#endif
-        if (!_py_slice) {
-            Py_DECREF(py_slice);
-        }
-        return result;
-    }
-    PyErr_Format(PyExc_TypeError,
-        "'%.200s' object does not support slice %.10s",
-        Py_TYPE(obj)->tp_name, value ? "assignment" : "deletion");
-bad:
-    return -1;
-}
-
-/* BytesEquals */
-static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals) {
-#if CYTHON_COMPILING_IN_PYPY
-    return PyObject_RichCompareBool(s1, s2, equals);
-#else
-    if (s1 == s2) {
-        return (equals == Py_EQ);
-    } else if (PyBytes_CheckExact(s1) & PyBytes_CheckExact(s2)) {
-        const char *ps1, *ps2;
-        Py_ssize_t length = PyBytes_GET_SIZE(s1);
-        if (length != PyBytes_GET_SIZE(s2))
-            return (equals == Py_NE);
-        ps1 = PyBytes_AS_STRING(s1);
-        ps2 = PyBytes_AS_STRING(s2);
-        if (ps1[0] != ps2[0]) {
-            return (equals == Py_NE);
-        } else if (length == 1) {
-            return (equals == Py_EQ);
-        } else {
-            int result;
-#if CYTHON_USE_UNICODE_INTERNALS
-            Py_hash_t hash1, hash2;
-            hash1 = ((PyBytesObject*)s1)->ob_shash;
-            hash2 = ((PyBytesObject*)s2)->ob_shash;
-            if (hash1 != hash2 && hash1 != -1 && hash2 != -1) {
-                return (equals == Py_NE);
-            }
-#endif
-            result = memcmp(ps1, ps2, (size_t)length);
-            return (equals == Py_EQ) ? (result == 0) : (result != 0);
-        }
-    } else if ((s1 == Py_None) & PyBytes_CheckExact(s2)) {
-        return (equals == Py_NE);
-    } else if ((s2 == Py_None) & PyBytes_CheckExact(s1)) {
-        return (equals == Py_NE);
-    } else {
-        int result;
-        PyObject* py_result = PyObject_RichCompare(s1, s2, equals);
-        if (!py_result)
-            return -1;
-        result = __Pyx_PyObject_IsTrue(py_result);
-        Py_DECREF(py_result);
-        return result;
-    }
-#endif
-}
-
-/* UnicodeEquals */
-static CYTHON_INLINE int __Pyx_PyUnicode_Equals(PyObject* s1, PyObject* s2, int equals) {
-#if CYTHON_COMPILING_IN_PYPY
-    return PyObject_RichCompareBool(s1, s2, equals);
-#else
-#if PY_MAJOR_VERSION < 3
-    PyObject* owned_ref = NULL;
-#endif
-    int s1_is_unicode, s2_is_unicode;
-    if (s1 == s2) {
-        goto return_eq;
-    }
-    s1_is_unicode = PyUnicode_CheckExact(s1);
-    s2_is_unicode = PyUnicode_CheckExact(s2);
-#if PY_MAJOR_VERSION < 3
-    if ((s1_is_unicode & (!s2_is_unicode)) && PyString_CheckExact(s2)) {
-        owned_ref = PyUnicode_FromObject(s2);
-        if (unlikely(!owned_ref))
-            return -1;
-        s2 = owned_ref;
-        s2_is_unicode = 1;
-    } else if ((s2_is_unicode & (!s1_is_unicode)) && PyString_CheckExact(s1)) {
-        owned_ref = PyUnicode_FromObject(s1);
-        if (unlikely(!owned_ref))
-            return -1;
-        s1 = owned_ref;
-        s1_is_unicode = 1;
-    } else if (((!s2_is_unicode) & (!s1_is_unicode))) {
-        return __Pyx_PyBytes_Equals(s1, s2, equals);
-    }
-#endif
-    if (s1_is_unicode & s2_is_unicode) {
-        Py_ssize_t length;
-        int kind;
-        void *data1, *data2;
-        if (unlikely(__Pyx_PyUnicode_READY(s1) < 0) || unlikely(__Pyx_PyUnicode_READY(s2) < 0))
-            return -1;
-        length = __Pyx_PyUnicode_GET_LENGTH(s1);
-        if (length != __Pyx_PyUnicode_GET_LENGTH(s2)) {
-            goto return_ne;
-        }
-#if CYTHON_USE_UNICODE_INTERNALS
-        {
-            Py_hash_t hash1, hash2;
-        #if CYTHON_PEP393_ENABLED
-            hash1 = ((PyASCIIObject*)s1)->hash;
-            hash2 = ((PyASCIIObject*)s2)->hash;
-        #else
-            hash1 = ((PyUnicodeObject*)s1)->hash;
-            hash2 = ((PyUnicodeObject*)s2)->hash;
-        #endif
-            if (hash1 != hash2 && hash1 != -1 && hash2 != -1) {
-                goto return_ne;
-            }
-        }
-#endif
-        kind = __Pyx_PyUnicode_KIND(s1);
-        if (kind != __Pyx_PyUnicode_KIND(s2)) {
-            goto return_ne;
-        }
-        data1 = __Pyx_PyUnicode_DATA(s1);
-        data2 = __Pyx_PyUnicode_DATA(s2);
-        if (__Pyx_PyUnicode_READ(kind, data1, 0) != __Pyx_PyUnicode_READ(kind, data2, 0)) {
-            goto return_ne;
-        } else if (length == 1) {
-            goto return_eq;
-        } else {
-            int result = memcmp(data1, data2, (size_t)(length * kind));
-            #if PY_MAJOR_VERSION < 3
-            Py_XDECREF(owned_ref);
-            #endif
-            return (equals == Py_EQ) ? (result == 0) : (result != 0);
-        }
-    } else if ((s1 == Py_None) & s2_is_unicode) {
-        goto return_ne;
-    } else if ((s2 == Py_None) & s1_is_unicode) {
-        goto return_ne;
-    } else {
-        int result;
-        PyObject* py_result = PyObject_RichCompare(s1, s2, equals);
-        #if PY_MAJOR_VERSION < 3
-        Py_XDECREF(owned_ref);
-        #endif
-        if (!py_result)
-            return -1;
-        result = __Pyx_PyObject_IsTrue(py_result);
-        Py_DECREF(py_result);
-        return result;
-    }
-return_eq:
-    #if PY_MAJOR_VERSION < 3
-    Py_XDECREF(owned_ref);
-    #endif
-    return (equals == Py_EQ);
-return_ne:
-    #if PY_MAJOR_VERSION < 3
-    Py_XDECREF(owned_ref);
-    #endif
-    return (equals == Py_NE);
-#endif
-}
-
-/* UnicodeAsUCS4 */
-static CYTHON_INLINE Py_UCS4 __Pyx_PyUnicode_AsPy_UCS4(PyObject* x) {
-   Py_ssize_t length;
-   #if CYTHON_PEP393_ENABLED
-   length = PyUnicode_GET_LENGTH(x);
-   if (likely(length == 1)) {
-       return PyUnicode_READ_CHAR(x, 0);
-   }
-   #else
-   length = PyUnicode_GET_SIZE(x);
-   if (likely(length == 1)) {
-       return PyUnicode_AS_UNICODE(x)[0];
-   }
-   #if Py_UNICODE_SIZE == 2
-   else if (PyUnicode_GET_SIZE(x) == 2) {
-       Py_UCS4 high_val = PyUnicode_AS_UNICODE(x)[0];
-       if (high_val >= 0xD800 && high_val <= 0xDBFF) {
-           Py_UCS4 low_val = PyUnicode_AS_UNICODE(x)[1];
-           if (low_val >= 0xDC00 && low_val <= 0xDFFF) {
-               return 0x10000 + (((high_val & ((1<<10)-1)) << 10) | (low_val & ((1<<10)-1)));
-           }
-       }
-   }
-   #endif
-   #endif
-   PyErr_Format(PyExc_ValueError,
-                "only single character unicode strings can be converted to Py_UCS4, "
-                "got length %" CYTHON_FORMAT_SSIZE_T "d", length);
-   return (Py_UCS4)-1;
-}
-
-/* object_ord */
-static long __Pyx__PyObject_Ord(PyObject* c) {
-    Py_ssize_t size;
-    if (PyBytes_Check(c)) {
-        size = PyBytes_GET_SIZE(c);
-        if (likely(size == 1)) {
-            return (unsigned char) PyBytes_AS_STRING(c)[0];
-        }
-#if PY_MAJOR_VERSION < 3
-    } else if (PyUnicode_Check(c)) {
-        return (long)__Pyx_PyUnicode_AsPy_UCS4(c);
-#endif
-#if (!CYTHON_COMPILING_IN_PYPY) || (defined(PyByteArray_AS_STRING) && defined(PyByteArray_GET_SIZE))
-    } else if (PyByteArray_Check(c)) {
-        size = PyByteArray_GET_SIZE(c);
-        if (likely(size == 1)) {
-            return (unsigned char) PyByteArray_AS_STRING(c)[0];
-        }
-#endif
-    } else {
-        PyErr_Format(PyExc_TypeError,
-            "ord() expected string of length 1, but %.200s found", c->ob_type->tp_name);
-        return (long)(Py_UCS4)-1;
-    }
-    PyErr_Format(PyExc_TypeError,
-        "ord() expected a character, but string of length %zd found", size);
-    return (long)(Py_UCS4)-1;
 }
 
 /* SliceObject */
@@ -11219,6 +10584,37 @@ bad:
     }
 
 /* CIntToPy */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
+    const int neg_one = (int) ((int) 0 - (int) 1), const_zero = (int) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(int) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(int) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+#endif
+        }
+    } else {
+        if (sizeof(int) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+#endif
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(int),
+                                     little, !is_unsigned);
+    }
+}
+
+/* CIntToPy */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
     const long neg_one = (long) ((long) 0 - (long) 1), const_zero = (long) 0;
     const int is_unsigned = neg_one > const_zero;
@@ -11247,6 +10643,94 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
         return _PyLong_FromByteArray(bytes, sizeof(long),
                                      little, !is_unsigned);
     }
+}
+
+/* PyUCS4InUnicode */
+#if PY_VERSION_HEX < 0x03090000
+#if Py_UNICODE_SIZE == 2
+static int __Pyx_PyUnicodeBufferContainsUCS4_SP(Py_UNICODE* buffer, Py_ssize_t length, Py_UCS4 character) {
+    Py_UNICODE high_val, low_val;
+    Py_UNICODE* pos;
+    high_val = (Py_UNICODE) (0xD800 | (((character - 0x10000) >> 10) & ((1<<10)-1)));
+    low_val  = (Py_UNICODE) (0xDC00 | ( (character - 0x10000)        & ((1<<10)-1)));
+    for (pos=buffer; pos < buffer+length-1; pos++) {
+        if (unlikely((high_val == pos[0]) & (low_val == pos[1]))) return 1;
+    }
+    return 0;
+}
+#endif
+static int __Pyx_PyUnicodeBufferContainsUCS4_BMP(Py_UNICODE* buffer, Py_ssize_t length, Py_UCS4 character) {
+    Py_UNICODE uchar;
+    Py_UNICODE* pos;
+    uchar = (Py_UNICODE) character;
+    for (pos=buffer; pos < buffer+length; pos++) {
+        if (unlikely(uchar == pos[0])) return 1;
+    }
+    return 0;
+}
+#endif
+static CYTHON_INLINE int __Pyx_UnicodeContainsUCS4(PyObject* unicode, Py_UCS4 character) {
+#if CYTHON_PEP393_ENABLED
+    const int kind = PyUnicode_KIND(unicode);
+    if (likely(kind != PyUnicode_WCHAR_KIND)) {
+        Py_ssize_t i;
+        const void* udata = PyUnicode_DATA(unicode);
+        const Py_ssize_t length = PyUnicode_GET_LENGTH(unicode);
+        for (i=0; i < length; i++) {
+            if (unlikely(character == PyUnicode_READ(kind, udata, i))) return 1;
+        }
+        return 0;
+    }
+#elif PY_VERSION_HEX >= 0x03090000
+    #error Cannot use "UChar in Unicode" in Python 3.9 without PEP-393 unicode strings.
+#endif
+#if PY_VERSION_HEX < 0x03090000
+#if Py_UNICODE_SIZE == 2
+    if (unlikely(character > 65535)) {
+        return __Pyx_PyUnicodeBufferContainsUCS4_SP(
+            PyUnicode_AS_UNICODE(unicode),
+            PyUnicode_GET_SIZE(unicode),
+            character);
+    } else
+#endif
+    {
+        return __Pyx_PyUnicodeBufferContainsUCS4_BMP(
+            PyUnicode_AS_UNICODE(unicode),
+            PyUnicode_GET_SIZE(unicode),
+            character);
+    }
+#endif
+}
+
+/* UnicodeAsUCS4 */
+static CYTHON_INLINE Py_UCS4 __Pyx_PyUnicode_AsPy_UCS4(PyObject* x) {
+   Py_ssize_t length;
+   #if CYTHON_PEP393_ENABLED
+   length = PyUnicode_GET_LENGTH(x);
+   if (likely(length == 1)) {
+       return PyUnicode_READ_CHAR(x, 0);
+   }
+   #else
+   length = PyUnicode_GET_SIZE(x);
+   if (likely(length == 1)) {
+       return PyUnicode_AS_UNICODE(x)[0];
+   }
+   #if Py_UNICODE_SIZE == 2
+   else if (PyUnicode_GET_SIZE(x) == 2) {
+       Py_UCS4 high_val = PyUnicode_AS_UNICODE(x)[0];
+       if (high_val >= 0xD800 && high_val <= 0xDBFF) {
+           Py_UCS4 low_val = PyUnicode_AS_UNICODE(x)[1];
+           if (low_val >= 0xDC00 && low_val <= 0xDFFF) {
+               return 0x10000 + (((high_val & ((1<<10)-1)) << 10) | (low_val & ((1<<10)-1)));
+           }
+       }
+   }
+   #endif
+   #endif
+   PyErr_Format(PyExc_ValueError,
+                "only single character unicode strings can be converted to Py_UCS4, "
+                "got length %" CYTHON_FORMAT_SSIZE_T "d", length);
+   return (Py_UCS4)-1;
 }
 
 /* CIntFromPy */
@@ -11814,6 +11298,27 @@ raise_neg_overflow:
     PyErr_SetString(PyExc_OverflowError,
         "can't convert negative value to long");
     return (long) -1;
+}
+
+/* ObjectAsUCS4 */
+static Py_UCS4 __Pyx__PyObject_AsPy_UCS4_raise_error(long ival) {
+   if (ival < 0) {
+       if (!PyErr_Occurred())
+           PyErr_SetString(PyExc_OverflowError,
+                           "cannot convert negative value to Py_UCS4");
+   } else {
+       PyErr_SetString(PyExc_OverflowError,
+                       "value too large to convert to Py_UCS4");
+   }
+   return (Py_UCS4)-1;
+}
+static Py_UCS4 __Pyx__PyObject_AsPy_UCS4(PyObject* x) {
+   long ival;
+   ival = __Pyx_PyInt_As_long(x);
+   if (unlikely(!__Pyx_is_valid_index(ival, 1114111 + 1))) {
+       return __Pyx__PyObject_AsPy_UCS4_raise_error(ival);
+   }
+   return (Py_UCS4)ival;
 }
 
 /* CIntFromPy */

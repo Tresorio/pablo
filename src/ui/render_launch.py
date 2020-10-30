@@ -1,13 +1,10 @@
-import bpy
-import time
 import math
-from src.properties.farm import TresorioFarmProps
-from src.services.backend import get_farms
-from src.config.enums import RenderTypes
-from src.properties.render_form import get_render_type
-from src.config.langs import TRADUCTOR, CONFIG_LANG
-from src.ui.popup import popup, alert
 import functools
+
+import bpy
+from bundle_modules import i18n
+from src.properties.farm import TresorioFarmProps
+from src.ui.popup import popup
 
 class TresorioFarmList(bpy.types.UIList):
     bl_idname = 'OBJECT_UL_TRESORIO_FARMS_LIST'
@@ -31,7 +28,8 @@ class TresorioFarmList(bpy.types.UIList):
         if item.gpu != 0:
             split.label(text=str(item.gpu))
         split.label(text=str(item.cpu))
-        split.label(text=str(math.floor(item.ram / 1000))+" "+TRADUCTOR['field']['GB'][CONFIG_LANG])
+        # TODO fix that
+        split.label(text=str(math.floor(item.ram / 1000))+" "+i18n.t('blender.GB'))
         split.label(text=str(float("{:.2f}".format(item.cost))))
 
     def draw_filter(self, context, layout):
@@ -66,31 +64,32 @@ class TresorioRenderResumer(bpy.types.Panel):
         name = render.name
 
         layout = self.layout
-        layout.label(text=TRADUCTOR['field']['resuming_summary'][CONFIG_LANG].format(str(number_of_frames), ('s' if number_of_frames > 1 else ''), mode, name))
+        # TODO fix that
+        layout.label(text=i18n.t('blender.resuming-summary').format(str(number_of_frames), ('s' if number_of_frames > 1 else ''), mode, name))
         layout.separator()
         available_farms_count = functools.reduce(lambda acc,val : acc + val.is_available, farms, 0)
         if len(farms) == 0:
-            layout.label(text=TRADUCTOR['field']['optimizing'][CONFIG_LANG])
+            layout.label(text=i18n.t('blender.optimizing'))
         else:
 
             if index >= 0 and index < len(farms) and not farms[index].is_available:
                 bpy.context.window_manager.tresorio_farm_props_index = bpy.context.window_manager.tresorio_farm_props_old_index
-                popup(TRADUCTOR['notif']['farm_not_available'][CONFIG_LANG], icon='ERROR')
+                popup(i18n.t('blender.farm-not-available'), icon='ERROR')
             else:
                 bpy.context.window_manager.tresorio_farm_props_old_index = index
 
             if available_farms_count == 0:
-                layout.label(text=TRADUCTOR['field']['farms_unavailable'][CONFIG_LANG])
-                layout.label(text=TRADUCTOR['field']['servers_try_again'][CONFIG_LANG])
+                layout.label(text=i18n.t('blender.farms-unavailable'))
+                layout.label(text=i18n.t('blender.servers-try-again'))
             else:
-                layout.label(text=TRADUCTOR['field']['select_farm'][CONFIG_LANG])
+                layout.label(text=i18n.t('blender.select-farm'))
             layout.separator()
             header = layout.box().split()
             if farms[0].gpu != 0:
                 header.label(text="Gpu")
             header.label(text="Cpu")
             header.label(text="RAM")
-            header.label(text=TRADUCTOR['field']['cost_per_hour'][CONFIG_LANG])
+            header.label(text=i18n.t('blender.cost-per-hour'))
             layout.template_list('OBJECT_UL_TRESORIO_FARMS_LIST',
                                 'Farms_list',
                                 context.window_manager,
@@ -133,31 +132,31 @@ class TresorioRenderLauncher(bpy.types.Panel):
         number_of_frames = bpy.context.scene.tresorio_render_form.number_of_frames
 
         layout = self.layout
-        layout.label(text=TRADUCTOR['field']['rendering_summary'][CONFIG_LANG].format(rendering_mode, str(number_of_frames), ('s' if number_of_frames > 1 else '')))
+        layout.label(text=i18n.t('blender.rendering-summary').format(rendering_mode, str(number_of_frames), ('s' if number_of_frames > 1 else '')))
         layout.separator()
         available_farms_count = functools.reduce(lambda acc,val : acc + val.is_available, farms, 0)
         if len(farms) == 0:
-            layout.label(text=TRADUCTOR['field']['optimizing'][CONFIG_LANG])
+            layout.label(text=i18n.t('blender.optimizing'))
         else:
 
             if index >= 0 and index < len(farms) and not farms[index].is_available:
                 bpy.context.window_manager.tresorio_farm_props_index = bpy.context.window_manager.tresorio_farm_props_old_index
-                popup(TRADUCTOR['notif']['farm_not_available'][CONFIG_LANG], icon='ERROR')
+                popup(i18n.t('blender.farm-not-available'), icon='ERROR')
             else:
                 bpy.context.window_manager.tresorio_farm_props_old_index = index
 
             if available_farms_count == 0:
-                layout.label(text=TRADUCTOR['field']['farms_unavailable'][CONFIG_LANG])
-                layout.label(text=TRADUCTOR['field']['servers_try_again'][CONFIG_LANG])
+                layout.label(text=i18n.t('blender.farms-unavailable'))
+                layout.label(text=i18n.t('blender.servers-try-again'))
             else:
-                layout.label(text=TRADUCTOR['field']['select_farm'][CONFIG_LANG])
+                layout.label(text=i18n.t('blender.select-farm'))
             layout.separator()
             header = layout.box().split()
             if farms[0].gpu != 0:
                 header.label(text="Gpu")
             header.label(text="Cpu")
             header.label(text="RAM")
-            header.label(text=TRADUCTOR['field']['cost_per_hour'][CONFIG_LANG])
+            header.label(text=i18n.t('blender.cost-per-hour'))
             layout.template_list('OBJECT_UL_TRESORIO_FARMS_LIST',
                                 'Farms_list',
                                 context.window_manager,

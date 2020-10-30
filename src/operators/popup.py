@@ -1,9 +1,11 @@
-from src.config.langs import TRADUCTOR, CONFIG_LANG
+"""Popup window"""
+
 import bpy
+from bundle_modules import i18n
 
 class ErrorPopup(bpy.types.Operator):
     bl_idname = "object.error_popup"
-    bl_label = TRADUCTOR['desc']['something_went_wrong'][CONFIG_LANG]
+    bl_label = i18n.t('blender.something-went-wrong')
 
     error_msg: bpy.props.StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
     subtitle: bpy.props.StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
@@ -21,7 +23,7 @@ class ErrorPopup(bpy.types.Operator):
 
 class InfoPopup(bpy.types.Operator):
     bl_idname = "object.info_popup"
-    bl_label = TRADUCTOR['desc']['info'][CONFIG_LANG]
+    bl_label = i18n.t('blender.info')
 
     info_msg: bpy.props.StringProperty(options={'HIDDEN', 'SKIP_SAVE'})
 

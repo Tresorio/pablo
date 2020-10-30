@@ -1,8 +1,8 @@
 """Defines the drawer for the connection panel"""
 
-from src.ui.icons import TresorioIconsLoader as til
-from src.config.langs import TRADUCTOR, CONFIG_LANG
 import bpy
+from bundle_modules import i18n
+from src.ui.icons import TresorioIconsLoader as til
 
 
 def draw_version_panel(layout: bpy.types.UILayout,
@@ -15,13 +15,13 @@ def draw_version_panel(layout: bpy.types.UILayout,
     report_props = bpy.context.window_manager.tresorio_report_props
 
     title = layout.row()
-    title.label(text=f"{TRADUCTOR['desc']['new_version'][CONFIG_LANG]}")
+    title.label(text=i18n.t('blender.new-version'))
     title = layout.row()
-    title.label(text=f"{TRADUCTOR['desc']['actual_version'][CONFIG_LANG]} : {actual_version}")
+    title.label(text=f"{i18n.t('blender.actual-version')} : {actual_version}")
     title = layout.row()
-    title.label(text=f"{TRADUCTOR['desc']['latest_version'][CONFIG_LANG]} : {latest_version}")
+    title.label(text=f"{i18n.t('blender.latest-version')} : {latest_version}")
     layout.operator('tresorio.download_addon',
-        text=f"{TRADUCTOR['desc']['download_latest'][CONFIG_LANG]}",
+        text=i18n.t('blender.download-latest'),
         icon_value=til.icon('TRESORIO_LEAF')
     )
 

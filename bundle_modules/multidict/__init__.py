@@ -17,31 +17,31 @@ __all__ = (
     "CIMultiDict",
     "upstr",
     "istr",
-    "getversion"
+    "getversion",
 )
 
-__version__ = "4.7.6"
+__version__ = "5.0.0"
 
 
 try:
     if not USE_CYTHON_EXTENSIONS:
         raise ImportError
     from ._multidict import (
-        MultiDictProxy,
+        CIMultiDict,
         CIMultiDictProxy,
         MultiDict,
-        CIMultiDict,
-        istr,
+        MultiDictProxy,
         getversion,
+        istr,
     )
 except ImportError:  # pragma: no cover
     from ._multidict_py import (
-        MultiDictProxy,
+        CIMultiDict,
         CIMultiDictProxy,
         MultiDict,
-        CIMultiDict,
-        istr,
+        MultiDictProxy,
         getversion,
+        istr,
     )
 
 

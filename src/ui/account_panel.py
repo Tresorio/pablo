@@ -1,15 +1,15 @@
 """This module defines the user account information panel"""
 
-from src.ui.icons import TresorioIconsLoader as til
-from src.config.langs import TRADUCTOR, CONFIG_LANG
 import bpy
+from bundle_modules import i18n
+from src.ui.icons import TresorioIconsLoader as til
 
 
 class TresorioAccountPanel(bpy.types.Panel):
     """User account panel"""
     bl_idname = 'OBJECT_PT_TRESORIO_ACCOUNT_PANEL'
     bl_parent_id = 'OBJECT_PT_TRESORIO_PANEL'
-    bl_label = TRADUCTOR['field']['account_panel'][CONFIG_LANG]
+    bl_label = i18n.t('blender.account-panel')
     bl_options = {'DEFAULT_CLOSED'}
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -38,10 +38,10 @@ class TresorioAccountPanel(bpy.types.Panel):
         rounded_credits = round(user_props.total_credits * 100) / 100
         split.label(text=f'Credits: {rounded_credits:.2f}')
         split.operator('tresorio.redirect_get_credits',
-                       text=TRADUCTOR['field']['get_credits'][CONFIG_LANG],
+                       text=i18n.t('blender.get-credits'),
                        icon_value=til.icon('TRESORIO_GET_CREDITS'))
         layout.operator('tresorio.logout',
-                        text=TRADUCTOR['field']['logout'][CONFIG_LANG],
+                        text=i18n.t('blender.logout'),
                         icon_value=til.icon('TRESORIO_LOGOUT'))
         layout.operator('tresorio.redirect_home',
                         text='Tresorio',

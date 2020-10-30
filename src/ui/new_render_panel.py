@@ -1,14 +1,14 @@
 """Render creation panel"""
 
-from src.config.langs import TRADUCTOR, CONFIG_LANG
 import bpy
+from bundle_modules import i18n
 
 
 class TresorioNewRenderPanel(bpy.types.Panel):
     """Render creation panel"""
     bl_idname = 'OBJECT_PT_TRESORIO_NEW_RENDER_PANEL'
     bl_parent_id = 'OBJECT_PT_TRESORIO_PANEL'
-    bl_label = TRADUCTOR['field']['new_render_panel'][CONFIG_LANG]
+    bl_label = i18n.t('blender.new-render-panel')
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = 'output'
@@ -34,47 +34,44 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row = box.row()
         row_1 = row.row()
         row_1.alignment = 'LEFT'
-        row_1.prop(render_form, 'show_settings', emboss=False,
-                   text=TRADUCTOR['field']['settings'][CONFIG_LANG]+':')
+        row_1.prop(render_form, 'show_settings', emboss=False, text=i18n.t('blender.settings'))
         row_2 = row.row()
         row_2.alignment = 'RIGHT'
         icon = 'DISCLOSURE_TRI_DOWN' if render_form.show_settings else 'DISCLOSURE_TRI_RIGHT'
-        row_2.prop(render_form, 'show_settings', text='', emboss=False,
-                   icon=icon)
+        row_2.prop(render_form, 'show_settings', text='', emboss=False, icon=icon)
 
         if render_form.show_settings:
             row = box.row().split(factor=0.4)
-            row.label(
-                text=TRADUCTOR['field']['new_rendering_name'][CONFIG_LANG]+':')
+            row.label(text=i18n.t('blender.new-rendering-name'))
             row.prop(render_form, 'rendering_name')
 
             row = box.row().split(factor=0.4)
-            row.label(text=TRADUCTOR['field']['render_type'][CONFIG_LANG]+':')
+            row.label(text=i18n.t('blender.render-type'))
             split = row.split(factor=0.5)
             split.prop(render_form, 'is_frame_selected', toggle=1,
-                       text=TRADUCTOR['field']['frame'][CONFIG_LANG], icon='RESTRICT_RENDER_OFF')
+                       text=i18n.t('blender.frame'), icon='RESTRICT_RENDER_OFF')
             split.prop(render_form, 'is_animation_selected', toggle=1,
-                       text=TRADUCTOR['field']['animation'][CONFIG_LANG], icon='RENDER_ANIMATION')
+                       text=i18n.t('blender.animation'), icon='RENDER_ANIMATION')
 
             row = box.row().split(factor=0.4)
-            row.label(text=TRADUCTOR['field']['engine'][CONFIG_LANG]+':')
+            row.label(text=i18n.t('blender.engine'))
             row.prop_menu_enum(render_form, 'render_engines_list', icon='EMPTY_AXIS',
                                text=render_form.render_engines_list.capitalize())
 
             row = box.row().split(factor=0.4)
-            row.label(text=TRADUCTOR['field']['format'][CONFIG_LANG]+':')
+            row.label(text=i18n.t('blender.format'))
             row.prop_menu_enum(render_form, 'output_formats_list', icon='FILE_IMAGE',
                                text=render_form.output_formats_list)
 
             split = box.split(factor=0.4)
-            split.label(text=TRADUCTOR['field']['options'][CONFIG_LANG]+':')
+            split.label(text=i18n.t('blender.options'))
             grid_flow = split.grid_flow(
                 even_rows=False, even_columns=True, align=True)
 
             grid_flow.prop(render_form, 'auto_tile_size',
-                           text=TRADUCTOR['field']['auto_tile_size'][CONFIG_LANG])
+                           text=i18n.t('blender.auto-tile-size'))
             # grid_flow.prop(render_form, 'use_optix',
-            #                 text=TRADUCTOR['field']['use_optix'][CONFIG_LANG])
+            #                 text=i18n.t('blender.use-optix'))
 
 
         # PROJECT
@@ -82,8 +79,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
         row = box.row()
         row_1 = row.row()
         row_1.alignment = 'LEFT'
-        row_1.prop(render_form, 'show_project', emboss=False,
-                   text=TRADUCTOR['field']['project'][CONFIG_LANG]+':')
+        row_1.prop(render_form, 'show_project', emboss=False, text=i18n.t('blender.project'))
         row_2 = row.row()
         row_2.alignment = 'RIGHT'
         icon = 'DISCLOSURE_TRI_DOWN' if render_form.show_project else 'DISCLOSURE_TRI_RIGHT'
@@ -92,10 +88,10 @@ class TresorioNewRenderPanel(bpy.types.Panel):
 
         if render_form.show_project:
             project_name = box.row().split(factor=0.4, align=True)
-            project_name.label(text=TRADUCTOR['field']['project_name'][CONFIG_LANG]+':')
+            project_name.label(text=i18n.t('blender.project-name'))
             project_name.prop(render_form, 'project_name')
 
-            box.row().label(text=TRADUCTOR['field']['project_directory'][CONFIG_LANG])
+            box.row().label(text=i18n.t('blender.project-directory'))
 
             project_content = box.row().split(factor=0.7, align=True)
 
@@ -114,18 +110,18 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                         sub_box = row.box()
                         sub_box.scale_x = 0.5
                         sub_box.scale_y = 0.5
-                        sub_box.label(text=TRADUCTOR['desc']['preparing_upload'][CONFIG_LANG])
+                        sub_box.label(text=i18n.t('blender.preparing-upload'))
                         row.operator('tresorio.cancelupload', icon='X')
                     else:
                         row = box.row()
                         row.prop(render_form, 'upload_percent',
-                                 text=TRADUCTOR['desc']['uploading'][CONFIG_LANG].format(render_form.file_uploading),
+                                 text=i18n.t('blender.uploading').format(render_form.file_uploading),
                                  slider=True)
                         row.operator('tresorio.cancelupload', icon='X')
                 elif report_props.packing_textures:
                     row = box.row()
                     row.prop(render_form, 'pack_percent',
-                             text=TRADUCTOR['desc']['exporting'][CONFIG_LANG],
+                             text=i18n.t('blender.exporting'),
                              slider=True)
                     row.operator('tresorio.cancelupload', icon='X')
                 else:
@@ -133,7 +129,7 @@ class TresorioNewRenderPanel(bpy.types.Panel):
                     sub_box = row.box()
                     sub_box.scale_x = 0.5
                     sub_box.scale_y = 0.5
-                    sub_box.label(text=TRADUCTOR['desc']['preparing_export'][CONFIG_LANG])
+                    sub_box.label(text=i18n.t('blender.preparing-export'))
                     row.operator('tresorio.cancelupload', icon='X')
 
         # LAUNCH

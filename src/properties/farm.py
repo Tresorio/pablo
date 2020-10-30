@@ -1,4 +1,4 @@
-from src.config.langs import TRADUCTOR, CONFIG_LANG
+
 import bpy
 
 class TresorioFarmProps(bpy.types.PropertyGroup):

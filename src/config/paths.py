@@ -3,22 +3,22 @@
 import os
 import bpy
 
-DIRNAME = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-CONFIG_JSONS_DIRNAME = 'config'
-ASSETS_DIRNAME = 'assets'
+# Finds the absolute path to the addon's directory. If you move `paths.py
+# to another folder, make sure the os.path.dirname chaining still leads
+# to the addon's folder.
+ABS_ADDON_PATH = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
-LANG_PATH = os.path.join(DIRNAME, CONFIG_JSONS_DIRNAME, 'lang')
-LANG_DESCRIPTION_PATH = os.path.join(LANG_PATH, 'description.json')
-LANG_FIELD_PATH = os.path.join(LANG_PATH, 'field.json')
-LANG_NOTIFICATION_PATH = os.path.join(LANG_PATH, 'notification.json')
+# Absolute path to the 'config/lang' folder
+LANG_PATH = os.path.join(ABS_ADDON_PATH, 'config', 'lang')
 
-TRESORIO_ADDON_PATH = os.path.join(DIRNAME, CONFIG_JSONS_DIRNAME, 'tresorio')
-TRESORIO_CONFIG_PATH = os.path.join(TRESORIO_ADDON_PATH, 'config.json')
-DEFAULT_USER_CONFIG_PATH = os.path.join(TRESORIO_ADDON_PATH, 'user.json')
+# Paths leading to addon / local user configs
+TRESORIO_LOCAL_CONFIG_PATH = os.path.join(ABS_ADDON_PATH, 'config', 'tresorio')
+TRESORIO_CONFIG_PATH = os.path.join(TRESORIO_LOCAL_CONFIG_PATH, 'config.json')
+DEFAULT_USER_CONFIG_PATH = os.path.join(TRESORIO_LOCAL_CONFIG_PATH, 'user.json')
 
-ICONS_PATH = os.path.join(DIRNAME, ASSETS_DIRNAME, 'icons')
+ICONS_PATH = os.path.join(ABS_ADDON_PATH, 'assets', 'icons')
 
 USER_CONFIG_PATH = os.path.join(bpy.utils.user_resource(
     'CONFIG', path='tresorio', create=True), 'user.json')
 LOGS_PATH = os.path.join(bpy.utils.user_resource(
-    'CONFIG', path='tresorio', create=True), "logs.txt")
+    'CONFIG', path='tresorio', create=True), 'logs.txt')

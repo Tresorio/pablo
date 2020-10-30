@@ -989,6 +989,7 @@
         {"shape":"ResourceNotFoundException"},
         {"shape":"DeleteConflictException"},
         {"shape":"ThrottlingException"},
+        {"shape":"ConflictingResourceUpdateException"},
         {"shape":"UnauthorizedException"}
       ],
       "documentation":"<p>Deletes a fleet provisioning template.</p>"
@@ -1007,6 +1008,7 @@
         {"shape":"ThrottlingException"},
         {"shape":"ResourceNotFoundException"},
         {"shape":"UnauthorizedException"},
+        {"shape":"ConflictingResourceUpdateException"},
         {"shape":"DeleteConflictException"}
       ],
       "documentation":"<p>Deletes a fleet provisioning template version.</p>"
@@ -2080,7 +2082,7 @@
         {"shape":"ThrottlingException"},
         {"shape":"InternalFailureException"}
       ],
-      "documentation":"<p>Lists the findings (results) of a Device Defender audit or of the audits performed during a specified time period. (Findings are retained for 180 days.)</p>"
+      "documentation":"<p>Lists the findings (results) of a Device Defender audit or of the audits performed during a specified time period. (Findings are retained for 90 days.)</p>"
     },
     "ListAuditMitigationActionsExecutions":{
       "name":"ListAuditMitigationActionsExecutions",
@@ -3064,7 +3066,8 @@
         {"shape":"InternalException"},
         {"shape":"NotConfiguredException"},
         {"shape":"InvalidRequestException"},
-        {"shape":"ServiceUnavailableException"}
+        {"shape":"ServiceUnavailableException"},
+        {"shape":"LimitExceededException"}
       ],
       "documentation":"<p>Sets the logging level.</p>"
     },
@@ -3704,7 +3707,7 @@
       "type":"string",
       "max":2048,
       "min":1,
-      "pattern":"arn:aws:acm:[a-z]{2}-(gov-)?[a-z]{4,9}-\\d{1}:\\d{12}:certificate/?[a-zA-Z0-9/-]+"
+      "pattern":"arn:aws(-cn|-us-gov|-iso-b|-iso)?:acm:[a-z]{2}-(gov-|iso-|isob-)?[a-z]{4,9}-\\d{1}:\\d{12}:certificate/[a-zA-Z0-9/-]+"
     },
     "Action":{
       "type":"structure",
@@ -3780,6 +3783,10 @@
         "stepFunctions":{
           "shape":"StepFunctionsAction",
           "documentation":"<p>Starts execution of a Step Functions state machine.</p>"
+        },
+        "timestream":{
+          "shape":"TimestreamAction",
+          "documentation":"<p>The Timestream rule action writes attributes (measures) from an MQTT message into an Amazon Timestream table. For more information, see the <a href=\"https://docs.aws.amazon.com/iot/latest/developerguide/timestream-rule-action.html\">Timestream</a> topic rule action documentation.</p>"
         },
         "http":{
           "shape":"HttpAction",
@@ -3976,7 +3983,6 @@
     "AssetId":{"type":"string"},
     "AssetPropertyAlias":{
       "type":"string",
-      "max":2048,
       "min":1
     },
     "AssetPropertyBooleanValue":{"type":"string"},
@@ -4076,6 +4082,12 @@
         "comment":{
           "shape":"Comment",
           "documentation":"<p>An optional comment string describing why the job was associated with the targets.</p>"
+        },
+        "namespaceId":{
+          "shape":"NamespaceId",
+          "documentation":"<p>The namespace used to indicate that a job is a customer-managed job.</p> <p>When you specify a value for this parameter, AWS IoT Core sends jobs notifications to MQTT topics that contain the value in the following format.</p> <p> <code>$aws/things/<i>THING_NAME</i>/jobs/<i>JOB_ID</i>/notify-namespace-<i>NAMESPACE_ID</i>/</code> </p> <note> <p>The <code>namespaceId</code> feature is in public preview.</p> </note>",
+          "location":"querystring",
+          "locationName":"namespaceId"
         }
       }
     },
@@ -4657,7 +4669,10 @@
       "type":"list",
       "member":{"shape":"AuthResult"}
     },
-    "AuthorizerArn":{"type":"string"},
+    "AuthorizerArn":{
+      "type":"string",
+      "max":2048
+    },
     "AuthorizerConfig":{
       "type":"structure",
       "members":{
@@ -4715,7 +4730,10 @@
       },
       "documentation":"<p>The authorizer description.</p>"
     },
-    "AuthorizerFunctionArn":{"type":"string"},
+    "AuthorizerFunctionArn":{
+      "type":"string",
+      "max":2048
+    },
     "AuthorizerName":{
       "type":"string",
       "max":128,
@@ -6030,6 +6048,10 @@
         "tags":{
           "shape":"TagList",
           "documentation":"<p>Metadata which can be used to manage the job.</p>"
+        },
+        "namespaceId":{
+          "shape":"NamespaceId",
+          "documentation":"<p>The namespace used to indicate that a job is a customer-managed job.</p> <p>When you specify a value for this parameter, AWS IoT Core sends jobs notifications to MQTT topics that contain the value in the following format.</p> <p> <code>$aws/things/<i>THING_NAME</i>/jobs/<i>JOB_ID</i>/notify-namespace-<i>NAMESPACE_ID</i>/</code> </p> <note> <p>The <code>namespaceId</code> feature is in public preview.</p> </note>"
         }
       }
     },
@@ -6552,7 +6574,7 @@
         },
         "additionalMetricsToRetain":{
           "shape":"AdditionalMetricsToRetainList",
-          "documentation":"<p>A list of metrics whose data is retained (stored). By default, data is retained for any metric used in the profile's <code>behaviors</code>, but it is also retained for any metric specified here.</p> <p> <b>Note:</b> This API field is deprecated. Please use <a>CreateSecurityProfileRequest$additionalMetricsToRetainV2</a> instead.</p>",
+          "documentation":"<p> <i>Please use <a>CreateSecurityProfileRequest$additionalMetricsToRetainV2</a> instead.</i> </p> <p>A list of metrics whose data is retained (stored). By default, data is retained for any metric used in the profile's <code>behaviors</code>, but it is also retained for any metric specified here.</p>",
           "deprecated":true,
           "deprecatedMessage":"Use additionalMetricsToRetainV2."
         },
@@ -7064,6 +7086,12 @@
           "documentation":"<p>(Optional) When true, you can delete a job execution which is \"IN_PROGRESS\". Otherwise, you can only delete a job execution which is in a terminal state (\"SUCCEEDED\", \"FAILED\", \"REJECTED\", \"REMOVED\" or \"CANCELED\") or an exception will occur. The default is false.</p> <note> <p>Deleting a job execution which is \"IN_PROGRESS\", will cause the device to be unable to access job information or update the job execution status. Use caution and ensure that the device is able to recover to a valid state.</p> </note>",
           "location":"querystring",
           "locationName":"force"
+        },
+        "namespaceId":{
+          "shape":"NamespaceId",
+          "documentation":"<p>The namespace used to indicate that a job is a customer-managed job.</p> <p>When you specify a value for this parameter, AWS IoT Core sends jobs notifications to MQTT topics that contain the value in the following format.</p> <p> <code>$aws/things/<i>THING_NAME</i>/jobs/<i>JOB_ID</i>/notify-namespace-<i>NAMESPACE_ID</i>/</code> </p> <note> <p>The <code>namespaceId</code> feature is in public preview.</p> </note>",
+          "location":"querystring",
+          "locationName":"namespaceId"
         }
       }
     },
@@ -7082,6 +7110,12 @@
           "documentation":"<p>(Optional) When true, you can delete a job which is \"IN_PROGRESS\". Otherwise, you can only delete a job which is in a terminal state (\"COMPLETED\" or \"CANCELED\") or an exception will occur. The default is false.</p> <note> <p>Deleting a job which is \"IN_PROGRESS\", will cause a device which is executing the job to be unable to access job information or update the job execution status. Use caution and ensure that each device executing a job which is deleted is able to recover to a valid state.</p> </note>",
           "location":"querystring",
           "locationName":"force"
+        },
+        "namespaceId":{
+          "shape":"NamespaceId",
+          "documentation":"<p>The namespace used to indicate that a job is a customer-managed job.</p> <p>When you specify a value for this parameter, AWS IoT Core sends jobs notifications to MQTT topics that contain the value in the following format.</p> <p> <code>$aws/things/<i>THING_NAME</i>/jobs/<i>JOB_ID</i>/notify-namespace-<i>NAMESPACE_ID</i>/</code> </p> <note> <p>The <code>namespaceId</code> feature is in public preview.</p> </note>",
+          "location":"querystring",
+          "locationName":"namespaceId"
         }
       }
     },
@@ -7823,6 +7857,10 @@
         "domainType":{
           "shape":"DomainType",
           "documentation":"<p>The type of the domain.</p>"
+        },
+        "lastStatusChangeDate":{
+          "shape":"DateType",
+          "documentation":"<p>The date and time the domain configuration's status was last changed.</p>"
         }
       }
     },
@@ -8207,7 +8245,7 @@
         },
         "additionalMetricsToRetain":{
           "shape":"AdditionalMetricsToRetainList",
-          "documentation":"<p>A list of metrics whose data is retained (stored). By default, data is retained for any metric used in the profile's <code>behaviors</code>, but it is also retained for any metric specified here.</p> <p> <b>Note:</b> This API field is deprecated. Please use <a>DescribeSecurityProfileResponse$additionalMetricsToRetainV2</a> instead.</p>",
+          "documentation":"<p> <i>Please use <a>DescribeSecurityProfileResponse$additionalMetricsToRetainV2</a> instead.</i> </p> <p>A list of metrics whose data is retained (stored). By default, data is retained for any metric used in the profile's <code>behaviors</code>, but it is also retained for any metric specified here.</p>",
           "deprecated":true,
           "deprecatedMessage":"Use additionalMetricsToRetainV2."
         },
@@ -8581,9 +8619,8 @@
     },
     "DetailsValue":{
       "type":"string",
-      "max":1024,
       "min":1,
-      "pattern":"[^\\p{C}]*+"
+      "pattern":"[^\\p{C}]+"
     },
     "DeviceCertificateUpdateAction":{
       "type":"string",
@@ -8953,11 +8990,11 @@
         },
         "incrementFactor":{
           "shape":"IncrementFactor",
-          "documentation":"<p>The exponential factor to increase the rate of rollout for a job.</p>"
+          "documentation":"<p>The exponential factor to increase the rate of rollout for a job.</p> <p>AWS IoT supports up to one digit after the decimal (for example, 1.5, but not 1.55).</p>"
         },
         "rateIncreaseCriteria":{
           "shape":"RateIncreaseCriteria",
-          "documentation":"<p>The criteria to initiate the increase in rate of rollout for a job.</p> <p>AWS IoT supports up to one digit after the decimal (for example, 1.5, but not 1.55).</p>"
+          "documentation":"<p>The criteria to initiate the increase in rate of rollout for a job.</p>"
         }
       },
       "documentation":"<p>Allows you to create an exponential rate of rollout for a job.</p>"
@@ -9870,6 +9907,10 @@
         "timeoutConfig":{
           "shape":"TimeoutConfig",
           "documentation":"<p>Specifies the amount of time each device has to finish its execution of the job. A timer is started when the job execution status is set to <code>IN_PROGRESS</code>. If the job execution status is not set to another terminal state before the timer expires, it will be automatically set to <code>TIMED_OUT</code>.</p>"
+        },
+        "namespaceId":{
+          "shape":"NamespaceId",
+          "documentation":"<p>The namespace used to indicate that a job is a customer-managed job.</p> <p>When you specify a value for this parameter, AWS IoT Core sends jobs notifications to MQTT topics that contain the value in the following format.</p> <p> <code>$aws/things/<i>THING_NAME</i>/jobs/<i>JOB_ID</i>/notify-namespace-<i>NAMESPACE_ID</i>/</code> </p> <note> <p>The <code>namespaceId</code> feature is in public preview.</p> </note>"
         }
       },
       "documentation":"<p>The <code>Job</code> object contains details about a job.</p>"
@@ -10520,7 +10561,7 @@
       "members":{
         "startTime":{
           "shape":"Timestamp",
-          "documentation":"<p>The beginning of the time period. Audit information is retained for a limited time (180 days). Requesting a start time prior to what is retained results in an \"InvalidRequestException\".</p>",
+          "documentation":"<p>The beginning of the time period. Audit information is retained for a limited time (90 days). Requesting a start time prior to what is retained results in an \"InvalidRequestException\".</p>",
           "location":"querystring",
           "locationName":"startTime"
         },
@@ -10923,6 +10964,12 @@
           "location":"querystring",
           "locationName":"status"
         },
+        "namespaceId":{
+          "shape":"NamespaceId",
+          "documentation":"<p>The namespace used to indicate that a job is a customer-managed job.</p> <p>When you specify a value for this parameter, AWS IoT Core sends jobs notifications to MQTT topics that contain the value in the following format.</p> <p> <code>$aws/things/<i>THING_NAME</i>/jobs/<i>JOB_ID</i>/notify-namespace-<i>NAMESPACE_ID</i>/</code> </p> <note> <p>The <code>namespaceId</code> feature is in public preview.</p> </note>",
+          "location":"querystring",
+          "locationName":"namespaceId"
+        },
         "maxResults":{
           "shape":"LaserMaxResults",
           "documentation":"<p>The maximum number of results to be returned per request.</p>",
@@ -10988,6 +11035,12 @@
           "documentation":"<p>A filter that limits the returned jobs to those for the specified group.</p>",
           "location":"querystring",
           "locationName":"thingGroupId"
+        },
+        "namespaceId":{
+          "shape":"NamespaceId",
+          "documentation":"<p>The namespace used to indicate that a job is a customer-managed job.</p> <p>When you specify a value for this parameter, AWS IoT Core sends jobs notifications to MQTT topics that contain the value in the following format.</p> <p> <code>$aws/things/<i>THING_NAME</i>/jobs/<i>JOB_ID</i>/notify-namespace-<i>NAMESPACE_ID</i>/</code> </p> <note> <p>The <code>namespaceId</code> feature is in public preview.</p> </note>",
+          "location":"querystring",
+          "locationName":"namespaceId"
         }
       }
     },
@@ -12269,6 +12322,7 @@
     },
     "Marker":{
       "type":"string",
+      "max":1024,
       "pattern":"[A-Za-z0-9+/]+={0,2}"
     },
     "MaxJobExecutionsPerMin":{
@@ -12494,6 +12548,12 @@
       "type":"string",
       "max":65535,
       "min":1
+    },
+    "NamespaceId":{
+      "type":"string",
+      "max":64,
+      "min":1,
+      "pattern":"[a-zA-Z0-9_-]+"
     },
     "NextToken":{"type":"string"},
     "NonCompliantChecksCount":{"type":"integer"},
@@ -13451,7 +13511,10 @@
       "min":1,
       "pattern":"[\\w.:-]+"
     },
-    "Resource":{"type":"string"},
+    "Resource":{
+      "type":"string",
+      "max":2048
+    },
     "ResourceAlreadyExistsException":{
       "type":"structure",
       "members":{
@@ -15117,6 +15180,86 @@
       "documentation":"<p>Specifies the amount of time each device has to finish its execution of the job. A timer is started when the job execution status is set to <code>IN_PROGRESS</code>. If the job execution status is not set to another terminal state before the timer expires, it will be automatically set to <code>TIMED_OUT</code>.</p>"
     },
     "Timestamp":{"type":"timestamp"},
+    "TimestreamAction":{
+      "type":"structure",
+      "required":[
+        "roleArn",
+        "databaseName",
+        "tableName",
+        "dimensions"
+      ],
+      "members":{
+        "roleArn":{
+          "shape":"AwsArn",
+          "documentation":"<p>The ARN of the role that grants permission to write to the Amazon Timestream database table.</p>"
+        },
+        "databaseName":{
+          "shape":"TimestreamDatabaseName",
+          "documentation":"<p>The name of an Amazon Timestream database.</p>"
+        },
+        "tableName":{
+          "shape":"TimestreamTableName",
+          "documentation":"<p>The name of the database table into which to write the measure records.</p>"
+        },
+        "dimensions":{
+          "shape":"TimestreamDimensionList",
+          "documentation":"<p>Metadata attributes of the time series that are written in each measure record.</p>"
+        },
+        "timestamp":{
+          "shape":"TimestreamTimestamp",
+          "documentation":"<p>Specifies an application-defined value to replace the default value assigned to the Timestream record's timestamp in the <code>time</code> column.</p> <p>You can use this property to specify the value and the precision of the Timestream record's timestamp. You can specify a value from the message payload or a value computed by a substitution template.</p> <p>If omitted, the topic rule action assigns the timestamp, in milliseconds, at the time it processed the rule. </p>"
+        }
+      },
+      "documentation":"<p>The Timestream rule action writes attributes (measures) from an MQTT message into an Amazon Timestream table. For more information, see the <a href=\"https://docs.aws.amazon.com/iot/latest/developerguide/timestream-rule-action.html\">Timestream</a> topic rule action documentation.</p>"
+    },
+    "TimestreamDatabaseName":{"type":"string"},
+    "TimestreamDimension":{
+      "type":"structure",
+      "required":[
+        "name",
+        "value"
+      ],
+      "members":{
+        "name":{
+          "shape":"TimestreamDimensionName",
+          "documentation":"<p>The metadata dimension name. This is the name of the column in the Amazon Timestream database table record.</p> <p>Dimensions cannot be named: <code>measure_name</code>, <code>measure_value</code>, or <code>time</code>. These names are reserved. Dimension names cannot start with <code>ts_</code> or <code>measure_value</code> and they cannot contain the colon (<code>:</code>) character.</p>"
+        },
+        "value":{
+          "shape":"TimestreamDimensionValue",
+          "documentation":"<p>The value to write in this column of the database record.</p>"
+        }
+      },
+      "documentation":"<p>Metadata attributes of the time series that are written in each measure record.</p>"
+    },
+    "TimestreamDimensionList":{
+      "type":"list",
+      "member":{"shape":"TimestreamDimension"},
+      "max":128,
+      "min":1
+    },
+    "TimestreamDimensionName":{"type":"string"},
+    "TimestreamDimensionValue":{"type":"string"},
+    "TimestreamTableName":{"type":"string"},
+    "TimestreamTimestamp":{
+      "type":"structure",
+      "required":[
+        "value",
+        "unit"
+      ],
+      "members":{
+        "value":{
+          "shape":"TimestreamTimestampValue",
+          "documentation":"<p>An expression that returns a long epoch time value.</p>"
+        },
+        "unit":{
+          "shape":"TimestreamTimestampUnit",
+          "documentation":"<p>The precision of the timestamp value that results from the expression described in <code>value</code>.</p> <p>Valid values: <code>SECONDS</code> | <code>MILLISECONDS</code> | <code>MICROSECONDS</code> | <code>NANOSECONDS</code>. The default is <code>MILLISECONDS</code>.</p>"
+        }
+      },
+      "documentation":"<p>Describes how to interpret an application-defined timestamp value from an MQTT message payload and the precision of that value.</p>"
+    },
+    "TimestreamTimestampUnit":{"type":"string"},
+    "TimestreamTimestampValue":{"type":"string"},
     "TlsContext":{
       "type":"structure",
       "members":{
@@ -15300,7 +15443,7 @@
       "members":{
         "sql":{
           "shape":"SQL",
-          "documentation":"<p>The SQL statement used to query the topic. For more information, see <a href=\"https://docs.aws.amazon.com/iot/latest/developerguide/iot-rules.html#aws-iot-sql-reference\">AWS IoT SQL Reference</a> in the <i>AWS IoT Developer Guide</i>.</p>"
+          "documentation":"<p>The SQL statement used to query the topic. For more information, see <a href=\"https://docs.aws.amazon.com/iot/latest/developerguide/iot-sql-reference.html\">AWS IoT SQL Reference</a> in the <i>AWS IoT Developer Guide</i>.</p>"
         },
         "description":{
           "shape":"Description",
@@ -15843,6 +15986,12 @@
         "timeoutConfig":{
           "shape":"TimeoutConfig",
           "documentation":"<p>Specifies the amount of time each device has to finish its execution of the job. The timer is started when the job execution status is set to <code>IN_PROGRESS</code>. If the job execution status is not set to another terminal state before the time expires, it will be automatically set to <code>TIMED_OUT</code>. </p>"
+        },
+        "namespaceId":{
+          "shape":"NamespaceId",
+          "documentation":"<p>The namespace used to indicate that a job is a customer-managed job.</p> <p>When you specify a value for this parameter, AWS IoT Core sends jobs notifications to MQTT topics that contain the value in the following format.</p> <p> <code>$aws/things/<i>THING_NAME</i>/jobs/<i>JOB_ID</i>/notify-namespace-<i>NAMESPACE_ID</i>/</code> </p> <note> <p>The <code>namespaceId</code> feature is in public preview.</p> </note>",
+          "location":"querystring",
+          "locationName":"namespaceId"
         }
       }
     },
@@ -16014,7 +16163,7 @@
         },
         "additionalMetricsToRetain":{
           "shape":"AdditionalMetricsToRetainList",
-          "documentation":"<p>A list of metrics whose data is retained (stored). By default, data is retained for any metric used in the profile's <code>behaviors</code>, but it is also retained for any metric specified here.</p> <p> <b>Note:</b> This API field is deprecated. Please use <a>UpdateSecurityProfileRequest$additionalMetricsToRetainV2</a> instead.</p>",
+          "documentation":"<p> <i>Please use <a>UpdateSecurityProfileRequest$additionalMetricsToRetainV2</a> instead.</i> </p> <p>A list of metrics whose data is retained (stored). By default, data is retained for any metric used in the profile's <code>behaviors</code>, but it is also retained for any metric specified here.</p>",
           "deprecated":true,
           "deprecatedMessage":"Use additionalMetricsToRetainV2."
         },
@@ -16067,7 +16216,7 @@
         },
         "additionalMetricsToRetain":{
           "shape":"AdditionalMetricsToRetainList",
-          "documentation":"<p>A list of metrics whose data is retained (stored). By default, data is retained for any metric used in the security profile's <code>behaviors</code>, but it is also retained for any metric specified here.</p> <p> <b>Note:</b> This API field is deprecated. Please use <a>UpdateSecurityProfileResponse$additionalMetricsToRetainV2</a> instead.</p>",
+          "documentation":"<p> <i>Please use <a>UpdateSecurityProfileResponse$additionalMetricsToRetainV2</a> instead.</i> </p> <p>A list of metrics whose data is retained (stored). By default, data is retained for any metric used in the security profile's <code>behaviors</code>, but it is also retained for any metric specified here.</p>",
           "deprecated":true,
           "deprecatedMessage":"Use additionalMetricsToRetainV2."
         },

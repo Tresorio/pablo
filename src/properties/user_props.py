@@ -1,15 +1,16 @@
 """This module defines the properties of a user"""
 
+import asyncio
+from urllib.parse import urlparse
+
+import bpy
+from bundle_modules import i18n
 from src.config.user_json import USER_CONFIG
 from src.utils.password import switch_password_visibility
-from src.config.langs import set_new_lang, TRADUCTOR, CONFIG_LANG, ALL_LANGS
-from collections.abc import Coroutine
+from src.config.langs import set_new_lang, CONFIG_LANG, ALL_LANGS
 from src.services.loggers import BACKEND_LOGGER
 from src.services.tresorio_platform import Platform
-import asyncio
 from src.config.api import API_CONFIG, MODE
-from urllib.parse import urlparse
-import bpy
 
 async def fetch_latest_version() -> str:
     latest_version = '0.0.0'
@@ -19,7 +20,7 @@ async def fetch_latest_version() -> str:
             latest_version = await res.text()
     except Exception as err:
         BACKEND_LOGGER.error(err)
-        popup_msg = TRADUCTOR['notif']['cant_connect_to_tresorio'][CONFIG_LANG]
+        popup_msg = i18n.t('blender.cant-connect-to-tresorio')
         latest_version = f"{API_CONFIG['version']['major']}.{API_CONFIG['version']['minor']}.{API_CONFIG['version']['patch']}"
     return latest_version
 
@@ -69,7 +70,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
     )
 
     conf_email = USER_CONFIG['email']
-    desc = TRADUCTOR['desc']['mail'][CONFIG_LANG]
+    desc = i18n.t('blender.mail')
     email: bpy.props.StringProperty(
         name='',
         description=desc,
@@ -79,7 +80,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
     )
 
     password = USER_CONFIG['password']
-    desc = TRADUCTOR['desc']['password'][CONFIG_LANG]
+    desc = i18n.t('blender.password')
     hidden_password: bpy.props.StringProperty(
         name='',
         description=desc,
@@ -89,7 +90,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['password'][CONFIG_LANG]
+    desc = i18n.t('blender.password')
     clear_password: bpy.props.StringProperty(
         name='',
         description=desc,
@@ -99,7 +100,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['toggle_password'][CONFIG_LANG]
+    desc = i18n.t('blender.toggle-password')
     show_password: bpy.props.BoolProperty(
         name='',
         description=desc,
@@ -108,7 +109,7 @@ class TresorioUserProps(bpy.types.PropertyGroup):
         options={'HIDDEN', 'SKIP_SAVE'},
     )
 
-    desc = TRADUCTOR['desc']['remember_email'][CONFIG_LANG]
+    desc = i18n.t('blender.remember-email')
     remember_email: bpy.props.BoolProperty(
         name='',
         description=desc,

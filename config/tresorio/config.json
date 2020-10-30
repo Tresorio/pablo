@@ -26,7 +26,7 @@
     "routes": {
         "latest_version": "/addon/version",
         "forgot_password": "/password",
-        "register": "/register",
+        "register": "/signup",
         "signin": "/auth",
         "user_info": "/users/me",
         "get_credits": "/profile/credits/get",

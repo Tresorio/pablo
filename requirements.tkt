@@ -1,3 +1,4 @@
 aiohttp
 certifi
 boto3
+python-i18n

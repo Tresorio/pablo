@@ -2,8 +2,9 @@
 
 from typing import Set
 
+from bundle_modules import i18n
 from src.services.backend import delete_all_renders
-from src.config.langs import TRADUCTOR, CONFIG_LANG
+
 import bpy
 
 # pylint: disable=too-few-public-methods,no-self-use
@@ -11,7 +12,7 @@ import bpy
 
 class TresorioDeleteAllRendersOperator(bpy.types.Operator):
     """Delete all the user's renders"""
-    __doc__ = TRADUCTOR['desc']['delete_all_renders'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.delete-all-renders')
     bl_idname = 'tresorio.delete_all_renders'
     bl_label = ''
 

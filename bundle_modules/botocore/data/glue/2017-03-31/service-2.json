@@ -200,6 +200,23 @@
       ],
       "documentation":"<p>Stops one or more job runs for a specified job definition.</p>"
     },
+    "BatchUpdatePartition":{
+      "name":"BatchUpdatePartition",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"BatchUpdatePartitionRequest"},
+      "output":{"shape":"BatchUpdatePartitionResponse"},
+      "errors":[
+        {"shape":"InvalidInputException"},
+        {"shape":"EntityNotFoundException"},
+        {"shape":"OperationTimeoutException"},
+        {"shape":"InternalServiceException"},
+        {"shape":"GlueEncryptionException"}
+      ],
+      "documentation":"<p>Updates one or more partitions in a batch operation.</p>"
+    },
     "CancelMLTaskRun":{
       "name":"CancelMLTaskRun",
       "http":{
@@ -496,7 +513,7 @@
         {"shape":"OperationTimeoutException"},
         {"shape":"GlueEncryptionException"}
       ],
-      "documentation":"<p>Delete the partition column statistics of a column.</p>"
+      "documentation":"<p>Delete the partition column statistics of a column.</p> <p>The Identity and Access Management (IAM) permission required for this operation is <code>DeletePartition</code>.</p>"
     },
     "DeleteColumnStatisticsForTable":{
       "name":"DeleteColumnStatisticsForTable",
@@ -513,7 +530,7 @@
         {"shape":"OperationTimeoutException"},
         {"shape":"GlueEncryptionException"}
       ],
-      "documentation":"<p>Retrieves table statistics of columns.</p>"
+      "documentation":"<p>Retrieves table statistics of columns.</p> <p>The Identity and Access Management (IAM) permission required for this operation is <code>DeleteTable</code>.</p>"
     },
     "DeleteConnection":{
       "name":"DeleteConnection",
@@ -793,7 +810,7 @@
         {"shape":"OperationTimeoutException"},
         {"shape":"GlueEncryptionException"}
       ],
-      "documentation":"<p>Retrieves partition statistics of columns.</p>"
+      "documentation":"<p>Retrieves partition statistics of columns.</p> <p>The Identity and Access Management (IAM) permission required for this operation is <code>GetPartition</code>.</p>"
     },
     "GetColumnStatisticsForTable":{
       "name":"GetColumnStatisticsForTable",
@@ -810,7 +827,7 @@
         {"shape":"OperationTimeoutException"},
         {"shape":"GlueEncryptionException"}
       ],
-      "documentation":"<p>Retrieves table statistics of columns.</p>"
+      "documentation":"<p>Retrieves table statistics of columns.</p> <p>The Identity and Access Management (IAM) permission required for this operation is <code>GetTable</code>.</p>"
     },
     "GetConnection":{
       "name":"GetConnection",
@@ -1156,6 +1173,23 @@
         {"shape":"GlueEncryptionException"}
       ],
       "documentation":"<p>Retrieves information about a specified partition.</p>"
+    },
+    "GetPartitionIndexes":{
+      "name":"GetPartitionIndexes",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"GetPartitionIndexesRequest"},
+      "output":{"shape":"GetPartitionIndexesResponse"},
+      "errors":[
+        {"shape":"InternalServiceException"},
+        {"shape":"OperationTimeoutException"},
+        {"shape":"InvalidInputException"},
+        {"shape":"EntityNotFoundException"},
+        {"shape":"ConflictException"}
+      ],
+      "documentation":"<p>Retrieves the partition indexes associated with a table.</p>"
     },
     "GetPartitions":{
       "name":"GetPartitions",
@@ -1956,7 +1990,7 @@
         {"shape":"OperationTimeoutException"},
         {"shape":"GlueEncryptionException"}
       ],
-      "documentation":"<p>Creates or updates partition statistics of columns.</p>"
+      "documentation":"<p>Creates or updates partition statistics of columns.</p> <p>The Identity and Access Management (IAM) permission required for this operation is <code>UpdatePartition</code>.</p>"
     },
     "UpdateColumnStatisticsForTable":{
       "name":"UpdateColumnStatisticsForTable",
@@ -1973,7 +2007,7 @@
         {"shape":"OperationTimeoutException"},
         {"shape":"GlueEncryptionException"}
       ],
-      "documentation":"<p>Creates or updates table statistics of columns.</p>"
+      "documentation":"<p>Creates or updates table statistics of columns.</p> <p>The Identity and Access Management (IAM) permission required for this operation is <code>UpdateTable</code>.</p>"
     },
     "UpdateConnection":{
       "name":"UpdateConnection",
@@ -2227,6 +2261,11 @@
     "ActionList":{
       "type":"list",
       "member":{"shape":"Action"}
+    },
+    "AdditionalPlanOptionsMap":{
+      "type":"map",
+      "key":{"shape":"GenericString"},
+      "value":{"shape":"GenericString"}
     },
     "AlreadyExistsException":{
       "type":"structure",
@@ -2660,6 +2699,83 @@
       "type":"list",
       "member":{"shape":"BatchStopJobRunSuccessfulSubmission"}
     },
+    "BatchUpdatePartitionFailureEntry":{
+      "type":"structure",
+      "members":{
+        "PartitionValueList":{
+          "shape":"BoundedPartitionValueList",
+          "documentation":"<p>A list of values defining the partitions.</p>"
+        },
+        "ErrorDetail":{
+          "shape":"ErrorDetail",
+          "documentation":"<p>The details about the batch update partition error.</p>"
+        }
+      },
+      "documentation":"<p>Contains information about a batch update partition error.</p>"
+    },
+    "BatchUpdatePartitionFailureList":{
+      "type":"list",
+      "member":{"shape":"BatchUpdatePartitionFailureEntry"}
+    },
+    "BatchUpdatePartitionRequest":{
+      "type":"structure",
+      "required":[
+        "DatabaseName",
+        "TableName",
+        "Entries"
+      ],
+      "members":{
+        "CatalogId":{
+          "shape":"CatalogIdString",
+          "documentation":"<p>The ID of the catalog in which the partition is to be updated. Currently, this should be the AWS account ID.</p>"
+        },
+        "DatabaseName":{
+          "shape":"NameString",
+          "documentation":"<p>The name of the metadata database in which the partition is to be updated.</p>"
+        },
+        "TableName":{
+          "shape":"NameString",
+          "documentation":"<p>The name of the metadata table in which the partition is to be updated.</p>"
+        },
+        "Entries":{
+          "shape":"BatchUpdatePartitionRequestEntryList",
+          "documentation":"<p>A list of up to 100 <code>BatchUpdatePartitionRequestEntry</code> objects to update.</p>"
+        }
+      }
+    },
+    "BatchUpdatePartitionRequestEntry":{
+      "type":"structure",
+      "required":[
+        "PartitionValueList",
+        "PartitionInput"
+      ],
+      "members":{
+        "PartitionValueList":{
+          "shape":"BoundedPartitionValueList",
+          "documentation":"<p>A list of values defining the partitions.</p>"
+        },
+        "PartitionInput":{
+          "shape":"PartitionInput",
+          "documentation":"<p>The structure used to update a partition.</p>"
+        }
+      },
+      "documentation":"<p>A structure that contains the values and structure used to update a partition.</p>"
+    },
+    "BatchUpdatePartitionRequestEntryList":{
+      "type":"list",
+      "member":{"shape":"BatchUpdatePartitionRequestEntry"},
+      "max":100,
+      "min":1
+    },
+    "BatchUpdatePartitionResponse":{
+      "type":"structure",
+      "members":{
+        "Errors":{
+          "shape":"BatchUpdatePartitionFailureList",
+          "documentation":"<p>The errors encountered when trying to update the requested partitions. A list of <code>BatchUpdatePartitionFailureEntry</code> objects.</p>"
+        }
+      }
+    },
     "BinaryColumnStatisticsData":{
       "type":"structure",
       "required":[
@@ -2670,18 +2786,18 @@
       "members":{
         "MaximumLength":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Maximum length of the column.</p>"
+          "documentation":"<p>The size of the longest bit sequence in the column.</p>"
         },
         "AverageLength":{
           "shape":"NonNegativeDouble",
-          "documentation":"<p>Average length of the column.</p>"
+          "documentation":"<p>The average bit sequence length in the column.</p>"
         },
         "NumberOfNulls":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of nulls.</p>"
+          "documentation":"<p>The number of null values in the column.</p>"
         }
       },
-      "documentation":"<p>Defines a binary column statistics data.</p>"
+      "documentation":"<p>Defines column statistics supported for bit sequence data values.</p>"
     },
     "Blob":{"type":"blob"},
     "Boolean":{"type":"boolean"},
@@ -2695,18 +2811,18 @@
       "members":{
         "NumberOfTrues":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of true value.</p>"
+          "documentation":"<p>The number of true values in the column.</p>"
         },
         "NumberOfFalses":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of false value.</p>"
+          "documentation":"<p>The number of false values in the column.</p>"
         },
         "NumberOfNulls":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of nulls.</p>"
+          "documentation":"<p>The number of null values in the column.</p>"
         }
       },
-      "documentation":"<p>Defines a boolean column statistics.</p>"
+      "documentation":"<p>Defines column statistics supported for Boolean data columns.</p>"
     },
     "BooleanNullable":{"type":"boolean"},
     "BooleanValue":{"type":"boolean"},
@@ -2996,14 +3112,14 @@
       "members":{
         "ColumnName":{
           "shape":"NameString",
-          "documentation":"<p>The name of the column.</p>"
+          "documentation":"<p>The name of the column that failed.</p>"
         },
         "Error":{
           "shape":"ErrorDetail",
-          "documentation":"<p>The error message occurred during operation.</p>"
+          "documentation":"<p>An error message with the reason for the failure of an operation.</p>"
         }
       },
-      "documentation":"<p>Defines a column containing error.</p>"
+      "documentation":"<p>Encapsulates a column name that failed and the reason for failure.</p>"
     },
     "ColumnErrors":{
       "type":"list",
@@ -3030,22 +3146,22 @@
       "members":{
         "ColumnName":{
           "shape":"NameString",
-          "documentation":"<p>The name of the column.</p>"
+          "documentation":"<p>Name of column which statistics belong to.</p>"
         },
         "ColumnType":{
           "shape":"TypeString",
-          "documentation":"<p>The type of the column.</p>"
+          "documentation":"<p>The data type of the column.</p>"
         },
         "AnalyzedTime":{
           "shape":"Timestamp",
-          "documentation":"<p>The analyzed time of the column statistics.</p>"
+          "documentation":"<p>The timestamp of when column statistics were generated.</p>"
         },
         "StatisticsData":{
           "shape":"ColumnStatisticsData",
-          "documentation":"<p>The statistics of the column.</p>"
+          "documentation":"<p>A <code>ColumnStatisticData</code> object that contains the statistics data values.</p>"
         }
       },
-      "documentation":"<p>Defines a column statistics.</p>"
+      "documentation":"<p>Represents the generated column-level statistics for a table or partition.</p>"
     },
     "ColumnStatisticsData":{
       "type":"structure",
@@ -3053,52 +3169,52 @@
       "members":{
         "Type":{
           "shape":"ColumnStatisticsType",
-          "documentation":"<p>The name of the column.</p>"
+          "documentation":"<p>The type of column statistics data.</p>"
         },
         "BooleanColumnStatisticsData":{
           "shape":"BooleanColumnStatisticsData",
-          "documentation":"<p>Boolean Column Statistics Data.</p>"
+          "documentation":"<p>Boolean column statistics data.</p>"
         },
         "DateColumnStatisticsData":{
           "shape":"DateColumnStatisticsData",
-          "documentation":"<p>Date Column Statistics Data.</p>"
+          "documentation":"<p>Date column statistics data.</p>"
         },
         "DecimalColumnStatisticsData":{
           "shape":"DecimalColumnStatisticsData",
-          "documentation":"<p>Decimal Column Statistics Data.</p>"
+          "documentation":"<p>Decimal column statistics data.</p>"
         },
         "DoubleColumnStatisticsData":{
           "shape":"DoubleColumnStatisticsData",
-          "documentation":"<p>Double Column Statistics Data.</p>"
+          "documentation":"<p>Double column statistics data.</p>"
         },
         "LongColumnStatisticsData":{
           "shape":"LongColumnStatisticsData",
-          "documentation":"<p>Long Column Statistics Data.</p>"
+          "documentation":"<p>Long column statistics data.</p>"
         },
         "StringColumnStatisticsData":{
           "shape":"StringColumnStatisticsData",
-          "documentation":"<p>String Column Statistics Data.</p>"
+          "documentation":"<p>String column statistics data.</p>"
         },
         "BinaryColumnStatisticsData":{
           "shape":"BinaryColumnStatisticsData",
-          "documentation":"<p>Binary Column Statistics Data.</p>"
+          "documentation":"<p>Binary column statistics data.</p>"
         }
       },
-      "documentation":"<p>Defines a column statistics data.</p>"
+      "documentation":"<p>Contains the individual types of column statistics data. Only one data object should be set and indicated by the <code>Type</code> attribute.</p>"
     },
     "ColumnStatisticsError":{
       "type":"structure",
       "members":{
         "ColumnStatistics":{
           "shape":"ColumnStatistics",
-          "documentation":"<p>The ColumnStatistics of the column.</p>"
+          "documentation":"<p>The <code>ColumnStatistics</code> of the column.</p>"
         },
         "Error":{
           "shape":"ErrorDetail",
-          "documentation":"<p>The error message occurred during operation.</p>"
+          "documentation":"<p>An error message with the reason for the failure of an operation.</p>"
         }
       },
-      "documentation":"<p>Defines a column containing error.</p>"
+      "documentation":"<p>Encapsulates a <code>ColumnStatistics</code> object that failed and the reason for failure.</p>"
     },
     "ColumnStatisticsErrors":{
       "type":"list",
@@ -3209,6 +3325,17 @@
     "ConditionList":{
       "type":"list",
       "member":{"shape":"Condition"}
+    },
+    "ConflictException":{
+      "type":"structure",
+      "members":{
+        "Message":{
+          "shape":"MessageString",
+          "documentation":"<p>A message describing the problem.</p>"
+        }
+      },
+      "documentation":"<p>The <code>CreatePartitions</code> API was called on a table that has indexes enabled. </p>",
+      "exception":true
     },
     "ConfusionMatrix":{
       "type":"structure",
@@ -3453,6 +3580,10 @@
           "shape":"ClassifierNameList",
           "documentation":"<p>A list of UTF-8 strings that specify the custom classifiers that are associated with the crawler.</p>"
         },
+        "RecrawlPolicy":{
+          "shape":"RecrawlPolicy",
+          "documentation":"<p>A policy that specifies whether to crawl the entire dataset again, or to crawl only folders that were added since the last crawler run.</p>"
+        },
         "SchemaChangePolicy":{
           "shape":"SchemaChangePolicy",
           "documentation":"<p>The policy that specifies update and delete behaviors for the crawler.</p>"
@@ -3620,6 +3751,10 @@
           "shape":"JdbcTargetList",
           "documentation":"<p>Specifies JDBC targets.</p>"
         },
+        "MongoDBTargets":{
+          "shape":"MongoDBTargetList",
+          "documentation":"<p>Specifies Amazon DocumentDB or MongoDB targets.</p>"
+        },
         "DynamoDBTargets":{
           "shape":"DynamoDBTargetList",
           "documentation":"<p>Specifies Amazon DynamoDB targets.</p>"
@@ -3719,6 +3854,10 @@
         "SchemaChangePolicy":{
           "shape":"SchemaChangePolicy",
           "documentation":"<p>The policy for the crawler's update and deletion behavior.</p>"
+        },
+        "RecrawlPolicy":{
+          "shape":"RecrawlPolicy",
+          "documentation":"<p>A policy that specifies whether to crawl the entire dataset again, or to crawl only folders that were added since the last crawler run.</p>"
         },
         "Configuration":{
           "shape":"CrawlerConfiguration",
@@ -4141,6 +4280,10 @@
         "Tags":{
           "shape":"TagsMap",
           "documentation":"<p>The tags to use with this machine learning transform. You may use tags to limit access to the machine learning transform. For more information about tags in AWS Glue, see <a href=\"https://docs.aws.amazon.com/glue/latest/dg/monitor-tags.html\">AWS Tags in AWS Glue</a> in the developer guide.</p>"
+        },
+        "TransformEncryption":{
+          "shape":"TransformEncryption",
+          "documentation":"<p>The encryption-at-rest settings of the transform that apply to accessing user data. Machine learning transforms can access user data encrypted in Amazon S3 using KMS.</p>"
         }
       }
     },
@@ -4262,6 +4405,10 @@
         "TableInput":{
           "shape":"TableInput",
           "documentation":"<p>The <code>TableInput</code> object that defines the metadata table to create in the catalog.</p>"
+        },
+        "PartitionIndexes":{
+          "shape":"PartitionIndexList",
+          "documentation":"<p>A list of partition indexes, <code>PartitionIndex</code> structures, to create in the table.</p>"
         }
       }
     },
@@ -4621,22 +4768,22 @@
       "members":{
         "MinimumValue":{
           "shape":"Timestamp",
-          "documentation":"<p>Minimum value of the column.</p>"
+          "documentation":"<p>The lowest value in the column.</p>"
         },
         "MaximumValue":{
           "shape":"Timestamp",
-          "documentation":"<p>Maximum value of the column.</p>"
+          "documentation":"<p>The highest value in the column.</p>"
         },
         "NumberOfNulls":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of nulls.</p>"
+          "documentation":"<p>The number of null values in the column.</p>"
         },
         "NumberOfDistinctValues":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of distinct values.</p>"
+          "documentation":"<p>The number of distinct values in a column.</p>"
         }
       },
-      "documentation":"<p>Defines a date column statistics data.</p>"
+      "documentation":"<p>Defines column statistics supported for timestamp data columns.</p>"
     },
     "DecimalColumnStatisticsData":{
       "type":"structure",
@@ -4647,22 +4794,22 @@
       "members":{
         "MinimumValue":{
           "shape":"DecimalNumber",
-          "documentation":"<p>Minimum value of the column.</p>"
+          "documentation":"<p>The lowest value in the column.</p>"
         },
         "MaximumValue":{
           "shape":"DecimalNumber",
-          "documentation":"<p>Maximum value of the column.</p>"
+          "documentation":"<p>The highest value in the column.</p>"
         },
         "NumberOfNulls":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of nulls.</p>"
+          "documentation":"<p>The number of null values in the column.</p>"
         },
         "NumberOfDistinctValues":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of distinct values.</p>"
+          "documentation":"<p>The number of distinct values in a column.</p>"
         }
       },
-      "documentation":"<p>Defines a decimal column statistics data.</p>"
+      "documentation":"<p>Defines column statistics supported for fixed-point number data columns.</p>"
     },
     "DecimalNumber":{
       "type":"structure",
@@ -5225,22 +5372,22 @@
       "members":{
         "MinimumValue":{
           "shape":"Double",
-          "documentation":"<p>Minimum value of the column.</p>"
+          "documentation":"<p>The lowest value in the column.</p>"
         },
         "MaximumValue":{
           "shape":"Double",
-          "documentation":"<p>Maximum value of the column.</p>"
+          "documentation":"<p>The highest value in the column.</p>"
         },
         "NumberOfNulls":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of nulls.</p>"
+          "documentation":"<p>The number of null values in the column.</p>"
         },
         "NumberOfDistinctValues":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of distinct values.</p>"
+          "documentation":"<p>The number of distinct values in a column.</p>"
         }
       },
-      "documentation":"<p>Defines a double column statistics data.</p>"
+      "documentation":"<p>Defines column statistics supported for floating-point number data columns.</p>"
     },
     "DynamoDBTarget":{
       "type":"structure",
@@ -6250,6 +6397,10 @@
         "MaxRetries":{
           "shape":"NullableInteger",
           "documentation":"<p>The maximum number of times to retry a task for this transform after a task run fails.</p>"
+        },
+        "TransformEncryption":{
+          "shape":"TransformEncryption",
+          "documentation":"<p>The encryption-at-rest settings of the transform that apply to accessing user data. Machine learning transforms can access user data encrypted in Amazon S3 using KMS.</p>"
         }
       }
     },
@@ -6313,6 +6464,44 @@
         "Mapping":{
           "shape":"MappingList",
           "documentation":"<p>A list of mappings to the specified targets.</p>"
+        }
+      }
+    },
+    "GetPartitionIndexesRequest":{
+      "type":"structure",
+      "required":[
+        "DatabaseName",
+        "TableName"
+      ],
+      "members":{
+        "CatalogId":{
+          "shape":"CatalogIdString",
+          "documentation":"<p>The catalog ID where the table resides.</p>"
+        },
+        "DatabaseName":{
+          "shape":"NameString",
+          "documentation":"<p>Specifies the name of a database from which you want to retrieve partition indexes.</p>"
+        },
+        "TableName":{
+          "shape":"NameString",
+          "documentation":"<p>Specifies the name of a table for which you want to retrieve the partition indexes.</p>"
+        },
+        "NextToken":{
+          "shape":"Token",
+          "documentation":"<p>A continuation token, included if this is a continuation call.</p>"
+        }
+      }
+    },
+    "GetPartitionIndexesResponse":{
+      "type":"structure",
+      "members":{
+        "PartitionIndexDescriptorList":{
+          "shape":"PartitionIndexDescriptorList",
+          "documentation":"<p>A list of index descriptors.</p>"
+        },
+        "NextToken":{
+          "shape":"Token",
+          "documentation":"<p>A continuation token, present if the current list segment is not the last.</p>"
         }
       }
     },
@@ -6427,6 +6616,10 @@
         "Language":{
           "shape":"Language",
           "documentation":"<p>The programming language of the code to perform the mapping.</p>"
+        },
+        "AdditionalPlanOptionsMap":{
+          "shape":"AdditionalPlanOptionsMap",
+          "documentation":"<p>A map to hold additional optional key-value parameters.</p> <p>Currently, these key-value pairs are supported:</p> <ul> <li> <p> <code>inferSchema</code>  —  Specifies whether to set <code>inferSchema</code> to true or false for the default script generated by an AWS Glue job. For example, to set <code>inferSchema</code> to true, pass the following key value pair:</p> <p> <code>--additional-plan-options-map '{\"inferSchema\":\"true\"}'</code> </p> </li> </ul>"
         }
       }
     },
@@ -7584,6 +7777,34 @@
     },
     "JsonPath":{"type":"string"},
     "JsonValue":{"type":"string"},
+    "KeyList":{
+      "type":"list",
+      "member":{"shape":"NameString"},
+      "min":1
+    },
+    "KeySchemaElement":{
+      "type":"structure",
+      "required":[
+        "Name",
+        "Type"
+      ],
+      "members":{
+        "Name":{
+          "shape":"NameString",
+          "documentation":"<p>The name of a partition key.</p>"
+        },
+        "Type":{
+          "shape":"ColumnTypeString",
+          "documentation":"<p>The type of a partition key.</p>"
+        }
+      },
+      "documentation":"<p>A partition key pair consisting of a name and a type.</p>"
+    },
+    "KeySchemaElementList":{
+      "type":"list",
+      "member":{"shape":"KeySchemaElement"},
+      "min":1
+    },
     "KeyString":{
       "type":"string",
       "max":255,
@@ -7900,22 +8121,22 @@
       "members":{
         "MinimumValue":{
           "shape":"Long",
-          "documentation":"<p>Minimum value of the column.</p>"
+          "documentation":"<p>The lowest value in the column.</p>"
         },
         "MaximumValue":{
           "shape":"Long",
-          "documentation":"<p>Maximum value of the column.</p>"
+          "documentation":"<p>The highest value in the column.</p>"
         },
         "NumberOfNulls":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of nulls.</p>"
+          "documentation":"<p>The number of null values in the column.</p>"
         },
         "NumberOfDistinctValues":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of distinct values.</p>"
+          "documentation":"<p>The number of distinct values in a column.</p>"
         }
       },
-      "documentation":"<p>Defines a long column statistics data.</p>"
+      "documentation":"<p>Defines column statistics supported for integer data columns.</p>"
     },
     "MLTransform":{
       "type":"structure",
@@ -7991,6 +8212,10 @@
         "MaxRetries":{
           "shape":"NullableInteger",
           "documentation":"<p>The maximum number of times to retry after an <code>MLTaskRun</code> of the machine learning transform fails.</p>"
+        },
+        "TransformEncryption":{
+          "shape":"TransformEncryption",
+          "documentation":"<p>The encryption-at-rest settings of the transform that apply to accessing user data. Machine learning transforms can access user data encrypted in Amazon S3 using KMS.</p>"
         }
       },
       "documentation":"<p>A structure for a machine learning transform.</p>"
@@ -8005,6 +8230,28 @@
       },
       "documentation":"<p>The machine learning transform is not ready to run.</p>",
       "exception":true
+    },
+    "MLUserDataEncryption":{
+      "type":"structure",
+      "required":["MlUserDataEncryptionMode"],
+      "members":{
+        "MlUserDataEncryptionMode":{
+          "shape":"MLUserDataEncryptionModeString",
+          "documentation":"<p>The encryption mode applied to user data. Valid values are:</p> <ul> <li> <p>DISABLED: encryption is disabled</p> </li> <li> <p>SSEKMS: use of server-side encryption with AWS Key Management Service (SSE-KMS) for user data stored in Amazon S3.</p> </li> </ul>"
+        },
+        "KmsKeyId":{
+          "shape":"NameString",
+          "documentation":"<p>The ID for the customer-provided KMS key.</p>"
+        }
+      },
+      "documentation":"<p>The encryption-at-rest settings of the transform that apply to accessing user data.</p>"
+    },
+    "MLUserDataEncryptionModeString":{
+      "type":"string",
+      "enum":[
+        "DISABLED",
+        "SSE-KMS"
+      ]
     },
     "MapValue":{
       "type":"map",
@@ -8063,6 +8310,28 @@
     },
     "MessageString":{"type":"string"},
     "MillisecondsCount":{"type":"long"},
+    "MongoDBTarget":{
+      "type":"structure",
+      "members":{
+        "ConnectionName":{
+          "shape":"ConnectionName",
+          "documentation":"<p>The name of the connection to use to connect to the Amazon DocumentDB or MongoDB target.</p>"
+        },
+        "Path":{
+          "shape":"Path",
+          "documentation":"<p>The path of the Amazon DocumentDB or MongoDB target (database/collection).</p>"
+        },
+        "ScanAll":{
+          "shape":"NullableBoolean",
+          "documentation":"<p>Indicates whether to scan all the records, or to sample rows from the table. Scanning all the records can take a long time when the table is not a high throughput table.</p> <p>A value of <code>true</code> means to scan all records, while a value of <code>false</code> means to sample the records. If no value is specified, the value defaults to <code>true</code>.</p>"
+        }
+      },
+      "documentation":"<p>Specifies an Amazon DocumentDB or MongoDB data store to crawl.</p>"
+    },
+    "MongoDBTargetList":{
+      "type":"list",
+      "member":{"shape":"MongoDBTarget"}
+    },
     "NameString":{
       "type":"string",
       "max":255,
@@ -8281,6 +8550,60 @@
     "PartitionErrors":{
       "type":"list",
       "member":{"shape":"PartitionError"}
+    },
+    "PartitionIndex":{
+      "type":"structure",
+      "required":[
+        "Keys",
+        "IndexName"
+      ],
+      "members":{
+        "Keys":{
+          "shape":"KeyList",
+          "documentation":"<p>The keys for the partition index.</p>"
+        },
+        "IndexName":{
+          "shape":"NameString",
+          "documentation":"<p>The name of the partition index.</p>"
+        }
+      },
+      "documentation":"<p>A structure for a partition index.</p>"
+    },
+    "PartitionIndexDescriptor":{
+      "type":"structure",
+      "required":[
+        "IndexName",
+        "Keys",
+        "IndexStatus"
+      ],
+      "members":{
+        "IndexName":{
+          "shape":"NameString",
+          "documentation":"<p>The name of the partition index.</p>"
+        },
+        "Keys":{
+          "shape":"KeySchemaElementList",
+          "documentation":"<p>A list of one or more keys, as <code>KeySchemaElement</code> structures, for the partition index.</p>"
+        },
+        "IndexStatus":{
+          "shape":"PartitionIndexStatus",
+          "documentation":"<p>The status of the partition index. </p>"
+        }
+      },
+      "documentation":"<p>A descriptor for a partition index in a table.</p>"
+    },
+    "PartitionIndexDescriptorList":{
+      "type":"list",
+      "member":{"shape":"PartitionIndexDescriptor"}
+    },
+    "PartitionIndexList":{
+      "type":"list",
+      "member":{"shape":"PartitionIndex"},
+      "max":3
+    },
+    "PartitionIndexStatus":{
+      "type":"string",
+      "enum":["ACTIVE"]
     },
     "PartitionInput":{
       "type":"structure",
@@ -8551,6 +8874,23 @@
     "RecordsCount":{
       "type":"long",
       "box":true
+    },
+    "RecrawlBehavior":{
+      "type":"string",
+      "enum":[
+        "CRAWL_EVERYTHING",
+        "CRAWL_NEW_FOLDERS_ONLY"
+      ]
+    },
+    "RecrawlPolicy":{
+      "type":"structure",
+      "members":{
+        "RecrawlBehavior":{
+          "shape":"RecrawlBehavior",
+          "documentation":"<p>Specifies whether to crawl the entire dataset again or to crawl only folders that were added since the last crawler run.</p> <p>A value of <code>CRAWL_EVERYTHING</code> specifies crawling the entire dataset again.</p> <p>A value of <code>CRAWL_NEW_FOLDERS_ONLY</code> specifies crawling only folders that were added since the last crawler run.</p>"
+        }
+      },
+      "documentation":"<p>When crawling an Amazon S3 data source after the first crawl is complete, specifies whether to crawl the entire dataset again or to crawl only folders that were added since the last crawler run. For more information, see <a href=\"https://docs.aws.amazon.com/glue/latest/dg/incremental-crawls.html\">Incremental Crawls in AWS Glue</a> in the developer guide.</p>"
     },
     "ReplaceBoolean":{"type":"boolean"},
     "ResetJobBookmarkRequest":{
@@ -9327,22 +9667,22 @@
       "members":{
         "MaximumLength":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Maximum value of the column.</p>"
+          "documentation":"<p>The size of the longest string in the column.</p>"
         },
         "AverageLength":{
           "shape":"NonNegativeDouble",
-          "documentation":"<p>Average value of the column.</p>"
+          "documentation":"<p>The average string length in the column.</p>"
         },
         "NumberOfNulls":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of nulls.</p>"
+          "documentation":"<p>The number of null values in the column.</p>"
         },
         "NumberOfDistinctValues":{
           "shape":"NonNegativeLong",
-          "documentation":"<p>Number of distinct values.</p>"
+          "documentation":"<p>The number of distinct values in a column.</p>"
         }
       },
-      "documentation":"<p>Defines a string column statistics data.</p>"
+      "documentation":"<p>Defines column statistics supported for character sequence data values.</p>"
     },
     "StringList":{
       "type":"list",
@@ -9780,6 +10120,20 @@
       "max":10,
       "min":1
     },
+    "TransformEncryption":{
+      "type":"structure",
+      "members":{
+        "MlUserDataEncryption":{
+          "shape":"MLUserDataEncryption",
+          "documentation":"<p>An <code>MLUserDataEncryption</code> object containing the encryption mode and customer-provided KMS key ID.</p>"
+        },
+        "TaskRunSecurityConfigurationName":{
+          "shape":"NameString",
+          "documentation":"<p>The name of the security configuration.</p>"
+        }
+      },
+      "documentation":"<p>The encryption-at-rest settings of the transform that apply to accessing user data. Machine learning transforms can access user data encrypted in Amazon S3 using KMS.</p> <p>Additionally, imported labels and trained transforms can now be encrypted using a customer provided KMS key.</p>"
+    },
     "TransformFilterCriteria":{
       "type":"structure",
       "members":{
@@ -9836,7 +10190,7 @@
       "members":{
         "TransformType":{
           "shape":"TransformType",
-          "documentation":"<p>The type of machine learning transform.</p> <p>For information about the types of machine learning transforms, see <a href=\"http://docs.aws.amazon.com/glue/latest/dg/add-job-machine-learning-transform.html\">Creating Machine Learning Transforms</a>.</p>"
+          "documentation":"<p>The type of machine learning transform.</p> <p>For information about the types of machine learning transforms, see <a href=\"https://docs.aws.amazon.com/glue/latest/dg/add-job-machine-learning-transform.html\">Creating Machine Learning Transforms</a>.</p>"
         },
         "FindMatchesParameters":{
           "shape":"FindMatchesParameters",
@@ -10210,6 +10564,10 @@
         "SchemaChangePolicy":{
           "shape":"SchemaChangePolicy",
           "documentation":"<p>The policy for the crawler's update and deletion behavior.</p>"
+        },
+        "RecrawlPolicy":{
+          "shape":"RecrawlPolicy",
+          "documentation":"<p>A policy that specifies whether to crawl the entire dataset again, or to crawl only folders that were added since the last crawler run.</p>"
         },
         "Configuration":{
           "shape":"CrawlerConfiguration",

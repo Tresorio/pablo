@@ -1,10 +1,11 @@
 """Draw the information of a selected render"""
 
-from src.ui.icons import TresorioIconsLoader as til
-from src.config.langs import TRADUCTOR, CONFIG_LANG
-import bpy
 import math
 
+import bpy
+from bundle_modules import i18n
+
+# TODO fix that in i18n and not here
 def pluralize(string, number):
     if number == 0 or number == 1:
         return string
@@ -23,13 +24,13 @@ def format_uptime(uptime):
     seconds = uptime
 
     if days != 0:
-        return pluralize(TRADUCTOR['field']['day'][CONFIG_LANG].format(days), days) + " " + pluralize(TRADUCTOR['field']['hour'][CONFIG_LANG].format(hours), hours)
+        return pluralize(i18n.t('blender.day').format(days), days) + " " + pluralize(i18n.t('blender.hour').format(hours), hours)
     elif hours != 0:
-        return pluralize(TRADUCTOR['field']['hour'][CONFIG_LANG].format(hours), hours) + " " + pluralize(TRADUCTOR['field']['minute'][CONFIG_LANG].format(minutes), minutes)
+        return pluralize(i18n.t('blender.hour').format(hours), hours) + " " + pluralize(i18n.t('blender.minute').format(minutes), minutes)
     elif minutes != 0:
-        return pluralize(TRADUCTOR['field']['minute'][CONFIG_LANG].format(minutes), minutes) + " " + pluralize(TRADUCTOR['field']['second'][CONFIG_LANG].format(seconds), seconds)
+        return pluralize(i18n.t('blender.minute').format(minutes), minutes) + " " + pluralize(i18n.t('blender.second').format(seconds), seconds)
     else:
-        return pluralize(TRADUCTOR['field']['second'][CONFIG_LANG].format(seconds), seconds)
+        return pluralize(i18n.t('blender.second').format(seconds), seconds)
 
 def draw_selected_render(layout: bpy.types.UILayout,
                          context: bpy.types.Context
@@ -42,9 +43,9 @@ def draw_selected_render(layout: bpy.types.UILayout,
     render_index = context.window_manager.tresorio_renders_list_index
 
     if nb_renders == 0:
-        box.label(text=TRADUCTOR['field']['its_all_empty'][CONFIG_LANG])
+        box.label(text=i18n.t('blender.its-all-empty'))
     elif render_index < 0 or render_index >= nb_renders:
-        box.label(text=TRADUCTOR['field']['no_selected_render'][CONFIG_LANG])
+        box.label(text=i18n.t('blender.no-selected-render'))
     else:
         render = context.window_manager.tresorio_renders_details[render_index]
 
@@ -52,38 +53,41 @@ def draw_selected_render(layout: bpy.types.UILayout,
         left = box.column()
         right = box.column()
 
-        left.label(text=TRADUCTOR['field']['project'][CONFIG_LANG]+':')
+        left.label(text=i18n.t('blender.project')+':')
         right.label(text=render.project_name.capitalize())
 
-        left.label(text=TRADUCTOR['field']['name'][CONFIG_LANG]+':')
+        left.label(text=i18n.t('blender.name')+':')
         right.label(text=render.name.capitalize())
 
-        left.label(text=TRADUCTOR['field']['status'][CONFIG_LANG]+':')
-        right.label(text=TRADUCTOR['field'][render.status][CONFIG_LANG])
+        left.label(text=i18n.t('blender.status')+':')
+        right.label(text=i18n.t(f'blender.{render.status}'))
 
-        left.label(text=TRADUCTOR['field']['engine'][CONFIG_LANG]+':')
+        left.label(text=i18n.t('blender.engine')+':')
         right.label(text=render.engine.capitalize())
 
-        left.label(text=TRADUCTOR['field']['format'][CONFIG_LANG]+':')
+        left.label(text=i18n.t('blender.format')+':')
         right.label(text=render.output_format.capitalize())
 
-        left.label(text=TRADUCTOR['field']['advancement'][CONFIG_LANG]+':')
+        left.label(text=i18n.t('blender.advancement')+':')
         if render.total_frames == 1:
-            suffix = TRADUCTOR['field']['frame_singular'][CONFIG_LANG]
+            # TODO fix that
+            suffix = i18n.t('blender.frame-singular')
             text = text = f'{render.rendered_frames} / {render.total_frames} {suffix}'
             right.label(text=text)
         else:
-            suffix = TRADUCTOR['field']['frame_plural'][CONFIG_LANG]
+            # TODO fix that
+            suffix = i18n.t('blender.frame-plural')
             text = f'{render.rendered_frames} / {render.total_frames} {suffix}'
             right.label(text=text)
 
-        left.label(text=TRADUCTOR['field']['uptime'][CONFIG_LANG]+':')
+        left.label(text=i18n.t('blender.uptime')+':')
         right.label(text=format_uptime(render.uptime))
 
-        left.label(text=TRADUCTOR['field']['total_cost'][CONFIG_LANG]+':')
+        left.label(text=i18n.t('blender.total-cost')+':')
+        # TODO string for tresorio coins abreviation
         right.label(text=str(float("{:.2f}".format(render.total_cost)))+" Tc")
 
-        left.label(text=TRADUCTOR['field']['farm'][CONFIG_LANG]+':')
+        left.label(text=i18n.t('blender.farm')+':')
         res_box = right.box().split()
         res_left = res_box.column()
         res_right = res_box.column()
@@ -93,6 +97,7 @@ def draw_selected_render(layout: bpy.types.UILayout,
         res_left.label(text='Cpu:')
         res_right.label(text=str(render.cpu))
         res_left.label(text='Ram:')
-        res_right.label(text=str(math.floor(render.ram / 1000))+" "+TRADUCTOR['field']['GB'][CONFIG_LANG])
-        res_left.label(text=TRADUCTOR['field']['cost'][CONFIG_LANG]+':')
+        res_right.label(text=str(math.floor(render.ram / 1000))+" "+i18n.t('blender.GB'))
+        res_left.label(text=i18n.t('blender.cost')+':')
+        # TODO fix that
         res_right.label(text=str(float("{:.2f}".format(render.cost)))+" Tc / h")

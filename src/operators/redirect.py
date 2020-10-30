@@ -1,10 +1,11 @@
 """This module provides the operators achieving redirection to web browsers"""
 
 from urllib.parse import urljoin
+import webbrowser
 import logging
 import bpy
+from bundle_modules import i18n
 from src.config.api import API_CONFIG, MODE
-from src.config.langs import TRADUCTOR, CONFIG_LANG
 
 
 # pylint: disable=too-few-public-methods
@@ -18,7 +19,6 @@ class RedirectorOperator(bpy.types.Operator):
     def execute(self, unused_ctx):
         """On click function"""
         del unused_ctx
-        import webbrowser
 
         try:
             webbrowser.open_new_tab(self.url)
@@ -31,7 +31,7 @@ class RedirectorOperator(bpy.types.Operator):
 
 class TresorioRedirectForgotPasswordOperator(RedirectorOperator):
     """This operator redirects to the password recovery page on Tresorio's website."""
-    __doc__ = TRADUCTOR['desc']['forgot_password'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.forgot-password')
 
     bl_idname = 'tresorio.redirect_forgot_password'
     bl_label = 'Forgot password'
@@ -44,7 +44,7 @@ class TresorioRedirectForgotPasswordOperator(RedirectorOperator):
 
 class TresorioRedirectGetCreditsOperator(RedirectorOperator):
     """This operator redirects to the get credits page on Tresorio's website."""
-    __doc__ = TRADUCTOR['desc']['get_credits'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.get-credits')
 
     bl_idname = 'tresorio.redirect_get_credits'
     bl_label = 'Get credits'
@@ -57,7 +57,7 @@ class TresorioRedirectGetCreditsOperator(RedirectorOperator):
 
 class TresorioRedirectRegisterOperator(RedirectorOperator):
     """This operator redirects to the registration page on the Tresorio's website."""
-    __doc__ = TRADUCTOR['desc']['create_account'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.create-account')
 
     bl_idname = 'tresorio.redirect_register'
     bl_label = 'Register'
@@ -70,7 +70,7 @@ class TresorioRedirectRegisterOperator(RedirectorOperator):
 
 class TresorioRedirectHomeOperator(RedirectorOperator):
     """This operator redirects to the main page on the Tresorio's website."""
-    __doc__ = TRADUCTOR['desc']['redirect_tresorio'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.redirect-tresorio')
 
     bl_idname = 'tresorio.redirect_home'
     bl_label = 'Tresorio Home'
@@ -81,7 +81,7 @@ class TresorioRedirectHomeOperator(RedirectorOperator):
 
 class TresorioRedirectDownloadAddon(RedirectorOperator):
     """This operator redirects to the download plugin page."""
-    ___doc___ = TRADUCTOR['desc']['redirect_download'][CONFIG_LANG]
+    ___doc___ = i18n.t('blender.redirect-download')
 
     bl_idname = 'tresorio.download_addon'
     bl_label = 'Tresorio Addon'

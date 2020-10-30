@@ -2,9 +2,9 @@
 
 from typing import Set
 
-from src.config.enums import RenderStatus
+from bundle_modules import i18n
 from src.services.backend import delete_render
-from src.config.langs import TRADUCTOR, CONFIG_LANG
+
 import bpy
 
 
@@ -12,7 +12,7 @@ import bpy
 
 class TresorioDeleteRenderOperator(bpy.types.Operator):
     """Delete render operator"""
-    __doc__ = TRADUCTOR['desc']['delete_render'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.delete-render')
     bl_idname = 'tresorio.delete_render'
     bl_label = ''
 

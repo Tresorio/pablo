@@ -2,9 +2,9 @@
 
 from typing import Set
 
-from src.operators.async_loop import shutdown_loop
-from src.config.langs import TRADUCTOR, CONFIG_LANG
 import bpy
+from bundle_modules import i18n
+from src.operators.async_loop import shutdown_loop
 
 
 def logout(context: bpy.types.Context) -> None:
@@ -20,7 +20,7 @@ def logout(context: bpy.types.Context) -> None:
 
 class TresorioLogoutOperator(bpy.types.Operator):
     """Logout operator"""
-    __doc__ = TRADUCTOR['desc']['tresorio_logout'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.tresorio-logout')
     bl_idname = 'tresorio.logout'
     bl_label = 'Logout'
 
@@ -29,6 +29,5 @@ class TresorioLogoutOperator(bpy.types.Operator):
                 ) -> Set[str]:
         """Called when operator is called"""
         logout(context)
-        self.report({'INFO'}, TRADUCTOR['notif']
-                    ['success_logout'][CONFIG_LANG])
+        self.report({'INFO'}, i18n.t('blender.success-logout'))
         return {'FINISHED'}

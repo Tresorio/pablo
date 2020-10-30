@@ -1,11 +1,11 @@
 """Draw the renders details of the user"""
 
+import bpy
+from bundle_modules import i18n
 from src.config.enums import RenderStatus
 from src.ui.icons import TresorioIconsLoader as til
-from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.ui.draw_selected_render import draw_selected_render
 from src.properties.renders import TresorioRendersDetailsProps
-import bpy
 
 
 class TresorioRendersList(bpy.types.UIList):
@@ -23,13 +23,13 @@ class TresorioRendersList(bpy.types.UIList):
         layout.separator()
         # layout.prop(user_settings,
         #             'decompress_results',
-        #             text=TRADUCTOR['field']['decompress_results'][CONFIG_LANG])
+        #             text=i18n.t('blender.decompress-results'))
         row = layout.row()
         if user_settings.decompress_results is False:
             row.enabled = False
         row.prop(user_settings,
                  'open_image_on_download',
-                 text=TRADUCTOR['field']['open_image_on_download'][CONFIG_LANG])
+                 text=i18n.t('blender.open-image-on-download'))
 
     # pylint: disable=too-many-arguments
     @staticmethod
@@ -65,13 +65,13 @@ class TresorioRendersList(bpy.types.UIList):
         row = split.row(align=True)
         row.alignment = 'RIGHT'
         if render.downloading:
-            row.label(text=TRADUCTOR['notif']['downloading'][CONFIG_LANG])
+            row.label(text=i18n.t('blender.downloading'))
         elif render.status == RenderStatus.STARTING:
-            row.label(text=TRADUCTOR['notif']['launching'][CONFIG_LANG])
+            row.label(text=i18n.t('blender.launching'))
         elif render.status == RenderStatus.RUNNING or render.status == RenderStatus.STOPPED:
             row.prop(render, 'progress')
         elif render.status == RenderStatus.STOPPING:
-            row.label(text=TRADUCTOR['notif']['stopping'][CONFIG_LANG])
+            row.label(text=i18n.t('blender.stopping'))
 
         # OPS_CASE
         if render.is_downloadable:
@@ -91,7 +91,7 @@ class TresorioRendersList(bpy.types.UIList):
 
 class TresorioRendersPanel(bpy.types.Panel):
     """Renders details panel"""
-    bl_label = TRADUCTOR['field']['your_renders'][CONFIG_LANG]
+    bl_label = i18n.t('blender.your-renders')
     bl_idname = 'OBJECT_PT_TRESORIO_RENDERS_PANEL'
     bl_parent_id = 'OBJECT_PT_TRESORIO_PANEL'
     bl_space_type = 'PROPERTIES'
@@ -138,7 +138,7 @@ class TresorioRendersPanel(bpy.types.Panel):
         row_1.prop(user_settings,
                    'show_selected_render',
                    emboss=False,
-                   text=TRADUCTOR['field']['selected_render_details'][CONFIG_LANG]+':',
+                   text=i18n.t('blender.selected-render-details')+':',
                    icon=icon)
 
         if data.tresorio_user_settings_props.show_selected_render:

@@ -2,16 +2,14 @@
 
 from typing import Set
 
-from src.ui.popup import popup
-from src.services.backend import new_render
-from src.config.langs import TRADUCTOR, CONFIG_LANG
+from bundle_modules import i18n
 import src.operators.upload_modal
 import bpy
 
 
 class TresorioCancelUploadOperator(bpy.types.Operator):
     """Render operator"""
-    __doc__ = TRADUCTOR['desc']['cancel'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.cancel')
     bl_idname = 'tresorio.cancelupload'
     bl_label = ''
 

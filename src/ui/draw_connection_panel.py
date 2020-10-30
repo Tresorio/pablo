@@ -1,8 +1,8 @@
 """Defines the drawer for the connection panel"""
 
-from src.ui.icons import TresorioIconsLoader as til
-from src.config.langs import TRADUCTOR, CONFIG_LANG
 import bpy
+from bundle_modules import i18n
+from src.ui.icons import TresorioIconsLoader as til
 
 
 def draw_connection_panel(layout: bpy.types.UILayout,
@@ -13,7 +13,7 @@ def draw_connection_panel(layout: bpy.types.UILayout,
     report_props = bpy.context.window_manager.tresorio_report_props
 
     case = layout.row().split(factor=0.5)
-    case.label(text=TRADUCTOR['field']['connection'][CONFIG_LANG])
+    case.label(text=i18n.t('blender.connection'))
     align_case = case.column().row().split(factor=0.8)
     align_case.column().prop(user_props, 'langs')
     align_case.column().operator('tresorio.advanced_settings_navigation_in',
@@ -21,9 +21,10 @@ def draw_connection_panel(layout: bpy.types.UILayout,
                                  text='')
 
     box = layout.box()
-    box.label(text=TRADUCTOR['field']['mail'][CONFIG_LANG] + ':')
+    # TODO fix that ugly thing
+    box.label(text=i18n.t('blender.mail') + ':')
     box.prop(user_props, 'email', text='')
-    box.label(text=TRADUCTOR['field']['password'][CONFIG_LANG] + ':')
+    box.label(text=i18n.t('blender.password') + ':')
 
     row = box.row().split(factor=0.9)
     if user_props.show_password:
@@ -35,19 +36,19 @@ def draw_connection_panel(layout: bpy.types.UILayout,
 
     row = layout.row().split(factor=0.5)
     row.column().prop(user_props, 'remember_email',
-                      text=TRADUCTOR['field']['remember_email'][CONFIG_LANG])
+                      text=i18n.t('blender.remember-email'))
     col = row.column()
     if not report_props.login_in:
         col.operator('tresorio.login', icon_value=til.icon('TRESORIO_LOGIN'),
-                     text=TRADUCTOR['field']['login'][CONFIG_LANG])
+                     text=i18n.t('blender.login'))
     else:
-        col.label(text=TRADUCTOR['notif']['login_in'][CONFIG_LANG])
+        col.label(text=i18n.t('blender.login-in'))
 
     layout.separator(factor=2.0)
 
     layout.operator('tresorio.redirect_forgot_password',
-                    text=TRADUCTOR['field']['forgot_password'][CONFIG_LANG],
+                    text=i18n.t('blender.forgot-password'),
                     icon_value=til.icon('TRESORIO_KEY'))
     layout.operator('tresorio.redirect_register',
-                    text=TRADUCTOR['field']['create_account'][CONFIG_LANG],
+                    text=i18n.t('blender.create-account'),
                     icon_value=til.icon('TRESORIO_PROFILE'))

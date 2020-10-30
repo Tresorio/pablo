@@ -219,15 +219,13 @@
         "en": "Settings",
         "fr": "Paramètres"
     },
-    "farmer": {
-        "singular": {
-            "en": "Farmer",
-            "fr": "Farmer"
-        },
-        "plural": {
-            "en": "Farmers",
-            "fr": "Farmers"
-        }
+    "farmer_singular": {
+        "en": "Farmer",
+        "fr": "Farmer"
+    },
+    "farmer_plural": {
+        "en": "Farmers",
+        "fr": "Farmers"
     },
     "frame": {
         "en": "Frame",

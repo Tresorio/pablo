@@ -3,18 +3,18 @@
 from typing import Set
 
 import bpy
+from bundle_modules import i18n
+from urllib.parse import urlparse
 from src.ui.popup import popup
-from src.config.langs import TRADUCTOR, CONFIG_LANG
 from src.services.tresorio_platform import set_backend_url
 from src.config.api import API_CONFIG, MODE
-from urllib.parse import urlparse
 
 # pylint: disable=too-few-public-methods,no-self-use
 
 
 class TresorioAdvancedSettingsNavigationInOperator(bpy.types.Operator):
     """Advanced Settings Navigation operator"""
-    __doc__ = TRADUCTOR['desc']['advanced_settings_navigation_in'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.advanced-settings-navigation-in')
     bl_idname = 'tresorio.advanced_settings_navigation_in'
     bl_label = ''
 
@@ -26,7 +26,7 @@ class TresorioAdvancedSettingsNavigationInOperator(bpy.types.Operator):
 
 class TresorioAdvancedSettingsNavigationOutOperator(bpy.types.Operator):
     """Advanced Settings Navigation operator"""
-    __doc__ = TRADUCTOR['desc']['advanced_settings_navigation_out'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.advanced-settings-navigation-out')
     bl_idname = 'tresorio.advanced_settings_navigation_out'
     bl_label = ''
 
@@ -38,7 +38,7 @@ class TresorioAdvancedSettingsNavigationOutOperator(bpy.types.Operator):
 
 class TresorioAdvancedSettingsOperator(bpy.types.Operator):
     """Advanced settings operator"""
-    __doc__ = TRADUCTOR['desc']['save_advanced_settings'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.save-advanced-settings')
     bl_idname = 'tresorio.advanced_settings'
     bl_label = 'Advanced settings'
 
@@ -50,7 +50,7 @@ class TresorioAdvancedSettingsOperator(bpy.types.Operator):
         ip_address, port, https = user_props.backend_ip_address, user_props.backend_port, user_props.backend_https
 
         if ip_address == '':
-            popup(TRADUCTOR['notif']['no_ip_address'][CONFIG_LANG], icon='ERROR')
+            popup(i18n.t('blender.no-ip-address'), icon='ERROR')
             return {'CANCELLED'}
 
         new_url = "http"
@@ -66,7 +66,7 @@ class TresorioAdvancedSettingsOperator(bpy.types.Operator):
 
 class TresorioAdvancedSettingsResetOperator(bpy.types.Operator):
     """Advanced settings reset operator"""
-    __doc__ = TRADUCTOR['desc']['advanced_settings_reset'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.advanced-settings-reset')
     bl_idname = 'tresorio.advanced_settings_reset'
     bl_label = 'Advanced settings reset'
 

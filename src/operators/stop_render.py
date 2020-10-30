@@ -5,7 +5,7 @@ from typing import Set
 
 from src.config.enums import RenderStatus
 from src.services.backend import stop_render
-from src.config.langs import TRADUCTOR, CONFIG_LANG
+from bundle_modules import i18n
 import bpy
 
 
@@ -13,7 +13,7 @@ import bpy
 
 class TresorioStopRenderOperator(bpy.types.Operator):
     """Stop render operator"""
-    __doc__ = TRADUCTOR['desc']['stop_render'][CONFIG_LANG]
+    __doc__ = i18n.t('blender.stop-render')
     bl_idname = 'tresorio.stop_render'
     bl_label = ''
 
