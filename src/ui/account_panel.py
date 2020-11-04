@@ -35,8 +35,9 @@ class TresorioAccountPanel(bpy.types.Panel):
         align_case.column().prop(user_props, 'langs')
 
         split = layout.split(factor=0.5)
-        rounded_credits = round(user_props.total_credits * 100) / 100
-        split.label(text=f'Credits: {rounded_credits:.2f}')
+
+        credits_round_precision = 2 if user_props.total_credits > 1 else 4
+        split.label(text=i18n.t('blender.account-credits', credits=round(user_props.total_credits, credits_round_precision)))
         split.operator('tresorio.redirect_get_credits',
                        text=i18n.t('blender.get-credits'),
                        icon_value=til.icon('TRESORIO_GET_CREDITS'))

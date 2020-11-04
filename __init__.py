@@ -7,8 +7,7 @@ import asyncio
 import bpy
 
 # Add the path of the addon to python's sys path
-USER_PATH = bpy.utils.resource_path('USER')
-ADDON_PATH = os.path.join(USER_PATH, 'scripts', 'addons', 'tresorio')
+ADDON_PATH = os.path.dirname(os.path.realpath(__file__))
 MODULES_PATH = os.path.join(ADDON_PATH, 'bundle_modules')
 sys.path.append(ADDON_PATH)
 sys.path.append(MODULES_PATH)

@@ -19,7 +19,6 @@ from src.ui.popup import popup, alert, notif
 from src.operators.logout import logout
 from src.services.tresorio_platform import Platform, backend_url
 from src.utils.force_sync import force_sync
-from src.services.nas import AsyncNas
 from src.services.loggers import BACKEND_LOGGER
 from src.config.api import API_CONFIG, MODE
 from src.utils.percent_reader import PercentReader
@@ -51,6 +50,7 @@ def get_farms(rendering_mode: str, number_of_frames: int) -> None:
 
     future = _get_farms(cookie, rendering_mode, number_of_frames)
     asyncio.ensure_future(future)
+
 
 def new_upload(blend_path: str, target_path: str, project_name: str) -> None:
     """Upload a new blend file"""
@@ -118,14 +118,17 @@ def connect_to_tresorio(email: str,
     scene = bpy.data.filepath
     if bpy.context.scene.tresorio_render_form.project_name == '':
         if scene == '':
-            bpy.context.scene.tresorio_render_form.project_name = i18n.t('blender.default-project-name')
+            bpy.context.scene.tresorio_render_form.project_name = i18n.t(
+                'blender.default-project-name')
         else:
-            bpy.context.scene.tresorio_render_form.project_name = os.path.splitext(os.path.basename(scene))[0].capitalize()
+            bpy.context.scene.tresorio_render_form.project_name = os.path.splitext(os.path.basename(scene))[
+                0].capitalize()
     if bpy.context.scene.tresorio_render_form.project_folder == '':
         if scene == '':
             bpy.context.scene.tresorio_render_form.project_folder = tempfile.gettempdir()
         else:
             bpy.context.scene.tresorio_render_form.project_folder = os.path.dirname(scene)
+
 
 def delete_render(render_id: str) -> None:
     """Delete a render
@@ -179,15 +182,15 @@ def delete_all_renders():
 
 
 def _download_folder_from_S3(render_result_path: str,
-               render: TresorioRendersDetailsProps,
-               open_on_download: bool = False):
+                             render: TresorioRendersDetailsProps,
+                             open_on_download: bool = False):
 
-    user=bpy.context.window_manager.tresorio_user_props
+    user = bpy.context.window_manager.tresorio_user_props
 
-    ### Hardcoded configuration needed to communicate with MinIO
+    # Hardcoded configuration needed to communicate with MinIO
     config = Config(
         s3={
-          "addressing_style":"virtual"
+            "addressing_style": "virtual"
         },
         signature_version='s3v4',
     )
@@ -209,11 +212,11 @@ def _download_folder_from_S3(render_result_path: str,
     bucket = s3_resource.Bucket(name=f'{user.id}-renderings')
     # bucket = s3_resource.Bucket(name="test-bucket2")
 
-    ### WILL BE AVAILABLE IN RENDER DETAILS
+    # WILL BE AVAILABLE IN RENDER DETAILS
     remoteDir = render.id
     # remoteDir = 'cke4co1h100194skz9njgr2wq'
 
-    ### Add suffix after target directory if it does already exist
+    # Add suffix after target directory if it does already exist
     counter = 1
     subdir = render.name
     target_dir = os.path.join(render_result_path, subdir)
@@ -227,10 +230,10 @@ def _download_folder_from_S3(render_result_path: str,
     print(f'TargetDir: {target_dir}')
 
     try:
-        for object in bucket.objects.filter(Prefix = remoteDir):
+        for object in bucket.objects.filter(Prefix=remoteDir):
             remote_filepath = os.path.relpath(object.key, remoteDir)
             print("Downloading "+remote_filepath+" (size: "+str(object.size)+")...")
-            filename=os.path.join(target_dir, remote_filepath)
+            filename = os.path.join(target_dir, remote_filepath)
             os.makedirs(os.path.dirname(filename), exist_ok=True)
             with open(filename, 'wb+') as file:
                 # bucket.download_fileobj(object.key, file, Callback=callback)
@@ -255,6 +258,7 @@ def _download_folder_from_S3(render_result_path: str,
         raise
 
 # ASYNC CORE-------------------------------------------------------------------
+
 
 async def _download_render_results(cookie: str,
                                    render: TresorioRendersDetailsProps,
@@ -393,14 +397,17 @@ async def _update_rendering(render: TresorioRendersDetailsProps,
         if isinstance(err, ClientResponseError):
             logout_if_unauthorized(err)
 
+
 def _on_upload_start(target_path: str):
     print('[UPL START]')
     bpy.context.scene.tresorio_render_form.upload_percent = 0.0
     bpy.context.window_manager.tresorio_report_props.uploading_blend_file = True
 
+
 def _on_upload_progress(filename: str, progress: float):
     bpy.context.scene.tresorio_render_form.file_uploading = filename
     bpy.context.scene.tresorio_render_form.upload_percent = progress
+
 
 def _on_upload_end(target_path: str, success: bool):
     print('[UPL END]')
@@ -409,25 +416,31 @@ def _on_upload_end(target_path: str, success: bool):
     bpy.context.scene.tresorio_render_form.file_uploading = ''
     bpy.context.window_manager.tresorio_report_props.uploading = False
 
+
 def _on_upload_error(filename: str, error: str):
     print('[UPL ERROR]')
     alert(i18n.t('blender.err-upl').format(filename, error))
+
 
 def _on_pack_start(blend_path: str, target_path: str):
     print('[PACK START]')
     bpy.context.window_manager.tresorio_report_props.packing_textures = True
     bpy.context.scene.tresorio_render_form.pack_percent = 0.0
 
+
 def _on_pack_progress(progress: float):
     bpy.context.scene.tresorio_render_form.pack_percent = progress
+
 
 def _on_pack_error(blend_path: str, target_path: str, error: str):
     print('[PACK ERROR]')
     alert(i18n.t('blender.cant-pack-textures'), subtitle=error)
 
+
 def _on_missing_file(blend_path: str, target_path: str, file: str):
     print('[MISSING FILE]')
     notif(i18n.t('blender.missing-file').format(file))
+
 
 def _on_pack_end(blend_path: str, target_path: str, success: bool):
     print('[PACK END]')
@@ -435,9 +448,11 @@ def _on_pack_end(blend_path: str, target_path: str, success: bool):
     bpy.context.window_manager.tresorio_report_props.packing_textures = False
     bpy.context.window_manager.tresorio_report_props.uploading_blend_file = True
 
+
 def _on_project_creation_error(project_name: str, error: str):
     print('[PROJECT CREATION ERROR]')
     alert(i18n.t('blender.error-project').format(project_name), subtitle=error)
+
 
 def _on_end(exit_code: int):
     print('[END]')
@@ -451,9 +466,11 @@ def _on_end(exit_code: int):
     if exit_code == 0:
         notif(i18n.t('blender.exported'))
 
+
 def _on_unknown_error(error: str):
     print('[UNKNOWN ERROR]')
     alert(i18n.t('blender.unknown-error-upl'), subtitle=error)
+
 
 async def _chunked_upload(cookie: str, blend_path: str, target_path: str, project_name: str) -> Coroutine:
     """This function upload a new .blend file"""
@@ -478,22 +495,20 @@ async def _chunked_upload(cookie: str, blend_path: str, target_path: str, projec
         src.operators.upload_modal.upload_end_callback = _on_upload_end
         src.operators.upload_modal.upload_error_callback = _on_upload_error
 
-
         bpy.ops.tresorio.upload_modal(
-            blend_path = blend_path,
-            target_path = target_path,
-            project_name = project_name,
-            url = backend_url,
-            cookie = cookie,
-            storage_url = API_CONFIG[MODE]['storage'],
-            storage_access_key = user.storage_access_key,
-            storage_secret_key = user.storage_secret_key,
-            bucket_name = user.id + '-renderings'
+            blend_path=blend_path,
+            target_path=target_path,
+            project_name=project_name,
+            url=backend_url,
+            cookie=cookie,
+            storage_url=API_CONFIG[MODE]['storage'],
+            storage_access_key=user.storage_access_key,
+            storage_secret_key=user.storage_secret_key,
+            bucket_name=user.id + '-renderings'
             # storage_access_key = 'test10',
             # storage_secret_key = 'test10-secret',
             # bucket_name = 'test-bucket2'
         )
-
 
     except Exception as err:
         bpy.context.window_manager.tresorio_report_props.uploading = False
@@ -506,52 +521,6 @@ async def _chunked_upload(cookie: str, blend_path: str, target_path: str, projec
         popup_msg = i18n.t('blender.err-upl-blendfile')
         alert(popup_msg)
 
-
-async def _new_upload(cookie: str, path: str, project_name: str) -> Coroutine:
-    """This function upload a new .blend file"""
-
-    render_form = bpy.context.scene.tresorio_render_form
-    render_info = None
-
-    print("Uploading", path)
-    bpy.context.window_manager.tresorio_report_props.uploading_blend_file = True
-
-    try:
-        async with Platform() as plt:
-            render_info = await plt.req_create_render(cookie, os.path.getsize(path), project_name, jsonify=True)
-            bpy.context.scene.tresorio_render_form.project_id = render_info['id']
-        try:
-            await _update_list_renderings(cookie)
-        except Exception:
-            pass
-        bpy.context.window_manager.tresorio_renders_list_index = 0
-
-        for dirname, dirnames, filenames in os.walk(path):
-            # for subdirname in dirnames:
-            #     print(os.path.relpath(os.path.join(dirname, subdirname), path))
-
-            for filename in filenames:
-                abspath = os.path.join(dirname, filename)
-                relpath = pathlib.PurePosixPath(pathlib.Path(os.path.relpath(abspath, path)))
-                print("Uploading", relpath)
-                bpy.context.scene.tresorio_render_form.file_uploading = os.path.basename(abspath)
-                loop = asyncio.get_running_loop()
-                upload = functools.partial(
-                    force_sync(_upload_blend_file_async), abspath, relpath, render_info)
-                await loop.run_in_executor(None, upload)
-
-    except Exception as err:
-        BACKEND_LOGGER.error(err)
-        popup_msg = i18n.t('blender.err-upl-blendfile')
-        if isinstance(err, ClientResponseError):
-            logout_if_unauthorized(err)
-            if err.status == HTTPStatus.SERVICE_UNAVAILABLE:
-                popup_msg = i18n.t('blender.not-enough-servers')
-        alert(popup_msg)
-        return
-    finally:
-        bpy.context.scene.tresorio_render_form.upload_percent = 0.0
-        bpy.context.window_manager.tresorio_report_props.uploading_blend_file = False
 
 async def _get_farms(
     cookie: str,
@@ -586,9 +555,9 @@ async def _get_farms(
 
 
 async def _resume_render(cookie: str,
-                        render,
-                        farm_index: int
-                        ) -> Coroutine:
+                         render,
+                         farm_index: int
+                         ) -> Coroutine:
     """Resume rendering"""
 
     try:
@@ -605,7 +574,8 @@ async def _resume_render(cookie: str,
             if err.status == HTTPStatus.FORBIDDEN:
                 popup_msg = i18n.t('blender.not-enough-credits')
             elif err.status == HTTPStatus.SERVICE_UNAVAILABLE:
-                alert(i18n.t('blender.rendering-failed').format(render.name.capitalize()), subtitle=i18n.t('blender.not-enough-servers'))
+                alert(i18n.t('blender.rendering-failed').format(render.name.capitalize()),
+                      subtitle=i18n.t('blender.not-enough-servers'))
                 return
             elif err.status == HTTPStatus.NOT_FOUND:
                 popup_msg = i18n.t('blender.no-scene').format(render.project_name.capitalize())
@@ -625,7 +595,8 @@ async def _new_render(cookie: str,
             launch_render['projectId'] = render_form.project_id
             await plt.req_launch_render(cookie, launch_render, jsonify=True)
             await _update_list_renderings(cookie)
-            notif(i18n.t('blender.rendering-launched').format(render_form.rendering_name.capitalize(), render_form.project_name.capitalize()))
+            notif(i18n.t('blender.rendering-launched').format(render_form.rendering_name.capitalize(),
+                                                              render_form.project_name.capitalize()))
             bpy.context.window_manager.tresorio_renders_list_index = 0
             bpy.context.window_manager.tresorio_user_settings_props.show_selected_render = True
     except Exception as err:
@@ -636,7 +607,8 @@ async def _new_render(cookie: str,
             if err.status == HTTPStatus.FORBIDDEN:
                 popup_msg = i18n.t('blender.not-enough-credits')
             elif err.status == HTTPStatus.SERVICE_UNAVAILABLE:
-                alert(i18n.t('blender.rendering-failed').format(render_form.rendering_name.capitalize()), subtitle=i18n.t('blender.not-enough-servers'))
+                alert(i18n.t('blender.rendering-failed').format(render_form.rendering_name.capitalize()),
+                      subtitle=i18n.t('blender.not-enough-servers'))
                 return
             elif err.status == HTTPStatus.CONFLICT:
                 popup_msg = i18n.t('blender.render-name-already-taken').format(
@@ -646,6 +618,7 @@ async def _new_render(cookie: str,
             elif err.status == HTTPStatus.BAD_REQUEST:
                 popup_msg = i18n.t('blender.wrong-name')
         alert(i18n.t('blender.rendering-failed').format(render_form.rendering_name.capitalize()) + popup_msg)
+
 
 async def _stop_render(cookie: str,
                        render: TresorioRendersDetailsProps
@@ -692,23 +665,6 @@ async def _delete_all_renders(cookie: str) -> Coroutine:
         bpy.context.window_manager.tresorio_report_props.deleting_all_renders = False
 
 
-async def _upload_blend_file_async(filepath: str,
-                                   relpath: str,
-                                   render_info: Dict[str, Any]
-                                   ) -> Coroutine:
-    """Upload the blend file on a Nas
-
-    Args:
-        blendfile: Filepath of the blender file
-        render_info: information about the render linked to the blend file
-    """
-    async with AsyncNas(render_info['ip']) as nas:
-        with PercentReader(filepath, update_queue=UPDATE_QUEUE) as file:
-            return await nas.upload_content(render_info['jwt'],
-                                            relpath,
-                                            file)
-
-
 # CALLBACKS--------------------------------------------------------------------
 
 
@@ -743,6 +699,7 @@ def _fill_render_details(render: TresorioRendersDetailsProps,
     render.is_stoppable = res['isStoppable']
     render.is_resumable = res['isResumable']
     render.is_restartable = res['isRestartable']
+
 
 def _add_renders_details_prop(res: Dict[str, Any]) -> None:
     render = bpy.context.window_manager.tresorio_renders_details.add()

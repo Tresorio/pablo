@@ -6,10 +6,13 @@ import bpy
 from bundle_modules import i18n
 
 # TODO fix that in i18n and not here
+
+
 def pluralize(string, number):
     if number == 0 or number == 1:
         return string
     return string + "s"
+
 
 def format_uptime(uptime):
     days = math.floor(uptime / (60 * 60 * 24))
@@ -31,6 +34,7 @@ def format_uptime(uptime):
         return pluralize(i18n.t('blender.minute').format(minutes), minutes) + " " + pluralize(i18n.t('blender.second').format(seconds), seconds)
     else:
         return pluralize(i18n.t('blender.second').format(seconds), seconds)
+
 
 def draw_selected_render(layout: bpy.types.UILayout,
                          context: bpy.types.Context
@@ -70,13 +74,7 @@ def draw_selected_render(layout: bpy.types.UILayout,
 
         left.label(text=i18n.t('blender.advancement')+':')
         if render.total_frames == 1:
-            # TODO fix that
-            suffix = i18n.t('blender.frame-singular')
-            text = text = f'{render.rendered_frames} / {render.total_frames} {suffix}'
-            right.label(text=text)
-        else:
-            # TODO fix that
-            suffix = i18n.t('blender.frame-plural')
+            suffix = i18n.t('blender.frame-count', count=render.total_frames)
             text = f'{render.rendered_frames} / {render.total_frames} {suffix}'
             right.label(text=text)
 
@@ -84,8 +82,8 @@ def draw_selected_render(layout: bpy.types.UILayout,
         right.label(text=format_uptime(render.uptime))
 
         left.label(text=i18n.t('blender.total-cost')+':')
-        # TODO string for tresorio coins abreviation
-        right.label(text=str(float("{:.2f}".format(render.total_cost)))+" Tc")
+        cost_rounding_precision = 4 if render.total_cost < 1 else 2
+        right.label(text=i18n.t('blender.tresorio-credits', credits=round(render.total_cost, cost_rounding_precision)))
 
         left.label(text=i18n.t('blender.farm')+':')
         res_box = right.box().split()
@@ -99,5 +97,5 @@ def draw_selected_render(layout: bpy.types.UILayout,
         res_left.label(text='Ram:')
         res_right.label(text=str(math.floor(render.ram / 1000))+" "+i18n.t('blender.GB'))
         res_left.label(text=i18n.t('blender.cost')+':')
-        # TODO fix that
-        res_right.label(text=str(float("{:.2f}".format(render.cost)))+" Tc / h")
+        cost_rounding_precision = 4 if render.cost < 1 else 2
+        res_right.label(text=i18n.t('blender.tresorio-credits-per-hour', credits=round(render.cost, cost_rounding_precision)))

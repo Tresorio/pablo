@@ -106,8 +106,8 @@ class Platform:
     async def req_latest_version(self) -> aiohttp.ClientResponse:
         url = urljoin(self.url, API_CONFIG['routes']['latest_version'])
         return await self.session.get(url,
-            raise_for_status=True,
-            ssl_context=SSL_CONTEXT)
+                                      raise_for_status=True,
+                                      ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_connect_to_tresorio(self,
@@ -142,11 +142,12 @@ class Platform:
                                 ) -> aiohttp.ClientResponse:
         url = urljoin(self.url, API_CONFIG['routes']['resume_render'].format(render_id))
         return await self.session.put(url,
-                                       json={'farmIndex': farm_index, 'renderingMode': rendering_mode},
-                                       headers={'Content-Type': 'application/json'},
-                                       cookies={'connect.sid': cookie},
-                                       raise_for_status=True,
-                                       ssl_context=SSL_CONTEXT)
+                                      json={'farmIndex': farm_index,
+                                            'renderingMode': rendering_mode},
+                                      headers={'Content-Type': 'application/json'},
+                                      cookies={'connect.sid': cookie},
+                                      raise_for_status=True,
+                                      ssl_context=SSL_CONTEXT)
 
     @_platformrequest.__func__
     async def req_launch_render(self,
@@ -260,7 +261,6 @@ class Platform:
                                       cookies={'connect.sid': cookie},
                                       ssl_context=SSL_CONTEXT)
 
-
     @_platformrequest.__func__
     async def req_create_render(self,
                                 cookie: str,
@@ -313,20 +313,18 @@ class Platform:
                                       cookies={'connect.sid': cookie},
                                       ssl_context=SSL_CONTEXT)
 
-
     @_platformrequest.__func__
     async def req_get_farms(self,
-        cookie: str,
-        params: Dict[str, Any]
-    ) -> aiohttp.ClientResponse:
+                            cookie: str,
+                            params: Dict[str, Any]
+                            ) -> aiohttp.ClientResponse:
         url = urljoin(self.url,
-            API_CONFIG['routes']['farms'])
+                      API_CONFIG['routes']['farms'])
         return await self.session.get(url,
                                       headers={'Content-Type': 'application/json'},
                                       cookies={'connect.sid': cookie},
                                       params=params,
                                       ssl_context=SSL_CONTEXT)
-
 
     @_platformrequest.__func__
     async def req_get_rendering_details(self,

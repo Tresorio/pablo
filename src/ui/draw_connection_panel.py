@@ -21,10 +21,9 @@ def draw_connection_panel(layout: bpy.types.UILayout,
                                  text='')
 
     box = layout.box()
-    # TODO fix that ugly thing
-    box.label(text=i18n.t('blender.mail') + ':')
+    box.label(text=i18n.t('blender.mail'))
     box.prop(user_props, 'email', text='')
-    box.label(text=i18n.t('blender.password') + ':')
+    box.label(text=i18n.t('blender.password'))
 
     row = box.row().split(factor=0.9)
     if user_props.show_password:

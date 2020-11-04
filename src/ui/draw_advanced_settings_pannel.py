@@ -27,9 +27,8 @@ def draw_advanced_settings_panel(layout: bpy.types.UILayout,
     box.enabled = False
     box.scale_x = 0.5
     box.scale_y = 0.5
-    # TODO fix that ugly thing
-    box.label(text=i18n.t('blender.version') + " : " + actual_version)
-    box.label(text=i18n.t('blender.latest') + " : " + latest_version)
+    box.label(text=i18n.t('blender.version', version=actual_version))
+    box.label(text=i18n.t('blender.latest', version=latest_version))
 
     box = layout.box()
     split = box.split(factor=0.4, align=True)

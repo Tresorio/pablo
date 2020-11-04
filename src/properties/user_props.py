@@ -12,17 +12,20 @@ from src.services.loggers import BACKEND_LOGGER
 from src.services.tresorio_platform import Platform
 from src.config.api import API_CONFIG, MODE
 
+
 async def fetch_latest_version() -> str:
     latest_version = '0.0.0'
     try:
+        import bundle_modules
         async with Platform() as plt:
-            res = await plt.req_latest_version()
-            latest_version = await res.text()
+            res = await plt.req_latest_version(jsonify=True)
+            latest_version = res
     except Exception as err:
         BACKEND_LOGGER.error(err)
         popup_msg = i18n.t('blender.cant-connect-to-tresorio')
         latest_version = f"{API_CONFIG['version']['major']}.{API_CONFIG['version']['minor']}.{API_CONFIG['version']['patch']}"
-    return latest_version
+    return latest_version['version']
+
 
 class TresorioUserProps(bpy.types.PropertyGroup):
     """User properties"""
