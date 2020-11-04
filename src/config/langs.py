@@ -17,13 +17,11 @@ i18n.load_path.append(paths.LANG_PATH)
 
 ALL_LANGS = {
     'en': ('en',
-           'English (US)',
-           'Set the language to English (US). '
-           'You must restart Blender for the new language to be applied everywhere'),
+           'English',
+           i18n.t('blender.lang-select-warning', locale='en')),
     'fr':  ('fr',
-            'Français (FR)',
-            'Définir le language à Français (FR). '
-            'Vous devrez redémarrer Blender pour appliquer le nouveau language'),
+            'Français',
+            i18n.t('blender.lang-select-warning', locale='fr')),
 }
 
 

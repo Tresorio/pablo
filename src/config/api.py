@@ -11,4 +11,4 @@ SSL_CONTEXT.load_verify_locations(certifi.where())
 
 IS_MOCKED = False
 API_CONFIG = json.load(paths.TRESORIO_CONFIG_PATH)
-MODE = "dev"
+MODE = "master"

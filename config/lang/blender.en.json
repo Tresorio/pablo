@@ -182,5 +182,5 @@
     "not-dir": "{0} is not a directory",
     "pack-first": "{0} doesn't exist already. You should export your project first",
     "pack-error": "{0} is not a Tresorio project. You should export your project first",
-    "lang-select-warning": "You must restart Blender for the new language to be applied everywhere"
+    "lang-select-warning": "Set the language to English. You must restart Blender for the new language to be applied everywhere"
 }
